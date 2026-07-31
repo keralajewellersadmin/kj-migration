@@ -239,12 +239,6 @@
   text-decoration: underline;
 }
 
-.current {
-  color: var(--color-charcoal-soft);
-  font-family: var(--font-body);
-  font-size: 14px; /* one-off */
-}
-
 .breadcrumbCurrent {
   color: var(--color-charcoal-dark);
   font-family: var(--font-body);

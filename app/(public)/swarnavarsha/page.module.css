@@ -21,7 +21,7 @@
 }
 
 .content {
-  color: #1a1b1f;
+  color: var(--color-rich-text);
   font-size: 18px;
 }
 

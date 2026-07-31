@@ -13,7 +13,7 @@
 }
 
 .richText {
-  color: #1a1b1f;
+  color: var(--color-rich-text);
   font-size: 18px;
   padding: 0 30px 75px;
 }

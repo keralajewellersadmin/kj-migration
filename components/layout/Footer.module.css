@@ -187,34 +187,6 @@
   border: 0;
 }
 
-.branchMapPlaceholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px; /* one-off */
-  background: linear-gradient(135deg, #f8f5f0, #f0ebe3); /* one-off */
-  color: var(--color-maroon);
-  transition: background-color 0.2s ease;
-}
-
-.branchMap:hover .branchMapPlaceholder {
-  background: linear-gradient(135deg, #f0ebe3, #e8e0d4); /* one-off */
-}
-
-.branchMapPlaceholder svg {
-  opacity: 0.6;
-}
-
-.branchMapPlaceholder span {
-  font-size: 13px; /* one-off */
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
 .branchName {
   font-size: var(--text-lg);
   font-weight: 700;
