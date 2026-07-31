@@ -1,0 +1,23 @@
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--color-charcoal);
+  font-size: 16px;
+  font-weight: 400;
+  -moz-osx-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+  font-variant-ligatures: common-ligatures;
+  font-kerning: normal;
+}
+
+img {
+  image-rendering: auto;
+  -webkit-interpolation-quality: high;
+}

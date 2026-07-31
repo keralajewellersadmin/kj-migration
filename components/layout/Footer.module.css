@@ -1,0 +1,351 @@
+.footer {
+  background-color: var(--color-smoke-light);
+  padding: var(--space-10) 0 var(--space-5);
+  font-family: var(--font-body);
+  color: var(--color-dark-grey);
+}
+
+.container {
+  max-width: 1200px; /* one-off */
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.logoLink {
+  display: block;
+  margin-bottom: var(--space-6);
+}
+
+.logo {
+  width: auto;
+  height: auto;
+  max-width: 170px; /* one-off */
+  display: block;
+}
+
+.top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-10);
+  margin-bottom: 30px; /* one-off */
+}
+
+.heading {
+  color: var(--color-maroon);
+  font-size: 22px; /* one-off */
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: var(--space-6);
+  text-transform: uppercase;
+  font-family: var(--font-decorative);
+}
+
+.linksGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.linksGrid a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--text-base);
+  font-style: normal;
+  transition: color var(--duration-normal) ease;
+}
+
+.linksGrid a:hover {
+  color: var(--color-maroon);
+}
+
+.support {
+  display: flex;
+  flex-direction: column;
+}
+
+.socials {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* one-off */
+  height: 40px; /* one-off */
+  background-color: var(--color-maroon);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  transition: background-color var(--duration-normal) ease;
+}
+
+.socials a:hover {
+  background-color: var(--color-maroon-deep);
+}
+
+.storeInfo .description {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+  font-style: normal;
+}
+
+.featuresList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-6) 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 15px; /* one-off */
+}
+
+.featuresList li {
+  display: flex;
+  align-items: flex-start;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.featuresList li span {
+  font-style: normal;
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  width: 18px; /* one-off */
+  height: 18px; /* one-off */
+  margin-right: var(--space-2);
+  margin-top: 1px; /* one-off */
+  color: var(--color-gold-accent);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.infoBlock strong {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--color-dark-grey);
+  margin-bottom: var(--space-1);
+  font-style: normal;
+}
+
+.infoIcon {
+  margin-right: 6px; /* one-off */
+  vertical-align: text-bottom;
+  color: var(--color-gold-accent);
+}
+
+.infoBlock a,
+.infoBlock p {
+  display: block;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--text-base);
+  margin: 0;
+  font-style: normal;
+}
+
+.branches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-6);
+}
+
+.branchCard {
+  background: var(--color-white);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.branchMap {
+  position: relative;
+  width: 100%;
+  height: 140px; /* one-off */
+  border-radius: 10px; /* one-off */
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  border: 1px solid rgba(200, 155, 60, 0.2); /* one-off */
+  display: block;
+}
+
+.branchMap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.branchMapPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* one-off */
+  background: linear-gradient(135deg, #f8f5f0, #f0ebe3); /* one-off */
+  color: var(--color-maroon);
+  transition: background-color 0.2s ease;
+}
+
+.branchMap:hover .branchMapPlaceholder {
+  background: linear-gradient(135deg, #f0ebe3, #e8e0d4); /* one-off */
+}
+
+.branchMapPlaceholder svg {
+  opacity: 0.6;
+}
+
+.branchMapPlaceholder span {
+  font-size: 13px; /* one-off */
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.branchName {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-dark-grey);
+  margin: var(--space-4) 0 var(--space-2);
+  font-style: normal;
+}
+
+.branchAddress {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  line-height: 1.5;
+  font-style: normal;
+  min-height: 42px; /* one-off */
+}
+
+.branchPhone {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  line-height: 1.5;
+  font-style: normal;
+}
+
+.branchPhone strong {
+  color: var(--color-dark-grey);
+}
+
+.branchPhone a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.branchActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px; /* one-off */
+  margin-top: auto;
+}
+
+.branchBtn {
+  padding: 10px; /* one-off */
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-normal) ease;
+  background-color: var(--color-maroon);
+  color: var(--color-white);
+  border: 1px solid var(--color-maroon);
+}
+
+.branchBtn:hover {
+  background-color: var(--color-maroon-deep);
+  border-color: var(--color-maroon-deep);
+}
+
+.branchBtnOutline {
+  background-color: var(--color-white);
+  color: var(--color-gold-outline);
+  border: 1px solid var(--color-gold-outline-border);
+}
+
+.branchBtnOutline:hover {
+  background-color: var(--color-gold-outline);
+  color: var(--color-white);
+}
+
+.bottom {
+  margin-top: var(--space-12);
+  border-top: 1px solid var(--color-border-light);
+  padding: var(--space-5) 0;
+}
+
+.bottom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px; /* one-off */
+}
+
+.bottom p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+  font-style: normal;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 991px) {
+  /* one-off */
+  .top {
+    grid-template-columns: 1fr;
+    gap: 30px; /* one-off */
+  }
+
+  .branches {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  /* one-off */
+  .bottom .container {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .branches {
+    grid-template-columns: 1fr;
+    gap: 16px; /* one-off */
+  }
+
+  .branchCard {
+    padding: 16px; /* one-off */
+  }
+
+  .linksGrid,
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .branchMap {
+    height: 100px; /* one-off */
+  }
+
+  .featuresList {
+    grid-template-columns: 1fr;
+  }
+}

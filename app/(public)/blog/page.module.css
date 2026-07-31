@@ -1,0 +1,173 @@
+.section {
+  background: var(--color-white);
+  padding: 60px 24px;
+}
+
+.container {
+  max-width: var(--layout-container);
+  margin: 0 auto;
+}
+
+.blogHeader {
+  text-align: center;
+  margin-bottom: 48px; /* one-off */
+}
+
+.blogTitle {
+  font-family: var(--font-decorative);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  color: var(--color-maroon);
+  margin: 0 0 12px;
+}
+
+.blogSubtitle {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyText {
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+/* ── Wedding Season hero band — matches live site exactly ── */
+.heroOuter {
+  padding: 75px 30px; /* one-off — matches div-block-60 */
+}
+
+.hero {
+  background-image: url("/assets/images/66ab58c3d0a7ccb5d5a92ebb_Group%202085665100.webp");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 15px; /* one-off — matches banner-slider1-blog */
+  width: 100%;
+  height: 50vh; /* one-off — matches live */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0; /* one-off */
+}
+
+.heroContent {
+  text-align: center;
+  width: 70%; /* one-off — matches intro-content-blog */
+  max-width: 1140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heroTitle {
+  font-family: var(--font-decorative);
+  font-size: clamp(40px, 6vw, 60px); /* one-off */
+  font-weight: 400;
+  color: var(--color-white);
+  margin: 0 0 10px;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+
+.heroImage {
+  width: 40%; /* one-off — matches image-blog */
+  height: auto;
+}
+
+.heroPara {
+  font-family: var(--font-body);
+  font-size: 20.667px; /* one-off — matches paragraph-bigger-2-blog */
+  line-height: 25px; /* one-off */
+  color: var(--color-gold-warm);
+  text-align: center;
+  width: 50%; /* one-off — matches paragraph-bigger-2-blog */
+  margin: 18px 0; /* one-off */
+}
+
+.heroBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 25px; /* one-off — matches button-blog */
+  border-radius: 5px; /* one-off */
+  background-color: var(--color-gold-warm);
+  color: var(--color-white);
+  font-family: var(--font-decorative);
+  font-size: 27.556px; /* one-off — matches button-blog */
+  font-weight: 300;
+  letter-spacing: 2px; /* one-off */
+  line-height: 20px; /* one-off */
+  text-transform: capitalize;
+  text-decoration: none;
+  transition:
+    background-color 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.heroBtn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 991px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hero {
+    height: 50vh; /* one-off */
+  }
+  .heroTitle {
+    font-size: 38px; /* one-off */
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding: 40px 16px;
+  }
+  .heroOuter {
+    padding: 40px 16px; /* one-off */
+  }
+  .hero {
+    height: auto; /* one-off */
+    min-height: 320px; /* one-off */
+    padding: 30px 0;
+  }
+  .heroContent {
+    width: 90%;
+  }
+  .heroImage {
+    width: 60%; /* one-off */
+  }
+  .heroTitle {
+    font-size: 30px; /* one-off */
+  }
+  .heroPara {
+    width: 80%;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .heroBtn {
+    font-size: 18px;
+    padding: 10px 22px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

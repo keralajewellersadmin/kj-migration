@@ -1,0 +1,121 @@
+import { Resend } from "resend";
+import crypto from "crypto";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const FROM_EMAIL =
+  process.env.RESEND_FROM_EMAIL || "keralajewellersadmin@gmail.com";
+const FROM_NAME = "Kerala Jewellers";
+
+export function generateOtp(): string {
+  return crypto.randomInt(100000, 999999).toString();
+}
+
+export function generateResetToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+export function hashValue(value: string): string {
+  return crypto.createHash("sha256").update(value).digest("hex");
+}
+
+export async function sendOtpEmail(toEmail: string, code: string) {
+  // In development, log OTP to console so devs don't need working email
+  if (process.env.NODE_ENV !== "production") {
+    console.log("\n╔══════════════════════════════════════╗");
+    console.log("║       DEV MODE — OTP CODE           ║");
+    console.log(`║  To: ${toEmail}`);
+    console.log(`║  Code: ${code}`);
+    console.log("╚══════════════════════════════════════╝\n");
+  }
+
+  try {
+    await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: toEmail,
+      subject: `Your login code: ${code}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+          <h2 style="color: #991f23;">Kerala Jewellers CMS</h2>
+          <p>Your login verification code is:</p>
+          <p style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #991f23;">
+            ${code}
+          </p>
+          <p style="color: #6b7280; font-size: 13px;">
+            This code expires in 10 minutes. If you didn't request this,
+            you can safely ignore this email.
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    // In dev, email failure is non-fatal since OTP is logged to console
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+    console.warn("Email send failed (non-fatal in dev):", err);
+  }
+}
+
+export async function sendPasswordResetEmail(
+  toEmail: string,
+  resetUrl: string,
+) {
+  // In development, log reset URL to console
+  if (process.env.NODE_ENV !== "production") {
+    console.log("\n╔══════════════════════════════════════╗");
+    console.log("║    DEV MODE — PASSWORD RESET URL    ║");
+    console.log(`║  To: ${toEmail}`);
+    console.log(`║  URL: ${resetUrl}`);
+    console.log("╚══════════════════════════════════════╝\n");
+  }
+
+  try {
+    await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: toEmail,
+      subject: "Reset your Kerala Jewellers CMS password",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+          <h2 style="color: #991f23;">Kerala Jewellers CMS</h2>
+          <p>Click the button below to reset your password. This link
+          expires in 30 minutes.</p>
+          <a href="${resetUrl}" style="display:inline-block;background:#991f23;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;margin:16px 0;">
+            Reset Password
+          </a>
+          <p style="color: #6b7280; font-size: 13px;">
+            If you didn't request this, you can safely ignore this email.
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+    console.warn("Email send failed (non-fatal in dev):", err);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function findUserByIdentifier(payload: any, identifier: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const findOpts = { limit: 1, overrideAccess: true } as any;
+
+  let result = await payload.find({
+    ...findOpts,
+    collection: "admin-users",
+    where: { email: { equals: identifier } },
+  });
+  if (result.docs.length) return { user: result.docs[0], matchedVia: "email" };
+
+  result = await payload.find({
+    ...findOpts,
+    collection: "admin-users",
+    where: { username: { equals: identifier } },
+  });
+  if (result.docs.length)
+    return { user: result.docs[0], matchedVia: "username" };
+
+  return { user: null, matchedVia: null };
+}

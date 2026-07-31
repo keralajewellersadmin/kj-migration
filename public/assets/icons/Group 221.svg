@@ -1,0 +1,16 @@
+<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 221">
+<circle id="Ellipse 6" cx="20.5" cy="20" r="20" fill="#2F373F"/>
+<g id="Frame" clip-path="url(#clip0_1_190)">
+<g id="line-md:youtube">
+<path id="Vector" d="M18.0996 16.1001L24.0996 19.6001L18.0996 23.1001V16.1001Z" fill="white"/>
+<path id="Vector_2" d="M20.0996 12.6001C29.0996 12.6001 29.0996 12.6001 29.0996 19.6001C29.0996 26.6001 29.0996 26.6001 20.0996 26.6001C11.0996 26.6001 11.0996 26.6001 11.0996 19.6001C11.0996 12.6001 11.0996 12.6001 20.0996 12.6001Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1_190">
+<rect width="21" height="20" fill="white" transform="translate(10 10)"/>
+</clipPath>
+</defs>
+</svg>

@@ -1,0 +1,98 @@
+.customSelect {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 200px; /* one-off */
+}
+
+.trigger {
+  align-items: center;
+  appearance: none;
+  background-color: var(--color-white);
+  border: 1px solid rgba(107, 74, 76, 0.16); /* one-off */
+  border-radius: 7px; /* one-off */
+  color: var(--color-charcoal);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-body);
+  font-size: 14px; /* one-off */
+  font-weight: 600;
+  height: 44px; /* one-off */
+  justify-content: space-between;
+  letter-spacing: 0.01em;
+  padding: 0 38px 0 14px; /* one-off */
+  transition: all 200ms ease;
+  width: 100%;
+}
+
+.trigger:hover {
+  border-color: rgba(107, 74, 76, 0.3);
+}
+
+.trigger:focus {
+  background-color: var(--color-ivory-soft);
+  border-color: rgba(153, 31, 35, 0.25);
+  box-shadow:
+    0 4px 12px rgba(153, 31, 35, 0.08),
+    inset 0 0 0 1px rgba(212, 175, 55, 0.12); /* one-off */
+  outline: none;
+  color: var(--color-charcoal-dark);
+}
+
+.triggerText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  border-left: 5px solid transparent; /* one-off */
+  border-right: 5px solid transparent; /* one-off */
+  border-top: 5px solid var(--color-charcoal-soft); /* one-off */
+  flex-shrink: 0;
+  height: 0;
+  margin-left: 8px; /* one-off */
+  width: 0;
+}
+
+.dropdown {
+  background: var(--color-white);
+  border: 1px solid rgba(107, 74, 76, 0.16); /* one-off */
+  border-radius: 7px; /* one-off */
+  box-shadow: 0 8px 24px rgba(57, 26, 21, 0.12); /* one-off */
+  left: 0;
+  list-style: none;
+  margin: 4px 0 0; /* one-off */
+  max-height: none;
+  overflow: visible;
+  padding: 4px 0; /* one-off */
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 50;
+}
+
+.option {
+  border: none;
+  background: none;
+  color: var(--color-charcoal);
+  cursor: pointer;
+  display: block;
+  font-family: var(--font-body);
+  font-size: 14px; /* one-off */
+  font-weight: 500;
+  padding: 10px 14px; /* one-off */
+  text-align: left;
+  transition: background-color 120ms ease;
+  width: 100%;
+}
+
+.option:hover {
+  background-color: rgba(153, 31, 35, 0.05);
+  color: var(--color-charcoal-dark);
+}
+
+.optionActive {
+  background-color: rgba(153, 31, 35, 0.08);
+  color: var(--color-maroon);
+  font-weight: 600;
+}

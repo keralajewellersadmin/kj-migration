@@ -1,0 +1,305 @@
+/* Features Grid (section-2) */
+.featuresSection {
+  background-color: var(--color-white);
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-12);
+}
+
+.container {
+  max-width: var(--layout-container);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--header-padding-x);
+  padding-right: var(--header-padding-x);
+}
+
+.grid {
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  column-gap: 3rem;
+  row-gap: 4rem;
+}
+
+.item {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+/* Circular image wrapper */
+.imageWrap {
+  position: relative;
+  border-radius: 50%;
+  height: 150px;
+  min-height: 150px;
+  width: 150px;
+  min-width: 150px;
+  margin: 0 auto var(--space-6);
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Title */
+.title {
+  margin: 0 0 var(--space-2);
+  color: var(--color-maroon);
+  font-family: var(--font-decorative);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+/* Description */
+.description {
+  margin: 0;
+  color: var(--color-charcoal-soft);
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.5;
+  width: 77%;
+}
+
+/* ── Responsive: Tablet ── */
+@media (max-width: 991px) {
+  .featuresSection {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  .container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── Responsive: Mobile (single column) ── */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .title {
+    font-size: 30px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .imageWrap {
+    height: 200px;
+    width: 200px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Carousel mode (≤991px) — matches live site kj-banner2-gallery
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 991px) {
+  .carouselTrack {
+    align-items: center;
+    display: flex;
+    height: clamp(430px, 78vh, 560px);
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: min(100%, 760px);
+    overflow: hidden;
+    padding: 24px 0;
+    position: relative;
+    touch-action: pan-y;
+    user-select: none;
+    width: 100%;
+  }
+
+  .carouselSlide {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    justify-content: center;
+    left: 50%;
+    max-width: min(78vw, 320px);
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    padding: 0;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.72);
+    transition:
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 360ms ease;
+    width: min(78vw, 320px);
+    z-index: 1;
+  }
+
+  /* ── Position: prev ── */
+  .pos-prev {
+    opacity: 0.26;
+    transform: translate(calc(-50% - min(53vw, 230px)), -50%) scale(0.66);
+    z-index: 2;
+  }
+
+  /* ── Position: next ── */
+  .pos-next {
+    opacity: 0.26;
+    transform: translate(calc(-50% + min(53vw, 230px)), -50%) scale(0.66);
+    z-index: 2;
+  }
+
+  /* ── Position: active ── */
+  .pos-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 4;
+  }
+
+  /* ── Image circle ── */
+  .carouselSlide .imageWrap {
+    aspect-ratio: 1 / 1;
+    border-radius: 999px;
+    box-shadow: 0 18px 36px rgba(35, 15, 16, 0.16);
+    height: clamp(190px, 58vw, 285px);
+    max-height: 285px;
+    max-width: 285px;
+    overflow: hidden;
+    width: clamp(190px, 58vw, 285px);
+    margin: 0;
+  }
+
+  .carouselSlide .image {
+    height: 100%;
+    max-height: none;
+    max-width: none;
+    min-height: 100%;
+    min-width: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  /* ── Title ── */
+  .carouselSlide .title {
+    opacity: 0;
+    text-align: center;
+    transform: translateY(10px);
+    transition:
+      opacity 320ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pos-active .title {
+    opacity: 1;
+    color: var(--color-maroon-bright);
+    font-family: var(--font-decorative);
+    font-size: clamp(32px, 7vw, 44px);
+    font-weight: 300;
+    line-height: 1.08;
+    margin-top: 18px;
+    text-align: center;
+    transform: translateY(0);
+  }
+
+  /* ── Description ── */
+  .carouselSlide .description {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .pos-active .description {
+    color: var(--color-charcoal-soft);
+    font-family: var(--font-body);
+    font-size: clamp(18px, 4.8vw, 24px);
+    font-weight: 400;
+    line-height: 1.45;
+    margin: 8px auto 0;
+    max-width: min(78vw, 310px);
+    opacity: 1;
+    text-align: center;
+    visibility: visible;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Rectangle Banner block
+   ══════════════════════════════════════════════════════════════════ */
+.rectItem {
+  position: relative;
+  grid-column: 1 / -1;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.rectImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rectOverlay {
+  position: relative;
+  z-index: 1;
+  padding: clamp(24px, 4vw, 48px);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+  width: 100%;
+  color: var(--color-white);
+}
+
+.rectHeading {
+  margin: 0 0 8px;
+  font-family: var(--font-decorative);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 400;
+  color: var(--color-white);
+}
+
+.rectDesc {
+  margin: 0 0 16px;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.rectCta {
+  display: inline-block;
+  padding: 10px 28px;
+  background: var(--color-maroon);
+  color: var(--color-white);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.rectCta:hover {
+  background: var(--color-maroon-deep);
+}

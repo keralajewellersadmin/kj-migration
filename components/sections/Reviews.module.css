@@ -1,0 +1,192 @@
+/* Reviews Section */
+.section {
+  background-color: var(--color-white);
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-12);
+  height: 620px;
+  min-height: 620px;
+  margin-bottom: 32px;
+}
+
+.container {
+  max-width: var(--layout-wide);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--header-padding-x);
+  padding-right: var(--header-padding-x);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-decorative);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--color-maroon);
+}
+
+.headingBorderBox {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.headingSeparator {
+  display: block;
+  width: 50%;
+  max-width: 940px;
+  height: 12.89px;
+  margin-top: var(--space-3);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--color-charcoal-soft);
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* Reviews Track */
+.track {
+  margin: 0 auto;
+  overflow: visible;
+  position: relative;
+}
+
+.swiper {
+  padding: 0;
+  overflow: visible;
+}
+
+.swiper:not(.swiper-initialized) {
+  min-height: 280px;
+}
+
+.swiperSlide {
+  height: auto;
+}
+
+/* Card */
+.card {
+  background: var(--color-ivory);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(35, 15, 16, 0.16);
+  border: 1px solid var(--color-line);
+  overflow: hidden;
+  height: 600px;
+}
+
+.cardInner {
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.quoteIcon {
+  opacity: 0.15;
+  flex-shrink: 0;
+}
+
+.text {
+  margin: 0;
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.author {
+  color: var(--color-maroon-bright);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Responsive: Tablet */
+@media (max-width: 991px) {
+  .cardInner {
+    padding: 28px 24px;
+    min-height: 200px;
+  }
+}
+
+/* Responsive: Mobile */
+@media (max-width: 767px) {
+  .section {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-10);
+    height: 560px;
+    min-height: 560px;
+  }
+
+  .card {
+    height: 520px;
+    border-radius: 8px;
+    width: min(350px, calc(100vw - 30px));
+    min-width: 290px;
+    max-width: calc(100vw - 30px);
+  }
+
+  .cardInner {
+    padding: 24px 20px;
+    min-height: 180px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+}
+
+/* Custom Dots — Large & Spaced (Option B) */
+.carouselWrap {
+  position: relative;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.dotBtn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2.5px solid var(--color-maroon);
+  opacity: 0.4;
+  transition: all 180ms ease;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dotBtn:hover {
+  opacity: 0.8;
+}
+
+.dotActive {
+  background: var(--color-maroon);
+  border-color: var(--color-maroon);
+  opacity: 1;
+}

@@ -1,0 +1,195 @@
+@font-face {
+  font-family: "Com 4 DL";
+  src: url("/assets/fonts/com4tdrify.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Com 4 DL";
+  src: url("/assets/fonts/com4tdrify.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Com 4 DL";
+  src: url("/assets/fonts/com4tdrify.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer tokens {
+  :root {
+    /* ===== Colors ===== */
+    --color-maroon: #991f23;
+    --color-maroon-deep: #7f191d;
+    --color-maroon-hover: #701519;
+    --color-maroon-mid: #900000;
+    --color-maroon-dark: #770b21;
+    --color-gold: #d4af37;
+    --color-gold-muted: #b58f35;
+    --color-gold-light: #fff8d2;
+    --color-gold-dark: #d2ab00;
+    --color-gold-ink: #5d4718;
+    --color-gold-warm: #9e5500;
+    --color-ivory: #fffaf0;
+    --color-ivory-soft: #fffdf7;
+    --color-charcoal: #4f403d;
+    --color-charcoal-soft: #6e5a56;
+    --color-charcoal-dark: #1f1f1f;
+    --color-dark-brown: #251510;
+    --color-scheme-heading: #3b2826;
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-light-black: #222222;
+    --color-grey: #8e8e8e;
+    --color-light-grey: #686868;
+    --color-dark-grey: #333333;
+    --color-emerald: #304e51;
+    --color-bright-red: #b00000;
+    --color-rate-strip: #90030a;
+    --color-rate-text: #681015;
+    --color-ivory-muted: #fbf8f3;
+    --color-cream: #fff5d8;
+    --color-cornsilk: #fff8dc;
+    --color-cream-deep: #fdf2c6;
+    --color-royal-blue: #1e2d5e;
+    --color-emerald-hover: #3d6366;
+    --color-bright-red-hover: #8b0000;
+    --color-smoke: #f1f1f1;
+    --color-smoke-deep: #e1e1e1;
+    --color-smoke-light: #e6e6e6;
+    --color-text-muted: #636363;
+    --color-gold-accent: #c19b67;
+    --color-gold-outline: #8a6410;
+    --color-gold-outline-border: #c89b3c;
+    --color-border-light: #cfcfcf;
+    --color-line: rgba(181, 143, 53, 0.22);
+    --color-maroon-bright: #9f1b1f;
+    --color-maroon-end: #e41c24;
+    --color-btn-primary: #ad1c20;
+    --color-btn-hover-gold: #f5d95f;
+    --color-border-card: #a7a7a7;
+    --color-card-title: #7d5f58;
+
+    /* ===== Typography ===== */
+    --font-decorative: "Com 4 DL", Georgia, serif;
+    --font-body: var(--font-body-loaded), Mulish, sans-serif;
+    --font-ui: var(--font-ui-loaded), Montserrat, sans-serif;
+
+    --text-base: 16px;
+    --text-sm: 14px;
+    --text-xs: 12px;
+    --text-lg: 18px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 30px;
+    --text-4xl: 36px;
+
+    --leading-none: 1;
+    --leading-tight: 1.3;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.66667;
+
+    /* ===== Spacing ===== */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+
+    /* ===== Gold Extended ===== */
+    --color-gold-deep: #c8a22e;
+    --color-gold-rich: #b8962a;
+
+    /* ===== Gradients ===== */
+    --gradient-ribbon: linear-gradient(
+      90deg,
+      var(--color-maroon) 0%,
+      var(--color-gold) 50%,
+      var(--color-maroon) 100%
+    );
+    --gradient-gold: linear-gradient(
+      135deg,
+      var(--color-gold) 0%,
+      var(--color-gold-dark) 100%
+    );
+    --gradient-gold-refined: linear-gradient(
+      135deg,
+      var(--color-gold-deep) 0%,
+      var(--color-gold) 40%,
+      var(--color-gold-rich) 100%
+    );
+    --gradient-heading: linear-gradient(90deg, #9f1b1f, #e41c24);
+
+    /* ===== Shadows ===== */
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --shadow-soft: 0 12px 30px rgba(65, 35, 28, 0.06);
+    --shadow-lift: 0 18px 38px rgba(65, 35, 28, 0.1);
+    --shadow-header: 0 4px 4px rgba(142, 142, 142, 0.58);
+    --shadow-mega: 0 18px 38px rgba(55, 21, 23, 0.14);
+    --shadow-card: 0 8px 20px rgba(153, 31, 35, 0.08);
+    --shadow-card-hover: 0 16px 34px rgba(57, 26, 21, 0.1);
+    --shadow-btn: 0 6px 16px rgba(153, 31, 35, 0.18);
+    --shadow-btn-hover: 0 12px 24px rgba(153, 31, 35, 0.22);
+    --shadow-gold-btn: 0 4px 12px rgba(212, 175, 55, 0.2);
+    --shadow-gold-btn-hover: 0 6px 20px rgba(212, 175, 55, 0.3);
+    --shadow-gold-glow: 0 8px 24px rgba(212, 175, 55, 0.12);
+
+    /* ===== Border Radius ===== */
+    --radius-xs: 6px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 14px;
+    --radius-full: 9999px;
+
+    /* ===== Z-Index ===== */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-overlay: 2000;
+    --z-modal: 3000;
+    --z-toast: 5000;
+    --z-header: 10000;
+
+    /* ===== Icons ===== */
+    --icon-coin-dropdown: 32px;
+
+    /* ===== Navigation ===== */
+    --text-nav: 18px;
+    --space-nav-gap: clamp(20px, 2.5vw, 36px);
+    --space-rate-gap: 36px;
+
+    /* ===== Layout ===== */
+    --layout-max: 1440px;
+    --layout-container: 940px;
+    --layout-container-tablet: 728px;
+    --layout-wide: 1240px;
+
+    --header-height: 90px;
+    --header-height-mobile: 96px;
+    --header-padding-y: 16px;
+    --header-padding-x: 28px;
+
+    /* ===== Transitions ===== */
+    --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+    --duration-fast: 180ms;
+    --duration-normal: 220ms;
+    --duration-slow: 280ms;
+
+    /* ===== Breakpoints (reference only; used in @media queries) ===== */
+    /* bp-tablet: 991px */
+    /* bp-mobile: 767px */
+    /* bp-small: 479px */
+  }
+}

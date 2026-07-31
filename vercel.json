@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "app/(payload)/api/**/*": {
+      "maxDuration": 30
+    },
+    "app/(payload)/admin/**/*": {
+      "maxDuration": 30
+    }
+  }
+}

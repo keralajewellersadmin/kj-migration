@@ -1,0 +1,247 @@
+/* Categories Grid (section-3) */
+.categoriesSection {
+  background-color: var(--color-white);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  max-width: calc(100% - 60px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card base */
+.card {
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background-size: cover;
+  background-position: center;
+  min-height: 309px;
+}
+
+.cardContent {
+  padding: 45px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  z-index: 2;
+  position: relative;
+}
+
+/* Heading */
+.heading {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-decorative);
+  font-weight: 300;
+  font-size: 65px;
+  line-height: 65px;
+  letter-spacing: -2.6px;
+}
+
+/* Description */
+.description {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.88px;
+  line-height: 1.09;
+  max-width: 60%;
+}
+
+/* CTA button — base matches computed .button-3 */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: var(--font-decorative);
+  font-size: clamp(18px, 1.9136vw, 27.556px);
+  font-weight: 300;
+  line-height: 29.7605px;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid var(--color-white);
+  background-color: var(--color-gold-light);
+  color: var(--color-charcoal);
+  padding: 10px 20px;
+  min-height: 52px;
+  margin-top: auto;
+  transition:
+    background-color var(--duration-normal) ease,
+    color var(--duration-normal) ease;
+}
+
+.cta:hover {
+  background-color: var(--color-cream-deep);
+}
+
+/* Variant: Gold */
+.gold {
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
+    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494453/kerala-jewellers/banners/66a9d9929d7e6142879f3154_Frame_2085665012__1_.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.gold .heading {
+  color: var(--color-white);
+}
+
+.gold .description {
+  color: var(--color-gold-light);
+}
+
+.gold .cta {
+  color: var(--color-emerald);
+}
+
+.gold .cta:hover {
+  background-color: var(--color-cream-deep);
+}
+
+/* Variant: Silver */
+.silver {
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
+    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494423/kerala-jewellers/banners/66a9d8ec29ec2a7cebe6da8a_Rectangle_336.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.silver .heading {
+  color: var(--color-maroon-dark);
+}
+
+.silver .description {
+  color: var(--color-maroon-dark);
+}
+
+.silver .cta {
+  background-color: var(--color-maroon);
+  color: var(--color-gold-light);
+  border-color: rgba(153, 31, 35, 0.72);
+}
+
+.silver .cta:hover {
+  background-color: var(--color-cream-deep);
+}
+
+/* Variant: Platinum */
+.platinum {
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
+    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494439/kerala-jewellers/gallery/66a9d8eca2a871357e55ff2c_3_5405220.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.platinum .heading {
+  color: var(--color-gold-light);
+}
+
+.platinum .description {
+  color: var(--color-gold-light);
+}
+
+.platinum .cta {
+  background-color: var(--color-gold);
+  color: var(--color-dark-brown);
+  border-color: rgba(255, 248, 223, 0.9);
+}
+
+.platinum .cta:hover {
+  background-color: var(--color-cream-deep);
+}
+
+/* Variant: Diamond */
+.diamond {
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
+    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494415/kerala-jewellers/banners/66a9d8eb1a1a26abf2af476b_Rectangle_337.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.diamond .heading {
+  color: var(--color-gold-light);
+}
+
+.diamond .description {
+  color: var(--color-gold-light);
+}
+
+.diamond .cta {
+  color: var(--color-maroon);
+  border-color: rgba(153, 31, 35, 0.42);
+}
+
+.diamond .cta:hover {
+  background-color: var(--color-cream-deep);
+}
+
+/* Responsive: Mobile — stacked column */
+@media (max-width: 991px) {
+  .categoriesSection {
+    padding: var(--space-10) var(--space-4);
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    min-height: 318px;
+  }
+
+  .cardContent {
+    max-width: 62%;
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .categoriesSection {
+    padding: var(--space-6) var(--space-2);
+  }
+
+  .card {
+    min-height: 269px;
+  }
+
+  .cardContent {
+    max-width: 88%;
+    width: 88%;
+  }
+
+  .heading {
+    font-size: 45px;
+    line-height: 45px;
+    margin-bottom: var(--space-3);
+  }
+
+  .description {
+    font-size: 16px;
+    line-height: 1.25;
+    margin-bottom: var(--space-4);
+  }
+
+  .cta {
+    font-size: 18px;
+    min-height: 41px;
+    padding: 10px 20px;
+  }
+}

@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+
+# Build cache
+.next
+
+# Logs
+*.log
+*.log.*
+server.log
+server-err.log
+
+# Root artifacts
+*.png
+*.tsbuildinfo
+.vercel
+
+# Dev/test
+scripts/
+screenshots/
+tests/
+playwright/
+.env*.local
+
+# Public assets (large — served via CDN in production)
+public/media/

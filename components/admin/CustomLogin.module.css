@@ -1,0 +1,373 @@
+.page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 9999;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  background: var(--color-ivory, #fffaf0);
+  color: #1a1a1a;
+  font-family:
+    var(--font-ui),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ─── Left Panel ─── */
+
+.brandPanel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 48px;
+  background: #0a0b0e;
+  overflow: hidden;
+}
+
+.brandPanel::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(212, 175, 55, 0.06) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.brandContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 28px;
+  border-radius: 50%;
+}
+
+.wordmark {
+  margin: 0 0 16px;
+  color: #f0ece4;
+  font-family: var(--font-decorative), Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+}
+
+.divider {
+  width: 40px;
+  height: 1px;
+  margin: 0 auto 14px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.4),
+    transparent
+  );
+}
+
+.tagline {
+  margin: 0;
+  color: rgba(212, 175, 55, 0.6);
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ─── Right Panel ─── */
+
+.loginPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 48px 40px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.cardHeader {
+  margin-bottom: 36px;
+}
+
+.cardHeader h2 {
+  margin: 0 0 8px;
+  color: #111;
+  font-family: var(--font-decorative), Georgia, serif;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.cardHeader p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.error {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border: 1px solid rgba(153, 31, 35, 0.15);
+  border-radius: 8px;
+  background: rgba(153, 31, 35, 0.05);
+  color: #991f23;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ─── Form ─── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.field input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #111;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.field input::placeholder {
+  color: #9ca3af;
+}
+
+.field input:focus {
+  border-color: var(--color-gold, #d4af37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.codeInput {
+  font-family: var(--font-ui), monospace;
+  font-size: 20px;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+/* ─── Form Meta ─── */
+
+.formMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-gold, #d4af37);
+  cursor: pointer;
+}
+
+.forgotLink {
+  color: var(--color-gold-muted, #b58f35);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.forgotLink:hover {
+  color: var(--color-gold, #d4af37);
+}
+
+/* ─── Button ─── */
+
+.submit {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-maroon, #991f23);
+  color: #fff;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.15s;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-maroon-deep, #7f191d);
+  box-shadow: 0 4px 16px rgba(153, 31, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.linkBtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.linkBtn:hover {
+  color: #374151;
+}
+
+/* ─── Footer ─── */
+
+.footer {
+  margin-top: 40px;
+  color: #d1d5db;
+  font-size: 12px;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1024px) {
+  .page {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .brandPanel {
+    min-height: auto;
+    padding: 48px 32px 40px;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .wordmark {
+    font-size: 22px;
+  }
+
+  .loginPanel {
+    min-height: auto;
+    padding: 40px 32px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brandPanel {
+    padding: 36px 24px 32px;
+  }
+
+  .loginPanel {
+    padding: 32px 24px 40px;
+  }
+
+  .cardHeader h2 {
+    font-size: 22px;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 1025px) {
+  .brandPanel {
+    padding: 32px;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .wordmark {
+    font-size: 22px;
+  }
+
+  .cardHeader {
+    margin-bottom: 24px;
+  }
+}

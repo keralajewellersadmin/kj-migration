@@ -1,0 +1,39 @@
+{
+  "name": "kerala-jewellers-rebuild",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 4000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@payloadcms/db-postgres": "^3.86.0",
+    "@payloadcms/db-sqlite": "^3.86.0",
+    "@payloadcms/email-resend": "^3.86.0",
+    "@payloadcms/next": "^3.86.0",
+    "cloudinary": "^2.10.0",
+    "dotenv": "^17.4.2",
+    "next": "16.2.9",
+    "nodemailer": "^9.0.3",
+    "payload": "^3.86.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "resend": "^6.18.0",
+    "swiper": "^14.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "playwright": "^1.61.1",
+    "typescript": "^5"
+  }
+}

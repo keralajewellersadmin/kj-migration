@@ -1,0 +1,468 @@
+/* Kerala Jewellers — Admin Panel Theme */
+
+:root {
+  --kj-admin-black: #0c0e12;
+  --kj-admin-panel: #1f2022;
+  --kj-admin-ink: #1a1d24;
+  --kj-admin-muted: #6b7280;
+  --kj-admin-line: #e5e5e5;
+  --kj-admin-soft: #f7f6f3;
+  --kj-admin-card: #ffffff;
+  --kj-admin-gold: #b08a3c;
+  --kj-admin-gold-2: #c9a84c;
+  --kj-admin-green: #16a34a;
+  --color-ivory: #fffdf8;
+}
+
+html[data-theme="light"],
+html,
+html.template-login {
+  background: var(--kj-admin-soft);
+}
+
+body,
+.payload-admin,
+.template-default,
+.template-minimal {
+  background: var(--kj-admin-soft);
+  color: var(--kj-admin-ink);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Login Page ─── */
+
+.login.template-minimal {
+  width: 100vw;
+  max-width: none;
+  min-height: 100dvh;
+  padding: 40px 20px;
+  background: var(--kj-admin-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login.template-minimal .template-minimal__wrap {
+  width: 100%;
+  max-width: 420px;
+  min-height: auto;
+  margin: 0;
+  padding: 48px 40px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--kj-admin-line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login.template-minimal main {
+  width: 100%;
+  max-width: 100%;
+}
+
+.login__brand {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.login__brand img {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.login__brand + *,
+.login.template-minimal .template-minimal__wrap > *:not(.login__brand) {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .login.template-minimal {
+    padding: 20px 16px;
+  }
+
+  .login.template-minimal .template-minimal__wrap {
+    padding: 32px 24px;
+    border-radius: 12px;
+  }
+}
+
+/* ─── Sidebar ─── */
+
+.nav {
+  width: 260px;
+  background: #1f2022;
+  border-right: 0;
+  color: #cbd5e1;
+  opacity: 1 !important;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+.nav > * {
+  position: relative;
+}
+
+.nav a,
+.nav button,
+.nav__label,
+.nav-group__label {
+  color: #c8d0dc;
+}
+
+.nav__header {
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 24px;
+  border-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav__header::before {
+  content: "";
+  display: block;
+  width: 150px;
+  height: 48px;
+  background-image: url("/assets/logo/kj-admin-logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center;
+  flex-shrink: 0;
+}
+
+.nav__scroll {
+  padding: 0 12px 18px;
+}
+
+.nav__controls {
+  padding: 0 12px 18px;
+}
+
+.nav__link,
+.nav-group__toggle,
+.nav__controls button {
+  border-radius: 10px;
+}
+
+.nav__link,
+.nav-group__toggle {
+  min-height: 40px;
+  margin: 3px 0;
+  padding: 0 13px;
+  color: #cbd5e1;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.nav__link svg,
+.nav-group__toggle svg {
+  width: 19px;
+  height: 19px;
+  color: #9ca3af;
+  stroke-width: 1.8;
+  transition: color 0.15s ease;
+}
+
+.nav__link:hover,
+.nav-group__toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+}
+
+.nav__link:hover svg,
+.nav-group__toggle:hover svg {
+  color: #f8fafc;
+}
+
+.nav__link--active,
+.nav__link--active:hover,
+.nav-group__toggle--active,
+.nav-group__toggle--active:hover {
+  background: linear-gradient(135deg, #d6bd5b, #c8a951);
+  color: #0f1115;
+  font-weight: 700;
+  box-shadow: 0 10px 26px rgba(200, 169, 81, 0.2);
+}
+
+.nav__link--active svg,
+.nav-group__toggle--active svg {
+  color: #0f1115;
+}
+
+.nav__label,
+.nav-group__label {
+  margin: 20px 12px 9px;
+  color: #8792a5;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nav-group__content {
+  margin: 4px 0 10px 22px;
+  padding-left: 10px;
+  border-left-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav-group__content .nav__link {
+  min-height: 34px;
+  font-size: 14px;
+}
+
+.nav__account,
+.nav__log-out,
+.nav__controls {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav__account {
+  padding: 16px 18px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.nav__account,
+.nav__account * {
+  color: #f8fafc;
+}
+
+.nav__log-out button,
+.nav__controls button {
+  color: #cbd5e1;
+}
+
+.nav__log-out button:hover,
+.nav__controls button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+/* ─── Header ─── */
+
+.app-header,
+.doc-header {
+  border-color: var(--kj-admin-line);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.app-header__content {
+  min-height: 64px;
+}
+
+.breadcrumbs,
+.breadcrumbs a,
+.doc-header__title,
+.collection-list__header h1,
+.global-edit__header h1,
+.collection-edit__header h1 {
+  color: var(--kj-admin-ink);
+}
+
+/* ─── Cards & Panels ─── */
+
+.collection-list__wrap,
+.collection-edit__form,
+.global-edit__form,
+.doc-controls,
+.list-controls,
+.table,
+.card,
+.render-fields,
+.tabs-field__tabs,
+.upload,
+.drawer__content,
+.modal,
+.popup {
+  border-color: var(--kj-admin-line);
+  border-radius: 10px;
+  background: var(--kj-admin-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.collection-list__wrap,
+.collection-edit__form,
+.global-edit__form {
+  overflow: hidden;
+}
+
+.list-controls {
+  padding: 14px;
+}
+
+/* ─── Table ─── */
+
+.table {
+  overflow: hidden;
+}
+
+.table table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  background: #fafaf8;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.table tbody tr:hover {
+  background: #fdfcfa;
+}
+
+.table tbody td {
+  border-color: #f0f0f0;
+}
+
+/* ─── Buttons ─── */
+
+.btn,
+button,
+.popup-button {
+  border-radius: 6px;
+}
+
+.btn--style-primary,
+button.btn--style-primary,
+.popup-button--style-primary {
+  border-color: var(--kj-admin-gold);
+  background: var(--kj-admin-gold);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn--style-primary:hover,
+button.btn--style-primary:hover {
+  border-color: #9a7a34;
+  background: #9a7a34;
+}
+
+.btn--style-secondary,
+button.btn--style-secondary,
+.popup-button--style-secondary {
+  border-color: var(--kj-admin-line);
+  background: #fff;
+  color: var(--kj-admin-ink);
+}
+
+/* ─── Pills & Status ─── */
+
+.pill,
+.status,
+.doc-status {
+  border-color: rgba(176, 138, 60, 0.2);
+  border-radius: 999px;
+  background: rgba(176, 138, 60, 0.08);
+  color: #8a6e2e;
+}
+
+/* ─── Form Fields ─── */
+
+.field-type input,
+.field-type textarea,
+.field-type select,
+.react-select__control {
+  border-color: #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.field-type label,
+.field-label {
+  color: var(--kj-admin-ink);
+  font-weight: 600;
+}
+
+.field-description,
+.description,
+.field-error {
+  color: var(--kj-admin-muted);
+}
+
+/* ─── Tabs ─── */
+
+.tabs-field__tabs {
+  padding: 6px;
+  background: #fafaf8;
+  border-radius: 8px;
+}
+
+.tabs-field__tab {
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.tabs-field__tab--active {
+  background: #fff;
+  color: var(--kj-admin-gold);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Upload ─── */
+
+.upload {
+  background: #fdfcfa;
+  border-color: var(--kj-admin-line);
+}
+
+/* ─── Responsive ─── */
+
+@media (min-width: 1024px) {
+  .template-default {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .template-default__wrap {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .template-default > .nav {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .template-default__nav-toggler-container {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav__header {
+    min-height: 80px;
+  }
+
+  .nav__header::before {
+    width: 110px;
+    height: 36px;
+  }
+}

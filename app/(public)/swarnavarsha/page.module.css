@@ -1,0 +1,48 @@
+.layout {
+  max-width: 1000px;
+  margin: 60px auto 100px;
+  padding: 0 20px;
+}
+
+.title {
+  text-align: center;
+  color: var(--color-scheme-heading);
+  font-family: var(--font-body);
+  font-size: clamp(32px, 5vw, 42px);
+  font-weight: 700;
+  margin: 0 0 20px 0;
+}
+
+.divider {
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-gold);
+  margin: 0 auto 50px;
+}
+
+.content {
+  color: #1a1b1f;
+  font-size: 18px;
+}
+
+.content .schemeName {
+  color: var(--color-maroon-bright);
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 1;
+  margin: 0 0 10px;
+}
+
+.content .tcHeading {
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+
+.content p {
+  margin: 0 0 10px;
+}
+
+.content ul {
+  padding-left: 40px;
+  margin: 0 0 10px;
+}
