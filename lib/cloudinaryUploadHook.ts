@@ -24,6 +24,9 @@ function getFolder(mediaType?: string): string {
 }
 
 function getMediaDir(): string {
+  if (process.env.MEDIA_DIR) {
+    return path.resolve(process.env.MEDIA_DIR);
+  }
   return path.resolve(process.cwd(), "public", "media");
 }
 

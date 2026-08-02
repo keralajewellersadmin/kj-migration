@@ -278,7 +278,7 @@ const Media: CollectionConfig = {
     afterDelete: [cloudinaryDeleteHook, auditLogAfterDelete],
   },
   upload: {
-    staticDir: "public/media",
+    staticDir: process.env.MEDIA_DIR || "public/media",
     mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
   },
   fields: [
