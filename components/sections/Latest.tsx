@@ -45,7 +45,9 @@ export default function Latest({
 }: {
   banners?: LatestBanner[];
 }) {
-  const banners = cmsBanners.length ? cmsBanners : defaultBanners;
+  const hasImages = cmsBanners.every((b) => !!b.image);
+  const banners =
+    cmsBanners.length && hasImages ? cmsBanners : defaultBanners;
   return (
     <section className={styles.section}>
       <div className={styles.container}>

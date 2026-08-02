@@ -36,6 +36,10 @@ import {
   enforceAdminRoleRestrictions,
   validateAdminPassword,
 } from "./lib/payload/security.ts";
+import {
+  cloudinaryUploadHook,
+  cloudinaryDeleteHook,
+} from "./lib/cloudinaryUploadHook";
 
 const canReadProtectedField = ({
   req,
@@ -270,11 +274,11 @@ const Media: CollectionConfig = {
     delete: canManageSettings,
   },
   hooks: {
-    afterChange: [auditLogAfterChange],
-    afterDelete: [auditLogAfterDelete],
+    afterChange: [cloudinaryUploadHook, auditLogAfterChange],
+    afterDelete: [cloudinaryDeleteHook, auditLogAfterDelete],
   },
   upload: {
-    staticDir: "../public/media",
+    staticDir: "public/media",
     mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
   },
   fields: [

@@ -60,7 +60,9 @@ export default function Features({
 }: {
   features?: Feature[];
 }) {
-  const features = cmsFeatures.length ? cmsFeatures : defaultFeatures;
+  const hasImages = cmsFeatures.every((f) => !!f.image);
+  const features =
+    cmsFeatures.length && hasImages ? cmsFeatures : defaultFeatures;
   const [active, setActive] = useState(0);
   const [isCarousel, setIsCarousel] = useState(() => {
     if (typeof window === "undefined") return false;
