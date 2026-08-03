@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { Client } from "pg";
 import {
   type Product,
   type BlogPost,
@@ -560,6 +561,109 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   },
 };
 
+async function enrichEmptyArrays(data: SiteSettingsData): Promise<SiteSettingsData> {
+  if (data.heroSlides.length > 0 && data.features.length > 0 && data.reviews.length > 0) {
+    return data;
+  }
+  const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
+  if (!dbUri || !dbUri.startsWith("postgresql")) return data;
+  const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+  try {
+    await client.connect();
+    const ss = await client.query(`SELECT id FROM site_settings LIMIT 1`);
+    const ssId = ss.rows[0]?.id;
+    if (!ssId) return data;
+    const enriched = { ...data };
+    if (enriched.heroSlides.length === 0) {
+      const rows = await client.query(
+        `SELECT h.heading, h.description, h.cta_text, h.cta_href, m.url as image_url
+         FROM site_settings_hero_slides h LEFT JOIN media m ON h.image_id = m.id
+         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId],
+      );
+      enriched.heroSlides = rows.rows.map((r: any) => ({
+        heading: r.heading || "",
+        description: r.description || "",
+        ctaText: r.cta_text || "",
+        ctaHref: r.cta_href || "",
+        image: r.image_url || "",
+      }));
+    }
+    if (enriched.features.length === 0) {
+      const rows = await client.query(
+        `SELECT b.title, b.description, b.alt, m.url as image_url
+         FROM site_settings_blocks_circle_banner b LEFT JOIN media m ON b.image_id = m.id
+         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId],
+      );
+      enriched.features = rows.rows.map((r: any) => ({
+        blockType: "circleBanner" as const,
+        title: r.title || "",
+        description: r.description || "",
+        image: r.image_url || "",
+        srcSet: "",
+        sizes: "(max-width: 479px) 81vw, (max-width: 767px) 49vw, (max-width: 991px) 356px, 462px",
+        alt: r.alt || "",
+      }));
+    }
+    if (enriched.banners.length === 0) {
+      const rows = await client.query(
+        `SELECT b.alt, b.title, b.cta_text, b.href, m.url as image_url
+         FROM site_settings_blocks_image_banner b LEFT JOIN media m ON b.image_id = m.id
+         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId],
+      );
+      enriched.banners = rows.rows.map((r: any) => ({
+        blockType: "imageBanner" as const,
+        image: r.image_url || "",
+        alt: r.alt || "",
+        title: r.title || "",
+        ctaText: r.cta_text || "",
+        href: r.href || "",
+      }));
+    }
+    if (enriched.heritage.length === 0) {
+      const rows = await client.query(
+        `SELECT h.heading, h.description, m.url as image_url
+         FROM site_settings_heritage h LEFT JOIN media m ON h.image_id = m.id
+         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId],
+      );
+      enriched.heritage = rows.rows.map((r: any) => ({
+        heading: r.heading || "",
+        description: r.description || "",
+        image: r.image_url || "",
+        srcSet: "",
+      }));
+    }
+    if (enriched.reviews.length === 0) {
+      const rows = await client.query(
+        `SELECT text, author, location FROM site_settings_reviews
+         WHERE _parent_id = $1 ORDER BY _order`, [ssId],
+      );
+      enriched.reviews = rows.rows.map((r: any) => ({
+        text: r.text || "",
+        author: r.author || "",
+        location: r.location || "",
+      }));
+    }
+    if (enriched.categories.length === 0) {
+      const rows = await client.query(
+        `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
+         WHERE _parent_id = $1 ORDER BY _order`, [ssId],
+      );
+      enriched.categories = rows.rows.map((r: any) => ({
+        title: r.title || "",
+        description: r.description || "",
+        ctaText: r.cta_text || "",
+        ctaHref: r.cta_href || "",
+        variant: r.variant || "",
+      }));
+    }
+    return enriched;
+  } catch {
+    return data;
+  } finally {
+    await client.end();
+  }
+}
+
 export async function getSiteSettings(): Promise<SiteSettingsData> {
   const payload = await getPayload({ config });
   try {
@@ -576,7 +680,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         ]),
       ),
     };
-    return {
+    const result = {
       ...raw,
       ...resolveFontsFromPairing(
         raw.fontPairing || "classic-luxury",
@@ -724,6 +828,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         };
       })(),
     };
+    return enrichEmptyArrays(result);
   } catch {
     return DEFAULT_SETTINGS;
   }
