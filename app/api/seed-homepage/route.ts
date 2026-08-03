@@ -3,20 +3,17 @@ import { Client } from "pg";
 
 export async function GET() {
   try {
-    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
+    const dbUri = process.env.DATABASE_URL;
     if (!dbUri) throw new Error("No DB URI");
     const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
     await client.connect();
     try {
       const ss = await client.query(`SELECT id FROM site_settings LIMIT 1`);
       const ssId = ss.rows[0]?.id;
-      const hero = await client.query(`SELECT _order, heading, description, image_id FROM site_settings_hero_slides WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      const features = await client.query(`SELECT title, description, image_id FROM site_settings_blocks_circle_banner WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      const banners = await client.query(`SELECT image_id, alt FROM site_settings_blocks_image_banner WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      const heritage = await client.query(`SELECT heading, image_id FROM site_settings_heritage WHERE _parent_id = $1`, [ssId]);
-      const reviews = await client.query(`SELECT author, location FROM site_settings_reviews WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      const cats = await client.query(`SELECT title, variant FROM site_settings_categories WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      return NextResponse.json({ ssId, hero: hero.rows, features: features.rows, banners: banners.rows, heritage: heritage.rows, reviews: reviews.rows, categories: cats.rows });
+      if (!ssId) return NextResponse.json({ error: "No site_settings row" });
+      const hero = await client.query(`SELECT id, _order, heading, image_id FROM site_settings_hero_slides WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+      const cats = await client.query(`SELECT id, title, variant FROM site_settings_categories WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+      return NextResponse.json({ ssId, heroCount: hero.rows.length, heroIds: hero.rows.map((r: any) => r.id), heroSlides: hero.rows, categories: cats.rows });
     } finally {
       await client.end();
     }
