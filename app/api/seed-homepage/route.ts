@@ -39,8 +39,8 @@ export async function POST(request: Request) {
   const log: string[] = [];
 
   try {
-    const dbUri = process.env.DATABASE_URI;
-    if (!dbUri) throw new Error("DATABASE_URI not set");
+    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
+    if (!dbUri) throw new Error("DATABASE_URL not set");
 
     const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
     await client.connect();
