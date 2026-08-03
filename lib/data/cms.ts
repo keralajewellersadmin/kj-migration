@@ -71,8 +71,8 @@ function mapSqlProduct(row: any): Product {
     row.image_srcset?.split(",")[0]?.trim().split(/\s+/)[0] ||
     row.image_url ||
     "/assets/images/placeholder.svg";
-  const seoTitle = row.seo?.title || undefined;
-  const seoDesc = row.seo?.description || undefined;
+  const seoTitle = row.seo_title || undefined;
+  const seoDesc = row.seo_description || undefined;
   const seoOgImage = row.seo_og_image_url || undefined;
   return {
     slug: row.slug || "",
@@ -95,14 +95,14 @@ function mapSqlProduct(row: any): Product {
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
          p.description, p.image_srcset, p.availability, p.price_mode, p.price,
-         p.featured, p.seo,
+         p.featured, p.seo_title, p.seo_description, p.seo_og_image,
          c.name AS category_name,
          m.url AS image_url, m.alt AS image_alt,
          mo.url AS seo_og_image_url
   FROM products p
   LEFT JOIN categories c ON p.category = c.id
   LEFT JOIN media m ON p.image = m.id
-  LEFT JOIN media mo ON (p.seo IS NOT NULL AND p.seo->>'ogImage' ~ '^[0-9]+$') AND (p.seo->>'ogImage')::int = mo.id
+  LEFT JOIN media mo ON p.seo_og_image = mo.id
 `;
 
 function isPostgres(): boolean {
