@@ -44,6 +44,12 @@ export const IMG = {
   aboutFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683338/kerala-jewellers/banners/69e32fa4d2963d91340807f8_carousel-01.jpg",
   blogDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683296/kerala-jewellers/gallery/67a74d23579de99844e4ba6d_Group%202085665159.png",
 
+  // Hero slide backgrounds (fallback when CMS heroSlides empty)
+  heroSlide1: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785763761/kerala-jewellers/gallery/hero-slide-1-celebrate.webp",
+  heroSlide2: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785763776/kerala-jewellers/gallery/hero-slide-2-ethnic.webp",
+  heroSlide3: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785763778/kerala-jewellers/gallery/hero-slide-3-gold.webp",
+  heroSlide4: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785763779/kerala-jewellers/gallery/hero-slide-4-bride.webp",
+
   // Hero decorative (static UI)
   heroDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683304/kerala-jewellers/gallery/66a9cbe79d7e6142879677cf_Group%202085665034.png",
 

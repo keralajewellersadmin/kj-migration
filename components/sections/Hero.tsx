@@ -20,12 +20,14 @@ const defaultSlides: HeroSlide[] = [
       "Find jewellery that complements every occasion.\nExplore our exclusive collections in-store & online.",
     ctaText: "EXPLORE",
     ctaHref: "/products",
+    image: IMG.heroSlide1,
   },
   {
     heading: "Ethnic Excellence",
     description: "Wrap yourself in a timeless aura with our heritage designs.",
     ctaText: "EXPLORE",
     ctaHref: "/products",
+    image: IMG.heroSlide2,
   },
   {
     heading: "Gleaming Gold",
@@ -33,6 +35,7 @@ const defaultSlides: HeroSlide[] = [
       "Accessorize in authentic gold featuring assorted embellishments.",
     ctaText: "EXPLORE",
     ctaHref: "/products",
+    image: IMG.heroSlide3,
   },
   {
     heading: "What A Bride Wants",
@@ -40,6 +43,7 @@ const defaultSlides: HeroSlide[] = [
       "Bridal jewellery that honors tradition, yet feels undeniably yours.",
     ctaText: "EXPLORE",
     ctaHref: "/products",
+    image: IMG.heroSlide4,
   },
 ];
 
