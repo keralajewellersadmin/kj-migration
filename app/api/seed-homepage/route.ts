@@ -54,61 +54,62 @@ export async function POST(request: Request) {
 
     const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
     await client.connect();
-    log.push("Connected to Neon.");
+    log.push("Connected to DB.");
 
     try {
-      const colsResult = await client.query(
-        `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'media' ORDER BY ordinal_position`,
-      );
-      const mediaCols = colsResult.rows.map((r: { column_name: string }) => r.column_name);
-      log.push(`Media columns: ${mediaCols.join(", ")}`);
-
-      const mediaIds: number[] = [];
-      const now = new Date().toISOString();
-      for (let i = 0; i < IMAGES.length; i++) {
-        const url = IMAGES[i];
-        const publicId = extractPublicId(url);
-        const alt = `Seed image ${i + 1}`;
-        try {
-          const result = await client.query(
-            `INSERT INTO media (alt, url, filename, filesize, width, height, created_at, updated_at)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
-            [alt, url, `seed-${i}.png`, 100, 1, 1, now, now],
-          );
-          const id = result.rows[0].id as number;
-          mediaIds.push(id);
-          log.push(`  Media ${i + 1}: id=${id}`);
-
-          if (mediaCols.includes("cloudinary_public_id")) {
-            await client.query(`UPDATE media SET cloudinary_public_id = $1 WHERE id = $2`, [publicId, id]);
-          }
-        } catch (err) {
-          log.push(`  Media ${i + 1} FAILED: ${String(err).substring(0, 120)}`);
-          mediaIds.push(0);
-        }
-      }
-
+      // 1. Ensure site_settings row exists
       let ssResult = await client.query(`SELECT id FROM site_settings LIMIT 1`);
       let ssId: number;
       if (ssResult.rows.length === 0) {
-        // Check what columns exist
-        const ssCols = await client.query(
-          `SELECT column_name FROM information_schema.columns WHERE table_name = 'site_settings' ORDER BY ordinal_position`,
-        );
-        const colNames = ssCols.rows.map((r: any) => r.column_name);
-        log.push(`site_settings columns: ${colNames.join(", ")}`);
-        // Insert a minimal row — just id + updated_at/created_at
+        const now = new Date().toISOString();
         const insertResult = await client.query(
           `INSERT INTO site_settings (updated_at, created_at) VALUES ($1, $2) RETURNING id`,
           [now, now],
         );
-        ssId = insertResult.rows[0].id;
+        ssId = insertResult.rows[0].id as number;
         log.push(`Created site_settings row: id=${ssId}`);
       } else {
-        ssId = ssResult.rows[0].id;
+        ssId = ssResult.rows[0].id as number;
+        log.push(`Found site_settings row: id=${ssId}`);
       }
-      log.push(`site_settings id: ${ssId}`);
 
+      // 2. Get existing media URLs for idempotency
+      const existingMedia = await client.query(`SELECT id, url FROM media WHERE url LIKE $1`, [`${CLOUDINARY_BASE}%`]);
+      const urlToId = new Map<string, number>();
+      for (const row of existingMedia.rows) {
+        urlToId.set(row.url, row.id);
+      }
+      log.push(`Found ${existingMedia.rows.length} existing Cloudinary media records.`);
+
+      // 3. Insert media records (skip existing)
+      const mediaIds: number[] = [];
+      const now = new Date().toISOString();
+      for (let i = 0; i < IMAGES.length; i++) {
+        const url = IMAGES[i];
+        const existingId = urlToId.get(url);
+        if (existingId) {
+          mediaIds.push(existingId);
+          log.push(`  Media ${i + 1}: EXISTS (id=${existingId})`);
+          continue;
+        }
+        const publicId = extractPublicId(url);
+        const alt = `Seed image ${i + 1}`;
+        try {
+          const result = await client.query(
+            `INSERT INTO media (alt, url, filename, filesize, width, height, media_type, created_at, updated_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+            [alt, url, `cloudinary-${publicId.replace(/\//g, "-")}.bin`, 100, 1, 1, "image", now, now],
+          );
+          const id = result.rows[0].id as number;
+          mediaIds.push(id);
+          log.push(`  Media ${i + 1}: CREATED (id=${id})`);
+        } catch (err) {
+          log.push(`  Media ${i + 1} FAILED: ${String(err).substring(0, 200)}`);
+          mediaIds.push(0);
+        }
+      }
+
+      // 4. Clear existing homepage data
       await client.query(`DELETE FROM site_settings_hero_slides WHERE _parent_id = $1`, [ssId]);
       await client.query(`DELETE FROM site_settings_blocks_circle_banner WHERE _parent_id = $1`, [ssId]);
       await client.query(`DELETE FROM site_settings_blocks_image_banner WHERE _parent_id = $1`, [ssId]);
@@ -119,6 +120,7 @@ export async function POST(request: Request) {
       await client.query(`DELETE FROM site_settings_categories WHERE _parent_id = $1`, [ssId]);
       log.push("Cleared existing homepage data.");
 
+      // 5. Insert hero slides
       const heroData = [
         { heading: "Celebrate\nEvery Precious Moment", description: "Find jewellery that complements every occasion.\nExplore our exclusive collections in-store & online.", ctaText: "EXPLORE", ctaHref: "/products", imgIdx: 0 },
         { heading: "Ethnic Excellence", description: "Wrap yourself in a timeless aura with our heritage designs.", ctaText: "EXPLORE", ctaHref: "/products", imgIdx: 1 },
@@ -135,6 +137,7 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${heroData.length} hero slides.`);
 
+      // 6. Insert features (circleBanner blocks)
       const featureData = [
         { title: "Weddings", description: "Find the wedding jewellery you've always dreamed of.", imgIdx: 4, alt: "Wedding wear, diamond jewellery" },
         { title: "Authenticity", description: "Choose from a wide range of certified and authentic jewellery for all occasions.", imgIdx: 5, alt: "Artmanship jewellery from Kerala Jewellers" },
@@ -150,6 +153,7 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${featureData.length} features.`);
 
+      // 7. Insert banners (imageBanner blocks)
       const bannerData = [
         { imgIdx: 7, alt: "Diamond ring handcrafted daily wear jewels" },
         { imgIdx: 8, alt: "Diamond Ring" },
@@ -165,6 +169,7 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${bannerData.length} banners.`);
 
+      // 8. Insert heritage
       await client.query(
         `INSERT INTO site_settings_heritage (_order, _parent_id, heading, description, image_id, src_set)
          VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -172,6 +177,7 @@ export async function POST(request: Request) {
       );
       log.push("Inserted 1 heritage item.");
 
+      // 9. Insert reviews
       const reviewData = [
         { text: "When we started shopping for my wedding jewelry, Kerala Jewellers made my dream come true. They truly became a part of our big day. Thank you for making my wedding sparkle!", author: "Shruthi", location: "Kodambakkam" },
         { text: "For my daughter's first birthday, we wanted something meaningful. Kerala Jewellers helped us find the perfect little gold necklace, and their warmth and service made the moment even more special.", author: "Pavithra", location: "Porur" },
@@ -188,6 +194,7 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${reviewData.length} reviews.`);
 
+      // 10. Insert categories
       const catData = [
         { title: "Golden Allure", description: "Browse our vast collection of exquisite gold necklaces and get ready to dazzle.", ctaText: "View Collection", ctaHref: "/products", variant: "gold" },
         { title: "Signature Silver", description: "Explore our signature silver jewellery and step into your own beautiful light.", ctaText: "View Collection", ctaHref: "/products/silver", variant: "silver" },
@@ -203,6 +210,15 @@ export async function POST(request: Request) {
         );
       }
       log.push(`Inserted ${catData.length} categories.`);
+
+      // Verify
+      const heroCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_hero_slides WHERE _parent_id = $1`, [ssId]);
+      const featureCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_blocks_circle_banner WHERE _parent_id = $1`, [ssId]);
+      const bannerCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_blocks_image_banner WHERE _parent_id = $1`, [ssId]);
+      const heritageCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_heritage WHERE _parent_id = $1`, [ssId]);
+      const reviewCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_reviews WHERE _parent_id = $1`, [ssId]);
+      const catCount = await client.query(`SELECT COUNT(*) as cnt FROM site_settings_categories WHERE _parent_id = $1`, [ssId]);
+      log.push(`Verify: hero=${heroCount.rows[0].cnt} features=${featureCount.rows[0].cnt} banners=${bannerCount.rows[0].cnt} heritage=${heritageCount.rows[0].cnt} reviews=${reviewCount.rows[0].cnt} categories=${catCount.rows[0].cnt}`);
 
       log.push("DONE — all homepage sections seeded via pure SQL.");
       return NextResponse.json({ message: "Homepage seed complete", mediaIds, log });
