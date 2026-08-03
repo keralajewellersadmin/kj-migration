@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
-import { randomUUID } from "crypto";
 
 export async function GET() {
   const dbVars = Object.keys(process.env)
@@ -25,8 +24,12 @@ const IMAGES = [
   `${CLOUDINARY_BASE}/v1785683312/kerala-jewellers/banners/66aa0d1f3e89efeb11397196_Rectangle%20343.webp`,
 ];
 
+let counter = 0;
 function uid(): string {
-  return randomUUID();
+  counter++;
+  const ts = Date.now().toString(36);
+  const rand = Math.random().toString(36).substring(2, 10);
+  return `${ts}-${rand}-${counter}`;
 }
 
 export async function POST(request: Request) {
