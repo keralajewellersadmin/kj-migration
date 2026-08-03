@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
 
+export async function GET() {
+  const dbVars = Object.keys(process.env)
+    .filter((k) => k.toLowerCase().includes("database") || k.toLowerCase().includes("postgres") || k.toLowerCase().includes("db_"))
+    .sort();
+  return NextResponse.json({ dbVars, NODE_ENV: process.env.NODE_ENV });
+}
+
 const CLOUDINARY_BASE = "https://res.cloudinary.com/htl6k8cd/image/upload";
 
 const IMAGES = [
@@ -40,21 +47,22 @@ export async function POST(request: Request) {
 
   try {
     const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
-    if (!dbUri) throw new Error("DATABASE_URL not set");
+    if (!dbUri) {
+      log.push("Available DB env vars: " + Object.keys(process.env).filter(k => k.toLowerCase().includes("database") || k.toLowerCase().includes("db_")).join(", "));
+      throw new Error("DATABASE_URL not set");
+    }
 
     const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
     await client.connect();
     log.push("Connected to Neon.");
 
     try {
-      // 1. Discover media table columns
       const colsResult = await client.query(
         `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'media' ORDER BY ordinal_position`,
       );
       const mediaCols = colsResult.rows.map((r: { column_name: string }) => r.column_name);
       log.push(`Media columns: ${mediaCols.join(", ")}`);
 
-      // 2. Insert media records using discovered columns
       const mediaIds: number[] = [];
       const now = new Date().toISOString();
       for (let i = 0; i < IMAGES.length; i++) {
@@ -71,7 +79,6 @@ export async function POST(request: Request) {
           mediaIds.push(id);
           log.push(`  Media ${i + 1}: id=${id}`);
 
-          // Set cloudinaryPublicId if column exists
           if (mediaCols.includes("cloudinary_public_id")) {
             await client.query(`UPDATE media SET cloudinary_public_id = $1 WHERE id = $2`, [publicId, id]);
           }
@@ -81,7 +88,6 @@ export async function POST(request: Request) {
         }
       }
 
-      // 3. Get site_settings id
       const ssResult = await client.query(`SELECT id FROM site_settings LIMIT 1`);
       if (ssResult.rows.length === 0) {
         throw new Error("No site_settings row found");
@@ -89,7 +95,6 @@ export async function POST(request: Request) {
       const ssId = ssResult.rows[0].id;
       log.push(`site_settings id: ${ssId}`);
 
-      // 4. Clear existing hero slides, features, banners, heritage, reviews, categories
       await client.query(`DELETE FROM site_settings_hero_slides WHERE _parent_id = $1`, [ssId]);
       await client.query(`DELETE FROM site_settings_blocks_circle_banner WHERE _parent_id = $1`, [ssId]);
       await client.query(`DELETE FROM site_settings_blocks_image_banner WHERE _parent_id = $1`, [ssId]);
@@ -100,7 +105,6 @@ export async function POST(request: Request) {
       await client.query(`DELETE FROM site_settings_categories WHERE _parent_id = $1`, [ssId]);
       log.push("Cleared existing homepage data.");
 
-      // 5. Insert hero slides
       const heroData = [
         { heading: "Celebrate\nEvery Precious Moment", description: "Find jewellery that complements every occasion.\nExplore our exclusive collections in-store & online.", ctaText: "EXPLORE", ctaHref: "/products", imgIdx: 0 },
         { heading: "Ethnic Excellence", description: "Wrap yourself in a timeless aura with our heritage designs.", ctaText: "EXPLORE", ctaHref: "/products", imgIdx: 1 },
@@ -117,7 +121,6 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${heroData.length} hero slides.`);
 
-      // 6. Insert features (circleBanner blocks)
       const featureData = [
         { title: "Weddings", description: "Find the wedding jewellery you've always dreamed of.", imgIdx: 4, alt: "Wedding wear, diamond jewellery" },
         { title: "Authenticity", description: "Choose from a wide range of certified and authentic jewellery for all occasions.", imgIdx: 5, alt: "Artmanship jewellery from Kerala Jewellers" },
@@ -133,7 +136,6 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${featureData.length} features.`);
 
-      // 7. Insert banners (imageBanner blocks)
       const bannerData = [
         { imgIdx: 7, alt: "Diamond ring handcrafted daily wear jewels" },
         { imgIdx: 8, alt: "Diamond Ring" },
@@ -149,7 +151,6 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${bannerData.length} banners.`);
 
-      // 8. Insert heritage
       await client.query(
         `INSERT INTO site_settings_heritage (_order, _parent_id, heading, description, image_id, src_set)
          VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -157,7 +158,6 @@ export async function POST(request: Request) {
       );
       log.push("Inserted 1 heritage item.");
 
-      // 9. Insert reviews
       const reviewData = [
         { text: "When we started shopping for my wedding jewelry, Kerala Jewellers made my dream come true. They truly became a part of our big day. Thank you for making my wedding sparkle!", author: "Shruthi", location: "Kodambakkam" },
         { text: "For my daughter's first birthday, we wanted something meaningful. Kerala Jewellers helped us find the perfect little gold necklace, and their warmth and service made the moment even more special.", author: "Pavithra", location: "Porur" },
@@ -174,7 +174,6 @@ export async function POST(request: Request) {
       }
       log.push(`Inserted ${reviewData.length} reviews.`);
 
-      // 10. Insert categories
       const catData = [
         { title: "Golden Allure", description: "Browse our vast collection of exquisite gold necklaces and get ready to dazzle.", ctaText: "View Collection", ctaHref: "/products", variant: "gold" },
         { title: "Signature Silver", description: "Explore our signature silver jewellery and step into your own beautiful light.", ctaText: "View Collection", ctaHref: "/products/silver", variant: "silver" },
