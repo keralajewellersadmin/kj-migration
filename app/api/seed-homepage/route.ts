@@ -1,27 +1,6 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
 
-export async function GET() {
-  try {
-    const dbUri = process.env.DATABASE_URL;
-    if (!dbUri) throw new Error("No DB URI");
-    const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
-    await client.connect();
-    try {
-      const ss = await client.query(`SELECT id FROM site_settings LIMIT 1`);
-      const ssId = ss.rows[0]?.id;
-      if (!ssId) return NextResponse.json({ error: "No site_settings row" });
-      const hero = await client.query(`SELECT id, _order, heading, image_id FROM site_settings_hero_slides WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      const cats = await client.query(`SELECT id, title, variant FROM site_settings_categories WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-      return NextResponse.json({ ssId, heroCount: hero.rows.length, heroIds: hero.rows.map((r: any) => r.id), heroSlides: hero.rows, categories: cats.rows });
-    } finally {
-      await client.end();
-    }
-  } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
-  }
-}
-
 const CLOUDINARY_BASE = "https://res.cloudinary.com/htl6k8cd/image/upload";
 
 const IMAGES = [
