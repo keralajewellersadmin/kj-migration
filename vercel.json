@@ -1,10 +1,8 @@
 {
   "functions": {
-    "app/(payload)/api/**/*": {
-      "maxDuration": 30
-    },
-    "app/(payload)/admin/**/*": {
+    "app/(payload)/kj-portal-0d7cfad1/**/*": {
       "maxDuration": 30
     }
-  }
+  },
+  "installCommand": "rm -rf node_modules package-lock.json && npm install"
 }
