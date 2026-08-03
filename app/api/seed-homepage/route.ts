@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
+import { randomUUID } from "crypto";
 
 export async function GET() {
   const dbVars = Object.keys(process.env)
@@ -24,13 +25,8 @@ const IMAGES = [
   `${CLOUDINARY_BASE}/v1785683312/kerala-jewellers/banners/66aa0d1f3e89efeb11397196_Rectangle%20343.webp`,
 ];
 
-function extractPublicId(url: string): string {
-  const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)$/);
-  if (!match) return "";
-  let id = match[1];
-  const dot = id.lastIndexOf(".");
-  if (dot > 0) id = id.substring(0, dot);
-  return id;
+function uid(): string {
+  return randomUUID();
 }
 
 export async function POST(request: Request) {
@@ -74,12 +70,12 @@ export async function POST(request: Request) {
       }
 
       // 2. Get existing media URLs for idempotency
-      const existingMedia = await client.query(`SELECT id, url FROM media WHERE url LIKE $1`, [`${CLOUDINARY_BASE}%`]);
+      const existingMedia = await client.query(`SELECT id, url FROM media`);
       const urlToId = new Map<string, number>();
       for (const row of existingMedia.rows) {
         urlToId.set(row.url, row.id);
       }
-      log.push(`Found ${existingMedia.rows.length} existing Cloudinary media records.`);
+      log.push(`Found ${existingMedia.rows.length} existing media records total.`);
 
       // 3. Insert media records (skip existing)
       const mediaIds: number[] = [];
@@ -92,13 +88,12 @@ export async function POST(request: Request) {
           log.push(`  Media ${i + 1}: EXISTS (id=${existingId})`);
           continue;
         }
-        const publicId = extractPublicId(url);
         const alt = `Seed image ${i + 1}`;
         try {
           const result = await client.query(
             `INSERT INTO media (alt, url, filename, filesize, width, height, media_type, created_at, updated_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-            [alt, url, `cloudinary-${publicId.replace(/\//g, "-")}.bin`, 100, 1, 1, "image", now, now],
+            [alt, url, `seed-${i + 24}.png`, 100, 1, 1, "image", now, now],
           );
           const id = result.rows[0].id as number;
           mediaIds.push(id);
@@ -130,9 +125,9 @@ export async function POST(request: Request) {
       for (let i = 0; i < heroData.length; i++) {
         const h = heroData[i];
         await client.query(
-          `INSERT INTO site_settings_hero_slides (_order, _parent_id, heading, description, cta_text, cta_href, image_id)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-          [i, ssId, h.heading, h.description, h.ctaText, h.ctaHref, mediaIds[h.imgIdx]],
+          `INSERT INTO site_settings_hero_slides (id, _order, _parent_id, heading, description, cta_text, cta_href, image_id)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [uid(), i, ssId, h.heading, h.description, h.ctaText, h.ctaHref, mediaIds[h.imgIdx]],
         );
       }
       log.push(`Inserted ${heroData.length} hero slides.`);
@@ -146,9 +141,9 @@ export async function POST(request: Request) {
       for (let i = 0; i < featureData.length; i++) {
         const f = featureData[i];
         await client.query(
-          `INSERT INTO site_settings_blocks_circle_banner (_order, _path, _parent_id, title, description, image_id, alt, block_name)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-          [i, `features.${i}`, ssId, f.title, f.description, mediaIds[f.imgIdx], f.alt, "circleBanner"],
+          `INSERT INTO site_settings_blocks_circle_banner (id, _order, _path, _parent_id, title, description, image_id, alt, block_name)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          [uid(), i, `features.${i}`, ssId, f.title, f.description, mediaIds[f.imgIdx], f.alt, "circleBanner"],
         );
       }
       log.push(`Inserted ${featureData.length} features.`);
@@ -162,18 +157,18 @@ export async function POST(request: Request) {
       for (let i = 0; i < bannerData.length; i++) {
         const b = bannerData[i];
         await client.query(
-          `INSERT INTO site_settings_blocks_image_banner (_order, _path, _parent_id, image_id, alt, title, cta_text, href, block_name)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-          [i, `banners.${i}`, ssId, mediaIds[b.imgIdx], b.alt, "", "", "", "imageBanner"],
+          `INSERT INTO site_settings_blocks_image_banner (id, _order, _path, _parent_id, image_id, alt, title, cta_text, href, block_name)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+          [uid(), i, `banners.${i}`, ssId, mediaIds[b.imgIdx], b.alt, "", "", "", "imageBanner"],
         );
       }
       log.push(`Inserted ${bannerData.length} banners.`);
 
       // 8. Insert heritage
       await client.query(
-        `INSERT INTO site_settings_heritage (_order, _parent_id, heading, description, image_id, src_set)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [0, ssId, "Intricate & Intimate", "Beautiful heritage-worthy designs have elevated our jewellery.\nExplore a range of personalised selections for different occasions.\nThe right piece can enrich your look and give people something to\nadmire and appreciate.", mediaIds[10], ""],
+        `INSERT INTO site_settings_heritage (id, _order, _parent_id, heading, description, image_id, src_set)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [uid(), 0, ssId, "Intricate & Intimate", "Beautiful heritage-worthy designs have elevated our jewellery.\nExplore a range of personalised selections for different occasions.\nThe right piece can enrich your look and give people something to\nadmire and appreciate.", mediaIds[10], ""],
       );
       log.push("Inserted 1 heritage item.");
 
@@ -187,9 +182,9 @@ export async function POST(request: Request) {
       for (let i = 0; i < reviewData.length; i++) {
         const r = reviewData[i];
         await client.query(
-          `INSERT INTO site_settings_reviews (_order, _parent_id, text, author, location)
-           VALUES ($1, $2, $3, $4, $5)`,
-          [i, ssId, r.text, r.author, r.location],
+          `INSERT INTO site_settings_reviews (id, _order, _parent_id, text, author, location)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [uid(), i, ssId, r.text, r.author, r.location],
         );
       }
       log.push(`Inserted ${reviewData.length} reviews.`);
@@ -204,9 +199,9 @@ export async function POST(request: Request) {
       for (let i = 0; i < catData.length; i++) {
         const c = catData[i];
         await client.query(
-          `INSERT INTO site_settings_categories (_order, _parent_id, title, description, cta_text, cta_href, variant)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-          [i, ssId, c.title, c.description, c.ctaText, c.ctaHref, c.variant],
+          `INSERT INTO site_settings_categories (id, _order, _parent_id, title, description, cta_text, cta_href, variant)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [uid(), i, ssId, c.title, c.description, c.ctaText, c.ctaHref, c.variant],
         );
       }
       log.push(`Inserted ${catData.length} categories.`);
