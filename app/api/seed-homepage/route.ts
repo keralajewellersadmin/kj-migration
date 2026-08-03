@@ -88,11 +88,25 @@ export async function POST(request: Request) {
         }
       }
 
-      const ssResult = await client.query(`SELECT id FROM site_settings LIMIT 1`);
+      let ssResult = await client.query(`SELECT id FROM site_settings LIMIT 1`);
+      let ssId: number;
       if (ssResult.rows.length === 0) {
-        throw new Error("No site_settings row found");
+        // Check what columns exist
+        const ssCols = await client.query(
+          `SELECT column_name FROM information_schema.columns WHERE table_name = 'site_settings' ORDER BY ordinal_position`,
+        );
+        const colNames = ssCols.rows.map((r: any) => r.column_name);
+        log.push(`site_settings columns: ${colNames.join(", ")}`);
+        // Insert a minimal row — just id + updated_at/created_at
+        const insertResult = await client.query(
+          `INSERT INTO site_settings (updated_at, created_at) VALUES ($1, $2) RETURNING id`,
+          [now, now],
+        );
+        ssId = insertResult.rows[0].id;
+        log.push(`Created site_settings row: id=${ssId}`);
+      } else {
+        ssId = ssResult.rows[0].id;
       }
-      const ssId = ssResult.rows[0].id;
       log.push(`site_settings id: ${ssId}`);
 
       await client.query(`DELETE FROM site_settings_hero_slides WHERE _parent_id = $1`, [ssId]);
