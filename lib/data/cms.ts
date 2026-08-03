@@ -71,9 +71,6 @@ function mapSqlProduct(row: any): Product {
     row.image_srcset?.split(",")[0]?.trim().split(/\s+/)[0] ||
     row.image_url ||
     "/assets/images/placeholder.svg";
-  const seoTitle = row.seo_title || undefined;
-  const seoDesc = row.seo_description || undefined;
-  const seoOgImage = row.seo_og_image_url || undefined;
   return {
     slug: row.slug || "",
     name: row.title || "",
@@ -86,23 +83,18 @@ function mapSqlProduct(row: any): Product {
     image: imageUrl,
     imageAlt: row.image_alt || "",
     imageSrcset: row.image_srcset || "",
-    seo: seoTitle || seoDesc || seoOgImage
-      ? { title: seoTitle, description: seoDesc, ogImage: seoOgImage }
-      : undefined,
+    seo: undefined,
   };
 }
 
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-         p.description, p.image_srcset, p.availability, p.price_mode, p.price,
-         p.featured, p.seo_title, p.seo_description, p.seo_og_image,
+         p.description, p.image_srcset,
          c.name AS category_name,
-         m.url AS image_url, m.alt AS image_alt,
-         mo.url AS seo_og_image_url
+         m.url AS image_url, m.alt AS image_alt
   FROM products p
   LEFT JOIN categories c ON p.category = c.id
   LEFT JOIN media m ON p.image = m.id
-  LEFT JOIN media mo ON p.seo_og_image = mo.id
 `;
 
 function isPostgres(): boolean {
@@ -126,10 +118,27 @@ async function sqlFindProducts(
       params,
     );
     const totalDocs: number = countQ.rows[0]?.cnt ?? 0;
-    const rows = await client.query(
-      `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT ${limit} OFFSET ${offset}`,
-      params,
-    );
+    let rows;
+    try {
+      rows = await client.query(
+        `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT ${limit} OFFSET ${offset}`,
+        params,
+      );
+    } catch {
+      const SIMPLE_BASE = `
+        SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
+               p.description, p.image_srcset,
+               c.name AS category_name,
+               m.url AS image_url, m.alt AS image_alt
+        FROM products p
+        LEFT JOIN categories c ON p.category = c.id
+        LEFT JOIN media m ON p.image = m.id
+      `;
+      rows = await client.query(
+        `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT ${limit} OFFSET ${offset}`,
+        params,
+      );
+    }
     return { products: rows.rows.map(mapSqlProduct), totalDocs };
   } finally {
     await client.end();
@@ -222,18 +231,22 @@ function mapBlogPost(doc: PayloadDoc): BlogPost {
 export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
   if (!slugs.length) return [];
   if (isPostgres()) {
-    const placeholders = slugs.map((_, i) => `$${i + 1}`).join(",");
-    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
-    const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
-    await client.connect();
     try {
-      const rows = await client.query(
-        `${PRODUCT_SQL_BASE} WHERE p.slug IN (${placeholders})`,
-        slugs,
-      );
-      return rows.rows.map(mapSqlProduct);
-    } finally {
-      await client.end();
+      const placeholders = slugs.map((_, i) => `$${i + 1}`).join(",");
+      const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
+      const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+      await client.connect();
+      try {
+        const rows = await client.query(
+          `${PRODUCT_SQL_BASE} WHERE p.slug IN (${placeholders})`,
+          slugs,
+        );
+        return rows.rows.map(mapSqlProduct);
+      } finally {
+        await client.end();
+      }
+    } catch {
+      // fall through to Payload
     }
   }
   const payload = await getPayload({ config });
@@ -252,17 +265,21 @@ export async function getRelatedProducts(
   limit = 4,
 ): Promise<Product[]> {
   if (isPostgres()) {
-    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
-    const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
-    await client.connect();
     try {
-      const rows = await client.query(
-        `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT ${limit}`,
-        [metal, excludeSlug],
-      );
-      return rows.rows.map(mapSqlProduct);
-    } finally {
-      await client.end();
+      const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
+      const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+      await client.connect();
+      try {
+        const rows = await client.query(
+          `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT ${limit}`,
+          [metal, excludeSlug],
+        );
+        return rows.rows.map(mapSqlProduct);
+      } finally {
+        await client.end();
+      }
+    } catch {
+      // fall through to Payload
     }
   }
   const payload = await getPayload({ config });
@@ -285,20 +302,24 @@ export async function getProductsByMetal(
   categorySlug?: string,
 ): Promise<Product[]> {
   if (isPostgres()) {
-    let where = "WHERE p.metal = $1";
-    const params: any[] = [metal];
-    if (categorySlug) {
-      where += " AND c.slug = $2";
-      params.push(categorySlug);
-    }
-    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
-    const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
-    await client.connect();
     try {
-      const rows = await client.query(`${PRODUCT_SQL_BASE} ${where} ORDER BY p.id LIMIT 500`, params);
-      return rows.rows.map(mapSqlProduct);
-    } finally {
-      await client.end();
+      let where = "WHERE p.metal = $1";
+      const params: any[] = [metal];
+      if (categorySlug) {
+        where += " AND c.slug = $2";
+        params.push(categorySlug);
+      }
+      const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
+      const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+      await client.connect();
+      try {
+        const rows = await client.query(`${PRODUCT_SQL_BASE} ${where} ORDER BY p.id LIMIT 500`, params);
+        return rows.rows.map(mapSqlProduct);
+      } finally {
+        await client.end();
+      }
+    } catch {
+      // fall through to Payload
     }
   }
   const payload = await getPayload({ config });
@@ -340,22 +361,26 @@ export async function getProductsByMetalPaginated(
   categorySlug?: string,
 ): Promise<PaginatedProducts> {
   if (isPostgres()) {
-    let where = "WHERE p.metal = $1";
-    const params: any[] = [metal];
-    if (categorySlug) {
-      where += " AND c.slug = $2";
-      params.push(categorySlug);
+    try {
+      let where = "WHERE p.metal = $1";
+      const params: any[] = [metal];
+      if (categorySlug) {
+        where += " AND c.slug = $2";
+        params.push(categorySlug);
+      }
+      const offset = (page - 1) * limit;
+      const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset);
+      const totalPages = Math.ceil(totalDocs / limit);
+      return {
+        products,
+        totalDocs,
+        totalPages,
+        page,
+        hasNextPage: page < totalPages,
+      };
+    } catch {
+      // fall through to Payload
     }
-    const offset = (page - 1) * limit;
-    const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset);
-    const totalPages = Math.ceil(totalDocs / limit);
-    return {
-      products,
-      totalDocs,
-      totalPages,
-      page,
-      hasNextPage: page < totalPages,
-    };
   }
   const payload = await getPayload({ config });
 
@@ -393,14 +418,32 @@ export async function getProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
   if (isPostgres()) {
-    const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
-    const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
-    await client.connect();
     try {
-      const rows = await client.query(`${PRODUCT_SQL_BASE} WHERE p.slug = $1 LIMIT 1`, [slug]);
-      return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
-    } finally {
-      await client.end();
+      const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI!;
+      const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+      await client.connect();
+      try {
+        let rows;
+        try {
+          rows = await client.query(`${PRODUCT_SQL_BASE} WHERE p.slug = $1 LIMIT 1`, [slug]);
+        } catch {
+          const SIMPLE = `
+            SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
+                   p.description, p.image_srcset,
+                   c.name AS category_name,
+                   m.url AS image_url, m.alt AS image_alt
+            FROM products p
+            LEFT JOIN categories c ON p.category = c.id
+            LEFT JOIN media m ON p.image = m.id
+          `;
+          rows = await client.query(`${SIMPLE} WHERE p.slug = $1 LIMIT 1`, [slug]);
+        }
+        return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
+      } finally {
+        await client.end();
+      }
+    } catch {
+      // fall through to Payload
     }
   }
   const payload = await getPayload({ config });
