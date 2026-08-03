@@ -1,11 +1,26 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
+import { getPayload } from "payload";
+import config from "@payload-config";
 
 export async function GET() {
-  const dbVars = Object.keys(process.env)
-    .filter((k) => k.toLowerCase().includes("database") || k.toLowerCase().includes("postgres") || k.toLowerCase().includes("db_"))
-    .sort();
-  return NextResponse.json({ dbVars, NODE_ENV: process.env.NODE_ENV });
+  try {
+    const payload = await getPayload({ config });
+    const settings = await payload.findGlobal({
+      slug: "site-settings",
+      depth: 2,
+    });
+    return NextResponse.json({
+      heroSlides: settings.heroSlides,
+      features: settings.features,
+      banners: settings.banners,
+      heritage: settings.heritage,
+      reviews: settings.reviews,
+      categories: settings.categories,
+    });
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/htl6k8cd/image/upload";
