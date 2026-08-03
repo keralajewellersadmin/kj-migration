@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl =
@@ -9,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/admin/"],
+        disallow: ["/api/", `${ADMIN_PATH}/`],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

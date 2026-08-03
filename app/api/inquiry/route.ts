@@ -22,7 +22,7 @@ const inquirySchema = z.object({
   message: z.string().trim().max(2000).optional().default(""),
   productId: z.string().trim().max(80).optional(),
   sourcePage: z.string().trim().max(300).optional().default("/contact"),
-  honeypot: z.string().max(0).optional().default(""),
+  honeypot: z.string().optional().default(""),
   startedAt: z.number().optional(),
 });
 

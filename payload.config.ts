@@ -8,6 +8,7 @@ import {
   type CollectionBeforeDeleteHook,
   type GlobalAfterChangeHook,
 } from "payload";
+import sharp from "sharp";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
@@ -28,14 +29,14 @@ import {
   canReadMedia,
   isAuthenticated,
   isSuperAdmin,
-  canCreateAdminUsers,
-  canUpdateAdminUsers,
+  isAdmin,
   canDeleteAdminUsers,
   adminRoleFieldAccess,
   adminIsActiveFieldAccess,
   enforceAdminRoleRestrictions,
+  enforceAccountLimit,
   validateAdminPassword,
-} from "./lib/payload/security.ts";
+} from "./lib/payload/security";
 import {
   cloudinaryUploadHook,
   cloudinaryDeleteHook,
@@ -279,7 +280,33 @@ const Media: CollectionConfig = {
   },
   upload: {
     staticDir: process.env.MEDIA_DIR || "public/media",
-    mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
+    mimeTypes: [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+    ],
+    imageSizes: [
+      {
+        name: "thumbnail",
+        width: 400,
+        height: 400,
+        position: "centre",
+      },
+      {
+        name: "card",
+        width: 800,
+        height: 600,
+        position: "centre",
+      },
+      {
+        name: "hero",
+        width: 1920,
+        height: 1080,
+        position: "centre",
+      },
+    ],
   },
   fields: [
     {
@@ -297,9 +324,24 @@ const Media: CollectionConfig = {
       type: "select",
       options: [
         { label: "Product", value: "product" },
+        { label: "Category", value: "category" },
         { label: "Banner", value: "banner" },
-        { label: "Content", value: "content" },
+        { label: "Gallery", value: "gallery" },
+        { label: "Blog", value: "blog" },
+        { label: "Heritage", value: "heritage" },
+        { label: "Timeline", value: "timeline" },
+        { label: "Campaign", value: "campaign" },
+        { label: "Store", value: "store" },
+        { label: "Collection", value: "collection" },
       ],
+    },
+    {
+      name: "cloudinaryPublicId",
+      type: "text",
+      admin: {
+        readOnly: true,
+        description: "Cloudinary public ID (auto-set on upload)",
+      },
     },
   ],
 };
@@ -313,10 +355,11 @@ const AdminUsers: CollectionConfig = {
       sameSite: "Lax",
     },
   },
-  admin: { useAsTitle: "email" },
+  admin: { useAsTitle: "username" },
   hooks: {
     beforeValidate: [
       enforceAdminRoleRestrictions,
+      enforceAccountLimit,
       ({ data }) => {
         const password = data?.password;
         if (typeof password === "string") {
@@ -336,9 +379,9 @@ const AdminUsers: CollectionConfig = {
     afterLogin: [auditLogAfterLogin],
   },
   access: {
-    read: () => true,
-    create: canCreateAdminUsers,
-    update: canUpdateAdminUsers,
+    read: isAdmin,
+    create: isSuperAdmin,
+    update: isSuperAdmin,
     delete: canDeleteAdminUsers,
   },
   fields: [
@@ -414,11 +457,6 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
-      filterOptions: ({ siblingData }) => {
-        const metal = (siblingData as Record<string, unknown>)?.metal;
-        if (!metal) return true;
-        return { metal: { equals: metal } };
-      },
     },
     { name: "weight", type: "text" },
     { name: "purity", type: "text" },
@@ -536,6 +574,28 @@ const Category: CollectionConfig = {
       admin: {
         description: "Order in navbar mega menu & filter dropdown (0 = first).",
       },
+    },
+    {
+      name: "seo",
+      type: "group",
+      fields: [
+        {
+          name: "title",
+          type: "text",
+          admin: {
+            description:
+              "Custom meta title for this category page (defaults to category name). Recommended: 50–60 characters.",
+          },
+        },
+        {
+          name: "description",
+          type: "textarea",
+          admin: {
+            description:
+              "Meta description for search engines (defaults to category name + metal). Recommended: 120–160 characters.",
+          },
+        },
+      ],
     },
   ],
 };
@@ -849,9 +909,9 @@ const LoginOtp: CollectionConfig = {
   admin: { hidden: true },
   access: {
     read: () => false,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: () => false,
+    update: () => false,
+    delete: () => false,
   },
   fields: [
     {
@@ -887,9 +947,9 @@ const PasswordReset: CollectionConfig = {
   admin: { hidden: true },
   access: {
     read: () => false,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: () => false,
+    update: () => false,
+    delete: () => false,
   },
   fields: [
     {
@@ -1267,10 +1327,8 @@ const SiteSettings: GlobalConfig = {
                     { name: "text", type: "textarea", required: true },
                     {
                       name: "image",
-                      type: "text",
-                      admin: {
-                        description: "Path to image in /assets/images/",
-                      },
+                      type: "upload",
+                      relationTo: "media",
                     },
                   ],
                 },
@@ -1290,10 +1348,8 @@ const SiteSettings: GlobalConfig = {
                     },
                     {
                       name: "image",
-                      type: "text",
-                      admin: {
-                        description: "Path to image in /assets/images/",
-                      },
+                      type: "upload",
+                      relationTo: "media",
                     },
                     { name: "alt", type: "text" },
                     {
@@ -1463,6 +1519,7 @@ const SiteSettings: GlobalConfig = {
 
 export default buildConfig({
   secret: requireProductionSecret(),
+  sharp,
   db: usePostgres
     ? postgresAdapter({
         pool: {
@@ -1522,7 +1579,7 @@ export default buildConfig({
     importMap: {
       importMapFile: path.resolve(
         process.cwd(),
-        "app/(payload)/admin/importMap.ts",
+        "app/(payload)/kj-portal-0d7cfad1/importMap.ts",
       ),
     },
   },

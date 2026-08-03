@@ -69,9 +69,12 @@ export const canReadCategories: Access = ({ req }) => {
   return true; // public read for SSR navbar
 };
 
-// Media — admin + super-admin only (no public read needed)
-export const canReadMedia: Access = ({ req }) =>
-  hasRole(getUser(req), ["super-admin", "admin"]);
+// Media — admin + super-admin for CRUD, public read for frontend image population
+export const canReadMedia: Access = ({ req }) => {
+  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
+    return true;
+  return true; // public read for SSR/frontend
+};
 
 // BlogPosts — admin + super-admin for CRUD, public read for frontend
 export const canReadBlogPosts: Access = ({ req }) => {
@@ -94,22 +97,21 @@ export const canReadAuditLogs: Access = ({ req }) =>
 // ─── Admin-users collection access ──────────────────────────────────────────
 
 export const canCreateAdminUsers: Access = async ({ req }) => {
+  // First-user bootstrap: if zero users exist, allow creating the first one
   if (!req.user?.isActive) {
-    // First-user bootstrap: if zero users exist, anyone can create the first one
     const existing = await req.payload.count({
       collection: "admin-users" as never,
     });
     if (existing.totalDocs === 0) return true;
     return false;
   }
-  if (req.user.role === "super-admin") return true;
-  if (req.user.role === "admin") return true;
-  return false;
+  // Only super-admin can create accounts
+  return req.user.role === "super-admin";
 };
 
 export const canUpdateAdminUsers: Access = ({ req: { user } }) => {
   if (!user?.isActive) return false;
-  return user.role === "super-admin" || user.role === "admin";
+  return user.role === "super-admin";
 };
 
 export const canDeleteAdminUsers: Access = ({ req: { user } }) => {
@@ -119,18 +121,16 @@ export const canDeleteAdminUsers: Access = ({ req: { user } }) => {
 
 // ─── Field-level access ─────────────────────────────────────────────────────
 
-// Role field: super-admin can set any role; admin can only set 'enquiry-manager'
+// Role field: only super-admin can set
 export const adminRoleFieldAccess: FieldAccess = ({ req: { user } }) => {
   if (!user?.isActive) return false;
-  if (user.role === "super-admin") return true;
-  if (user.role === "admin") return true;
-  return false;
+  return user.role === "super-admin";
 };
 
-// isActive field: super-admin + admin can toggle
+// isActive field: only super-admin can toggle
 export const adminIsActiveFieldAccess: FieldAccess = ({ req: { user } }) => {
   if (!user?.isActive) return false;
-  return user.role === "super-admin" || user.role === "admin";
+  return user.role === "super-admin";
 };
 
 // ─── beforeValidate hook: enforce role restrictions ─────────────────────────
@@ -204,3 +204,22 @@ export function hashIp(ip: string) {
     "local-development";
   return crypto.createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }
+
+// ─── Account limit hook (max 3 accounts system-wide) ────────────────────────
+
+export const enforceAccountLimit: CollectionBeforeValidateHook = async ({
+  req,
+  operation,
+}) => {
+  if (operation !== "create") return;
+
+  const existing = await req.payload.count({
+    collection: "admin-users" as never,
+  });
+
+  if (existing.totalDocs >= 3) {
+    throw new Error(
+      "Account limit reached. Maximum 3 admin accounts allowed system-wide.",
+    );
+  }
+};

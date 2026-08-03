@@ -50,11 +50,20 @@ function resolveFontsFromPairing(
 }
 
 function resolveMediaUrl(val: unknown): string {
-  if (val && typeof val === "object" && "url" in val)
-    return (val as { url: string }).url || "";
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    if (typeof obj.cloudinaryPublicId === "string" && obj.cloudinaryPublicId) {
+      return cloudinaryUrl(obj.cloudinaryPublicId);
+    }
+    if (typeof obj.url === "string") {
+      return obj.url;
+    }
+  }
   if (typeof val === "string") return val;
   return "";
 }
+
+import { cloudinaryUrl } from "../cloudinary";
 
 function mapProduct(doc: PayloadDoc): Product {
   const catName =
@@ -71,11 +80,11 @@ function mapProduct(doc: PayloadDoc): Product {
       : "";
   const imageUrl =
     imageFromSrcset ||
-    imageObj?.url ||
-    (typeof doc.image === "string" ? doc.image : "") ||
+    resolveMediaUrl(doc.image) ||
     "/assets/images/placeholder.svg";
   const imageAlt = imageObj?.alt || "";
   const seoGroup = doc.seo as Record<string, unknown> | undefined;
+  
   const seo: SeoFields | undefined = seoGroup
     ? {
         title: (seoGroup.title as string) || undefined,

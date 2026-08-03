@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import type { ServerProps } from "payload";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./DashboardStats.module.css";
 
 function timeAgo(dateStr: string): string {
@@ -263,7 +264,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
   const quickActions = [
     {
       label: "Add Product",
-      href: "/admin/collections/products/create",
+      href: `${ADMIN_PATH}/collections/products/create`,
       icon: actionIcons.addProduct,
       accent: "#f59e0b",
       bg: "#fff7ed",
@@ -271,7 +272,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
     },
     {
       label: "Add Category",
-      href: "/admin/collections/categories/create",
+      href: `${ADMIN_PATH}/collections/categories/create`,
       icon: actionIcons.addCategory,
       accent: "#a855f7",
       bg: "#faf5ff",
@@ -279,7 +280,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
     },
     {
       label: "Upload Media",
-      href: "/admin/collections/media/create",
+      href: `${ADMIN_PATH}/collections/media/create`,
       icon: actionIcons.uploadMedia,
       accent: "#10b981",
       bg: "#ecfdf5",
@@ -287,7 +288,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
     },
     {
       label: "Create Banner",
-      href: "/admin/globals/site-settings",
+      href: `${ADMIN_PATH}/globals/site-settings`,
       icon: actionIcons.createBanner,
       accent: "#f43f5e",
       bg: "#fff1f2",
@@ -295,7 +296,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
     },
     {
       label: "Site Settings",
-      href: "/admin/globals/site-settings",
+      href: `${ADMIN_PATH}/globals/site-settings`,
       icon: actionIcons.siteSettings,
       accent: "#64748b",
       bg: "#f8fafc",
@@ -362,7 +363,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
           <div className={styles.panelHeader}>
             <h3 className={styles.panelTitle}>Recent Inquiries</h3>
             <Link
-              href="/admin/collections/inquiries?sort=-submittedAt"
+              href={`${ADMIN_PATH}/collections/inquiries?sort=-submittedAt`}
               className={styles.viewAll}
             >
               View all
@@ -388,7 +389,7 @@ export default async function DashboardStats({ payload }: ServerProps) {
                 return (
                   <Link
                     key={inquiry.id}
-                    href={`/admin/collections/inquiries/${inquiry.id}`}
+                    href={`${ADMIN_PATH}/collections/inquiries/${inquiry.id}`}
                     className={styles.inquiryRow}
                   >
                     <div

@@ -5,7 +5,15 @@ import Image from "next/image";
 import styles from "./Hero.module.css";
 import { IMG } from "@/lib/image-urls";
 
-const defaultSlides = [
+type HeroSlide = {
+  heading: string;
+  description: string;
+  ctaText: string;
+  ctaHref: string;
+  image?: string;
+};
+
+const defaultSlides: HeroSlide[] = [
   {
     heading: "Celebrate\nEvery Precious Moment",
     description:
@@ -34,14 +42,6 @@ const defaultSlides = [
     ctaHref: "/products",
   },
 ];
-
-type HeroSlide = {
-  heading: string;
-  description: string;
-  ctaText: string;
-  ctaHref: string;
-  image?: string;
-};
 
 export default function Hero({
   slides: cmsSlides = [],
@@ -101,7 +101,12 @@ export default function Hero({
                   className={`${styles.slide} ${i === 0 ? styles.active : ""}`}
                 >
                   <div
-                    className={`${styles.banner} ${styles[`banner${i + 1}`]}`}
+                    className={styles.banner}
+                    style={
+                      slide.image
+                        ? { backgroundImage: `url(${slide.image})` }
+                        : undefined
+                    }
                   >
                     <div className={styles.content}>
                       <h1 className={styles.heading}>{slide.heading}</h1>

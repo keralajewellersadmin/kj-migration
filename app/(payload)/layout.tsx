@@ -1,15 +1,25 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+import type { Metadata } from "next";
 import type { ServerFunctionClient } from "payload";
 import config from "@payload-config";
 import { RootLayout, handleServerFunctions } from "@payloadcms/next/layouts";
 import "@payloadcms/next/css";
 import "./custom.css";
 import React from "react";
-import { importMap } from "./admin/importMap";
+import { importMap } from "./kj-portal-0d7cfad1/importMap";
 
 type Args = {
   children: React.ReactNode;
+};
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
 };
 
 const serverFunction: ServerFunctionClient = async function (args) {

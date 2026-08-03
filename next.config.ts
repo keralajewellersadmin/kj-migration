@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const isProduction = process.env.NODE_ENV === "production";
+const ADMIN_PATH = "/kj-portal-0d7cfad1";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -22,6 +23,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pg", "payload"],
   images: cloudinaryCloudName
     ? {
+        loader: "custom",
+        loaderFile: "./lib/cloudinaryLoader.ts",
         remotePatterns: [
           {
             protocol: "https",
@@ -46,7 +49,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/admin/:path*",
+        source: `${ADMIN_PATH}/:path*`,
         headers: [{ key: "X-Frame-Options", value: "DENY" }],
       },
     ];

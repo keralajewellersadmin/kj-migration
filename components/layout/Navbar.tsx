@@ -178,6 +178,19 @@ export default function Navbar({
 }) {
   const [rateOpen, setRateOpen] = useState(false);
   const [dateStr] = useState(() => formatDate(new Date()));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
   const rateDropdownRef = useRef<HTMLDivElement>(null);
   const rateTypes = buildRateTypes(rates);
   const ratesText = rates
@@ -268,7 +281,7 @@ export default function Navbar({
                       className={`${styles.rateMenu} ${rateOpen ? styles.rateMenuOpen : ""}`}
                       role="menu"
                     >
-                      <div className={styles.rateMenuHeader}>
+                      <div className={styles.rateMenuHeader} suppressHydrationWarning>
                         Today&apos;s Price — {dateStr}
                       </div>
                       {rateTypes.map((r, i) => (
@@ -335,15 +348,11 @@ export default function Navbar({
       {/* Mobile Header */}
       <div className={styles.mobileHeader}>
         <div className={styles.mobileHeaderContainer}>
-          <input
-            type="checkbox"
-            id="mobile-menu-toggle"
-            className={styles.hamburgerCheck}
-          />
           <Link
             className={styles.brand}
             href="/"
             aria-label="Kerala Jewellers Home"
+            onClick={() => setMobileMenuOpen(false)}
           >
             <Image
               alt="Kerala Jewellers Logo"
@@ -354,45 +363,68 @@ export default function Navbar({
               style={{ width: "auto", height: "auto" }}
             />
           </Link>
-          <nav className={styles.mobileNav} role="navigation" id="mobileMenu">
-            <Link className={styles.mobileMenuLink} href="/products">
-              Gold
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/products/silver">
-              Silver
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/products/diamond">
-              Diamond
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/coming-soon">
-              Platinum
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/about">
-              About Us
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/thanga-mazhai">
-              Thanga Mazhai
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/swarnavarsha">
-              Swarnavarsha
-            </Link>
-            <Link className={styles.mobileMenuLink} href="/contact">
-              Contact
-            </Link>
-          </nav>
           <div className={styles.headerRight}>
-            <label
-              htmlFor="mobile-menu-toggle"
-              className={styles.mobileMenuToggle}
-              data-kj-hamburger
+            <button
+              className={`${styles.mobileMenuToggle} ${mobileMenuOpen ? styles.isOpen : ""}`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
             >
               <span className={styles.mobileMenuToggle__line}></span>
               <span className={styles.mobileMenuToggle__line}></span>
               <span className={styles.mobileMenuToggle__line}></span>
-            </label>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Nav Overlay */}
+        <div 
+          className={`${styles.mobileNavOverlay} ${mobileMenuOpen ? styles.isOpen : ""}`} 
+          onClick={() => setMobileMenuOpen(false)} 
+        />
+
+        {/* Mobile Nav Menu */}
+        <nav className={`${styles.mobileNav} ${mobileMenuOpen ? styles.isOpen : ""}`} role="navigation" id="mobileMenu">
+          <MobileAccordion
+            menu={MEGA_MENUS.gold}
+            categories={navCategories.gold || []}
+            onNavigate={() => setMobileMenuOpen(false)}
+            isOpen={!!openAccordions["gold"]}
+            toggle={() => setOpenAccordions(prev => ({ ...prev, gold: !prev.gold }))}
+          />
+          <MobileAccordion
+            menu={MEGA_MENUS.silver}
+            categories={navCategories.silver || []}
+            onNavigate={() => setMobileMenuOpen(false)}
+            isOpen={!!openAccordions["silver"]}
+            toggle={() => setOpenAccordions(prev => ({ ...prev, silver: !prev.silver }))}
+          />
+          <MobileAccordion
+            menu={MEGA_MENUS.diamond}
+            categories={navCategories.diamond || []}
+            onNavigate={() => setMobileMenuOpen(false)}
+            isOpen={!!openAccordions["diamond"]}
+            toggle={() => setOpenAccordions(prev => ({ ...prev, diamond: !prev.diamond }))}
+          />
+          <Link className={styles.mobileMenuLink} href="/coming-soon" onClick={() => setMobileMenuOpen(false)}>
+            Platinum
+          </Link>
+          <Link className={styles.mobileMenuLink} href="/about" onClick={() => setMobileMenuOpen(false)}>
+            About Us
+          </Link>
+          <MobileAccordion
+            menu={MEGA_MENUS.scheme}
+            categories={[]}
+            textOnly
+            hideViewAll
+            onNavigate={() => setMobileMenuOpen(false)}
+            isOpen={!!openAccordions["scheme"]}
+            toggle={() => setOpenAccordions(prev => ({ ...prev, scheme: !prev.scheme }))}
+          />
+          <Link className={styles.mobileMenuLink} href="/contact" onClick={() => setMobileMenuOpen(false)}>
+            Contact
+          </Link>
+        </nav>
       </div>
     </header>
   );
@@ -486,6 +518,72 @@ function MegaMenuItem({
             )}
           </div>
         </nav>
+      </div>
+    </div>
+  );
+}
+
+function MobileAccordion({
+  menu,
+  categories,
+  textOnly,
+  hideViewAll,
+  onNavigate,
+  isOpen,
+  toggle,
+}: {
+  menu: { href: string; label: string; image?: string; links?: string[]; schemeHrefs?: string[]; linkLabels?: string[] };
+  categories?: Array<{ name: string; slug: string }>;
+  textOnly?: boolean;
+  hideViewAll?: boolean;
+  onNavigate: () => void;
+  isOpen: boolean;
+  toggle: () => void;
+}) {
+  const links: string[] =
+    "links" in menu && menu.links
+      ? (menu.links as string[])
+      : (categories || []).map((c) => c.name);
+  const linkLabels =
+    "linkLabels" in menu && menu.linkLabels
+      ? (menu.linkLabels as string[])
+      : undefined;
+
+  return (
+    <div className={styles.mobileAccordion}>
+      <button className={`${styles.mobileAccordionToggle} ${isOpen ? styles.isOpen : ""}`} onClick={toggle}>
+        <span>{menu.label}</span>
+        <svg
+          className={`${styles.mobileAccordionIcon} ${isOpen ? styles.isOpen : ""}`}
+          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div className={`${styles.mobileAccordionContent} ${isOpen ? styles.isOpen : ""}`}>
+        <div className={styles.mobileAccordionContentInner}>
+          {links.map((link, i) => {
+            const href =
+              textOnly && menu.href === "#"
+                ? "schemeHrefs" in menu
+                  ? (menu as { schemeHrefs?: string[] }).schemeHrefs?.[i] || "#"
+                  : "#"
+                : categories?.[i]
+                  ? `${menu.href}?category=${encodeURIComponent(categories[i].slug)}`
+                  : `${menu.href}?category=${encodeURIComponent(link)}`;
+            const label = linkLabels ? linkLabels[i] : link;
+            return (
+              <Link key={link + i} className={styles.mobileAccordionLink} href={href} onClick={onNavigate}>
+                {label}
+              </Link>
+            );
+          })}
+          {!hideViewAll && (
+            <Link className={styles.mobileAccordionViewAll} href={menu.href} onClick={onNavigate}>
+              View All {menu.label}
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ import {
   sendOtpEmail,
 } from "@/lib/auth/email";
 
+const SHARED_EMAIL = "keralajewellersadmin@gmail.com";
+
 export async function POST(request: Request) {
   const body = await request.json();
   const { identifier, password } = body as {
@@ -17,7 +19,7 @@ export async function POST(request: Request) {
 
   if (!identifier || !password) {
     return NextResponse.json(
-      { error: "Email/username and password are required" },
+      { error: "Email or username and password are required" },
       { status: 400 },
     );
   }
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
   const userRole = user.role as string;
   const userEmail = user.email as string;
 
+  // Role-based login method enforcement
   if (userRole === "super-admin" && matchedVia !== "email") {
     return NextResponse.json(
       { error: "Please log in with your email address" },
@@ -84,9 +87,9 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send OTP via email
+    // Send OTP to shared Gmail (not user's personal email)
     try {
-      await sendOtpEmail(userEmail, otp);
+      await sendOtpEmail(SHARED_EMAIL, otp);
     } catch (err) {
       console.error("Failed to send OTP email:", err);
       return NextResponse.json(
@@ -95,14 +98,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Mask email for display
-    const [local, domain] = userEmail.split("@");
-    const masked = `${local[0]}***@${domain}`;
-
     return NextResponse.json({
       success: true,
       requiresOtp: true,
-      maskedEmail: masked,
+      maskedEmail: "k***@gmail.com",
       userId: loginResult.user.id,
     });
   } catch {

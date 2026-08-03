@@ -1,4 +1,4 @@
-/* Kerala Jewellers — Admin Panel Theme */
+﻿/* Kerala Jewellers ΓÇö Admin Panel Theme */
 
 :root {
   --kj-admin-black: #0c0e12;
@@ -31,71 +31,8 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Login Page ─── */
 
-.login.template-minimal {
-  width: 100vw;
-  max-width: none;
-  min-height: 100dvh;
-  padding: 40px 20px;
-  background: var(--kj-admin-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login.template-minimal .template-minimal__wrap {
-  width: 100%;
-  max-width: 420px;
-  min-height: auto;
-  margin: 0;
-  padding: 48px 40px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.06),
-    0 1px 4px rgba(0, 0, 0, 0.04);
-  border: 1px solid var(--kj-admin-line);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.login.template-minimal main {
-  width: 100%;
-  max-width: 100%;
-}
-
-.login__brand {
-  margin-bottom: 32px;
-  display: flex;
-  justify-content: center;
-}
-
-.login__brand img {
-  width: 56px !important;
-  height: 56px !important;
-  border-radius: 50%;
-  object-fit: contain;
-}
-
-.login__brand + *,
-.login.template-minimal .template-minimal__wrap > *:not(.login__brand) {
-  width: 100%;
-}
-
-@media (max-width: 480px) {
-  .login.template-minimal {
-    padding: 20px 16px;
-  }
-
-  .login.template-minimal .template-minimal__wrap {
-    padding: 32px 24px;
-    border-radius: 12px;
-  }
-}
-
-/* ─── Sidebar ─── */
+/* ΓöÇΓöÇΓöÇ Sidebar ΓöÇΓöÇΓöÇ */
 
 .nav {
   width: 260px;
@@ -262,7 +199,7 @@ body,
   color: #fff;
 }
 
-/* ─── Header ─── */
+/* ΓöÇΓöÇΓöÇ Header ΓöÇΓöÇΓöÇ */
 
 .app-header,
 .doc-header {
@@ -284,7 +221,7 @@ body,
   color: var(--kj-admin-ink);
 }
 
-/* ─── Cards & Panels ─── */
+/* ΓöÇΓöÇΓöÇ Cards & Panels ΓöÇΓöÇΓöÇ */
 
 .collection-list__wrap,
 .collection-edit__form,
@@ -315,7 +252,7 @@ body,
   padding: 14px;
 }
 
-/* ─── Table ─── */
+/* ΓöÇΓöÇΓöÇ Table ΓöÇΓöÇΓöÇ */
 
 .table {
   overflow: hidden;
@@ -343,7 +280,7 @@ body,
   border-color: #f0f0f0;
 }
 
-/* ─── Buttons ─── */
+/* ΓöÇΓöÇΓöÇ Buttons ΓöÇΓöÇΓöÇ */
 
 .btn,
 button,
@@ -374,7 +311,7 @@ button.btn--style-secondary,
   color: var(--kj-admin-ink);
 }
 
-/* ─── Pills & Status ─── */
+/* ΓöÇΓöÇΓöÇ Pills & Status ΓöÇΓöÇΓöÇ */
 
 .pill,
 .status,
@@ -385,7 +322,7 @@ button.btn--style-secondary,
   color: #8a6e2e;
 }
 
-/* ─── Form Fields ─── */
+/* ΓöÇΓöÇΓöÇ Form Fields ΓöÇΓöÇΓöÇ */
 
 .field-type input,
 .field-type textarea,
@@ -408,7 +345,7 @@ button.btn--style-secondary,
   color: var(--kj-admin-muted);
 }
 
-/* ─── Tabs ─── */
+/* ΓöÇΓöÇΓöÇ Tabs ΓöÇΓöÇΓöÇ */
 
 .tabs-field__tabs {
   padding: 6px;
@@ -427,14 +364,14 @@ button.btn--style-secondary,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* ─── Upload ─── */
+/* ΓöÇΓöÇΓöÇ Upload ΓöÇΓöÇΓöÇ */
 
 .upload {
   background: #fdfcfa;
   border-color: var(--kj-admin-line);
 }
 
-/* ─── Responsive ─── */
+/* ΓöÇΓöÇΓöÇ Responsive ΓöÇΓöÇΓöÇ */
 
 @media (min-width: 1024px) {
   .template-default {

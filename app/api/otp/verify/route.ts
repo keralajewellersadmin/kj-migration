@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import config from "@payload-config";
 import { getPayload } from "payload";
+import crypto from "crypto";
+
+function hashOtp(code: string): string {
+  return crypto.createHash("sha256").update(code).digest("hex");
+}
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
@@ -67,7 +72,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (storedOtp !== code) {
+  if (storedOtp !== hashOtp(code)) {
     return NextResponse.json(
       { error: "Invalid verification code" },
       { status: 400 },

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./CustomLogin.module.css";
 
 type LoginStep = "login" | "otp" | "forgot" | "reset-sent";
@@ -76,7 +77,7 @@ export default function CustomLogin() {
 
       if (data.token) {
         document.cookie = `payload-token=${data.token}; path=/; max-age=${60 * 60 * 8}`;
-        window.location.href = "/admin";
+        window.location.href = `${ADMIN_PATH}`;
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -141,6 +142,7 @@ export default function CustomLogin() {
             height={100}
             className={styles.logo}
             priority
+            unoptimized
           />
           <h1 className={styles.wordmark}>Kerala Jewellers</h1>
           <div className={styles.divider} />

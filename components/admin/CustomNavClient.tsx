@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./CustomNav.module.css";
 
 type IconName =
@@ -35,36 +36,36 @@ type NavSection = {
 
 const sections: NavSection[] = [
   {
-    items: [{ href: "/admin", icon: "dashboard", label: "Dashboard" }],
+    items: [{ href: `${ADMIN_PATH}`, icon: "dashboard", label: "Dashboard" }],
   },
   {
     label: "Catalog",
     items: [
-      { href: "/admin/collections/products", icon: "box", label: "Products" },
+      { href: `${ADMIN_PATH}/collections/products`, icon: "box", label: "Products" },
       {
-        href: "/admin/collections/categories",
+        href: `${ADMIN_PATH}/collections/categories`,
         icon: "category",
         label: "Categories",
       },
       {
-        href: "/admin/collections/products?where[featured][equals]=true",
+        href: `${ADMIN_PATH}/collections/products?where[featured][equals]=true`,
         icon: "folder",
         label: "Collections",
       },
-      { href: "/admin/collections/media", icon: "image", label: "Media" },
+      { href: `${ADMIN_PATH}/collections/media`, icon: "image", label: "Media" },
     ],
   },
   {
     label: "Content",
     items: [
-      { href: "/admin/collections/legal-pages", icon: "page", label: "Pages" },
+      { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Pages" },
       {
-        href: "/admin/globals/site-settings",
+        href: `${ADMIN_PATH}/globals/site-settings`,
         icon: "banner",
         label: "Banners",
       },
       {
-        href: "/admin/globals/site-settings",
+        href: `${ADMIN_PATH}/globals/site-settings`,
         icon: "settings",
         label: "Site Settings",
       },
@@ -74,7 +75,7 @@ const sections: NavSection[] = [
     label: "Communication",
     items: [
       {
-        href: "/admin/collections/inquiries",
+        href: `${ADMIN_PATH}/collections/inquiries`,
         icon: "mail",
         label: "Inquiries",
       },
@@ -83,9 +84,9 @@ const sections: NavSection[] = [
   {
     label: "System",
     items: [
-      { href: "/admin/collections/admin-users", icon: "users", label: "Users" },
+      { href: `${ADMIN_PATH}/collections/admin-users`, icon: "users", label: "Users" },
       {
-        href: "/admin/collections/audit-logs",
+        href: `${ADMIN_PATH}/collections/audit-logs`,
         icon: "activity",
         label: "Activity Logs",
       },
@@ -217,7 +218,7 @@ function isActive(
 ) {
   const [hrefPathname, hrefQuery] = href.split("?");
 
-  if (hrefPathname === "/admin") return pathname === "/admin";
+  if (hrefPathname === ADMIN_PATH) return pathname === ADMIN_PATH;
 
   const pathMatches =
     pathname === hrefPathname || pathname.startsWith(`${hrefPathname}/`);
@@ -315,7 +316,7 @@ function NavContent({
         className={`nav ${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ""}`}
       >
         <Link
-          href="/admin"
+          href={`${ADMIN_PATH}`}
           className={styles.brand}
           aria-label="Kerala Jewellers dashboard"
         >
@@ -325,6 +326,7 @@ function NavContent({
             width={118}
             height={42}
             priority
+            unoptimized
           />
         </Link>
 
@@ -369,7 +371,7 @@ function NavContent({
             <span>{role}</span>
           </div>
           <Link
-            href="/admin/logout"
+            href={`${ADMIN_PATH}/logout`}
             className={styles.logoutBtn}
             aria-label="Logout"
           >

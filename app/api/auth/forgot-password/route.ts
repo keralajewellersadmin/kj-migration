@@ -7,9 +7,11 @@ import {
   hashValue,
   sendPasswordResetEmail,
 } from "@/lib/auth/email";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://kj-migration.vercel.app";
+const SHARED_EMAIL = "keralajewellersadmin@gmail.com";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -76,9 +78,9 @@ export async function POST(request: Request) {
   });
 
   // Send reset email
-  const resetUrl = `${SITE_URL}/admin/reset-password?token=${rawToken}`;
+  const resetUrl = `${SITE_URL}${ADMIN_PATH}/reset-password?token=${rawToken}`;
   try {
-    await sendPasswordResetEmail(user.email as string, resetUrl);
+    await sendPasswordResetEmail(SHARED_EMAIL, resetUrl);
   } catch (err) {
     console.error("Failed to send reset email:", err);
   }

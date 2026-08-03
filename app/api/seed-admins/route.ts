@@ -4,24 +4,11 @@ import { getPayload } from "payload";
 
 const ADMINS = [
   {
-    email: "superadmin@keralajewellers.in",
+    email: "keralajewellersadmin@gmail.com",
     password: "SuperAdmin@12345",
     name: "Super Admin",
     role: "super-admin" as const,
-  },
-  {
-    email: "admin@keralajewellers.in",
-    password: "AdminMgr@12345",
-    name: "Admin Manager",
-    role: "admin" as const,
-    username: "admin",
-  },
-  {
-    email: "enquiry@keralajewellers.in",
-    password: "EnquiryMgr@12345",
-    name: "Enquiry Manager",
-    role: "enquiry-manager" as const,
-    username: "enquiry",
+    username: "superadmin",
   },
 ];
 
@@ -41,9 +28,10 @@ export async function POST(request: Request) {
 
   for (const admin of ADMINS) {
     try {
+      // Delete existing account with same username
       const existing = await payload.find({
         collection: "admin-users",
-        where: { email: { equals: admin.email } },
+        where: { username: { equals: admin.username } },
         limit: 1,
         overrideAccess: true,
       });
@@ -64,20 +52,20 @@ export async function POST(request: Request) {
           password: admin.password,
           name: admin.name,
           role: admin.role,
+          username: admin.username,
           isActive: true,
-          ...("username" in admin ? { username: admin.username } : {}),
         } as never,
       });
 
       results.push({
-        email: admin.email,
+        username: admin.username,
         role: admin.role,
         id: created.id,
         created: true,
       });
     } catch (err) {
       results.push({
-        email: admin.email,
+        username: admin.username,
         role: admin.role,
         error: String(err),
       });

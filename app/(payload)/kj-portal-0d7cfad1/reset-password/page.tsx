@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -32,7 +33,7 @@ export default function ResetPasswordPage() {
             This password reset link is invalid or missing.
           </p>
           <Link
-            href="/admin/login"
+            href={`${ADMIN_PATH}/login`}
             style={{
               color: "#991f23",
               marginTop: "1rem",
@@ -110,7 +111,7 @@ export default function ResetPasswordPage() {
             password.
           </p>
           <Link
-            href="/admin/login"
+            href={`${ADMIN_PATH}/login`}
             style={{
               display: "inline-block",
               background: "#9f1b1f",
@@ -261,7 +262,7 @@ export default function ResetPasswordPage() {
 
         <p style={{ textAlign: "center", marginTop: "1.5rem" }}>
           <Link
-            href="/admin/login"
+            href={`${ADMIN_PATH}/login`}
             style={{ color: "#9f1b1f", fontSize: "0.9rem" }}
           >
             Back to Login

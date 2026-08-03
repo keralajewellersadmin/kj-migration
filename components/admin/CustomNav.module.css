@@ -15,8 +15,11 @@
     sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
-  z-index: 50;
+  z-index: 9999;
   transition: transform 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .brand {

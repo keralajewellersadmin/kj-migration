@@ -246,7 +246,7 @@ export default async function AboutPage() {
               <Image
                 src={
                   aboutPage.ventures.image ||
-                  "/assets/images/66ab51b4545fb122260daa62_Rectangle%20343%20(2).png"
+                  "https://res.cloudinary.com/htl6k8cd/image/upload/v1785693889/kerala-jewellers/banners/66ab51b4545fb122260daa62_Rectangle%20343%20%282%29.png"
                 }
                 alt={
                   aboutPage.ventures.alt ||

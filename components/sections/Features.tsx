@@ -188,7 +188,7 @@ export default function Features({
                       alt={feature.alt || ""}
                       className={styles.image}
                       fill
-                      sizes="(max-width: 991px) 285px, 210px"
+                      sizes="(max-width: 991px) 340px, 200px"
                       loading="lazy"
                     />
                   </div>

@@ -32,7 +32,7 @@ export default function ProductGrid({
         limit: "24",
       });
       if (category) params.set("category", category);
-      const res = await fetch(`/api/products?${params}`);
+      const res = await fetch(`/api/frontend-products?${params}`);
       const data = await res.json();
       setProducts((prev) => [...prev, ...data.products]);
       setHasMore(data.hasNextPage);

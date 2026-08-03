@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import config from "@payload-config";
 import { getPayload } from "payload";
-import { Resend } from "resend";
 import crypto from "crypto";
+import { sendEmail } from "../../../../lib/auth/gmail";
+
+const SHARED_EMAIL = "keralajewellersadmin@gmail.com";
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
@@ -24,6 +26,10 @@ function generateOtp(): string {
   return crypto.randomInt(100000, 999999).toString();
 }
 
+function hashOtp(code: string): string {
+  return crypto.createHash("sha256").update(code).digest("hex");
+}
+
 export async function POST(request: Request) {
   const payload = await getPayload({ config });
 
@@ -38,28 +44,26 @@ export async function POST(request: Request) {
   }
 
   const userId = decoded.id as string | number;
-  const email = decoded.email as string;
 
   const otp = generateOtp();
+  const otpHash = hashOtp(otp);
   const expires = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
 
   await payload.update({
     collection: "admin-users",
     id: userId,
     data: {
-      emailOtp: otp,
+      emailOtp: otpHash,
       emailOtpExpires: expires,
     } as never,
     overrideAccess: true,
   });
 
   // Send OTP via email
-  if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
+  if (process.env.GMAIL_OTP_SENDER_EMAIL && process.env.GMAIL_OTP_SENDER_APP_PASSWORD) {
     try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL,
-        to: email,
+      await sendEmail({
+        to: SHARED_EMAIL,
         subject: "Kerala Jewellers Admin — Login Verification Code",
         html: `
           <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; padding: 2rem;">

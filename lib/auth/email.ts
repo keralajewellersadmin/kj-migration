@@ -1,11 +1,5 @@
-import { Resend } from "resend";
 import crypto from "crypto";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL || "keralajewellersadmin@gmail.com";
-const FROM_NAME = "Kerala Jewellers";
+import { sendEmail } from "./gmail";
 
 export function generateOtp(): string {
   return crypto.randomInt(100000, 999999).toString();
@@ -30,8 +24,7 @@ export async function sendOtpEmail(toEmail: string, code: string) {
   }
 
   try {
-    await resend.emails.send({
-      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+    await sendEmail({
       to: toEmail,
       subject: `Your login code: ${code}`,
       html: `
@@ -71,8 +64,7 @@ export async function sendPasswordResetEmail(
   }
 
   try {
-    await resend.emails.send({
-      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+    await sendEmail({
       to: toEmail,
       subject: "Reset your Kerala Jewellers CMS password",
       html: `
