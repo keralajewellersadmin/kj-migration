@@ -93,8 +93,8 @@ const PRODUCT_SQL_BASE = `
          c.name AS category_name,
          m.url AS image_url, m.alt AS image_alt
   FROM products p
-  LEFT JOIN categories c ON p.category = c.id
-  LEFT JOIN media m ON p.image = m.id
+  LEFT JOIN categories c ON p.category_id = c.id
+  LEFT JOIN media m ON p.image_id = m.id
 `;
 
 function isPostgres(): boolean {
