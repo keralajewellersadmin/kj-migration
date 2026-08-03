@@ -561,40 +561,59 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   },
 };
 
-async function enrichEmptyArrays(data: SiteSettingsData): Promise<SiteSettingsData> {
-  if (data.heroSlides.length > 0 && data.features.length > 0 && data.reviews.length > 0) {
-    return data;
-  }
+let _ssDbClient: Client | null = null;
+async function getSsDbClient(): Promise<Client> {
+  if (_ssDbClient) return _ssDbClient;
   const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
-  if (!dbUri || !dbUri.startsWith("postgresql")) return data;
+  if (!dbUri || !dbUri.startsWith("postgresql")) throw new Error("No postgres DB");
   const client = new Client({ connectionString: dbUri, ssl: { rejectUnauthorized: false } });
+  await client.connect();
+  _ssDbClient = client;
+  return client;
+}
+
+async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> {
   try {
-    await client.connect();
+    const client = await getSsDbClient();
     const ss = await client.query(`SELECT id FROM site_settings LIMIT 1`);
     const ssId = ss.rows[0]?.id;
     if (!ssId) return data;
-    const enriched = { ...data };
-    if (enriched.heroSlides.length === 0) {
-      const rows = await client.query(
+
+    const [heroRes, circleBannerRes, imageBannerRes, heritageRes, reviewsRes, catsRes] = await Promise.all([
+      client.query(
         `SELECT h.heading, h.description, h.cta_text, h.cta_href, m.url as image_url
          FROM site_settings_hero_slides h LEFT JOIN media m ON h.image_id = m.id
-         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId],
-      );
-      enriched.heroSlides = rows.rows.map((r: any) => ({
+         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]),
+      client.query(
+        `SELECT b.title, b.description, b.alt, m.url as image_url
+         FROM site_settings_blocks_circle_banner b LEFT JOIN media m ON b.image_id = m.id
+         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]),
+      client.query(
+        `SELECT b.alt, b.title, b.cta_text, b.href, m.url as image_url
+         FROM site_settings_blocks_image_banner b LEFT JOIN media m ON b.image_id = m.id
+         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]),
+      client.query(
+        `SELECT h.heading, h.description, m.url as image_url
+         FROM site_settings_heritage h LEFT JOIN media m ON h.image_id = m.id
+         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]),
+      client.query(
+        `SELECT text, author, location FROM site_settings_reviews
+         WHERE _parent_id = $1 ORDER BY _order`, [ssId]),
+      client.query(
+        `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
+         WHERE _parent_id = $1 ORDER BY _order`, [ssId]),
+    ]);
+
+    return {
+      ...data,
+      heroSlides: heroRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
         image: r.image_url || "",
-      }));
-    }
-    if (enriched.features.length === 0) {
-      const rows = await client.query(
-        `SELECT b.title, b.description, b.alt, m.url as image_url
-         FROM site_settings_blocks_circle_banner b LEFT JOIN media m ON b.image_id = m.id
-         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId],
-      );
-      enriched.features = rows.rows.map((r: any) => ({
+      })),
+      features: circleBannerRes.rows.map((r: any) => ({
         blockType: "circleBanner" as const,
         title: r.title || "",
         description: r.description || "",
@@ -602,65 +621,36 @@ async function enrichEmptyArrays(data: SiteSettingsData): Promise<SiteSettingsDa
         srcSet: "",
         sizes: "(max-width: 479px) 81vw, (max-width: 767px) 49vw, (max-width: 991px) 356px, 462px",
         alt: r.alt || "",
-      }));
-    }
-    if (enriched.banners.length === 0) {
-      const rows = await client.query(
-        `SELECT b.alt, b.title, b.cta_text, b.href, m.url as image_url
-         FROM site_settings_blocks_image_banner b LEFT JOIN media m ON b.image_id = m.id
-         WHERE b._parent_id = $1 ORDER BY b._order`, [ssId],
-      );
-      enriched.banners = rows.rows.map((r: any) => ({
+      })),
+      banners: imageBannerRes.rows.map((r: any) => ({
         blockType: "imageBanner" as const,
         image: r.image_url || "",
         alt: r.alt || "",
         title: r.title || "",
         ctaText: r.cta_text || "",
         href: r.href || "",
-      }));
-    }
-    if (enriched.heritage.length === 0) {
-      const rows = await client.query(
-        `SELECT h.heading, h.description, m.url as image_url
-         FROM site_settings_heritage h LEFT JOIN media m ON h.image_id = m.id
-         WHERE h._parent_id = $1 ORDER BY h._order`, [ssId],
-      );
-      enriched.heritage = rows.rows.map((r: any) => ({
+      })),
+      heritage: heritageRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
         image: r.image_url || "",
         srcSet: "",
-      }));
-    }
-    if (enriched.reviews.length === 0) {
-      const rows = await client.query(
-        `SELECT text, author, location FROM site_settings_reviews
-         WHERE _parent_id = $1 ORDER BY _order`, [ssId],
-      );
-      enriched.reviews = rows.rows.map((r: any) => ({
+      })),
+      reviews: reviewsRes.rows.map((r: any) => ({
         text: r.text || "",
         author: r.author || "",
         location: r.location || "",
-      }));
-    }
-    if (enriched.categories.length === 0) {
-      const rows = await client.query(
-        `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
-         WHERE _parent_id = $1 ORDER BY _order`, [ssId],
-      );
-      enriched.categories = rows.rows.map((r: any) => ({
+      })),
+      categories: catsRes.rows.map((r: any) => ({
         title: r.title || "",
         description: r.description || "",
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
         variant: r.variant || "",
-      }));
-    }
-    return enriched;
+      })),
+    };
   } catch {
     return data;
-  } finally {
-    await client.end();
   }
 }
 
@@ -669,7 +659,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
   try {
     const settings = await payload.findGlobal({
       slug: "site-settings",
-      depth: 1,
+      depth: 0,
     });
     const raw = {
       ...DEFAULT_SETTINGS,
@@ -689,85 +679,12 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         raw.uiFont || undefined,
       ),
       fontPairing: raw.fontPairing || "classic-luxury",
-      heroSlides: (raw.heroSlides || []).map((s: PayloadDoc) => ({
-        heading: s.heading || "",
-        description: s.description || "",
-        ctaText: s.ctaText || "",
-        ctaHref: s.ctaHref || "",
-        image: resolveMediaUrl(s.image),
-      })),
-      banners: (raw.banners || []).map((b: PayloadDoc) => {
-        if (b.blockType === "imageBanner") {
-          return {
-            blockType: "imageBanner" as const,
-            image: resolveMediaUrl(b.image),
-            alt: b.alt || "",
-            title: b.title || "",
-            ctaText: b.ctaText || "",
-            href: b.href || "",
-          };
-        }
-        if (b.blockType === "textBanner") {
-          return {
-            blockType: "textBanner" as const,
-            heading: b.heading || "",
-            description: b.description || "",
-            ctaText: b.ctaText || "",
-            ctaLink: b.ctaLink || "",
-            bgColor: b.bgColor || "",
-          };
-        }
-        // Legacy array format fallback
-        return {
-          blockType: "imageBanner" as const,
-          image: resolveMediaUrl(b.image),
-          alt: b.alt || "",
-          title: b.title || "",
-          ctaText: b.ctaText || "",
-          href: b.href || "",
-        };
-      }),
-      features: (raw.features || []).map((f: PayloadDoc) => {
-        if (f.blockType === "circleBanner") {
-          return {
-            blockType: "circleBanner" as const,
-            title: f.title || "",
-            description: f.description || "",
-            image: resolveMediaUrl(f.image),
-            srcSet: "",
-            sizes:
-              "(max-width: 479px) 81vw, (max-width: 767px) 49vw, (max-width: 991px) 356px, 462px",
-            alt: f.alt || "",
-          };
-        }
-        if (f.blockType === "rectangleBanner") {
-          return {
-            blockType: "rectangleBanner" as const,
-            heading: f.heading || "",
-            description: f.description || "",
-            image: resolveMediaUrl(f.image),
-            ctaText: f.ctaText || "Explore",
-            ctaLink: f.ctaLink || "/products",
-            alt: f.alt || "",
-          };
-        }
-        // Legacy array format fallback
-        return {
-          blockType: "circleBanner" as const,
-          title: f.title || "",
-          description: f.description || "",
-          image: resolveMediaUrl(f.image),
-          srcSet: f.srcSet || "",
-          sizes: f.sizes || "",
-          alt: f.alt || "",
-        };
-      }),
-      heritage: (raw.heritage || []).map((h: PayloadDoc) => ({
-        heading: h.heading || "",
-        description: h.description || "",
-        image: resolveMediaUrl(h.image),
-        srcSet: h.srcSet || "",
-      })),
+      heroSlides: [],
+      banners: [],
+      features: [],
+      heritage: [],
+      reviews: [],
+      categories: [],
       aboutPage: (() => {
         const ap = raw.aboutPage as PayloadDoc | undefined;
         if (!ap) return DEFAULT_SETTINGS.aboutPage;
@@ -828,7 +745,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         };
       })(),
     };
-    return enrichEmptyArrays(result);
+    return loadArrayData(result);
   } catch {
     return DEFAULT_SETTINGS;
   }
