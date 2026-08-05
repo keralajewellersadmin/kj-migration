@@ -450,6 +450,16 @@ const Product: CollectionConfig = {
         readOnly: true,
         description: "Auto-generated on creation — frozen after save.",
       },
+      hooks: {
+        beforeChange: [
+          ({ operation, siblingData, req }) => {
+            if (operation === "update" && req.context?.skipSlugLock) return;
+            if (operation === "update" && siblingData && "slug" in siblingData) {
+              throw new Error("Slug cannot be changed after creation.");
+            }
+          },
+        ],
+      },
     },
     { name: "code", type: "text" },
     { name: "metal", type: "select", options: [...metalSelect.options] },
