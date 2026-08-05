@@ -1,14 +1,29 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Navigation — Header to Pages', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-  });
+async function waitForHydration(page: import('@playwright/test').Page) {
+  await page.locator('a[aria-label="Kerala Jewellers Home"]').first().waitFor({ state: 'visible', timeout: 20000 });
+  await page.waitForTimeout(1000);
+}
 
+test.describe('Navigation — Header to Pages', () => {
   test('can navigate from home to /products and back', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await waitForHydration(page);
+      await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
+      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
+      await page.locator('#mobileMenu button').filter({ hasText: 'Gold' }).click();
+      await page.waitForTimeout(500);
+      await page.locator('#mobileMenu a[class*="AccordionViewAll"]').filter({ hasText: 'View All Gold' }).click({ force: true });
+      await expect(page).toHaveURL(/\/products/);
+      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
+      await logo.click();
+      await expect(page).toHaveURL('/');
+      return;
+    }
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await expect(page).toHaveURL(/\/products/);
     const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').first();
     await logo.click();
@@ -17,7 +32,20 @@ test.describe('Navigation — Header to Pages', () => {
 
   test('can navigate from home to /about and back via logo', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await waitForHydration(page);
+      await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
+      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
+      await page.locator('#mobileMenu a[href="/about"]').click();
+      await expect(page).toHaveURL(/\/about/);
+      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
+      await logo.click();
+      await expect(page).toHaveURL('/');
+      return;
+    }
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await page.locator('a[href="/about"]').first().click();
     await expect(page).toHaveURL(/\/about/);
     await page.locator('a[aria-label="Kerala Jewellers Home"]').first().click();
@@ -26,7 +54,20 @@ test.describe('Navigation — Header to Pages', () => {
 
   test('can navigate from home to /contact and back via logo', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await waitForHydration(page);
+      await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
+      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
+      await page.locator('#mobileMenu a[href="/contact"]').click();
+      await expect(page).toHaveURL(/\/contact/);
+      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
+      await logo.click();
+      await expect(page).toHaveURL('/');
+      return;
+    }
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await page.locator('a[href="/contact"]').first().click();
     await expect(page).toHaveURL(/\/contact/);
     await page.locator('a[aria-label="Kerala Jewellers Home"]').first().click();
@@ -37,6 +78,7 @@ test.describe('Navigation — Header to Pages', () => {
 test.describe('Navigation — Product Breadcrumbs', () => {
   test('product detail breadcrumb links to products listing', async ({ page }) => {
     await page.goto('/product/bombay-choker', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     const breadcrumb = page.locator('a[href="/products"]').filter({ hasText: 'Products' }).first();
     await expect(breadcrumb).toBeVisible();
     await breadcrumb.click();
@@ -45,7 +87,8 @@ test.describe('Navigation — Product Breadcrumbs', () => {
 
   test('can navigate: home → products → product detail → enquiry', async ({ page }) => {
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
+    await page.locator('a[href^="/product/"]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(1000);
     const firstProduct = page.locator('a[href^="/product/"]').first();
     const href = await firstProduct.getAttribute('href');
     await firstProduct.click();
@@ -58,24 +101,30 @@ test.describe('Navigation — Product Breadcrumbs', () => {
 test.describe('Navigation — Footer Links', () => {
   test('footer Contact Us link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('footer').getByText('Contact Us').click();
+    await waitForHydration(page);
+    const link = page.locator('footer').getByText('Contact Us');
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
     await expect(page).toHaveURL(/\/contact/);
   });
 
   test('footer Privacy Policy link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await page.locator('footer').getByText('Privacy Policy').click();
     await expect(page).toHaveURL(/\/privacy-policy/);
   });
 
   test('footer Blog link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await page.locator('footer').getByText('Blogs').click();
     await expect(page).toHaveURL(/\/blog/);
   });
 
   test('footer Terms link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     await page.locator('footer').getByText('Terms').click();
     await expect(page).toHaveURL(/\/terms-conditions/);
   });
@@ -84,6 +133,7 @@ test.describe('Navigation — Footer Links', () => {
 test.describe('Navigation — Cross-Page Flows', () => {
   test('home → category CTA → products page', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await waitForHydration(page);
     const categoryCTA = page.locator('a').filter({ hasText: 'View Collection' }).first();
     if (await categoryCTA.isVisible()) {
       await categoryCTA.click();
@@ -93,9 +143,11 @@ test.describe('Navigation — Cross-Page Flows', () => {
 
   test('products page → product card → detail page → back to products', async ({ page }) => {
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
+    await page.locator('a[href^="/product/"]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(1000);
     const card = page.locator('a[href^="/product/"]').first();
     await card.click();
+    await expect(page).toHaveURL(/\/product\//);
     await page.waitForTimeout(1000);
     const breadcrumb = page.locator('a[href="/products"]').filter({ hasText: 'Products' }).first();
     await breadcrumb.click();

@@ -5,28 +5,28 @@ import { IMG } from "@/lib/image-urls";
 
 const fallbackProducts = [
   {
-    title: "Antique Idol",
-    category: "Silver",
-    image: IMG.antiqueIdol,
-    srcSet: `${IMG.antiqueIdolP500} 500w, ${IMG.antiqueIdolP800} 800w, ${IMG.antiqueIdolP1080} 1080w, ${IMG.antiqueIdolP1600} 1600w, ${IMG.antiqueIdolP2000} 2000w, ${IMG.antiqueIdol} 2048w`,
-    sizes: "(max-width: 767px) 100vw, (max-width: 991px) 727px, 939px",
-    href: "/product/idols-5",
-  },
-  {
-    title: "Antique Jimmiki",
+    title: "Bombay Choker",
     category: "Gold",
     image: IMG.antiqueJimmiki,
     srcSet: `${IMG.antiqueJimmikiP500} 500w, ${IMG.antiqueJimmikiP800} 800w, ${IMG.antiqueJimmiki} 852w`,
     sizes: "(max-width: 767px) 100vw, (max-width: 991px) 727px, 939px",
-    href: "/product/personalised-ring-2",
+    href: "/product/bombay-choker",
   },
   {
-    title: "Diamond Necklace",
+    title: "Kerala Bangles",
+    category: "Gold",
+    image: IMG.antiqueIdol,
+    srcSet: `${IMG.antiqueIdolP500} 500w, ${IMG.antiqueIdolP800} 800w, ${IMG.antiqueIdolP1080} 1080w, ${IMG.antiqueIdolP1600} 1600w, ${IMG.antiqueIdolP2000} 2000w, ${IMG.antiqueIdol} 2048w`,
+    sizes: "(max-width: 767px) 100vw, (max-width: 991px) 727px, 939px",
+    href: "/product/kerala-bangles",
+  },
+  {
+    title: "Diamond Choker",
     category: "Diamond",
     image: IMG.diamondNecklace,
     srcSet: `${IMG.diamondNecklaceP500} 500w, ${IMG.diamondNecklaceP800} 800w, ${IMG.diamondNecklaceP1080} 1080w, ${IMG.diamondNecklaceP1600} 1600w, ${IMG.diamondNecklaceP2000} 2000w, ${IMG.diamondNecklace} 2048w`,
     sizes: "(max-width: 767px) 100vw, (max-width: 991px) 727px, 939px",
-    href: "/product/necklace-4",
+    href: "/product/diamond-choker-kjd005",
   },
 ];
 

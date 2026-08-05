@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test';
 
+async function openMobileMenu(page: import('@playwright/test').Page) {
+  await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
+  await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
+}
+
 test.describe('Navbar — Desktop', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.locator('a[aria-label="Kerala Jewellers Home"]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(1000);
   });
 
   test('logo links to home', async ({ page }) => {
@@ -20,7 +27,15 @@ test.describe('Navbar — Desktop', () => {
 
   test('Gold dropdown shows categories on hover', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu button').filter({ hasText: 'Gold' }).click();
+      await page.waitForTimeout(500);
+      const goldContent = page.locator('#mobileMenu .mobileAccordionLink, #mobileMenu a[class*="AccordionLink"]');
+      await expect(goldContent.filter({ hasText: 'Bangles' }).first()).toBeVisible();
+      await expect(goldContent.filter({ hasText: 'Necklace' }).first()).toBeVisible();
+      return;
+    }
     const goldDropdown = page.locator('[data-kj-megamenu="gold"]');
     await goldDropdown.locator('..').hover();
     await expect(goldDropdown).toBeVisible();
@@ -32,7 +47,15 @@ test.describe('Navbar — Desktop', () => {
 
   test('Silver dropdown shows categories on hover', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu button').filter({ hasText: 'Silver' }).click();
+      await page.waitForTimeout(500);
+      const silverContent = page.locator('#mobileMenu .mobileAccordionLink, #mobileMenu a[class*="AccordionLink"]');
+      await expect(silverContent.filter({ hasText: 'Bracelets' }).first()).toBeVisible();
+      await expect(silverContent.filter({ hasText: 'Idols' }).first()).toBeVisible();
+      return;
+    }
     const silverDropdown = page.locator('[data-kj-megamenu="silver"]');
     await silverDropdown.locator('..').hover();
     await expect(silverDropdown).toBeVisible();
@@ -42,7 +65,15 @@ test.describe('Navbar — Desktop', () => {
 
   test('Diamond dropdown shows categories on hover', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu button').filter({ hasText: 'Diamond' }).click();
+      await page.waitForTimeout(500);
+      const diamondContent = page.locator('#mobileMenu .mobileAccordionLink, #mobileMenu a[class*="AccordionLink"]');
+      await expect(diamondContent.filter({ hasText: 'Necklace' }).first()).toBeVisible();
+      await expect(diamondContent.filter({ hasText: 'Rings' }).first()).toBeVisible();
+      return;
+    }
     const diamondDropdown = page.locator('[data-kj-megamenu="diamond"]');
     await diamondDropdown.locator('..').hover();
     await expect(diamondDropdown).toBeVisible();
@@ -52,24 +83,40 @@ test.describe('Navbar — Desktop', () => {
 
   test('navigates to /products via Gold link', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
-    const goldDropdown = page.locator('[data-kj-megamenu="gold"]');
-    await goldDropdown.locator('..').locator('a[href="/products"]').first().click();
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu button').filter({ hasText: 'Gold' }).click();
+      await page.waitForTimeout(500);
+      await page.locator('#mobileMenu a[class*="AccordionViewAll"]').filter({ hasText: 'View All Gold' }).click({ force: true });
+      await expect(page).toHaveURL(/\/products/);
+      return;
+    }
+    await page.locator('a[href="/products"]').first().click({ force: true });
     await expect(page).toHaveURL(/\/products/);
   });
 
   test('navigates to /about', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu a[href="/about"]').click();
+      await expect(page).toHaveURL(/\/about/);
+      return;
+    }
     await page.locator('a[href="/about"]').first().click();
-    await expect(page).toHaveURL(/\/about/);
+    await expect(page).toHaveURL(/\/about/, { timeout: 15000 });
   });
 
   test('navigates to /contact', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) { test.skip(); return; }
+    if (viewport && viewport.width < 768) {
+      await openMobileMenu(page);
+      await page.locator('#mobileMenu a[href="/contact"]').click();
+      await expect(page).toHaveURL(/\/contact/, { timeout: 15000 });
+      return;
+    }
     await page.locator('a[href="/contact"]').first().click();
-    await expect(page).toHaveURL(/\/contact/);
+    await expect(page).toHaveURL(/\/contact/, { timeout: 15000 });
   });
 });
 

@@ -34,11 +34,11 @@ test.describe('Product Listing — /products', () => {
 
   test('category filter dropdown opens and shows options', async ({ page }) => {
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
+    await page.waitForSelector('a[href^="/product/"]', { timeout: 15000 });
     const filterTriggers = page.locator('button[class*="trigger"]');
     if (await filterTriggers.count() > 0) {
       await filterTriggers.first().click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
       const options = page.locator('button[class*="option"]');
       expect(await options.count()).toBeGreaterThan(0);
     }
@@ -46,7 +46,7 @@ test.describe('Product Listing — /products', () => {
 
   test('sort filter updates URL params', async ({ page }) => {
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
+    await page.waitForSelector('a[href^="/product/"]', { timeout: 15000 });
     const filterTriggers = page.locator('button[class*="trigger"]');
     if (await filterTriggers.count() > 1) {
       await filterTriggers.nth(1).click();

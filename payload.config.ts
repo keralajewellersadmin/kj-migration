@@ -1260,7 +1260,7 @@ const SiteSettings: GlobalConfig = {
               type: "text",
               admin: {
                 description:
-                  "Comma-separated product slugs (e.g. idols-5,personalised-ring-2,necklace-4)",
+                  "Comma-separated product slugs (e.g. bombay-choker,antique-jimmiki,diamond-choker-kjd005)",
               },
             },
           ],

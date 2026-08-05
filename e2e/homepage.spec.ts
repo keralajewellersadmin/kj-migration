@@ -37,15 +37,19 @@ test.describe('Homepage — Sections', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  test('navigation links are present (desktop)', async ({ page }) => {
+  test('navigation links are present', async ({ page }) => {
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 768) {
-      test.skip();
-      return;
+    const isMobile = viewport && viewport.width < 768;
+    if (isMobile) {
+      await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
+      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 5000 });
+      await expect(page.locator('#mobileMenu a[href="/about"]').first()).toBeVisible();
+      await expect(page.locator('#mobileMenu a[href="/contact"]').first()).toBeVisible();
+    } else {
+      await expect(page.locator('a[href="/products"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/about"]').first()).toBeVisible();
+      await expect(page.locator('a[href="/contact"]').first()).toBeVisible();
     }
-    await expect(page.locator('a[href="/products"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/about"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/contact"]').first()).toBeVisible();
   });
 
   test('categories section renders with collection links', async ({ page }) => {
