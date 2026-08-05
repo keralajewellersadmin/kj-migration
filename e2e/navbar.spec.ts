@@ -8,7 +8,12 @@ async function openMobileMenu(page: import('@playwright/test').Page) {
 test.describe('Navbar — Desktop', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('a[aria-label="Kerala Jewellers Home"]').first().waitFor({ state: 'visible', timeout: 15000 });
+    // On mobile the desktop logo is hidden; use .last() which is the mobile logo
+    const viewport = page.viewportSize();
+    const logo = viewport && viewport.width < 768
+      ? page.locator('a[aria-label="Kerala Jewellers Home"]').last()
+      : page.locator('a[aria-label="Kerala Jewellers Home"]').first();
+    await logo.waitFor({ state: 'visible', timeout: 15000 });
     await page.waitForTimeout(2000);
   });
 

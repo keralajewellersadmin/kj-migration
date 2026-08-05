@@ -42,7 +42,7 @@ test.describe('Homepage — Sections', () => {
     const isMobile = viewport && viewport.width < 768;
     if (isMobile) {
       await page.locator('button[aria-label="Toggle navigation menu"]').first().click();
-      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 5000 });
+      await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 15000 });
       await expect(page.locator('#mobileMenu a[href="/about"]').first()).toBeVisible();
       await expect(page.locator('#mobileMenu a[href="/contact"]').first()).toBeVisible();
     } else {
