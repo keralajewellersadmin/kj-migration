@@ -71,6 +71,11 @@ function mapSqlProduct(row: any): Product {
     row.image_srcset?.split(",")[0]?.trim().split(/\s+/)[0] ||
     row.image_url ||
     "/assets/images/placeholder.svg";
+  const seoGroup = row.seo_title || row.seo_description ? {
+    title: row.seo_title || undefined,
+    description: row.seo_description || undefined,
+    ogImage: row.seo_og_image_url || undefined,
+  } : undefined;
   return {
     slug: row.slug || "",
     name: row.title || "",
@@ -83,18 +88,21 @@ function mapSqlProduct(row: any): Product {
     image: imageUrl,
     imageAlt: row.image_alt || "",
     imageSrcset: row.image_srcset || "",
-    seo: undefined,
+    seo: seoGroup as any,
   };
 }
 
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
          p.description, p.image_srcset,
+         p.seo_title, p.seo_description, p.seo_og_image,
          c.name AS category_name,
-         m.url AS image_url, m.alt AS image_alt
+         m.url AS image_url, m.alt AS image_alt,
+         som.url AS seo_og_image_url
   FROM products p
   LEFT JOIN categories c ON p.category_id = c.id
   LEFT JOIN media m ON p.image_id = m.id
+  LEFT JOIN media som ON p.seo_og_image = som.id
 `;
 
 function isPostgres(): boolean {
@@ -928,12 +936,12 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
             year: t.year || "",
             title: t.title || "",
             text: t.text || "",
-            image: t.image || "",
+            image: resolveMediaUrl(t.image) || "",
           })),
           ventures: {
             heading: ve?.heading || DEFAULT_SETTINGS.aboutPage.ventures.heading,
             subheading: ve?.subheading || "Our Dedicated Wedding Hall",
-            image: ve?.image || "",
+            image: resolveMediaUrl(ve?.image) || "",
             alt: ve?.alt || "",
             bullets: (ve?.bullets || []).map((b: PayloadDoc) => ({
               text: b.text || "",

@@ -1,0 +1,114 @@
+[
+  {
+    "section": "3.1",
+    "test": "Hero heading edit → frontend",
+    "pass": false
+  },
+  {
+    "section": "3.1",
+    "test": "Hero heading revert",
+    "pass": true
+  },
+  {
+    "section": "3.2",
+    "test": "Features section renders",
+    "pass": true
+  },
+  {
+    "section": "5.1",
+    "test": "Blog post create",
+    "pass": false
+  },
+  {
+    "section": "5.2",
+    "test": "Blog appears in listing",
+    "pass": false
+  },
+  {
+    "section": "5.3",
+    "test": "Blog h2 block",
+    "pass": false
+  },
+  {
+    "section": "5.3",
+    "test": "Blog paragraph block",
+    "pass": false
+  },
+  {
+    "section": "5.3",
+    "test": "Blog list block",
+    "pass": false
+  },
+  {
+    "section": "5.4",
+    "test": "Blog excerpt edit",
+    "pass": false
+  },
+  {
+    "section": "5.5",
+    "test": "Blog delete → 404",
+    "pass": true
+  },
+  {
+    "section": "6.1",
+    "test": "Terms edit → frontend",
+    "pass": false
+  },
+  {
+    "section": "6.1",
+    "test": "Terms revert",
+    "pass": true
+  },
+  {
+    "section": "6.3",
+    "test": "Legal slug cannot be changed",
+    "pass": true,
+    "note": "Slug auto-generated, readOnly in admin UI"
+  },
+  {
+    "section": "7.1",
+    "test": "About page renders",
+    "pass": true
+  },
+  {
+    "section": "8.1",
+    "test": "Typography field exists",
+    "pass": true
+  },
+  {
+    "section": "9.1",
+    "test": "Product SEO title",
+    "pass": false
+  },
+  {
+    "section": "9.1",
+    "test": "Product SEO description",
+    "pass": false
+  },
+  {
+    "section": "9.2",
+    "test": "SEO fallback (empty fields)",
+    "pass": true
+  },
+  {
+    "section": "10.1",
+    "test": "Contact page shows branches",
+    "pass": true
+  },
+  {
+    "section": "10.2",
+    "test": "Footer renders on homepage",
+    "pass": true
+  },
+  {
+    "section": "10.4",
+    "test": "Contact page map (hideMaps check)",
+    "pass": true,
+    "note": "Verified via screenshots — check s10-contact-page.png"
+  },
+  {
+    "section": "12.1",
+    "test": "Media collection accessible",
+    "pass": true
+  }
+]
