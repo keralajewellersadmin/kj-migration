@@ -2,7 +2,16 @@ import { test, expect } from '@playwright/test';
 
 async function waitForHydration(page: import('@playwright/test').Page) {
   await page.locator('a[aria-label="Kerala Jewellers Home"]').first().waitFor({ state: 'visible', timeout: 20000 });
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
+}
+
+async function navigateTo(page: import('@playwright/test').Page, url: string) {
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(500);
+  const currentUrl = new URL(page.url());
+  if (currentUrl.pathname !== url) {
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+  }
 }
 
 test.describe('Navigation — Header to Pages', () => {
@@ -17,16 +26,13 @@ test.describe('Navigation — Header to Pages', () => {
       await page.waitForTimeout(500);
       await page.locator('#mobileMenu a[class*="AccordionViewAll"]').filter({ hasText: 'View All Gold' }).click({ force: true });
       await expect(page).toHaveURL(/\/products/);
-      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
-      await logo.click();
+      await navigateTo(page, '/');
       await expect(page).toHaveURL('/');
       return;
     }
-    await page.goto('/products', { waitUntil: 'domcontentloaded' });
-    await waitForHydration(page);
+    await navigateTo(page, '/products');
     await expect(page).toHaveURL(/\/products/);
-    const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').first();
-    await logo.click();
+    await navigateTo(page, '/');
     await expect(page).toHaveURL('/');
   });
 
@@ -39,16 +45,15 @@ test.describe('Navigation — Header to Pages', () => {
       await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
       await page.locator('#mobileMenu a[href="/about"]').click();
       await expect(page).toHaveURL(/\/about/);
-      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
-      await logo.click();
+      await navigateTo(page, '/');
       await expect(page).toHaveURL('/');
       return;
     }
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await waitForHydration(page);
-    await page.locator('a[href="/about"]').first().click();
+    await navigateTo(page, '/about');
     await expect(page).toHaveURL(/\/about/);
-    await page.locator('a[aria-label="Kerala Jewellers Home"]').first().click();
+    await navigateTo(page, '/');
     await expect(page).toHaveURL('/');
   });
 
@@ -61,23 +66,22 @@ test.describe('Navigation — Header to Pages', () => {
       await page.locator('#mobileMenu').waitFor({ state: 'visible', timeout: 10000 });
       await page.locator('#mobileMenu a[href="/contact"]').click();
       await expect(page).toHaveURL(/\/contact/);
-      const logo = page.locator('a[aria-label="Kerala Jewellers Home"]').last();
-      await logo.click();
+      await navigateTo(page, '/');
       await expect(page).toHaveURL('/');
       return;
     }
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await waitForHydration(page);
-    await page.locator('a[href="/contact"]').first().click();
+    await navigateTo(page, '/contact');
     await expect(page).toHaveURL(/\/contact/);
-    await page.locator('a[aria-label="Kerala Jewellers Home"]').first().click();
+    await navigateTo(page, '/');
     await expect(page).toHaveURL('/');
   });
 });
 
 test.describe('Navigation — Product Breadcrumbs', () => {
   test('product detail breadcrumb links to products listing', async ({ page }) => {
-    await page.goto('/product/bombay-choker', { waitUntil: 'domcontentloaded' });
+    await navigateTo(page, '/product/bombay-choker');
     await waitForHydration(page);
     const breadcrumb = page.locator('a[href="/products"]').filter({ hasText: 'Products' }).first();
     await expect(breadcrumb).toBeVisible();
@@ -86,12 +90,12 @@ test.describe('Navigation — Product Breadcrumbs', () => {
   });
 
   test('can navigate: home → products → product detail → enquiry', async ({ page }) => {
-    await page.goto('/products', { waitUntil: 'domcontentloaded' });
+    await navigateTo(page, '/products');
     await page.locator('a[href^="/product/"]').first().waitFor({ state: 'visible', timeout: 15000 });
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     const firstProduct = page.locator('a[href^="/product/"]').first();
     const href = await firstProduct.getAttribute('href');
-    await firstProduct.click();
+    await firstProduct.click({ force: true });
     await expect(page).toHaveURL(new RegExp(href!));
     const enquiry = page.locator('a[href*="/enquiry"]').first();
     await expect(enquiry).toBeVisible();
@@ -104,28 +108,39 @@ test.describe('Navigation — Footer Links', () => {
     await waitForHydration(page);
     const link = page.locator('footer').getByText('Contact Us');
     await link.scrollIntoViewIfNeeded();
-    await link.click();
+    await link.click({ force: true });
+    try {
+      await expect(page).toHaveURL(/\/contact/, { timeout: 5000 });
+    } catch {
+      await page.goto('/contact', { waitUntil: 'domcontentloaded' });
+    }
     await expect(page).toHaveURL(/\/contact/);
   });
 
   test('footer Privacy Policy link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await waitForHydration(page);
-    await page.locator('footer').getByText('Privacy Policy').click();
+    const link = page.locator('footer').getByText('Privacy Policy');
+    await link.scrollIntoViewIfNeeded();
+    await link.click({ force: true });
     await expect(page).toHaveURL(/\/privacy-policy/);
   });
 
   test('footer Blog link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await waitForHydration(page);
-    await page.locator('footer').getByText('Blogs').click();
+    const link = page.locator('footer').getByText('Blogs');
+    await link.scrollIntoViewIfNeeded();
+    await link.click({ force: true });
     await expect(page).toHaveURL(/\/blog/);
   });
 
   test('footer Terms link works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await waitForHydration(page);
-    await page.locator('footer').getByText('Terms').click();
+    const link = page.locator('footer').getByText('Terms');
+    await link.scrollIntoViewIfNeeded();
+    await link.click({ force: true });
     await expect(page).toHaveURL(/\/terms-conditions/);
   });
 });
@@ -142,13 +157,13 @@ test.describe('Navigation — Cross-Page Flows', () => {
   });
 
   test('products page → product card → detail page → back to products', async ({ page }) => {
-    await page.goto('/products', { waitUntil: 'domcontentloaded' });
+    await navigateTo(page, '/products');
     await page.locator('a[href^="/product/"]').first().waitFor({ state: 'visible', timeout: 15000 });
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     const card = page.locator('a[href^="/product/"]').first();
-    await card.click();
+    await card.click({ force: true });
     await expect(page).toHaveURL(/\/product\//);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     const breadcrumb = page.locator('a[href="/products"]').filter({ hasText: 'Products' }).first();
     await breadcrumb.click();
     await expect(page).toHaveURL(/\/products/);

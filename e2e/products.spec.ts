@@ -35,9 +35,13 @@ test.describe('Product Listing — /products', () => {
   test('category filter dropdown opens and shows options', async ({ page }) => {
     await page.goto('/products', { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('a[href^="/product/"]', { timeout: 15000 });
+    const filterWrapper = page.locator('[class*="filterWrapper"]');
+    await filterWrapper.waitFor({ state: 'visible', timeout: 10000 });
+    await page.waitForTimeout(2000);
     const filterTriggers = page.locator('button[class*="trigger"]');
-    if (await filterTriggers.count() > 0) {
-      await filterTriggers.first().click();
+    const count = await filterTriggers.count();
+    if (count > 0) {
+      await filterTriggers.first().click({ force: true });
       await page.waitForTimeout(1000);
       const options = page.locator('button[class*="option"]');
       expect(await options.count()).toBeGreaterThan(0);
