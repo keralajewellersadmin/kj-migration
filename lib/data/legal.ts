@@ -337,29 +337,6 @@ export const swarnavarshaSections: LegalSection[] = [
   },
 ];
 
-export const thangaMazhaiTerms: string[] = [
-  "The monthly advance against purchase of jewellery must be uniform and paid continuously (for eleven months) with a minimum of Rs.1000/-, the advance payments cannot be extended beyond 11th month and is not transferable under any circumstance.",
-  "On completion of eleven months from the date of enrolment the customer will be eligible to purchase the chosen jewellery without Value addition (VA) under Swarnavarsha Advance Gold Purchase Plan. Customers can choose any jewellery including Gold coin limited to the accumulated value or the accumulated Gold weight.",
-  "This advance against purchase of jewellery is unique and cannot be clubbed with any other existing schemes / offers.",
-  "The monthly advance against purchase of jewellery must be paid by the 15th of every month and monthly advance against purchase of jewellery can neither be paid in advance nor carried over, the advance amounts paid will not be eligible for any interest.",
-  "Jewellery can be purchased only after 30 days from the date of last advance payment paid.",
-  "As and when advance payments are made, the amount of advance payment will be converted into weight of gold at the prevailing selling rate of 22kt or the amount of money as paid. Gold rate notified by the Madras Jewellers Association.",
-  "In case of premature closing before three advance payments, the nominal amount of 10% on first advance payment will be deducted as administrative charges.",
-  "In case of change in address, loss of advance receipt book, the customer should inform the company immediately and apply for new advance receipt book with KYC details.",
-  "No more than one advance payment can be made in a month and also the plan cannot be extended beyond the stipulated period.",
-  "Advance against purchase of jewellery can be made in cash, credit/debit card, NEFT, UPI, local cheques favouring the company, bank charges will be borne by the customers (In case of cheque dishonour). Your receipt for having paid the advance money will be advised to you by SMS or Email.",
-  "After purchase of jewellery on maturity, if any balance is left over it will not be refunded by cash. It can only be adjusted on additional purchase of Gold Coin.",
-  "The customers will be eligible for NO Value addition (VA) on purchase only after he or she has paid all the advance payments promptly.",
-  "The customer will not be able to continue the plan in the event of default in the monthly advance payments. Hence it is mandatory that the customer pay the advance payments promptly every month without fail.",
-  "Making charges & Stone charges will be charged according to the type of jewellery purchased and Value Addition (VA) will be charged for special jewellery accordingly like Diamond, Platinum, Uncut diamonds, Antique Jewellery, Ruby & Emerald.",
-  "When the customer purchases jewellery in excess of accumulated amount or in excess of accumulated Gold weight, the Value addition (VA) as applicable will be borne by the customer for the excess amount / weight.",
-  "GST and any other Government levies at the time of delivery will be borne by the customer.",
-  "The customers signature will be verified at the time of redemption of the plan. The advance receipt book should be surrendered at the time of purchase of jewellery.",
-  "Company has its sole discretion can alter, amend, modify, add or delete any of the terms and conditions from time to time with or without any prior notice.",
-  "Kerala Jewellers reserves all rights to alter amend, add or delete part of whole of the privileges of the scheme with or without prior notice. Kerala Jewellers is the sponsor of the scheme and reserves the right to suspend the scheme at any time. In such event, the member may purchase any item at the store equal to weight value of money accumulated in the account as on that day.",
-  "All disputes are subject to the jurisdiction of the competent courts in Chennai.",
-];
-
 export const privacySections: LegalSection[] = [
   {
     title: "",

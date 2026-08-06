@@ -80,6 +80,7 @@ export default async function Bestsellers({
           {products.map((product, i) => (
             <div key={i} className={styles.card}>
               <div className={styles.cardMedia}>
+                <span className={styles.cardTitle}>{product.title}</span>
                 <span className={styles.cardCategory}>{product.category}</span>
                 <div className={styles.cardImageWrap}>
                   {product.image ? (
@@ -95,7 +96,6 @@ export default async function Bestsellers({
                 </div>
               </div>
               <div className={styles.cardAction}>
-                <span className={styles.cardTitle}>{product.title}</span>
                 <a href={product.href} className={styles.viewBtn}>
                   View Item
                 </a>

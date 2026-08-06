@@ -91,8 +91,7 @@ export async function sendPasswordResetEmail(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function findUserByIdentifier(payload: any, identifier: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const findOpts = { limit: 1, overrideAccess: true } as any;
+  const findOpts = { limit: 1, overrideAccess: true } as { limit: number; overrideAccess: boolean };
 
   let result = await payload.find({
     ...findOpts,

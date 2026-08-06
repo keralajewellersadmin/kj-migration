@@ -22,11 +22,11 @@ type UserWithRole = {
   email?: string;
 };
 
-export function getUser(req?: PayloadRequest): UserWithRole | undefined {
+function getUser(req?: PayloadRequest): UserWithRole | undefined {
   return req?.user as UserWithRole | undefined;
 }
 
-export function hasRole(user: UserWithRole | undefined, roles: AdminRole[]) {
+function hasRole(user: UserWithRole | undefined, roles: AdminRole[]) {
   return Boolean(user?.isActive && user.role && roles.includes(user.role));
 }
 
@@ -38,9 +38,6 @@ export const isSuperAdmin: Access = ({ req }) =>
 
 export const isAdmin: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin", "admin"]);
-
-export const isEnquiryManager: Access = ({ req }) =>
-  hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]);
 
 // ─── Collection-level access ────────────────────────────────────────────────
 
@@ -56,20 +53,6 @@ export const canManageSettings: Access = ({ req }) =>
 export const canManageInquiries: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]);
 
-// Products — public read for frontend SEO (server-side renders bypass access anyway)
-export const canReadProducts: Access = ({ req }) => {
-  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
-    return true;
-  return true; // public read for SSR/SEO
-};
-
-// Categories — admin + super-admin for CRUD, public read for frontend navbar
-export const canReadCategories: Access = ({ req }) => {
-  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
-    return true;
-  return true; // public read for SSR navbar
-};
-
 // Media — admin + super-admin for CRUD, public read for frontend image population
 export const canReadMedia: Access = ({ req }) => {
   if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
@@ -77,43 +60,11 @@ export const canReadMedia: Access = ({ req }) => {
   return true; // public read for SSR/frontend
 };
 
-// BlogPosts — admin + super-admin for CRUD, public read for frontend
-export const canReadBlogPosts: Access = ({ req }) => {
-  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
-    return true;
-  return true; // public read for SSR
-};
-
-// LegalPages — admin + super-admin for CRUD, public read for frontend
-export const canReadLegalPages: Access = ({ req }) => {
-  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
-    return true;
-  return true; // public read for SSR
-};
-
 // AuditLogs — super-admin only
 export const canReadAuditLogs: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin"]);
 
 // ─── Admin-users collection access ──────────────────────────────────────────
-
-export const canCreateAdminUsers: Access = async ({ req }) => {
-  // First-user bootstrap: if zero users exist, allow creating the first one
-  if (!req.user?.isActive) {
-    const existing = await req.payload.count({
-      collection: "admin-users" as never,
-    });
-    if (existing.totalDocs === 0) return true;
-    return false;
-  }
-  // Only super-admin can create accounts
-  return req.user.role === "super-admin";
-};
-
-export const canUpdateAdminUsers: Access = ({ req: { user } }) => {
-  if (!user?.isActive) return false;
-  return user.role === "super-admin";
-};
 
 export const canDeleteAdminUsers: Access = ({ req: { user } }) => {
   if (!user?.isActive) return false;
@@ -163,11 +114,6 @@ export const enforceAdminRoleRestrictions: CollectionBeforeValidateHook = ({
   // enquiry-manager: cannot create/update admin users at all (handled by collection access)
   return data;
 };
-
-// ─── Legacy aliases (kept for backward compatibility, not used in new code) ─
-
-export const protectAdminUserFields: FieldAccess = ({ req }) =>
-  hasRole(getUser(req), ["super-admin"]);
 
 // ─── Utilities ──────────────────────────────────────────────────────────────
 

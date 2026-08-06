@@ -9,8 +9,6 @@ import styles from "../products.module.css";
 
 export const revalidate = 300;
 
-export const dynamic = "force-dynamic";
-
 export function generateStaticParams() {
   return metals.map((m) => ({ metal: m.slug }));
 }

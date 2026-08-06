@@ -8,10 +8,10 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/product/${product.slug}`} className={styles.card}>
       <div className={styles.media}>
-        <span className={styles.title}>{product.name}</span>
-        <span className={styles.category}>
-          {normalizeCategory(product.category)}
-        </span>
+        <div className={styles.title}>{product.name}</div>
+        <div className={styles.category}>
+          {normalizeCategory(product.category || product.metal, product.metal)}
+        </div>
         {product.image ? (
           <Image
             src={product.image}
@@ -39,6 +39,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
       </div>
       <div className={styles.content}>
+        <span className={styles.weight}>{product.weight || product.code}</span>
         <span className={styles.viewBtn}>View Item</span>
       </div>
     </Link>

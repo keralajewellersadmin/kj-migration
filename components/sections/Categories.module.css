@@ -142,7 +142,7 @@
 .platinum {
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
-    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494439/kerala-jewellers/gallery/66a9d8eca2a871357e55ff2c_3_5405220.png");
+    url("/assets/images/66a9d8eca2a871357e55ff2c_3%205405220.png");
   background-size: cover;
   background-position: center;
 }

@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 
 const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const isProduction = process.env.NODE_ENV === "production";
-const ADMIN_PATH = "/kj-portal-0d7cfad1";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -20,11 +19,15 @@ const contentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
   serverExternalPackages: ["pg", "payload"],
   images: cloudinaryCloudName
     ? {
         loader: "custom",
         loaderFile: "./lib/cloudinaryLoader.ts",
+        formats: ["image/avif", "image/webp"],
         remotePatterns: [
           {
             protocol: "https",
@@ -46,11 +49,12 @@ const nextConfig: NextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
-      },
-      {
-        source: `${ADMIN_PATH}/:path*`,
-        headers: [{ key: "X-Frame-Options", value: "DENY" }],
       },
     ];
   },

@@ -1,18 +1,6 @@
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME || "htl6k8cd";
 
-export type CloudinaryFolder =
-  | "products"
-  | "categories"
-  | "banners"
-  | "gallery"
-  | "blog"
-  | "heritage"
-  | "timeline"
-  | "campaigns"
-  | "stores"
-  | "collections";
-
-const FOLDER_MAP: Record<string, CloudinaryFolder> = {
+const FOLDER_MAP: Record<string, string> = {
   product: "products",
   category: "categories",
   banner: "banners",
@@ -28,10 +16,6 @@ const FOLDER_MAP: Record<string, CloudinaryFolder> = {
 export function getCloudinaryFolder(mediaType?: string): string {
   const folder = FOLDER_MAP[mediaType || ""] || "gallery";
   return `kerala-jewellers/${folder}`;
-}
-
-export function getCloudinaryBaseUrl(): string {
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`;
 }
 
 export interface CloudinaryTransformOptions {
@@ -68,24 +52,12 @@ export function cloudinaryUrl(
   }
 
   const transformations = parts.join(",");
-  const base = getCloudinaryBaseUrl();
+  const base = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`;
 
   if (transformations) {
     return `${base}/${transformations}/${publicId}`;
   }
   return `${base}/${publicId}`;
-}
-
-export function cloudinaryThumbnail(
-  publicId: string,
-  width = 400,
-  height = 400,
-): string {
-  return cloudinaryUrl(publicId, { width, height, quality: "auto", format: "auto" });
-}
-
-export function cloudinaryFull(publicId: string): string {
-  return cloudinaryUrl(publicId, { quality: "auto", format: "auto" });
 }
 
 export function extractPublicIdFromUrl(url: string): string | null {
@@ -102,8 +74,4 @@ export function extractPublicIdFromUrl(url: string): string | null {
   }
 
   return null;
-}
-
-export function isCloudinaryUrl(url: string): boolean {
-  return Boolean(url && url.includes("res.cloudinary.com"));
 }

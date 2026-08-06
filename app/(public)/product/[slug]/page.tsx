@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug, getRelatedProducts } from "@/lib/data/cms";
+import {
+  getProductBySlug,
+  getRelatedProducts,
+  getAllProductSlugs,
+} from "@/lib/data/cms";
 import ProductImage from "./ProductImage";
 import ProductCard from "@/components/ui/ProductCard";
 import styles from "./productDetail.module.css";
 
 export const revalidate = 300;
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  try {
+    const slugs = await getAllProductSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
