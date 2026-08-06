@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { IMG } from "@/lib/image-urls";
+import { apiPost } from "@/lib/api-client";
 
 function EnquiryForm() {
   const params = useSearchParams();
@@ -21,38 +22,28 @@ function EnquiryForm() {
     setSubmitting(true);
     setError("");
     const fd = new FormData(e.currentTarget);
-    try {
-      const res = await fetch("/api/inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: fd.get("customerName"),
-          phone: fd.get("mobile"),
-          email: fd.get("email") || "",
-          message: [
-            fd.get("city") ? `City: ${fd.get("city")}` : "",
-            fd.get("preferredTime")
-              ? `Preferred Time: ${fd.get("preferredTime")}`
-              : "",
-            fd.get("productName") ? `Product: ${fd.get("productName")}` : "",
-            fd.get("productId") ? `Product ID: ${fd.get("productId")}` : "",
-            fd.get("message") || "",
-          ]
-            .filter(Boolean)
-            .join("\n"),
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Submission failed. Please try again.");
-        return;
-      }
+    const { ok, error: err } = await apiPost("/api/inquiry", {
+      name: fd.get("customerName"),
+      phone: fd.get("mobile"),
+      email: fd.get("email") || "",
+      message: [
+        fd.get("city") ? `City: ${fd.get("city")}` : "",
+        fd.get("preferredTime")
+          ? `Preferred Time: ${fd.get("preferredTime")}`
+          : "",
+        fd.get("productName") ? `Product: ${fd.get("productName")}` : "",
+        fd.get("productId") ? `Product ID: ${fd.get("productId")}` : "",
+        fd.get("message") || "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    });
+    if (!ok) {
+      setError(err || "Submission failed. Please try again.");
+    } else {
       setSubmitted(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
     }
+    setSubmitting(false);
   };
 
   const handleWhatsApp = () => {

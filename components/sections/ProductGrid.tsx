@@ -4,12 +4,18 @@ import { useState, useCallback } from "react";
 import ProductCard from "@/components/ui/ProductCard";
 import type { Product } from "@/lib/data/types";
 import styles from "./ProductGrid.module.css";
+import { apiGet } from "@/lib/api-client";
 
 interface Props {
   initialProducts: Product[];
   metal: string;
   category?: string;
   totalDocs: number;
+}
+
+interface ProductPage {
+  products: Product[];
+  hasNextPage: boolean;
 }
 
 export default function ProductGrid({
@@ -25,23 +31,15 @@ export default function ProductGrid({
 
   const loadMore = useCallback(async () => {
     setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        metal,
-        page: String(page),
-        limit: "24",
-      });
-      if (category) params.set("category", category);
-      const res = await fetch(`/api/frontend-products?${params}`);
-      const data = await res.json();
+    const params = new URLSearchParams({ metal, page: String(page), limit: "24" });
+    if (category) params.set("category", category);
+    const { data, ok } = await apiGet<ProductPage>(`/api/frontend-products?${params}`);
+    if (ok && data) {
       setProducts((prev) => [...prev, ...data.products]);
       setHasMore(data.hasNextPage);
       setPage((p) => p + 1);
-    } catch {
-      // silently fail — user can retry
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, [metal, page, category]);
 
   return (

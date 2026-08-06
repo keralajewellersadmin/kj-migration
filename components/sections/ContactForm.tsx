@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "@/app/(public)/contact/page.module.css";
+import { apiPost } from "@/lib/api-client";
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -13,27 +14,17 @@ export default function ContactForm() {
     setSubmitting(true);
     setError("");
     const fd = new FormData(e.currentTarget);
-    try {
-      const res = await fetch("/api/inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: fd.get("name"),
-          email: fd.get("email"),
-          message: fd.get("message"),
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Submission failed.");
-        return;
-      }
+    const { ok, error: err } = await apiPost("/api/inquiry", {
+      name: fd.get("name"),
+      email: fd.get("email"),
+      message: fd.get("message"),
+    });
+    if (!ok) {
+      setError(err || "Submission failed.");
+    } else {
       setSubmitted(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
     }
+    setSubmitting(false);
   };
 
   return (
