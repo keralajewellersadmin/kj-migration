@@ -46,11 +46,18 @@ export default async function ProductsPage(props: {
   if (sort === "desc")
     sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
 
+  const heroTitle = categorySlug
+    ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`
+    : goldMetal.heroTitle;
+  const heroSubtitle = categorySlug
+    ? `Explore our curated selection of ${categorySlug.replace(/-/g, " ")} jewellery.`
+    : goldMetal.heroSubtitle;
+
   return (
     <>
       <ProductsHero
-        title={goldMetal.heroTitle}
-        subtitle={goldMetal.heroSubtitle}
+        title={heroTitle}
+        subtitle={heroSubtitle}
         bgImage={goldMetal.heroBg}
         metal="gold"
       />

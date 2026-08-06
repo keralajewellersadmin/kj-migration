@@ -67,10 +67,21 @@ function resolveMediaUrl(val: unknown): string {
 import { cloudinaryUrl } from "../cloudinary";
 
 function mapSqlProduct(row: any): Product {
-  const imageUrl =
-    row.image_srcset?.split(",")[0]?.trim().split(/\s+/)[0] ||
-    row.image_url ||
-    "/assets/images/placeholder.svg";
+  let imageUrl: string;
+  if (row.cloudinary_public_id) {
+    imageUrl = cloudinaryUrl(row.cloudinary_public_id);
+  } else if (row.image_url && row.image_url.startsWith("http")) {
+    imageUrl = row.image_url;
+  } else if (row.image_srcset) {
+    const firstSrc = row.image_srcset.split(",")[0]?.trim().split(/\s+/)[0];
+    if (firstSrc && firstSrc.startsWith("http")) {
+      imageUrl = firstSrc;
+    } else {
+      imageUrl = "/assets/images/placeholder.svg";
+    }
+  } else {
+    imageUrl = "/assets/images/placeholder.svg";
+  }
   let seo: any = undefined;
   if (row.seo) {
     try {
@@ -104,7 +115,8 @@ const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
          p.description, p.image_srcset, p.seo,
          c.name AS category_name,
-         m.url AS image_url, m.alt AS image_alt
+         m.url AS image_url, m.alt AS image_alt,
+         m.cloudinary_public_id AS cloudinary_public_id
   FROM products p
   LEFT JOIN categories c ON p.category_id = c.id
   LEFT JOIN media m ON p.image_id = m.id
@@ -142,7 +154,8 @@ async function sqlFindProducts(
         SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
                p.description, p.image_srcset,
                c.name AS category_name,
-               m.url AS image_url, m.alt AS image_alt
+               m.url AS image_url, m.alt AS image_alt,
+               m.cloudinary_public_id AS cloudinary_public_id
         FROM products p
         LEFT JOIN categories c ON p.category = c.id
         LEFT JOIN media m ON p.image = m.id
@@ -167,14 +180,22 @@ function mapProduct(doc: PayloadDoc): Product {
         : "";
   const imageObj =
     typeof doc.image === "object" && doc.image !== null ? doc.image : null;
+  const cloudinaryId =
+    imageObj && typeof (imageObj as any).cloudinaryPublicId === "string"
+      ? (imageObj as any).cloudinaryPublicId
+      : null;
   const imageFromSrcset =
     typeof doc.imageSrcset === "string"
       ? doc.imageSrcset.split(",")[0]?.trim().split(/\s+/)[0] || ""
       : "";
-  const imageUrl =
-    imageFromSrcset ||
-    resolveMediaUrl(doc.image) ||
-    "/assets/images/placeholder.svg";
+  let imageUrl: string;
+  if (cloudinaryId) {
+    imageUrl = cloudinaryUrl(cloudinaryId);
+  } else if (imageFromSrcset && imageFromSrcset.startsWith("http")) {
+    imageUrl = imageFromSrcset;
+  } else {
+    imageUrl = resolveMediaUrl(doc.image) || "/assets/images/placeholder.svg";
+  }
   const imageAlt = imageObj?.alt || "";
   const seoGroup = doc.seo as Record<string, unknown> | undefined;
   
@@ -444,7 +465,8 @@ export async function getProductBySlug(
             SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
                    p.description, p.image_srcset,
                    c.name AS category_name,
-                   m.url AS image_url, m.alt AS image_alt
+                   m.url AS image_url, m.alt AS image_alt,
+                   m.cloudinary_public_id AS cloudinary_public_id
             FROM products p
             LEFT JOIN categories c ON p.category = c.id
             LEFT JOIN media m ON p.image = m.id
