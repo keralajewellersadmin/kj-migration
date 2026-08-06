@@ -8,6 +8,7 @@ export default function AdminLogo() {
       alt="Kerala Jewellers"
       width={28}
       height={28}
+      unoptimized
       style={{ borderRadius: "50%" }}
       priority
     />

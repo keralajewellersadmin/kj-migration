@@ -100,6 +100,7 @@ function EnquiryForm() {
             alt="Kerala Jewellers"
             width={190}
             height={64}
+            unoptimized
           />
         </Link>
 

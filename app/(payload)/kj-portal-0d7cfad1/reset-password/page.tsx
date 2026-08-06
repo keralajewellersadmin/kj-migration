@@ -101,6 +101,7 @@ export default function ResetPasswordPage() {
             alt="Kerala Jewellers"
             width={80}
             height={80}
+            unoptimized
             style={{ margin: "0 auto 1.5rem" }}
           />
           <h2 style={{ color: "#16a34a", marginBottom: "1rem" }}>
@@ -155,6 +156,7 @@ export default function ResetPasswordPage() {
             alt="Kerala Jewellers"
             width={60}
             height={60}
+            unoptimized
             style={{ margin: "0 auto 1rem" }}
           />
           <h2

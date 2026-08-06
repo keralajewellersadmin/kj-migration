@@ -227,6 +227,7 @@ export default function Footer({
                 src={IMG.logoKj}
                 width={170}
                 height={57}
+                unoptimized
                 style={{ width: "auto", height: "auto" }}
               />
             </Link>

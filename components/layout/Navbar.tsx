@@ -121,7 +121,7 @@ function RateMenuItem({ item }: { item: RateItem }) {
       className={`${styles.rateRow} ${item.featured ? styles.rateRowFeatured : ""}`}
     >
       <span className={styles.rateRowCoin}>
-        <Image src={item.coin} alt="" width={38} height={38} />
+        <Image src={item.coin} alt="" width={38} height={38} unoptimized />
       </span>
       <span className={styles.rateRowMeta}>
         <span className={styles.rateRowName}>{item.name}</span>
@@ -240,6 +240,7 @@ export default function Navbar({
                     width={170}
                     height={57}
                     priority
+                    unoptimized
                     style={{ width: "auto", height: "auto" }}
                   />
                 </Link>
@@ -268,6 +269,7 @@ export default function Navbar({
                           alt=""
                           width={28}
                           height={28}
+                          unoptimized
                         />
                       </span>
                       <span className={styles.rateToggleLabel}>
@@ -360,6 +362,7 @@ export default function Navbar({
               width={170}
               height={57}
               priority
+              unoptimized
               style={{ width: "auto", height: "auto" }}
             />
           </Link>
