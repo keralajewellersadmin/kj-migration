@@ -34,65 +34,75 @@ type NavSection = {
   label?: string;
 };
 
-const sections: NavSection[] = [
-  {
-    items: [{ href: `${ADMIN_PATH}`, icon: "dashboard", label: "Dashboard" }],
-  },
-  {
-    label: "Catalog",
-    items: [
-      { href: `${ADMIN_PATH}/collections/products`, icon: "box", label: "Products" },
-      {
-        href: `${ADMIN_PATH}/collections/categories`,
-        icon: "category",
-        label: "Categories",
-      },
-      {
-        href: `${ADMIN_PATH}/collections/products?where[featured][equals]=true`,
-        icon: "folder",
-        label: "Collections",
-      },
-      { href: `${ADMIN_PATH}/collections/media`, icon: "image", label: "Media" },
-    ],
-  },
-  {
-    label: "Content",
-    items: [
-      { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Pages" },
-      {
-        href: `${ADMIN_PATH}/globals/site-settings`,
-        icon: "banner",
-        label: "Banners",
-      },
-      {
-        href: `${ADMIN_PATH}/globals/site-settings`,
-        icon: "settings",
-        label: "Site Settings",
-      },
-    ],
-  },
-  {
-    label: "Communication",
-    items: [
-      {
-        href: `${ADMIN_PATH}/collections/inquiries`,
-        icon: "mail",
-        label: "Inquiries",
-      },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { href: `${ADMIN_PATH}/collections/admin-users`, icon: "users", label: "Users" },
-      {
-        href: `${ADMIN_PATH}/collections/audit-logs`,
-        icon: "activity",
-        label: "Activity Logs",
-      },
-    ],
-  },
-];
+function getVisibleSections(role: string): NavSection[] {
+  const allSections: NavSection[] = [
+    {
+      items: [{ href: `${ADMIN_PATH}`, icon: "dashboard", label: "Dashboard" }],
+    },
+    {
+      label: "Catalog",
+      items: [
+        { href: `${ADMIN_PATH}/collections/products`, icon: "box", label: "Products" },
+        {
+          href: `${ADMIN_PATH}/collections/categories`,
+          icon: "category",
+          label: "Categories",
+        },
+        {
+          href: `${ADMIN_PATH}/collections/products?where[featured][equals]=true`,
+          icon: "folder",
+          label: "Collections",
+        },
+        { href: `${ADMIN_PATH}/collections/media`, icon: "image", label: "Media" },
+      ],
+    },
+    {
+      label: "Content",
+      items: [
+        { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Pages" },
+        {
+          href: `${ADMIN_PATH}/globals/site-settings`,
+          icon: "banner",
+          label: "Banners",
+        },
+        {
+          href: `${ADMIN_PATH}/globals/site-settings`,
+          icon: "settings",
+          label: "Site Settings",
+        },
+      ],
+    },
+    {
+      label: "Communication",
+      items: [
+        {
+          href: `${ADMIN_PATH}/collections/inquiries`,
+          icon: "mail",
+          label: "Inquiries",
+        },
+      ],
+    },
+    {
+      label: "System",
+      items: [
+        { href: `${ADMIN_PATH}/collections/admin-users`, icon: "users", label: "Users" },
+        {
+          href: `${ADMIN_PATH}/collections/audit-logs`,
+          icon: "activity",
+          label: "Activity Logs",
+        },
+      ],
+    },
+  ];
+
+  if (role === "enquiry-manager") {
+    return allSections.filter((s) => s.label === "Communication" || s.items.some((i) => i.label === "Dashboard"));
+  }
+  if (role === "admin") {
+    return allSections.filter((s) => s.label !== "System");
+  }
+  return allSections;
+}
 
 function Icon({ name }: { name: IconName }) {
   const common = {
@@ -215,6 +225,7 @@ function isActive(
   pathname: string,
   searchParams: URLSearchParams,
   href: string,
+  visibleSections: NavSection[],
 ) {
   const [hrefPathname, hrefQuery] = href.split("?");
 
@@ -236,7 +247,7 @@ function isActive(
   }
 
   // If this item HAS NO query, it is active UNLESS a more specific nav item matches
-  const allNavItems = sections.flatMap((s) => s.items);
+  const allNavItems = visibleSections.flatMap((s) => s.items);
   for (const item of allNavItems) {
     const [itemPath, itemQuery] = item.href.split("?");
     if (itemPath === hrefPathname && itemQuery) {
@@ -283,6 +294,7 @@ function NavContent({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const visibleSections = getVisibleSections(role);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -331,14 +343,14 @@ function NavContent({
         </Link>
 
         <nav className={styles.nav} aria-label="Admin navigation">
-          {sections.map((section, sectionIndex) => (
+          {getVisibleSections(role).map((section, sectionIndex) => (
             <div className={styles.section} key={section.label || sectionIndex}>
               {section.label && (
                 <div className={styles.sectionLabel}>{section.label}</div>
               )}
               <div className={styles.items}>
                 {section.items.map((item) => {
-                  const active = isActive(pathname, searchParams, item.href);
+                  const active = isActive(pathname, searchParams, item.href, visibleSections);
                   const badge =
                     item.label === "Inquiries" ? inquiries : item.badge;
                   return (

@@ -1,9 +1,10 @@
 import crypto from "crypto";
-import type {
-  Access,
-  FieldAccess,
-  CollectionBeforeValidateHook,
-  PayloadRequest,
+import {
+  APIError,
+  type Access,
+  type FieldAccess,
+  type CollectionBeforeValidateHook,
+  type PayloadRequest,
 } from "payload";
 
 export type AdminRole = "super-admin" | "admin" | "enquiry-manager";
@@ -218,8 +219,9 @@ export const enforceAccountLimit: CollectionBeforeValidateHook = async ({
   });
 
   if (existing.totalDocs >= 3) {
-    throw new Error(
+    throw new APIError(
       "Account limit reached. Maximum 3 admin accounts allowed system-wide.",
+      409,
     );
   }
 };
