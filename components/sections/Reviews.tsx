@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperClass } from "swiper";
 import "swiper/css";
 import styles from "./Reviews.module.css";
-import { IMG } from "@/lib/image-urls";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const baseReviews = [
   {
@@ -87,24 +86,11 @@ export default function Reviews({
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Customer Reviews</h2>
-          <div className={styles.headingBorderBox}>
-            <Image
-              src={IMG.separator}
-              alt=""
-              className={styles.headingSeparator}
-              width={940}
-              height={20}
-              loading="lazy"
-            />
-          </div>
-          <p className={styles.subtitle}>
-            Our Jewelry Isn&apos;t Just Worn. It&apos;s Cherished. Each Piece
-            Tells A Story, And You Can Hear It From Our Customers Who Wear
-            Theirs With Pride.
-          </p>
-        </div>
+        <SectionHeader
+          title="Customer Reviews"
+          subtitle="Our Jewelry Isn&apos;t Just Worn. It&apos;s Cherished. Each Piece Tells A Story, And You Can Hear It From Our Customers Who Wear Theirs With Pride."
+          subtitleOutside
+        />
         <div className={styles.track}>
           <div className={styles.carouselWrap}>
             <Swiper

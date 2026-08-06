@@ -1,0 +1,53 @@
+.header {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-decorative);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  background-image: var(--gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-maroon-bright);
+  text-align: center;
+}
+
+.borderBox {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.separator {
+  display: block;
+  width: 50%;
+  max-width: 940px;
+  height: 12.89px;
+  margin-top: var(--space-3);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--color-charcoal-soft);
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .title {
+    font-size: clamp(28px, 8vw, 38px);
+    line-height: 1.2;
+  }
+}

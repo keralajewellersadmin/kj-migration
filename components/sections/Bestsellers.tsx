@@ -2,6 +2,7 @@ import Image from "next/image";
 import styles from "./Bestsellers.module.css";
 import { getProductsBySlugs } from "@/lib/data/cms";
 import { IMG } from "@/lib/image-urls";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const fallbackProducts = [
   {
@@ -59,23 +60,10 @@ export default async function Bestsellers({
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.headingTitle}>Our Bestsellers</h2>
-          <div className={styles.headingBorderBox}>
-            <Image
-              src={IMG.separator}
-              alt=""
-              className={styles.headingSeparator}
-              width={940}
-              height={20}
-              loading="lazy"
-            />
-            <p className={styles.headingSubtitle}>
-              Choose from among trendy designs and timeless pieces. There&apos;s
-              something for everyone and every occasion.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          title="Our Bestsellers"
+          subtitle="Choose from among trendy designs and timeless pieces. There&apos;s something for everyone and every occasion."
+        />
         <div className={styles.grid}>
           {products.map((product, i) => (
             <div key={i} className={styles.card}>

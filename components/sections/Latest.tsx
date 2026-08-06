@@ -1,6 +1,7 @@
 import Image from "next/image";
 import styles from "./Latest.module.css";
 import { IMG } from "@/lib/image-urls";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const defaultBanners = [
   {
@@ -51,23 +52,10 @@ export default function Latest({
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.headingTitle}>Our Latest</h2>
-          <div className={styles.headingBorderBox}>
-            <Image
-              src={IMG.separator}
-              alt=""
-              className={styles.headingSeparator}
-              width={940}
-              height={20}
-              loading="lazy"
-            />
-            <p className={styles.headingSubtitle}>
-              Check out some of the latest designs in our ever-expanding
-              collection.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          title="Our Latest"
+          subtitle="Check out some of the latest designs in our ever-expanding collection."
+        />
         <div className={styles.banners}>
           {banners.map((banner, i) => {
             if (banner.blockType === "textBanner") {
