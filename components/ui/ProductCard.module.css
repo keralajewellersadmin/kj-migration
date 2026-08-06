@@ -1,162 +1,95 @@
 .card {
-  min-height: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(153, 31, 35, .14);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(57, 26, 21, .06);
+  color: #2b1e1f;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  color: #2b1e1f;
+  padding: 15px 16px 17px;
   text-decoration: none;
-  background: linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(255, 249, 239, 0.94));
-  border: 1px solid rgba(153, 31, 35, 0.14);
-  border-radius: 10px;
-  box-shadow: 0 10px 24px rgba(57, 26, 21, 0.06);
-  transform: translate3d(0, 0, 0);
-  transition:
-    border-color 240ms ease,
-    box-shadow 280ms ease,
-    transform 280ms ease;
+  transition: border-color 180ms ease, box-shadow 220ms ease, transform 220ms ease;
 }
 
-.card:hover,
-.card:focus-visible {
-  border-color: rgba(153, 31, 35, 0.24);
-  box-shadow: 0 18px 38px rgba(57, 26, 21, 0.11);
-  transform: translateY(-4px);
-}
-
-.media {
-  min-height: 286px;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  overflow: hidden;
-  background: #fff7eb;
+.card:hover {
+  border-color: rgba(153, 31, 35, .36);
+  box-shadow: 0 16px 34px rgba(57, 26, 21, .1);
+  transform: translateY(-3px);
 }
 
 .title {
-  min-height: 23px;
-  padding: 0 12px 6px;
   color: #2b1e1f;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(16px, 1.15vw, 18px);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.22;
-  text-align: left;
-  text-transform: none;
+  font-family: var(--font-ui);
+  font-size: clamp(15px, 1.08vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  line-height: 1.32;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 5px;
 }
 
-.card:hover .title,
-.card:focus-visible .title {
-  color: #991f23;
+.card:hover .title {
+  color: var(--color-maroon);
 }
 
 .category {
-  min-height: 19px;
-  padding: 0 12px 8px;
-  color: #7d5f58;
+  color: var(--color-card-title);
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: clamp(12px, 0.9vw, 14px);
   font-weight: 600;
   letter-spacing: 0.08em;
   line-height: 1.35;
-  text-align: left;
   text-transform: uppercase;
+  text-align: center;
+}
+
+.media {
+  background: var(--color-ivory-muted);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 14px;
 }
 
 .image {
-  width: 100%;
-  min-height: 230px;
-  max-height: 260px;
+  aspect-ratio: 1 / 1;
   display: block;
-  flex: 1 1 auto;
+  height: auto;
   object-fit: cover;
-  backface-visibility: hidden;
-  transform: scale(1);
-  transition:
-    filter 260ms ease,
-    opacity 260ms ease,
-    transform 520ms ease;
+  width: 100%;
+  transition: filter 260ms ease, transform 520ms ease;
 }
 
-.card:hover .image,
-.card:focus-visible .image {
+.card:hover .image {
   filter: saturate(1.03) contrast(1.02);
   transform: scale(1.025);
 }
 
 .content {
-  min-height: 58px;
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 14px 14px 15px;
-  background: rgba(255, 253, 248, 0.96);
-}
-
-.weight {
-  min-width: 0;
-  overflow: hidden;
-  color: #991f23;
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-top: auto;
 }
 
 .viewBtn {
-  flex: 0 0 auto;
-  min-width: 92px;
-  padding: 8px 14px;
+  color: #fff;
+  text-align: center;
+  background-color: var(--color-btn-primary);
   border: 1px solid #fff;
   border-radius: 5px;
-  background-color: #ad1c20;
-  color: #fff;
-  cursor: pointer;
+  padding: 7px 12px;
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: -0.01em;
   line-height: 1.09;
-  text-align: center;
   text-decoration: none;
-  transition:
-    color 0.4s ease,
-    background-color 0.4s ease,
-    opacity 0.4s ease;
+  cursor: pointer;
+  transition: background-color 0.4s, opacity 0.4s, color 0.4s;
 }
 
-.card:hover .viewBtn,
-.card:focus-visible .viewBtn {
-  color: #f5d95f;
-}
-
-@media (max-width: 767px) {
-  .media {
-    min-height: 240px;
-  }
-
-  .image {
-    min-height: 190px;
-    max-height: 220px;
-  }
-
-  .content {
-    min-height: 54px;
-    padding: 12px;
-  }
-}
-
-@media (max-width: 479px) {
-  .media {
-    min-height: 280px;
-  }
-
-  .image {
-    min-height: 225px;
-    max-height: 250px;
-  }
+.viewBtn:hover {
+  color: var(--color-btn-hover-gold);
 }
