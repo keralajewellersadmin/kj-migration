@@ -71,11 +71,19 @@ function mapSqlProduct(row: any): Product {
     row.image_srcset?.split(",")[0]?.trim().split(/\s+/)[0] ||
     row.image_url ||
     "/assets/images/placeholder.svg";
-  const seoGroup = row.seo_title || row.seo_description ? {
-    title: row.seo_title || undefined,
-    description: row.seo_description || undefined,
-    ogImage: row.seo_og_image_url || undefined,
-  } : undefined;
+  let seo: any = undefined;
+  if (row.seo) {
+    try {
+      const seoData = typeof row.seo === "string" ? JSON.parse(row.seo) : row.seo;
+      if (seoData.title || seoData.description) {
+        seo = {
+          title: seoData.title || undefined,
+          description: seoData.description || undefined,
+          ogImage: seoData.ogImage ? resolveMediaUrl(seoData.ogImage) || undefined : undefined,
+        };
+      }
+    } catch {}
+  }
   return {
     slug: row.slug || "",
     name: row.title || "",
@@ -88,21 +96,18 @@ function mapSqlProduct(row: any): Product {
     image: imageUrl,
     imageAlt: row.image_alt || "",
     imageSrcset: row.image_srcset || "",
-    seo: seoGroup as any,
+    seo,
   };
 }
 
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-         p.description, p.image_srcset,
-         p.seo_title, p.seo_description, p.seo_og_image,
+         p.description, p.image_srcset, p.seo,
          c.name AS category_name,
-         m.url AS image_url, m.alt AS image_alt,
-         som.url AS seo_og_image_url
+         m.url AS image_url, m.alt AS image_alt
   FROM products p
   LEFT JOIN categories c ON p.category_id = c.id
   LEFT JOIN media m ON p.image_id = m.id
-  LEFT JOIN media som ON p.seo_og_image = som.id
 `;
 
 function isPostgres(): boolean {
