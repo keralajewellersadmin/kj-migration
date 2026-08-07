@@ -1,26 +1,23 @@
 .card {
-  background: #ffffff;
-  border: 1px solid rgba(153, 31, 35, .14);
-  border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(57, 26, 21, .06);
-  color: #2b1e1f;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--color-rich-text);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  padding: 15px 16px 17px;
+  padding: 0;
   text-decoration: none;
-  transition: border-color 180ms ease, box-shadow 220ms ease, transform 220ms ease;
+  transition: transform var(--duration-normal) ease;
 }
 
 .card:hover {
-  border-color: rgba(153, 31, 35, .36);
-  box-shadow: 0 16px 34px rgba(57, 26, 21, .1);
   transform: translateY(-3px);
 }
 
 .title {
-  color: #2b1e1f;
+  color: var(--color-card-title);
   font-family: var(--font-ui);
   font-size: clamp(15px, 1.08vw, 17px);
   font-weight: 700;
@@ -48,7 +45,7 @@
 
 .media {
   background: var(--color-ivory-muted);
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
   margin-top: 14px;
 }
@@ -75,10 +72,10 @@
 }
 
 .viewBtn {
-  color: #fff;
+  color: var(--color-white);
   text-align: center;
   background-color: var(--color-btn-primary);
-  border: 1px solid #fff;
+  border: 1px solid var(--color-white);
   border-radius: 5px;
   padding: 7px 12px;
   font-family: var(--font-body);
