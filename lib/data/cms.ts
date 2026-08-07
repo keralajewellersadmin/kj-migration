@@ -80,13 +80,13 @@ function resolveMediaUrl(val: unknown): string {
   if (val && typeof val === "object") {
     const obj = val as Record<string, unknown>;
     if (typeof obj.cloudinaryPublicId === "string" && obj.cloudinaryPublicId) {
-      return encodeURI(cloudinaryUrl(obj.cloudinaryPublicId));
+      return cloudinaryUrl(obj.cloudinaryPublicId);
     }
     if (typeof obj.url === "string") {
-      return encodeURI(obj.url);
+      return obj.url;
     }
   }
-  if (typeof val === "string") return encodeURI(val);
+  if (typeof val === "string") return val;
   return "";
 }
 
@@ -96,7 +96,7 @@ function firstSrcsetUrl(srcset?: string): string {
   if (!srcset) return "";
   const firstCandidate = srcset.split(",")[0]?.trim() || "";
   const match = firstCandidate.match(/^(.+?)\s+(?:\d+(?:\.\d+)?[wx])$/);
-  return encodeURI((match?.[1] || firstCandidate).trim());
+  return (match?.[1] || firstCandidate).trim();
 }
 
 function normalizeMigratedMediaUrl(url?: string): string {
@@ -113,16 +113,16 @@ function normalizeMigratedMediaUrl(url?: string): string {
   if (url.includes("66a9d8eca2a871357e55ff2c_3_5405220")) {
     return "/assets/images/66a9d8eca2a871357e55ff2c_3%205405220.png";
   }
-  return encodeURI(url);
+  return url;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapSqlProduct(row: any): Product {
   let imageUrl: string;
   if (row.cloudinary_public_id) {
-    imageUrl = encodeURI(cloudinaryUrl(row.cloudinary_public_id));
+    imageUrl = cloudinaryUrl(row.cloudinary_public_id);
   } else if (row.image_url && row.image_url.startsWith("http")) {
-    imageUrl = encodeURI(row.image_url);
+    imageUrl = row.image_url;
   } else if (row.image_srcset) {
     const firstSrc = firstSrcsetUrl(row.image_srcset);
     if (firstSrc && firstSrc.startsWith("http")) {
@@ -236,7 +236,7 @@ function mapProduct(doc: PayloadDoc): Product {
       : "";
   let imageUrl: string;
   if (cloudinaryId) {
-    imageUrl = encodeURI(cloudinaryUrl(cloudinaryId));
+    imageUrl = cloudinaryUrl(cloudinaryId);
   } else if (imageFromSrcset && imageFromSrcset.startsWith("http")) {
     imageUrl = imageFromSrcset;
   } else {

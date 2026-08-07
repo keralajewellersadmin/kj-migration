@@ -40,6 +40,10 @@ export function cloudinaryUrl(
     gravity = "auto",
   } = options;
 
+  // Decode any URL-encoded characters in the public_id first (handles both
+  // raw "Frame 2085665022" and stored "Frame%202085665022" formats).
+  const rawId = decodeURIComponent(publicId);
+
   const parts: string[] = [];
 
   if (width) parts.push(`w_${width}`);
@@ -55,9 +59,9 @@ export function cloudinaryUrl(
   const base = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`;
 
   if (transformations) {
-    return `${base}/${transformations}/${publicId}`;
+    return `${base}/${transformations}/${rawId}`;
   }
-  return `${base}/${publicId}`;
+  return `${base}/${rawId}`;
 }
 
 export function extractPublicIdFromUrl(url: string): string | null {
