@@ -25,8 +25,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pg", "payload"],
   images: cloudinaryCloudName
     ? {
-        loader: "custom",
-        loaderFile: "./lib/cloudinaryLoader.ts",
         formats: ["image/avif", "image/webp"],
         remotePatterns: [
           {
