@@ -40,9 +40,18 @@ export function cloudinaryUrl(
     gravity = "auto",
   } = options;
 
-  // Decode any URL-encoded characters in the public_id first (handles both
-  // raw "Frame 2085665022" and stored "Frame%202085665022" formats).
+  // Normalize: decode any existing encoding, then re-encode for the URL.
+  // This handles both raw "Frame 2085665022" and stored "Frame%202085665022"
+  // formats consistently, preventing double-encoding (%2520).
+  // Note: Node v24's encodeURIComponent no longer encodes ( ) per WHATWG spec,
+  // but Cloudinary requires them encoded, so we fix those manually.
   const rawId = decodeURIComponent(publicId);
+  const encodedId = rawId
+    .split("/")
+    .map((seg) =>
+      encodeURIComponent(seg).replace(/\(/g, "%28").replace(/\)/g, "%29"),
+    )
+    .join("/");
 
   const parts: string[] = [];
 
@@ -59,9 +68,9 @@ export function cloudinaryUrl(
   const base = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`;
 
   if (transformations) {
-    return `${base}/${transformations}/${rawId}`;
+    return `${base}/${transformations}/${encodedId}`;
   }
-  return `${base}/${rawId}`;
+  return `${base}/${encodedId}`;
 }
 
 export function extractPublicIdFromUrl(url: string): string | null {
