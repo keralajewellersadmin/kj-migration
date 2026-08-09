@@ -32,10 +32,22 @@ export default async function Home() {
       <Hero slides={settings.heroSlides} />
       <Features features={settings.features} />
       <Categories categories={settings.categories} />
-      <Bestsellers bestsellerProducts={settings.bestsellerProducts} />
-      <Latest banners={settings.banners} />
+      <Bestsellers
+        bestsellerProducts={settings.bestsellerProducts}
+        title={settings.homepageSections.bestsellersTitle}
+        subtitle={settings.homepageSections.bestsellersSubtitle}
+      />
+      <Latest
+        banners={settings.banners}
+        title={settings.homepageSections.latestTitle}
+        subtitle={settings.homepageSections.latestSubtitle}
+      />
       <Heritage heritage={settings.heritage} />
-      <LazyReviews reviews={settings.reviews} />
+      <LazyReviews
+        reviews={settings.reviews}
+        title={settings.homepageSections.reviewsTitle}
+        subtitle={settings.homepageSections.reviewsSubtitle}
+      />
     </>
   );
 }

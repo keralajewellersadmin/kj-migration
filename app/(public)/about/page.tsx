@@ -245,8 +245,7 @@ export default async function AboutPage() {
             <div className={styles.venturesImageWrap}>
               <Image
                 src={
-                  aboutPage.ventures.image ||
-                  "https://res.cloudinary.com/htl6k8cd/image/upload/v1785693889/kerala-jewellers/banners/66ab51b4545fb122260daa62_Rectangle%20343%20%282%29.png"
+                  aboutPage.ventures.image || IMG.aboutFallback
                 }
                 alt={
                   aboutPage.ventures.alt ||

@@ -7,7 +7,6 @@ const defaultHeritage = {
   description:
     "Beautiful heritage-worthy designs have elevated our jewellery.\nExplore a range of personalised selections for different occasions.\nThe right piece can enrich your look and give people something to\nadmire and appreciate.",
   image: IMG.heritageHero,
-  srcSet: `${IMG.heritageHeroP1080} 1080w, ${IMG.heritageHeroP1600} 1600w, ${IMG.heritageHeroP2000} 2000w, ${IMG.heritageHero} 2408w`,
 };
 
 type HeritageItem = typeof defaultHeritage;

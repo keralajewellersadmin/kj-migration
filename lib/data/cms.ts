@@ -38,6 +38,10 @@ function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
   });
 }
 
+export function clearSiteSettingsCache() {
+  _cache.delete("site-settings");
+}
+
 const FONT_PAIRINGS: Record<
   string,
   { heading: string; body: string; ui: string }
@@ -83,14 +87,14 @@ function resolveMediaUrl(val: unknown): string {
       return cloudinaryUrl(obj.cloudinaryPublicId);
     }
     if (typeof obj.url === "string") {
-      return obj.url;
+      return normalizeCloudinaryDeliveryUrl(obj.url);
     }
   }
-  if (typeof val === "string") return val;
+  if (typeof val === "string") return normalizeCloudinaryDeliveryUrl(val);
   return "";
 }
 
-import { cloudinaryUrl } from "../cloudinary";
+import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 
 function firstSrcsetUrl(srcset?: string): string {
   if (!srcset) return "";
@@ -113,7 +117,7 @@ function normalizeMigratedMediaUrl(url?: string): string {
   if (url.includes("66a9d8eca2a871357e55ff2c_3_5405220")) {
     return "/assets/images/66a9d8eca2a871357e55ff2c_3%205405220.png";
   }
-  return url;
+  return normalizeCloudinaryDeliveryUrl(url);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,11 +126,11 @@ function mapSqlProduct(row: any): Product {
   if (row.cloudinary_public_id) {
     imageUrl = cloudinaryUrl(row.cloudinary_public_id);
   } else if (row.image_url && row.image_url.startsWith("http")) {
-    imageUrl = row.image_url;
+      imageUrl = normalizeCloudinaryDeliveryUrl(row.image_url);
   } else if (row.image_srcset) {
     const firstSrc = firstSrcsetUrl(row.image_srcset);
     if (firstSrc && firstSrc.startsWith("http")) {
-      imageUrl = firstSrc;
+      imageUrl = normalizeCloudinaryDeliveryUrl(firstSrc);
     } else {
       imageUrl = "/assets/images/placeholder.svg";
     }
@@ -195,8 +199,8 @@ async function sqlFindProducts(
   let rows;
   try {
     rows = await pool.query(
-      `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT ${limit} OFFSET ${offset}`,
-      params,
+      `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, limit, offset],
     );
   } catch {
     const SIMPLE_BASE = `
@@ -210,8 +214,8 @@ async function sqlFindProducts(
       LEFT JOIN media m ON p.image = m.id
     `;
     rows = await pool.query(
-      `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT ${limit} OFFSET ${offset}`,
-      params,
+      `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, limit, offset],
     );
   }
   return { products: rows.rows.map(mapSqlProduct), totalDocs };
@@ -238,7 +242,7 @@ function mapProduct(doc: PayloadDoc): Product {
   if (cloudinaryId) {
     imageUrl = cloudinaryUrl(cloudinaryId);
   } else if (imageFromSrcset && imageFromSrcset.startsWith("http")) {
-    imageUrl = imageFromSrcset;
+    imageUrl = normalizeCloudinaryDeliveryUrl(imageFromSrcset);
   } else {
     imageUrl = resolveMediaUrl(doc.image) || "/assets/images/placeholder.svg";
   }
@@ -363,8 +367,8 @@ export async function getRelatedProducts(
     try {
       const pool = getPool();
       const rows = await pool.query(
-        `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT ${limit}`,
-        [metal, excludeSlug],
+        `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT $3`,
+        [metal, excludeSlug, limit],
       );
       return rows.rows.map(mapSqlProduct);
     } catch {
@@ -664,8 +668,6 @@ export interface SiteSettingsData {
     heading?: string;
     description?: string;
     image?: string;
-    srcSet?: string;
-    sizes?: string;
     alt?: string;
     ctaText?: string;
     ctaLink?: string;
@@ -674,7 +676,6 @@ export interface SiteSettingsData {
     heading: string;
     description: string;
     image: string;
-    srcSet: string;
   }>;
   categories: Array<{
     title: string;
@@ -709,6 +710,39 @@ export interface SiteSettingsData {
   baseFontSize: string;
   headingScale: string;
   customFonts: string;
+  homepageSections: {
+    bestsellersTitle: string;
+    bestsellersSubtitle: string;
+    latestTitle: string;
+    latestSubtitle: string;
+    reviewsTitle: string;
+    reviewsSubtitle: string;
+  };
+  blogPage: {
+    promoHeading: string;
+    promoDescription: string;
+    promoCtaText: string;
+    promoCtaHref: string;
+    promoImage: string;
+    headerTitle: string;
+    headerSubtitle: string;
+    emptyText: string;
+  };
+  contactPage: {
+    heroTitle: string;
+    heroSubtitle: string;
+    cardTitle: string;
+    cardDescription: string;
+    cardItems: Array<{ text: string }>;
+    cardQuote: string;
+    branchesTitle: string;
+    formTitle: string;
+  };
+  productsPage: {
+    goldHero: { title: string; subtitle: string };
+    silverHero: { title: string; subtitle: string };
+    diamondHero: { title: string; subtitle: string };
+  };
   aboutPage: {
     goldenOccasions: {
       heading: string;
@@ -778,6 +812,39 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   baseFontSize: "16px",
   headingScale: "1.25",
   customFonts: "",
+  homepageSections: {
+    bestsellersTitle: "Our Bestsellers",
+    bestsellersSubtitle: "Choose from among trendy designs and timeless pieces. There's something for everyone and every occasion.",
+    latestTitle: "Our Latest",
+    latestSubtitle: "Check out some of the latest designs in our ever-expanding collection.",
+    reviewsTitle: "Customer Reviews",
+    reviewsSubtitle: "Our Jewelry Isn't Just Worn. It's Cherished. Each Piece Tells A Story, And You Can Hear It From Our Customers Who Wear Theirs With Pride.",
+  },
+  blogPage: {
+    promoHeading: "Wedding Season is here",
+    promoDescription: "Embrace the magic of the wedding season with our exquisite jewellery collection. Elevate your bridal ensemble or find the perfect gift for the happy couple with our stunning array of wedding-ready pieces.",
+    promoCtaText: "Shop Now",
+    promoCtaHref: "/products",
+    promoImage: "",
+    headerTitle: "Our Blog",
+    headerSubtitle: "From Shopping Guides To Lifestyle Recommendations, Explore Our Blog And Learn Everything You Need To Know About Jewellery.",
+    emptyText: "Blog posts coming soon. Stay tuned for shopping guides, lifestyle tips, and everything about jewellery.",
+  },
+  contactPage: {
+    heroTitle: "Contact Kerala Jewellers",
+    heroSubtitle: "We're here to help you with store visits, jewellery enquiries, custom designs, and service support.",
+    cardTitle: "Get In Touch",
+    cardDescription: "Looking for a specific jewellery design, bridal collection, custom order, or gold/silver rate update? Our team will guide you with product availability, store visit support, and purchase assistance.",
+    cardItems: [],
+    cardQuote: "Send us a message and our team will get back to you shortly.",
+    branchesTitle: "Our Branches",
+    formTitle: "Send Us a Message",
+  },
+  productsPage: {
+    goldHero: { title: "Elegant & Timeless Gold Jewellery", subtitle: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion." },
+    silverHero: { title: "Classic Elegance in Silver", subtitle: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment." },
+    diamondHero: { title: "Timeless Brilliance in Diamonds", subtitle: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
+  },
   aboutPage: {
     goldenOccasions: {
       heading: "Golden Occasions & Gleaming Beginnings",
@@ -808,7 +875,210 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   },
 };
 
-async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> {
+async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPayload>>): Promise<SiteSettingsData> {
+  const settings = await payload.findGlobal({
+    slug: "site-settings",
+    depth: 1,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapSlide = (s: any) => ({
+    heading: s.heading || "",
+    description: s.description || "",
+    ctaText: s.ctaText || "",
+    ctaHref: s.ctaHref || "",
+    image: resolveMediaUrl(s.image),
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapCircleBanner = (b: any) => ({
+    blockType: "circleBanner" as const,
+    title: b.title || "",
+    description: b.description || "",
+    image: resolveMediaUrl(b.image),
+    alt: b.alt || "",
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapImageBanner = (b: any) => ({
+    blockType: "imageBanner" as const,
+    image: resolveMediaUrl(b.image),
+    alt: b.alt || "",
+    title: b.title || "",
+    ctaText: b.ctaText || "",
+    href: b.href || "",
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapHeritage = (h: any) => ({
+    heading: h.heading || "",
+    description: h.description || "",
+    image: resolveMediaUrl(h.image),
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapReview = (r: any) => ({
+    text: r.text || "",
+    author: r.author || "",
+    location: r.location || "",
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapCategory = (c: any) => ({
+    title: c.title || "",
+    description: c.description || "",
+    ctaText: c.ctaText || "",
+    ctaHref: c.ctaHref || "",
+    variant: c.variant || "",
+  });
+
+  return {
+    heroSlides: (settings.heroSlides || []).map(mapSlide),
+    features: (settings.features || []).map(mapCircleBanner),
+    banners: (settings.banners || []).map(mapImageBanner),
+    heritage: (settings.heritage || []).map(mapHeritage),
+    reviews: (settings.reviews || []).map(mapReview),
+    categories: (settings.categories || []).map(mapCategory),
+    // Carry over all scalar fields from DEFAULT_SETTINGS
+    rateGold22: (settings.rateGold22 as string) || DEFAULT_SETTINGS.rateGold22,
+    rateGold18: (settings.rateGold18 as string) || DEFAULT_SETTINGS.rateGold18,
+    rateSilver: (settings.rateSilver as string) || DEFAULT_SETTINGS.rateSilver,
+    ratePlatinum: (settings.ratePlatinum as string) || DEFAULT_SETTINGS.ratePlatinum,
+    rateUpdated: (settings.rateUpdated as string) || DEFAULT_SETTINGS.rateUpdated,
+    footerAbout: (settings.footerAbout as string) || DEFAULT_SETTINGS.footerAbout,
+    instagramUrl: (settings.instagramUrl as string) || DEFAULT_SETTINGS.instagramUrl,
+    facebookUrl: (settings.facebookUrl as string) || DEFAULT_SETTINGS.facebookUrl,
+    youtubeUrl: (settings.youtubeUrl as string) || DEFAULT_SETTINGS.youtubeUrl,
+    phone: (settings.phone as string) || DEFAULT_SETTINGS.phone,
+    whatsapp: (settings.whatsapp as string) || DEFAULT_SETTINGS.whatsapp,
+    email: (settings.email as string) || DEFAULT_SETTINGS.email,
+    storeTiming: (settings.storeTiming as string) || DEFAULT_SETTINGS.storeTiming,
+    bestsellerProducts: (settings.bestsellerProducts as string) || DEFAULT_SETTINGS.bestsellerProducts,
+    headingFont: (settings.headingFont as string) || DEFAULT_SETTINGS.headingFont,
+    bodyFont: (settings.bodyFont as string) || DEFAULT_SETTINGS.bodyFont,
+    uiFont: (settings.uiFont as string) || DEFAULT_SETTINGS.uiFont,
+    fontPairing: ((settings as unknown as Record<string, unknown>)["fontPairing"] as string) || DEFAULT_SETTINGS.fontPairing,
+    baseFontSize: (settings.baseFontSize as string) || DEFAULT_SETTINGS.baseFontSize,
+    headingScale: (settings.headingScale as string) || DEFAULT_SETTINGS.headingScale,
+    customFonts: (settings.customFonts as string) || DEFAULT_SETTINGS.customFonts,
+    homepageSections: (() => {
+      const hs = (settings as unknown as Record<string, unknown>)?.homepageSections as Record<string, unknown> | undefined;
+      return {
+        bestsellersTitle: (hs?.bestsellersTitle as string) || DEFAULT_SETTINGS.homepageSections.bestsellersTitle,
+        bestsellersSubtitle: (hs?.bestsellersSubtitle as string) || DEFAULT_SETTINGS.homepageSections.bestsellersSubtitle,
+        latestTitle: (hs?.latestTitle as string) || DEFAULT_SETTINGS.homepageSections.latestTitle,
+        latestSubtitle: (hs?.latestSubtitle as string) || DEFAULT_SETTINGS.homepageSections.latestSubtitle,
+        reviewsTitle: (hs?.reviewsTitle as string) || DEFAULT_SETTINGS.homepageSections.reviewsTitle,
+        reviewsSubtitle: (hs?.reviewsSubtitle as string) || DEFAULT_SETTINGS.homepageSections.reviewsSubtitle,
+      };
+    })(),
+    blogPage: (() => {
+      const bp = (settings as unknown as Record<string, unknown>)?.blogPage as Record<string, unknown> | undefined;
+      return {
+        promoHeading: (bp?.promoHeading as string) || DEFAULT_SETTINGS.blogPage.promoHeading,
+        promoDescription: (bp?.promoDescription as string) || DEFAULT_SETTINGS.blogPage.promoDescription,
+        promoCtaText: (bp?.promoCtaText as string) || DEFAULT_SETTINGS.blogPage.promoCtaText,
+        promoCtaHref: (bp?.promoCtaHref as string) || DEFAULT_SETTINGS.blogPage.promoCtaHref,
+        promoImage: bp?.promoImage ? resolveMediaUrl(bp.promoImage) : "",
+        headerTitle: (bp?.headerTitle as string) || DEFAULT_SETTINGS.blogPage.headerTitle,
+        headerSubtitle: (bp?.headerSubtitle as string) || DEFAULT_SETTINGS.blogPage.headerSubtitle,
+        emptyText: (bp?.emptyText as string) || DEFAULT_SETTINGS.blogPage.emptyText,
+      };
+    })(),
+    contactPage: (() => {
+      const cp = (settings as unknown as Record<string, unknown>)?.contactPage as Record<string, unknown> | undefined;
+      return {
+        heroTitle: (cp?.heroTitle as string) || DEFAULT_SETTINGS.contactPage.heroTitle,
+        heroSubtitle: (cp?.heroSubtitle as string) || DEFAULT_SETTINGS.contactPage.heroSubtitle,
+        cardTitle: (cp?.cardTitle as string) || DEFAULT_SETTINGS.contactPage.cardTitle,
+        cardDescription: (cp?.cardDescription as string) || DEFAULT_SETTINGS.contactPage.cardDescription,
+        cardItems: (cp?.cardItems as Array<Record<string, unknown>> || []).map((i) => ({ text: (i.text as string) || "" })),
+        cardQuote: (cp?.cardQuote as string) || DEFAULT_SETTINGS.contactPage.cardQuote,
+        branchesTitle: (cp?.branchesTitle as string) || DEFAULT_SETTINGS.contactPage.branchesTitle,
+        formTitle: (cp?.formTitle as string) || DEFAULT_SETTINGS.contactPage.formTitle,
+      };
+    })(),
+    productsPage: (() => {
+      const pp = (settings as unknown as Record<string, unknown>)?.productsPage as Record<string, unknown> | undefined;
+      const gold = pp?.goldHero as Record<string, unknown> | undefined;
+      const silver = pp?.silverHero as Record<string, unknown> | undefined;
+      const diamond = pp?.diamondHero as Record<string, unknown> | undefined;
+      return {
+        goldHero: { title: (gold?.title as string) || DEFAULT_SETTINGS.productsPage.goldHero.title, subtitle: (gold?.subtitle as string) || DEFAULT_SETTINGS.productsPage.goldHero.subtitle },
+        silverHero: { title: (silver?.title as string) || DEFAULT_SETTINGS.productsPage.silverHero.title, subtitle: (silver?.subtitle as string) || DEFAULT_SETTINGS.productsPage.silverHero.subtitle },
+        diamondHero: { title: (diamond?.title as string) || DEFAULT_SETTINGS.productsPage.diamondHero.title, subtitle: (diamond?.subtitle as string) || DEFAULT_SETTINGS.productsPage.diamondHero.subtitle },
+      };
+    })(),
+    defaultSeo: (() => {
+      const ds = (settings as unknown as Record<string, unknown>)?.defaultSeo as Record<string, unknown> | undefined;
+      return {
+        title: (ds?.title as string) || DEFAULT_SETTINGS.defaultSeo.title,
+        description: (ds?.description as string) || DEFAULT_SETTINGS.defaultSeo.description,
+        ogImage: resolveMediaUrl(ds?.ogImage) || "",
+      };
+    })(),
+    aboutPage: (() => {
+      const ap = (settings as unknown as Record<string, unknown>)?.aboutPage as Record<string, unknown> | undefined;
+      if (!ap) return DEFAULT_SETTINGS.aboutPage;
+      const go = ap.goldenOccasions as Record<string, unknown> | undefined;
+      const tm = ap.tasteMeetsTradition as Record<string, unknown> | undefined;
+      const or = ap.origins as Record<string, unknown> | undefined;
+      const ve = ap.ventures as Record<string, unknown> | undefined;
+      return {
+        goldenOccasions: {
+          heading: (go?.heading as string) || DEFAULT_SETTINGS.aboutPage.goldenOccasions.heading,
+          paragraphs: (go?.paragraphs as Array<Record<string, unknown>> || []).map((p) => ({
+            text: (p.text as string) || "",
+          })),
+          image: go?.image ? resolveMediaUrl(go.image) : "",
+          alt: (go?.alt as string) || "About Kerala Jewellers",
+        },
+        tasteMeetsTradition: {
+          heading: (tm?.heading as string) || DEFAULT_SETTINGS.aboutPage.tasteMeetsTradition.heading,
+          text: (tm?.text as string) || "",
+        },
+        origins: {
+          heading: (or?.heading as string) || DEFAULT_SETTINGS.aboutPage.origins.heading,
+          intro: (or?.intro as string) || "",
+        },
+        timeline: (ap.timeline as Array<Record<string, unknown>> || []).map((t) => ({
+          year: (t.year as string) || "",
+          title: (t.title as string) || "",
+          text: (t.text as string) || "",
+          image: resolveMediaUrl(t.image) || "",
+        })),
+        ventures: {
+          heading: (ve?.heading as string) || DEFAULT_SETTINGS.aboutPage.ventures.heading,
+          subheading: (ve?.subheading as string) || "Our Dedicated Wedding Hall",
+          image: resolveMediaUrl(ve?.image) || "",
+          alt: (ve?.alt as string) || "",
+          bullets: (ve?.bullets as Array<Record<string, unknown>> || []).map((b) => ({
+            text: (b.text as string) || "",
+          })),
+          cta1Text: (ve?.cta1Text as string) || "Know More About Us",
+          cta1Href: (ve?.cta1Href as string) || "https://www.ayswariyamahal.com/",
+          cta2Text: (ve?.cta2Text as string) || "Find Us",
+          cta2Href: (ve?.cta2Href as string) || "https://maps.app.goo.gl/vP759GxjSJLK4oU88",
+        },
+      };
+    })(),
+    branches: (() => {
+      const br = (settings as unknown as Record<string, unknown>)?.branches;
+      if (Array.isArray(br) && br.length > 0) {
+        return br.map((b: Record<string, unknown>) => ({
+          name: (b.name as string) || "",
+          address: (b.address as string) || "",
+          phone: (b.phone as string) || "",
+          phoneFull: (b.phoneFull as string) || "",
+          email: (b.email as string) || "",
+          hours: (b.hours as string) || "",
+          mapQ: (b.mapQ as string) || "",
+          mapEmbedUrl: (b.mapEmbedUrl as string) || "",
+        }));
+      }
+      return DEFAULT_SETTINGS.branches;
+    })(),
+  };
+}
+
+async function loadArrayDataViaSQL(
+  data: SiteSettingsData,
+): Promise<SiteSettingsData> {
   try {
     const pool = getPool();
     const ss = await pool.query(`SELECT id FROM site_settings LIMIT 1`);
@@ -837,6 +1107,9 @@ async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> 
     const catsRes = await pool.query(
       `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
        WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+    const branchesRes = await pool.query(
+      `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
+       FROM site_settings_branches WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
 
     return {
       ...data,
@@ -854,8 +1127,6 @@ async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> 
         title: r.title || "",
         description: r.description || "",
         image: normalizeMigratedMediaUrl(r.image_url),
-        srcSet: "",
-        sizes: "(max-width: 479px) 81vw, (max-width: 767px) 49vw, (max-width: 991px) 356px, 462px",
         alt: r.alt || "",
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -872,7 +1143,6 @@ async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> 
         heading: r.heading || "",
         description: r.description || "",
         image: normalizeMigratedMediaUrl(r.image_url),
-        srcSet: "",
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reviews: reviewsRes.rows.map((r: any) => ({
@@ -888,6 +1158,17 @@ async function loadArrayData(data: SiteSettingsData): Promise<SiteSettingsData> 
         ctaHref: r.cta_href || "",
         variant: r.variant || "",
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      branches: branchesRes.rows.length > 0 ? branchesRes.rows.map((r: any) => ({
+        name: r.name || "",
+        address: r.address || "",
+        phone: r.phone || "",
+        phoneFull: r.phone_full || "",
+        email: r.email || "",
+        hours: r.hours || "",
+        mapQ: r.map_q || "",
+        mapEmbedUrl: r.map_embed_url || "",
+      })) : data.branches,
     };
   } catch {
     return data;
@@ -898,95 +1179,100 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
   return cached("site-settings", async () => {
     const payload = await getPayload({ config });
     try {
-    const settings = await payload.findGlobal({
-      slug: "site-settings",
-      depth: 0,
-    });
-    const raw = {
-      ...DEFAULT_SETTINGS,
-      ...Object.fromEntries(
-        Object.entries(settings || {}).map(([k, v]) => [
-          k,
-          v ?? DEFAULT_SETTINGS[k as keyof SiteSettingsData],
-        ]),
-      ),
-    };
-    const result = {
-      ...raw,
-      ...resolveFontsFromPairing(
-        raw.fontPairing || "classic-luxury",
-        raw.headingFont || undefined,
-        raw.bodyFont || undefined,
-        raw.uiFont || undefined,
-      ),
-      fontPairing: raw.fontPairing || "classic-luxury",
-      heroSlides: [],
-      banners: [],
-      features: [],
-      heritage: [],
-      reviews: [],
-      categories: [],
-      aboutPage: (() => {
-        const ap = raw.aboutPage as PayloadDoc | undefined;
-        if (!ap) return DEFAULT_SETTINGS.aboutPage;
-        const go = ap.goldenOccasions as PayloadDoc | undefined;
-        const tm = ap.tasteMeetsTradition as PayloadDoc | undefined;
-        const or = ap.origins as PayloadDoc | undefined;
-        const ve = ap.ventures as PayloadDoc | undefined;
-        return {
-          goldenOccasions: {
-            heading:
-              go?.heading || DEFAULT_SETTINGS.aboutPage.goldenOccasions.heading,
-            paragraphs: (go?.paragraphs || []).map((p: PayloadDoc) => ({
-              text: p.text || "",
+    if (isPostgres()) {
+      const settings = await payload.findGlobal({
+        slug: "site-settings",
+        depth: 0,
+      });
+      const raw = {
+        ...DEFAULT_SETTINGS,
+        ...Object.fromEntries(
+          Object.entries(settings || {}).map(([k, v]) => [
+            k,
+            v ?? DEFAULT_SETTINGS[k as keyof SiteSettingsData],
+          ]),
+        ),
+      };
+      const result = {
+        ...raw,
+        ...resolveFontsFromPairing(
+          raw.fontPairing || "classic-luxury",
+          raw.headingFont || undefined,
+          raw.bodyFont || undefined,
+          raw.uiFont || undefined,
+        ),
+        fontPairing: raw.fontPairing || "classic-luxury",
+        heroSlides: [],
+        banners: [],
+        features: [],
+        heritage: [],
+        reviews: [],
+        categories: [],
+        aboutPage: (() => {
+          const ap = raw.aboutPage as PayloadDoc | undefined;
+          if (!ap) return DEFAULT_SETTINGS.aboutPage;
+          const go = ap.goldenOccasions as PayloadDoc | undefined;
+          const tm = ap.tasteMeetsTradition as PayloadDoc | undefined;
+          const or = ap.origins as PayloadDoc | undefined;
+          const ve = ap.ventures as PayloadDoc | undefined;
+          return {
+            goldenOccasions: {
+              heading:
+                go?.heading || DEFAULT_SETTINGS.aboutPage.goldenOccasions.heading,
+              paragraphs: (go?.paragraphs || []).map((p: PayloadDoc) => ({
+                text: p.text || "",
+              })),
+              image: go?.image ? resolveMediaUrl(go.image) : "",
+              alt: go?.alt || "About Kerala Jewellers",
+            },
+            tasteMeetsTradition: {
+              heading:
+                tm?.heading ||
+                DEFAULT_SETTINGS.aboutPage.tasteMeetsTradition.heading,
+              text: tm?.text || "",
+            },
+            origins: {
+              heading: or?.heading || DEFAULT_SETTINGS.aboutPage.origins.heading,
+              intro: or?.intro || "",
+            },
+            timeline: (ap.timeline || []).map((t: PayloadDoc) => ({
+              year: t.year || "",
+              title: t.title || "",
+              text: t.text || "",
+              image: resolveMediaUrl(t.image) || "",
             })),
-            image: go?.image ? resolveMediaUrl(go.image) : "",
-            alt: go?.alt || "About Kerala Jewellers",
-          },
-          tasteMeetsTradition: {
-            heading:
-              tm?.heading ||
-              DEFAULT_SETTINGS.aboutPage.tasteMeetsTradition.heading,
-            text: tm?.text || "",
-          },
-          origins: {
-            heading: or?.heading || DEFAULT_SETTINGS.aboutPage.origins.heading,
-            intro: or?.intro || "",
-          },
-          timeline: (ap.timeline || []).map((t: PayloadDoc) => ({
-            year: t.year || "",
-            title: t.title || "",
-            text: t.text || "",
-            image: resolveMediaUrl(t.image) || "",
-          })),
-          ventures: {
-            heading: ve?.heading || DEFAULT_SETTINGS.aboutPage.ventures.heading,
-            subheading: ve?.subheading || "Our Dedicated Wedding Hall",
-            image: resolveMediaUrl(ve?.image) || "",
-            alt: ve?.alt || "",
-            bullets: (ve?.bullets || []).map((b: PayloadDoc) => ({
-              text: b.text || "",
-            })),
-            cta1Text: ve?.cta1Text || "Know More About Us",
-            cta1Href: ve?.cta1Href || "https://www.ayswariyamahal.com/",
-            cta2Text: ve?.cta2Text || "Find Us",
-            cta2Href:
-              ve?.cta2Href || "https://maps.app.goo.gl/vP759GxjSJLK4oU88",
-          },
-        };
-      })(),
-      defaultSeo: (() => {
-        const ds = raw.defaultSeo as Record<string, unknown> | undefined;
-        return {
-          title: (ds?.title as string) || DEFAULT_SETTINGS.defaultSeo.title,
-          description:
-            (ds?.description as string) ||
-            DEFAULT_SETTINGS.defaultSeo.description,
-          ogImage: resolveMediaUrl(ds?.ogImage) || "",
-        };
-      })(),
-    };
-    return loadArrayData(result);
+            ventures: {
+              heading: ve?.heading || DEFAULT_SETTINGS.aboutPage.ventures.heading,
+              subheading: ve?.subheading || "Our Dedicated Wedding Hall",
+              image: resolveMediaUrl(ve?.image) || "",
+              alt: ve?.alt || "",
+              bullets: (ve?.bullets || []).map((b: PayloadDoc) => ({
+                text: b.text || "",
+              })),
+              cta1Text: ve?.cta1Text || "Know More About Us",
+              cta1Href: ve?.cta1Href || "https://www.ayswariyamahal.com/",
+              cta2Text: ve?.cta2Text || "Find Us",
+              cta2Href:
+                ve?.cta2Href || "https://maps.app.goo.gl/vP759GxjSJLK4oU88",
+            },
+          };
+        })(),
+        defaultSeo: (() => {
+          const ds = raw.defaultSeo as Record<string, unknown> | undefined;
+          return {
+            title: (ds?.title as string) || DEFAULT_SETTINGS.defaultSeo.title,
+            description:
+              (ds?.description as string) ||
+              DEFAULT_SETTINGS.defaultSeo.description,
+            ogImage: resolveMediaUrl(ds?.ogImage) || "",
+          };
+        })(),
+      };
+      return loadArrayDataViaSQL(result);
+    }
+
+    // SQLite path: use Payload API with depth:1 to resolve relationships
+    return await loadArrayDataViaPayload(payload);
   } catch {
     return DEFAULT_SETTINGS;
   }

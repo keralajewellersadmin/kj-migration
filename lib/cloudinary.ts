@@ -23,6 +23,7 @@ export interface CloudinaryTransformOptions {
   height?: number;
   quality?: "auto" | number | string;
   format?: "auto" | "webp" | "avif" | "jpg" | "png";
+  colorSpace?: "srgb" | "tiny-srgb" | "cmyk" | false;
   crop?: "fill" | "fit" | "scale" | "crop" | "thumb";
   gravity?: "auto" | "face" | "center" | "north" | "south";
 }
@@ -36,6 +37,7 @@ export function cloudinaryUrl(
     height,
     quality = "auto",
     format = "auto",
+    colorSpace = "srgb",
     crop = "fill",
     gravity = "auto",
   } = options;
@@ -59,6 +61,7 @@ export function cloudinaryUrl(
   if (height) parts.push(`h_${height}`);
   if (quality !== undefined) parts.push(`q_${quality}`);
   if (format) parts.push(`f_${format}`);
+  if (colorSpace) parts.push(`cs_${colorSpace}`);
   if (width || height) {
     parts.push(`c_${crop}`);
     parts.push(`g_${gravity}`);
@@ -71,6 +74,28 @@ export function cloudinaryUrl(
     return `${base}/${transformations}/${encodedId}`;
   }
   return `${base}/${encodedId}`;
+}
+
+export function normalizeCloudinaryDeliveryUrl(url: string): string {
+  if (!url.includes("res.cloudinary.com") || !url.includes("/image/upload/")) {
+    return url;
+  }
+
+  const [prefix, suffix] = url.split("/image/upload/");
+  if (!prefix || !suffix || suffix.includes("cs_srgb")) return url;
+
+  const segments = suffix.split("/");
+  const firstSegment = segments[0] || "";
+  const hasTransformSegment =
+    firstSegment.includes("_") && !firstSegment.startsWith("v");
+
+  if (hasTransformSegment) {
+    segments[0] = `${firstSegment},cs_srgb`;
+  } else {
+    segments.unshift("q_auto,f_auto,cs_srgb");
+  }
+
+  return `${prefix}/image/upload/${segments.join("/")}`;
 }
 
 export function extractPublicIdFromUrl(url: string): string | null {

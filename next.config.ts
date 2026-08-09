@@ -7,9 +7,9 @@ const isProduction = process.env.NODE_ENV === "production";
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isProduction ? "" : " 'unsafe-eval'"}`,
-  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https: http:",
-  "font-src 'self'",
+  "font-src 'self' https://fonts.gstatic.com",
   "connect-src 'self'",
   "frame-src 'self' https://www.google.com https://maps.google.com https://res.cloudinary.com",
   "frame-ancestors 'none'",
@@ -35,6 +35,27 @@ const nextConfig: NextConfig = {
         ],
       }
     : undefined,
+  async redirects() {
+    return [
+      {
+        source: "/admin",
+        destination: "/kj-portal-0d7cfad1",
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/kj-portal-0d7cfad1",
+        destination: "/admin",
+      },
+      {
+        source: "/kj-portal-0d7cfad1/:path*",
+        destination: "/admin/:path*",
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -52,6 +73,12 @@ const nextConfig: NextConfig = {
             value: "max-age=63072000; includeSubDomains; preload",
           },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
+        ],
+      },
+      {
+        source: "/api/frontend-products",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=300, stale-while-revalidate=600" },
         ],
       },
     ];

@@ -1,6 +1,6 @@
 {
   "functions": {
-    "app/(payload)/kj-portal-0d7cfad1/**/*": {
+    "app/(payload)/admin/**/*": {
       "maxDuration": 30
     }
   },

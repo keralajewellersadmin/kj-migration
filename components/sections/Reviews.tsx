@@ -56,8 +56,12 @@ type Review = {
 
 export default function Reviews({
   reviews: cmsReviews = [],
+  title = "Customer Reviews",
+  subtitle = "Our Jewelry Isn&apos;t Just Worn. It&apos;s Cherished. Each Piece Tells A Story, And You Can Hear It From Our Customers Who Wear Theirs With Pride.",
 }: {
   reviews?: Review[];
+  title?: string;
+  subtitle?: string;
 }) {
   const base = cmsReviews.length ? cmsReviews : baseReviews;
   const reviews = [...base, ...base];
@@ -87,8 +91,8 @@ export default function Reviews({
     <section className={styles.section}>
       <div className={styles.container}>
         <SectionHeader
-          title="Customer Reviews"
-          subtitle="Our Jewelry Isn&apos;t Just Worn. It&apos;s Cherished. Each Piece Tells A Story, And You Can Hear It From Our Customers Who Wear Theirs With Pride."
+          title={title}
+          subtitle={subtitle}
           subtitleOutside
         />
         <div className={styles.track}>

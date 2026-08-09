@@ -1,23 +1,21 @@
-import { v2 as cloudinary } from "cloudinary";
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
 } from "payload";
-import fs from "fs";
-import path from "path";
 import { getCloudinaryFolder, extractPublicIdFromUrl } from "./cloudinary";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+async function getCloudinaryClient() {
+  const { v2: cloudinary } = await import("cloudinary");
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+  return cloudinary;
+}
 
-function getMediaDir(): string {
-  if (process.env.MEDIA_DIR) {
-    return path.resolve(process.env.MEDIA_DIR);
-  }
-  return path.resolve(process.cwd(), "public", "media");
+function getConfiguredMediaDir(): string | undefined {
+  return process.env.MEDIA_DIR;
 }
 
 export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
@@ -34,7 +32,15 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
   if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return doc;
   if (doc.url && doc.url.includes("res.cloudinary.com")) return doc;
 
-  const mediaDir = getMediaDir();
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const mediaDir =
+    getConfiguredMediaDir() ||
+    path.join(
+      /* turbopackIgnore: true */ process.cwd(),
+      "public",
+      "media",
+    );
   const filePath = path.join(mediaDir, doc.filename);
 
   if (!fs.existsSync(filePath)) {
@@ -42,11 +48,13 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
   }
 
   try {
+    const cloudinary = await getCloudinaryClient();
     const folder = getCloudinaryFolder(doc.mediaType);
     const result = await cloudinary.uploader.upload(filePath, {
       folder,
       public_id: String(doc.id),
       resource_type: "image",
+      colorspace: "srgb",
     });
 
     const updateData: Record<string, unknown> = {
@@ -66,7 +74,9 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
       // Non-critical
     }
 
-    console.log(`[Cloudinary] ${doc.filename} → ${result.secure_url}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[Cloudinary] ${doc.filename} → ${result.secure_url}`);
+    }
     return { ...doc, ...updateData };
   } catch (err) {
     console.error(`[Cloudinary] Upload failed for ${doc.filename}:`, err);
@@ -81,19 +91,31 @@ export const cloudinaryDeleteHook: CollectionAfterDeleteHook = async ({
   if (!doc?.url || !doc.url.includes("res.cloudinary.com")) return doc;
 
   try {
+    const cloudinary = await getCloudinaryClient();
     const publicId =
       doc.cloudinaryPublicId ||
       extractPublicIdFromUrl(doc.url);
     if (publicId) {
       await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
-      console.log(`[Cloudinary] Deleted ${publicId}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[Cloudinary] Deleted ${publicId}`);
+      }
     }
   } catch (err) {
     console.error(`[Cloudinary] Delete failed for ${doc.filename}:`, err);
   }
 
   if (doc.filename) {
-    const filePath = path.join(getMediaDir(), doc.filename);
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const mediaDir =
+      getConfiguredMediaDir() ||
+      path.join(
+        /* turbopackIgnore: true */ process.cwd(),
+        "public",
+        "media",
+      );
+    const filePath = path.join(mediaDir, doc.filename);
     try {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     } catch {

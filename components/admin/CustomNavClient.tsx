@@ -40,36 +40,19 @@ function getVisibleSections(role: string): NavSection[] {
       items: [{ href: `${ADMIN_PATH}`, icon: "dashboard", label: "Dashboard" }],
     },
     {
-      label: "Catalog",
+      label: "Content",
       items: [
-        { href: `${ADMIN_PATH}/collections/products`, icon: "box", label: "Products" },
-        {
-          href: `${ADMIN_PATH}/collections/categories`,
-          icon: "category",
-          label: "Categories",
-        },
-        {
-          href: `${ADMIN_PATH}/collections/products?where[featured][equals]=true`,
-          icon: "folder",
-          label: "Collections",
-        },
+        { href: `${ADMIN_PATH}/site-settings`, icon: "page", label: "Pages" },
+        { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "folder", label: "Blog Posts" },
+        { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Legal Pages" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "image", label: "Media" },
       ],
     },
     {
-      label: "Content",
+      label: "Catalog",
       items: [
-        { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Pages" },
-        {
-          href: `${ADMIN_PATH}/globals/site-settings`,
-          icon: "banner",
-          label: "Banners",
-        },
-        {
-          href: `${ADMIN_PATH}/globals/site-settings`,
-          icon: "settings",
-          label: "Site Settings",
-        },
+        { href: `${ADMIN_PATH}/collections/products`, icon: "box", label: "Products" },
+        { href: `${ADMIN_PATH}/collections/categories`, icon: "category", label: "Categories" },
       ],
     },
     {

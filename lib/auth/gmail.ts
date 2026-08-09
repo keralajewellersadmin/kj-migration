@@ -1,12 +1,19 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_OTP_SENDER_EMAIL,
-    pass: process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
-  },
-});
+let _transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter {
+  if (!_transporter) {
+    _transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_OTP_SENDER_EMAIL,
+        pass: process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
+      },
+    });
+  }
+  return _transporter;
+}
 
 export interface SendEmailOptions {
   to: string;
@@ -21,16 +28,12 @@ export async function sendEmail({
 }: SendEmailOptions): Promise<void> {
   const from = process.env.GMAIL_OTP_SENDER_EMAIL || "keralajewellersadmin@gmail.com";
 
-  // In development, log to console so devs don't need working email
+  // In development, skip sending email entirely
   if (process.env.NODE_ENV !== "production") {
-    console.log("\n╔══════════════════════════════════════╗");
-    console.log("║       DEV MODE — EMAIL              ║");
-    console.log(`║  To: ${to}`);
-    console.log(`║  Subject: ${subject}`);
-    console.log("╚══════════════════════════════════════╝\n");
+    return;
   }
 
-  await transporter.sendMail({
+  await getTransporter().sendMail({
     from,
     to,
     subject,

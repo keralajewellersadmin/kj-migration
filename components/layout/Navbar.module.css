@@ -654,7 +654,7 @@
   }
 
   .mobileHeader .brand img {
-    height: 60px; /* one-off */
+    height: auto; /* one-off */
     max-height: 60px; /* one-off */
     object-fit: contain;
     width: 170px; /* one-off */

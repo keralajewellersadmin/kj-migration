@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
+  const cp = settings.contactPage;
   const branches = settings.branches?.length
     ? settings.branches
     : DEFAULT_BRANCHES;
@@ -30,10 +31,9 @@ export default async function ContactPage() {
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroContainer}>
-          <h1 className={styles.heroTitle}>Contact Kerala Jewellers</h1>
+          <h1 className={styles.heroTitle}>{cp.heroTitle}</h1>
           <p className={styles.heroSubtitle}>
-            We&apos;re here to help you with store visits, jewellery enquiries,
-            custom designs, and service support.
+            {cp.heroSubtitle}
           </p>
         </div>
       </section>
@@ -43,23 +43,18 @@ export default async function ContactPage() {
           <ContactForm />
 
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>Get In Touch</h2>
+            <h2 className={styles.cardTitle}>{cp.cardTitle}</h2>
             <div className={styles.infoText}>
               <p>
-                Looking for a specific jewellery design, bridal collection,
-                custom order, or gold/silver rate update? Our team will guide
-                you with product availability, store visit support, and purchase
-                assistance.
+                {cp.cardDescription}
               </p>
               <ul className={styles.infoList}>
-                <li>Bridal &amp; occasion jewellery assistance</li>
-                <li>Product availability and pricing support</li>
-                <li>Store visit and direction guidance</li>
-                <li>Custom jewellery enquiry support</li>
+                {cp.cardItems.map((item, i) => (
+                  <li key={i}>{item.text}</li>
+                ))}
               </ul>
               <p className={styles.quote}>
-                &ldquo;Send us a message and our team will get back to you
-                shortly.&rdquo;
+                &ldquo;{cp.cardQuote}&rdquo;
               </p>
             </div>
             <div className={styles.socialLinks}>
@@ -113,7 +108,7 @@ export default async function ContactPage() {
         </div>
 
         <div className={styles.branchesSection}>
-          <h2 className={styles.branchesTitle}>Our Branches</h2>
+          <h2 className={styles.branchesTitle}>{cp.branchesTitle}</h2>
           <div className={styles.branchesGrid}>
             {branches.map((branch) => (
               <div key={branch.name} className={styles.branchCard}>

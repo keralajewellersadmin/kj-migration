@@ -33,8 +33,12 @@ const fallbackProducts = [
 
 export default async function Bestsellers({
   bestsellerProducts = "",
+  title = "Our Bestsellers",
+  subtitle = "Choose from among trendy designs and timeless pieces. There&apos;s something for everyone and every occasion.",
 }: {
   bestsellerProducts?: string;
+  title?: string;
+  subtitle?: string;
 }) {
   const slugs = bestsellerProducts
     .split(",")
@@ -61,16 +65,15 @@ export default async function Bestsellers({
     <section className={styles.section}>
       <div className={styles.container}>
         <SectionHeader
-          title="Our Bestsellers"
-          subtitle="Choose from among trendy designs and timeless pieces. There&apos;s something for everyone and every occasion."
+          title={title}
+          subtitle={subtitle}
         />
         <div className={styles.grid}>
           {products.map((product, i) => (
             <div key={i} className={styles.card}>
-              <div className={styles.cardMedia}>
-                <span className={styles.cardTitle}>{product.title}</span>
-                <span className={styles.cardCategory}>{product.category}</span>
-                <div className={styles.cardImageWrap}>
+              <a href={product.href} className={styles.cardLink}>
+                <span className={styles.cornerMark} aria-hidden="true" />
+                <div className={styles.cardMedia}>
                   {product.image ? (
                     <Image
                       src={product.image}
@@ -78,16 +81,19 @@ export default async function Bestsellers({
                       className={styles.cardImage}
                       width={600}
                       height={600}
-                      loading="lazy"
+                      loading={i === 0 ? "eager" : "lazy"}
+                      priority={i === 0}
                     />
                   ) : null}
                 </div>
-              </div>
-              <div className={styles.cardAction}>
-                <a href={product.href} className={styles.viewBtn}>
-                  View Item
-                </a>
-              </div>
+                <div className={styles.cardBody}>
+                  <h3 className={styles.cardTitle}>{product.title}</h3>
+                  <span className={styles.cardCategory}>
+                    {product.category}
+                  </span>
+                  <span className={styles.viewBtn}>View Item</span>
+                </div>
+              </a>
             </div>
           ))}
         </div>

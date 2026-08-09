@@ -1,4 +1,5 @@
 import { IMG } from "../image-urls";
+import { normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 
 export function normalizeCategory(raw: string, metal?: string): string {
   const lower = raw.toLowerCase();
@@ -41,7 +42,7 @@ export const metals = [
     heroTitle: "Elegant & Timeless Gold Jewellery",
     heroSubtitle:
       "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion.",
-    heroBg: "https://res.cloudinary.com/htl6k8cd/image/upload/v1786011479/kerala-jewellers/banners/products-hero-gold.webp",
+    heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011479/kerala-jewellers/banners/products-hero-gold.webp"),
   },
   {
     slug: "silver",
@@ -52,7 +53,7 @@ export const metals = [
     heroTitle: "Classic Elegance <br>in Silver",
     heroSubtitle:
       "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment.",
-    heroBg: "https://res.cloudinary.com/htl6k8cd/image/upload/v1786011521/kerala-jewellers/banners/products-hero-silver.webp",
+    heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011521/kerala-jewellers/banners/products-hero-silver.webp"),
   },
   {
     slug: "diamond",
@@ -63,6 +64,6 @@ export const metals = [
     heroTitle: "Timeless Brilliance in Diamonds",
     heroSubtitle:
       "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion.",
-    heroBg: "https://res.cloudinary.com/htl6k8cd/image/upload/v1786011524/kerala-jewellers/banners/products-hero-diamond.webp",
+    heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011524/kerala-jewellers/banners/products-hero-diamond.webp"),
   },
 ];

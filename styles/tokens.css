@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Mulish:wght@300;400;500;600;700&display=swap");
+
 @font-face {
   font-family: "Com 4 DL";
   src: url("/assets/fonts/com4tdrify.ttf") format("truetype");
@@ -76,8 +78,16 @@
     --color-btn-hover-gold: #f5d95f;
     --color-border-card: #a7a7a7;
     --color-card-title: #7d5f58;
+    --color-product-card-text: #4f403d;
+    --color-product-card-category: #7d5f58;
+    --color-product-card-header-bg: #fff7eb;
+    --color-product-card-body-bg: #ffffff;
+    --color-product-card-surface: rgba(255, 253, 248, 0.96);
+    --color-product-card-border: rgba(181, 143, 53, 0.22);
 
     /* ===== Typography ===== */
+    --font-ui-loaded: "Montserrat";
+    --font-body-loaded: "Mulish";
     --font-decorative: "Com 4 DL", Georgia, serif;
     --font-body: var(--font-body-loaded), Mulish, sans-serif;
     --font-ui: var(--font-ui-loaded), Montserrat, sans-serif;
@@ -141,6 +151,8 @@
     --shadow-mega: 0 18px 38px rgba(55, 21, 23, 0.14);
     --shadow-card: 0 8px 20px rgba(153, 31, 35, 0.08);
     --shadow-card-hover: 0 16px 34px rgba(57, 26, 21, 0.1);
+    --shadow-product-card: 0 12px 30px rgba(65, 35, 28, 0.06);
+    --shadow-product-card-hover: 0 18px 38px rgba(65, 35, 28, 0.1);
     --shadow-btn: 0 6px 16px rgba(153, 31, 35, 0.18);
     --shadow-btn-hover: 0 12px 24px rgba(153, 31, 35, 0.22);
     --shadow-gold-btn: 0 4px 12px rgba(212, 175, 55, 0.2);
@@ -154,6 +166,29 @@
     --radius-lg: 12px;
     --radius-xl: 14px;
     --radius-full: 9999px;
+
+    /* ===== Product Listing Card (live reference) ===== */
+    --product-card-width-ref: 261px;
+    --product-card-padding-y-top: 15px;
+    --product-card-padding-x: 16px;
+    --product-card-padding-y-bottom: 17px;
+    --product-card-media-gap: 14px;
+    --product-card-title-margin-top: 8px;
+    --product-card-title-margin-bottom: 5px;
+    --product-card-title-size: 15.552px;
+    --product-card-category-size: 12.96px;
+    --product-card-category-tracking: 1.0368px;
+    --product-card-button-padding-y: 7px;
+    --product-card-button-padding-x: 15px;
+    --product-card-button-tracking: -0.48px;
+    --product-card-border-width: 1px;
+    --product-card-radius: 10px;
+    --product-card-button-radius: 5px;
+    --product-card-hover-lift: -4px;
+    --product-card-title-size-mobile: 15px;
+    --product-grid-max: 1120px;
+    --product-grid-gap: 26px;
+    --product-grid-gap-mobile: 16px;
 
     /* ===== Z-Index ===== */
     --z-dropdown: 1000;

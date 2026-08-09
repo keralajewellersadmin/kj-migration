@@ -89,8 +89,8 @@ function EnquiryForm() {
             fetchPriority="high"
             src={IMG.logoKj}
             alt="Kerala Jewellers"
-            width={190}
-            height={64}
+            width={244}
+            height={88}
             unoptimized
           />
         </Link>

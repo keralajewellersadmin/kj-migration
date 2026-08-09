@@ -45,8 +45,12 @@ export default function ProductGrid({
   return (
     <>
       <div className={styles.grid}>
-        {products.map((product) => (
-          <ProductCard key={product.slug} product={product} />
+        {products.map((product, index) => (
+          <ProductCard
+            key={product.slug}
+            product={product}
+            priority={index === 0}
+          />
         ))}
       </div>
       {hasMore && (

@@ -106,7 +106,7 @@
 .tasteSection {
   background-image:
     linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(253, 253, 253, 0)),
-    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785693283/kerala-jewellers/backgrounds/66ab3c6cdab04df4b1d00432_Group%202085665110.webp");
+    url("https://res.cloudinary.com/htl6k8cd/image/upload/q_auto,f_auto,cs_srgb/v1785693283/kerala-jewellers/backgrounds/66ab3c6cdab04df4b1d00432_Group%202085665110.webp");
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -220,32 +220,6 @@
   width: 100%;
 }
 
-/* Progress bar */
-.timelineProgress {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 3px; /* one-off */
-  height: 5%; /* one-off */
-  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
-  transform: translateX(-50%);
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.timelineDot {
-  width: 24px; /* one-off */
-  height: 24px; /* one-off */
-  border-radius: 99px;
-  background-color: #fff;
-  border: 1px solid #ad1c20;
-  position: relative;
-  z-index: 1;
-}
-
 /* Text items */
 .timelineItemWrap {
   display: flex;
@@ -319,10 +293,6 @@
   border-radius: 0.5em; /* one-off */
   padding: 2em; /* one-off */
   margin: 1.9em 0; /* one-off */
-}
-
-.timelineImageCard.hasImages {
-  background-color: #fff;
 }
 
 .timelineImageRow {

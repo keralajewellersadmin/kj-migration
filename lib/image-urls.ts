@@ -1,4 +1,15 @@
-export const IMG = {
+import { normalizeCloudinaryDeliveryUrl } from "./cloudinary";
+
+function normalizeImageMap<T extends Record<string, string>>(images: T): T {
+  return Object.fromEntries(
+    Object.entries(images).map(([key, value]) => [
+      key,
+      normalizeCloudinaryDeliveryUrl(value),
+    ]),
+  ) as T;
+}
+
+export const IMG = normalizeImageMap({
   // Bestsellers fallback (CMS products override these)
   antiqueIdol: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785697808/kerala-jewellers/products/67766fa7d514e286b3ae7693_100.png",
   antiqueIdolP500: "https://res.cloudinary.com/htl6k8cd/image/upload/w_500,q_auto,f_auto/kerala-jewellers/products/67766fa7d514e286b3ae7693_100.png",
@@ -63,4 +74,4 @@ export const IMG = {
   coinSilver: "/assets/coin/silver coin.png",
   coinPlatinum: "/assets/coin/Platinum Coin.png",
   placeholder: "/assets/images/placeholder.svg",
-};
+});

@@ -1,0 +1,104 @@
+[
+  {
+    "slug": "dashboard",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1",
+    "screenshot": "dashboard.png",
+    "issues": []
+  },
+  {
+    "slug": "admin-users-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/admin-users",
+    "screenshot": "admin-users-list.png",
+    "issues": []
+  },
+  {
+    "slug": "admin-users-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/admin-users/create",
+    "screenshot": "admin-users-create.png",
+    "issues": []
+  },
+  {
+    "slug": "media-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/media",
+    "screenshot": "media-list.png",
+    "issues": []
+  },
+  {
+    "slug": "media-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/media/create",
+    "screenshot": "media-create.png",
+    "issues": []
+  },
+  {
+    "slug": "products-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/products",
+    "screenshot": "products-list.png",
+    "issues": []
+  },
+  {
+    "slug": "products-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/products/create",
+    "screenshot": "products-create.png",
+    "issues": []
+  },
+  {
+    "slug": "categories-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/categories",
+    "screenshot": "categories-list.png",
+    "issues": []
+  },
+  {
+    "slug": "categories-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/categories/create",
+    "screenshot": "categories-create.png",
+    "issues": []
+  },
+  {
+    "slug": "blog-posts-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/blog-posts",
+    "screenshot": "blog-posts-list.png",
+    "issues": []
+  },
+  {
+    "slug": "blog-posts-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/blog-posts/create",
+    "screenshot": "blog-posts-create.png",
+    "issues": []
+  },
+  {
+    "slug": "legal-pages-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/legal-pages",
+    "screenshot": "legal-pages-list.png",
+    "issues": []
+  },
+  {
+    "slug": "legal-pages-create",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/legal-pages/create",
+    "screenshot": "legal-pages-create.png",
+    "issues": []
+  },
+  {
+    "slug": "inquiries-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/inquiries",
+    "screenshot": "inquiries-list.png",
+    "issues": []
+  },
+  {
+    "slug": "audit-logs-list",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/collections/audit-logs",
+    "screenshot": "audit-logs-list.png",
+    "issues": []
+  },
+  {
+    "slug": "site-settings",
+    "url": "http://localhost:4000/kj-portal-0d7cfad1/globals/site-settings",
+    "screenshot": "site-settings.png",
+    "issues": []
+  },
+  {
+    "slug": "products-edit-first",
+    "url": "http://localhost:4000/admin/collections/products/create",
+    "screenshot": "products-edit-first.png",
+    "issues": []
+  }
+]

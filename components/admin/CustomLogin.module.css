@@ -132,6 +132,59 @@
   line-height: 1.5;
 }
 
+.cardHeader .devResetLink {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(181, 143, 53, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 248, 228, 0.58);
+  color: #4f403d;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.devResetLink a {
+  color: var(--color-maroon, #991f23);
+  font-weight: 700;
+}
+
+.devOtp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border: 1px solid rgba(48, 78, 81, 0.2);
+  border-radius: 8px;
+  background: rgba(48, 78, 81, 0.05);
+  color: var(--color-emerald, #304e51);
+  font-size: 13px;
+}
+
+.devOtp strong {
+  font-family: monospace;
+  font-size: 15px;
+  letter-spacing: 0.15em;
+}
+
+.devCopyBtn {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--color-emerald, #304e51);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-emerald, #304e51);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.devCopyBtn:hover {
+  background: rgba(48, 78, 81, 0.08);
+}
+
 .error {
   margin-bottom: 20px;
   padding: 12px 14px;
@@ -187,6 +240,46 @@
 .field input:focus {
   border-color: var(--color-gold, #d4af37);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* ─── Password Toggle ─── */
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  padding: 0 44px 0 14px;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.togglePassword:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.togglePassword svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .codeInput {

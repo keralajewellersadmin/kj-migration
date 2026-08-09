@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import config from "@payload-config";
-import { getPayload } from "payload";
+import { getCachedPayload } from "@/lib/payload-singleton";
 import { generateOtp, hashValue, sendOtpEmail } from "@/lib/auth/email";
 
 export async function POST(request: Request) {
@@ -12,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getPayload({ config });
+  const payload: any = await getCachedPayload();
 
   // Get user
   const user = await payload.findByID({
@@ -48,7 +47,7 @@ export async function POST(request: Request) {
     }
   }
 
-  // Delete old OTPs for this user
+  // Delete old OTPs for this user, but preserve the sessionToken from the original login
   const oldOtps = await payload.find({
     collection: "login-otps",
     where: {
@@ -57,6 +56,12 @@ export async function POST(request: Request) {
     limit: 10,
     overrideAccess: true,
   });
+
+  // Extract sessionToken from the most recent OTP (set during initial login)
+  let sessionToken: string | undefined;
+  if (oldOtps.docs.length > 0) {
+    sessionToken = (oldOtps.docs[0].sessionToken as string) || undefined;
+  }
 
   for (const oldOtp of oldOtps.docs) {
     await payload.delete({
@@ -79,14 +84,14 @@ export async function POST(request: Request) {
       codeHash,
       expiresAt,
       attempts: 0,
+      ...(sessionToken ? { sessionToken } : {}),
     },
   });
 
   // Send OTP
   try {
     await sendOtpEmail(user.email as string, otp);
-  } catch (err) {
-    console.error("Failed to send OTP email:", err);
+  } catch {
     return NextResponse.json(
       { error: "Failed to send verification email" },
       { status: 500 },

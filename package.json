@@ -17,8 +17,8 @@
     "@payloadcms/db-sqlite": "^3.86.0",
     "@payloadcms/email-resend": "^3.86.0",
     "@payloadcms/next": "^3.86.0",
+    "better-sqlite3": "^13.0.3",
     "cloudinary": "^2.10.0",
-    "graphql": "^17.0.2",
     "next": "16.2.9",
     "nodemailer": "^9.0.3",
     "payload": "^3.86.0",
@@ -26,7 +26,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.18.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.34.5",
     "swiper": "^14.0.1",
     "zod": "^4.4.3"
   },
@@ -41,6 +41,7 @@
     "eslint-config-next": "16.2.9",
     "knip": "^6.32.0",
     "playwright": "^1.61.1",
+    "tsx": "^4.19.0",
     "typescript": "^5"
   }
 }

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import config from "@payload-config";
-import { getPayload } from "payload";
+import { getCachedPayload } from "@/lib/payload-singleton";
 import {
   findUserByIdentifier,
   generateResetToken,
@@ -9,13 +8,12 @@ import {
 } from "@/lib/auth/email";
 import { ADMIN_PATH } from "@/lib/admin-path";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kj-migration.vercel.app";
 const SHARED_EMAIL = "keralajewellersadmin@gmail.com";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { identifier } = body as { identifier?: string };
+  const requestOrigin = new URL(request.url).origin;
 
   // Always return generic message (no account enumeration)
   if (!identifier) {
@@ -26,7 +24,7 @@ export async function POST(request: Request) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getPayload({ config });
+  const payload: any = await getCachedPayload();
   const { user } = await findUserByIdentifier(payload, identifier.trim());
 
   if (!user) {
@@ -78,15 +76,17 @@ export async function POST(request: Request) {
   });
 
   // Send reset email
-  const resetUrl = `${SITE_URL}${ADMIN_PATH}/reset-password?token=${rawToken}`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
+  const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
   try {
-    await sendPasswordResetEmail(SHARED_EMAIL, resetUrl);
-  } catch (err) {
-    console.error("Failed to send reset email:", err);
+    await sendPasswordResetEmail((user.email as string) || SHARED_EMAIL, resetUrl);
+  } catch {
+    // Silently fail — user gets generic response anyway
   }
 
   return NextResponse.json({
     success: true,
     message: "If an account exists, a reset link has been sent.",
+    ...(process.env.NODE_ENV !== "production" ? { resetUrl } : {}),
   });
 }

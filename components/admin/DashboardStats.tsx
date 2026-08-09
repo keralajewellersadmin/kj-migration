@@ -4,19 +4,7 @@ import type { ServerProps } from "payload";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./DashboardStats.module.css";
 
-function timeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diff = Math.floor((now - then) / 1000);
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-  });
-}
+import { timeAgo } from "@/lib/utils";
 
 async function getStats(payload: ServerProps["payload"]) {
   const [products, categories, media] = await Promise.all([
@@ -233,7 +221,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
       icon: statIcons.products,
       accent: "#f59e0b",
       bg: "#fff7ed",
-      trend: "12.5%",
     },
     {
       label: "Total Categories",
@@ -241,7 +228,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
       icon: statIcons.categories,
       accent: "#a855f7",
       bg: "#faf5ff",
-      trend: "7.2%",
     },
     {
       label: "Inquiries",
@@ -249,7 +235,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
       icon: statIcons.inquiries,
       accent: "#f59e0b",
       bg: "#fff7ed",
-      trend: "18.4%",
     },
     {
       label: "Active Media",
@@ -257,7 +242,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
       icon: statIcons.banners,
       accent: "#10b981",
       bg: "#ecfdf5",
-      trend: "20%",
     },
   ];
 
@@ -327,10 +311,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
             </div>
             <div className={styles.statValue}>
               {card.value.toLocaleString()}
-            </div>
-            <div className={styles.statTrend}>
-              <span>↑ {card.trend}</span>
-              <em>vs last month</em>
             </div>
           </div>
         ))}
@@ -428,7 +408,6 @@ export default async function DashboardStats({ payload }: ServerProps) {
 
       <div className={styles.dashboardFooter}>
         <span>© 2025 Kerala Jewellers. All rights reserved.</span>
-        <span>Payload CMS v3.0.0</span>
       </div>
     </div>
   );

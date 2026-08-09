@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import config from "@payload-config";
-import { getPayload } from "payload";
+import { getCachedPayload } from "@/lib/payload-singleton";
 import { hashValue } from "@/lib/auth/email";
 import { validateAdminPassword } from "@/lib/payload/security";
 
@@ -16,7 +15,7 @@ export async function POST(request: Request) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getPayload({ config });
+  const payload: any = await getCachedPayload();
   const tokenHash = hashValue(token);
 
   // Find the reset record

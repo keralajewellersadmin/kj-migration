@@ -10,6 +10,15 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const SUCCESS_MESSAGE = "Your inquiry has been received successfully.";
 const RATE_LIMITS_COLLECTION = "rate-limits" as never;
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const inquirySchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z
@@ -150,11 +159,11 @@ export async function POST(request: Request) {
           subject: `Kerala Jewellers inquiry from ${parsed.name}`,
           replyTo: parsed.email,
           html: [
-            `<p><strong>Name:</strong> ${parsed.name}</p>`,
-            `<p><strong>Email:</strong> ${parsed.email}</p>`,
-            `<p><strong>Phone:</strong> ${parsed.phone || "-"}</p>`,
-            `<p><strong>Source:</strong> ${parsed.sourcePage}</p>`,
-            `<p><strong>Message:</strong></p><p>${parsed.message || "-"}</p>`,
+            `<p><strong>Name:</strong> ${escapeHtml(parsed.name)}</p>`,
+            `<p><strong>Email:</strong> ${escapeHtml(parsed.email)}</p>`,
+            `<p><strong>Phone:</strong> ${escapeHtml(parsed.phone || "-")}</p>`,
+            `<p><strong>Source:</strong> ${escapeHtml(parsed.sourcePage || "")}</p>`,
+            `<p><strong>Message:</strong></p><p>${escapeHtml(parsed.message || "-")}</p>`,
           ].join(""),
         });
         await payload.update({
@@ -162,7 +171,8 @@ export async function POST(request: Request) {
           id: inquiry.id,
           data: { emailNotificationStatus: "sent" } as never,
         });
-      } catch {
+      } catch (emailErr) {
+        console.error("[Inquiry] Failed to send notification email:", emailErr);
         await payload.update({
           collection: "inquiries",
           id: inquiry.id,
@@ -173,7 +183,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, message: SUCCESS_MESSAGE });
   } catch (err) {
-    console.error("Inquiry submission failed:", err);
+    console.error("[Inquiry] Submission error:", err);
     return NextResponse.json(
       { error: "Unable to submit inquiry right now." },
       { status: 500 },

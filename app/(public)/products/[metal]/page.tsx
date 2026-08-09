@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { metals } from "@/lib/data/utils";
-import { getProductsByMetalPaginated, getCategories } from "@/lib/data/cms";
+import { getProductsByMetalPaginated, getCategories, getSiteSettings } from "@/lib/data/cms";
 import ProductGrid from "@/components/sections/ProductGrid";
 import ProductsHero from "@/components/sections/ProductsHero";
 import CategoryFilter from "@/components/ui/CategoryFilter";
@@ -44,13 +44,11 @@ export default async function MetalProductsPage(props: {
   const metal = metals.find((m) => m.slug === params.metal);
   if (!metal) notFound();
 
-  const allCategories = await getCategories(params.metal);
-  const result = await getProductsByMetalPaginated(
-    params.metal,
-    1,
-    24,
-    categorySlug || undefined,
-  );
+  const [settings, allCategories, result] = await Promise.all([
+    getSiteSettings(),
+    getCategories(params.metal),
+    getProductsByMetalPaginated(params.metal, 1, 24, categorySlug || undefined),
+  ]);
 
   let sorted = result.products;
   if (sort === "asc")
@@ -58,12 +56,15 @@ export default async function MetalProductsPage(props: {
   if (sort === "desc")
     sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
 
+  const metalKey = params.metal as "gold" | "silver" | "diamond";
+  const heroKey = `${metalKey}Hero` as "goldHero" | "silverHero" | "diamondHero";
+  const cmsHero = settings.productsPage[heroKey];
   const heroTitle = categorySlug
     ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`
-    : metal.heroTitle;
+    : cmsHero.title;
   const heroSubtitle = categorySlug
     ? `Explore our curated selection of ${categorySlug.replace(/-/g, " ")} jewellery.`
-    : metal.heroSubtitle;
+    : cmsHero.subtitle;
 
   return (
     <>
@@ -71,7 +72,7 @@ export default async function MetalProductsPage(props: {
         title={heroTitle}
         subtitle={heroSubtitle}
         bgImage={metal.heroBg}
-        metal={params.metal as "gold" | "silver" | "diamond"}
+        metal={metalKey}
       />
       <section className={styles.section} id="product-grid">
         <div className={styles.container}>

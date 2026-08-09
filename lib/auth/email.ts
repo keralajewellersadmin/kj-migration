@@ -14,13 +14,14 @@ export function hashValue(value: string): string {
 }
 
 export async function sendOtpEmail(toEmail: string, code: string) {
-  // In development, log OTP to console so devs don't need working email
+  // In development, log OTP to console — skip email entirely
   if (process.env.NODE_ENV !== "production") {
     console.log("\n╔══════════════════════════════════════╗");
     console.log("║       DEV MODE — OTP CODE           ║");
     console.log(`║  To: ${toEmail}`);
     console.log(`║  Code: ${code}`);
     console.log("╚══════════════════════════════════════╝\n");
+    return;
   }
 
   try {
@@ -42,11 +43,9 @@ export async function sendOtpEmail(toEmail: string, code: string) {
       `,
     });
   } catch (err) {
-    // In dev, email failure is non-fatal since OTP is logged to console
     if (process.env.NODE_ENV === "production") {
       throw err;
     }
-    console.warn("Email send failed (non-fatal in dev):", err);
   }
 }
 
@@ -54,13 +53,14 @@ export async function sendPasswordResetEmail(
   toEmail: string,
   resetUrl: string,
 ) {
-  // In development, log reset URL to console
+  // In development, log reset URL to console — skip email entirely
   if (process.env.NODE_ENV !== "production") {
     console.log("\n╔══════════════════════════════════════╗");
     console.log("║    DEV MODE — PASSWORD RESET URL    ║");
     console.log(`║  To: ${toEmail}`);
     console.log(`║  URL: ${resetUrl}`);
     console.log("╚══════════════════════════════════════╝\n");
+    return;
   }
 
   try {
@@ -85,7 +85,6 @@ export async function sendPasswordResetEmail(
     if (process.env.NODE_ENV === "production") {
       throw err;
     }
-    console.warn("Email send failed (non-fatal in dev):", err);
   }
 }
 

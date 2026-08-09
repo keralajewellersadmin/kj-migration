@@ -225,8 +225,8 @@ export default function Footer({
                 className={styles.logo}
                 alt="Kerala Jewellers Logo"
                 src={IMG.logoKj}
-                width={170}
-                height={57}
+                width={244}
+                height={88}
                 unoptimized
                 style={{ width: "auto", height: "auto" }}
               />

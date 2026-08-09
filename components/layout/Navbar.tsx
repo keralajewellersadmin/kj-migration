@@ -237,8 +237,8 @@ export default function Navbar({
                   <Image
                     alt="Kerala Jewellers Logo"
                     src={IMG.logoKj}
-                    width={170}
-                    height={57}
+                    width={244}
+                    height={88}
                     priority
                     unoptimized
                     style={{ width: "auto", height: "auto" }}
@@ -359,8 +359,8 @@ export default function Navbar({
             <Image
               alt="Kerala Jewellers Logo"
               src={IMG.logoKj}
-              width={170}
-              height={57}
+              width={244}
+              height={88}
               priority
               unoptimized
               style={{ width: "auto", height: "auto" }}

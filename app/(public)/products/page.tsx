@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductsByMetalPaginated, getCategories } from "@/lib/data/cms";
+import { getProductsByMetalPaginated, getCategories, getSiteSettings } from "@/lib/data/cms";
 import { metals } from "@/lib/data/utils";
 import ProductGrid from "@/components/sections/ProductGrid";
 import ProductsHero from "@/components/sections/ProductsHero";
@@ -29,14 +29,11 @@ export default async function ProductsPage(props: {
   const categorySlug = searchParams.category;
   const sort = searchParams.sort;
 
-  const goldMetal = metals.find((m) => m.slug === "gold")!;
-  const allCategories = await getCategories("gold");
-  const result = await getProductsByMetalPaginated(
-    "gold",
-    1,
-    24,
-    categorySlug || undefined,
-  );
+  const [settings, allCategories, result] = await Promise.all([
+    getSiteSettings(),
+    getCategories("gold"),
+    getProductsByMetalPaginated("gold", 1, 24, categorySlug || undefined),
+  ]);
 
   let sorted = result.products;
   if (sort === "asc")
@@ -44,19 +41,20 @@ export default async function ProductsPage(props: {
   if (sort === "desc")
     sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
 
+  const goldHero = settings.productsPage.goldHero;
   const heroTitle = categorySlug
     ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`
-    : goldMetal.heroTitle;
+    : goldHero.title;
   const heroSubtitle = categorySlug
     ? `Explore our curated selection of ${categorySlug.replace(/-/g, " ")} jewellery.`
-    : goldMetal.heroSubtitle;
+    : goldHero.subtitle;
 
   return (
     <>
       <ProductsHero
         title={heroTitle}
         subtitle={heroSubtitle}
-        bgImage={goldMetal.heroBg}
+        bgImage={metals.find((m) => m.slug === "gold")!.heroBg}
         metal="gold"
       />
       <section className={styles.section} id="product-grid">

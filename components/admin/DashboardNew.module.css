@@ -1,0 +1,311 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ── Stat Cards ── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #f0ebe3;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.statCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.statIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1512;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #8a7d6b;
+  font-family: "Montserrat", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.newBadge {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #9f1b1f;
+  background: rgba(159, 27, 31, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ── Content Grid ── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.contentGrid > :last-child {
+  grid-column: 1 / -1;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #f0ebe3;
+  padding: 20px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1512;
+  margin: 0;
+  font-family: "Mulish", sans-serif;
+}
+
+.cardLink {
+  font-size: 13px;
+  color: #9f1b1f;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: "Mulish", sans-serif;
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Metal Rates ── */
+.ratesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.rateItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #faf8f5;
+  border-radius: 8px;
+}
+
+.rateLabel {
+  font-size: 13px;
+  color: #6b5e4f;
+  font-family: "Mulish", sans-serif;
+}
+
+.rateValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1512;
+  font-family: "Montserrat", sans-serif;
+}
+
+.ratesUpdated {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #a89880;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* ── Quick Actions ── */
+.actionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #faf8f5;
+  border: 1px solid #f0ebe3;
+  border-radius: 8px;
+  color: #1a1512;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Mulish", sans-serif;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.actionBtn:hover {
+  background: #f5f0e8;
+  border-color: #d4af37;
+}
+
+.actionBtn svg {
+  color: #9f1b1f;
+  flex-shrink: 0;
+}
+
+/* ── Recent Inquiries ── */
+.inquiryList {
+  display: flex;
+  flex-direction: column;
+}
+
+.inquiryRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f0e8;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.1s;
+}
+
+.inquiryRow:last-child {
+  border-bottom: none;
+}
+
+.inquiryAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  flex-shrink: 0;
+}
+
+.inquiryInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inquiryName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1512;
+  font-family: "Mulish", sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inquiryProduct {
+  font-size: 12px;
+  color: #8a7d6b;
+  font-family: "Mulish", sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inquiryMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.inquiryTime {
+  font-size: 11px;
+  color: #a89880;
+  font-family: "Montserrat", sans-serif;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #a89880;
+  font-size: 13px;
+  font-family: "Mulish", sans-serif;
+}
+
+.footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+  color: #a89880;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .statGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 16px;
+  }
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+  .ratesGrid {
+    grid-template-columns: 1fr;
+  }
+  .actionsGrid {
+    grid-template-columns: 1fr;
+  }
+}

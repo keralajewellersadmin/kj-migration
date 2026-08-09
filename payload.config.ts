@@ -14,6 +14,7 @@ import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import path from "path";
 import { revalidatePath } from "next/cache";
+import { clearSiteSettingsCache } from "./lib/data/cms";
 import {
   auditLogAfterChange,
   auditLogAfterDelete,
@@ -73,6 +74,7 @@ const revalidateLegal: CollectionAfterChangeHook = () => {
 };
 
 const revalidateSiteSettings: GlobalAfterChangeHook = () => {
+  clearSiteSettingsCache();
   revalidatePath("/");
   revalidatePath("/products");
   revalidatePath("/products/gold");
@@ -131,12 +133,12 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
 const publicRead = () => true;
 
 const requireProductionSecret = () => {
-  if (process.env.NODE_ENV === "production" && !process.env.PAYLOAD_SECRET) {
-    throw new Error("PAYLOAD_SECRET is required in production.");
+  if (!process.env.PAYLOAD_SECRET) {
+    throw new Error(
+      "PAYLOAD_SECRET is required. Set it in .env.local or your environment.",
+    );
   }
-  return (
-    process.env.PAYLOAD_SECRET || "local-dev-secret-change-before-deploying"
-  );
+  return process.env.PAYLOAD_SECRET;
 };
 
 const preventDuplicateCategory: CollectionBeforeValidateHook = async ({
@@ -411,16 +413,6 @@ const AdminUsers: CollectionConfig = {
         create: adminIsActiveFieldAccess,
         update: adminIsActiveFieldAccess,
       },
-    },
-    {
-      name: "emailOtp",
-      type: "text",
-      admin: { hidden: true },
-    },
-    {
-      name: "emailOtpExpires",
-      type: "date",
-      admin: { hidden: true },
     },
   ],
 };
@@ -706,7 +698,8 @@ const BlogPost: CollectionConfig = {
 
 const LegalPage: CollectionConfig = {
   slug: "legal-pages",
-  admin: { useAsTitle: "title" },
+  labels: { singular: "Legal Page", plural: "Legal Pages" },
+  admin: { useAsTitle: "title", group: "Content" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -994,80 +987,70 @@ const SiteSettings: GlobalConfig = {
   hooks: { afterChange: [revalidateSiteSettings, auditLogGlobalAfterChange] },
   fields: [
     {
-      label: "Rates",
+      label: "Site Settings",
       type: "tabs",
       tabs: [
+        // ─── Homepage ─────────────────────────────────────────────
         {
-          label: "Metal Rates",
-          fields: [
-            {
-              name: "rateGold22",
-              type: "text",
-              admin: { description: "Number only, e.g. 7,450" },
-            },
-            {
-              name: "rateGold18",
-              type: "text",
-              admin: { description: "Number only, e.g. 6,080" },
-            },
-            {
-              name: "rateSilver",
-              type: "text",
-              admin: { description: "Number only, e.g. 92" },
-            },
-            {
-              name: "ratePlatinum",
-              type: "text",
-              admin: { description: "Number only, e.g. 3,890" },
-            },
-            {
-              name: "rateUpdated",
-              type: "text",
-              admin: { description: "e.g. 27-06-2026" },
-            },
-          ],
-        },
-        {
-          label: "Hero Slides",
+          label: "Homepage",
           fields: [
             {
               name: "heroSlides",
               type: "array",
+              label: "Hero Slides",
               fields: [
-                { name: "heading", type: "text" },
+                { name: "heading", type: "text", required: true },
                 { name: "description", type: "textarea" },
                 { name: "ctaText", type: "text", defaultValue: "EXPLORE" },
                 { name: "ctaHref", type: "text", defaultValue: "/products" },
+                { name: "image", type: "upload", relationTo: "media" },
+              ],
+            },
+            {
+              name: "categories",
+              type: "array",
+              label: "Category Cards",
+              fields: [
+                { name: "title", type: "text", required: true },
+                { name: "description", type: "textarea" },
+                { name: "ctaText", type: "text" },
+                { name: "ctaHref", type: "text" },
+                { name: "variant", type: "text", admin: { description: "gold, silver, diamond, or platinum" } },
+              ],
+            },
+            {
+              name: "bestsellerProducts",
+              type: "text",
+              label: "Bestsellers",
+              admin: { description: "Comma-separated product slugs (e.g. bombay-choker,kerala-bangles,diamond-choker-kjd005)" },
+            },
+            {
+              name: "features",
+              type: "blocks",
+              label: "Features Section",
+              blocks: [
                 {
-                  name: "image",
-                  type: "upload",
-                  relationTo: "media",
-                  admin: { description: "Slide background image" },
+                  slug: "circleBanner",
+                  labels: { singular: "Feature", plural: "Features" },
+                  fields: [
+                    { name: "title", type: "text", required: true },
+                    { name: "description", type: "textarea" },
+                    { name: "image", type: "upload", relationTo: "media" },
+                    { name: "alt", type: "text" },
+                  ],
                 },
               ],
             },
           ],
         },
+        // ─── Content ──────────────────────────────────────────────
         {
-          label: "Reviews",
-          fields: [
-            {
-              name: "reviews",
-              type: "array",
-              fields: [
-                { name: "text", type: "textarea", required: true },
-                { name: "author", type: "text", required: true },
-                { name: "location", type: "text" },
-              ],
-            },
-          ],
-        },
-        {
-          label: "Banners",
+          label: "Content",
           fields: [
             {
               name: "banners",
               type: "blocks",
+              label: "Banners",
               blocks: [
                 {
                   slug: "imageBanner",
@@ -1080,239 +1063,48 @@ const SiteSettings: GlobalConfig = {
                     { name: "href", type: "text" },
                   ],
                 },
-                {
-                  slug: "textBanner",
-                  labels: { singular: "Text Banner", plural: "Text Banners" },
-                  fields: [
-                    { name: "heading", type: "text", required: true },
-                    { name: "description", type: "textarea" },
-                    { name: "ctaText", type: "text" },
-                    { name: "ctaLink", type: "text" },
-                    {
-                      name: "bgColor",
-                      type: "text",
-                      admin: { description: "CSS color value, e.g. #991f23" },
-                    },
-                  ],
-                },
               ],
             },
-          ],
-        },
-        {
-          label: "Features",
-          fields: [
-            {
-              name: "features",
-              type: "blocks",
-              blocks: [
-                {
-                  slug: "circleBanner",
-                  labels: {
-                    singular: "Circle Banner",
-                    plural: "Circle Banners",
-                  },
-                  fields: [
-                    { name: "title", type: "text", required: true },
-                    { name: "description", type: "textarea" },
-                    { name: "image", type: "upload", relationTo: "media" },
-                    { name: "alt", type: "text" },
-                  ],
-                },
-                {
-                  slug: "rectangleBanner",
-                  labels: {
-                    singular: "Rectangle Banner",
-                    plural: "Rectangle Banners",
-                  },
-                  fields: [
-                    { name: "heading", type: "text", required: true },
-                    { name: "description", type: "textarea" },
-                    { name: "image", type: "upload", relationTo: "media" },
-                    { name: "ctaText", type: "text", defaultValue: "Explore" },
-                    {
-                      name: "ctaLink",
-                      type: "text",
-                      defaultValue: "/products",
-                    },
-                    { name: "alt", type: "text" },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "Heritage",
-          fields: [
             {
               name: "heritage",
               type: "array",
+              label: "Heritage",
               fields: [
                 { name: "heading", type: "text" },
                 { name: "description", type: "textarea" },
-                {
-                  name: "image",
-                  type: "upload",
-                  relationTo: "media",
-                  admin: { description: "Heritage section image" },
-                },
-                { name: "srcSet", type: "text" },
+                { name: "image", type: "upload", relationTo: "media" },
               ],
             },
-          ],
-        },
-        {
-          label: "Categories",
-          fields: [
             {
-              name: "categories",
+              name: "reviews",
               type: "array",
+              label: "Reviews",
               fields: [
-                { name: "title", type: "text" },
-                { name: "description", type: "textarea" },
-                { name: "ctaText", type: "text" },
-                { name: "ctaHref", type: "text" },
-                {
-                  name: "variant",
-                  type: "text",
-                  admin: { description: "gold, silver, diamond, or platinum" },
-                },
+                { name: "text", type: "textarea", required: true },
+                { name: "author", type: "text", required: true },
+                { name: "location", type: "text" },
               ],
             },
-          ],
-        },
-        {
-          label: "Branches",
-          fields: [
-            {
-              name: "branches",
-              type: "array",
-              fields: [
-                {
-                  name: "name",
-                  type: "text",
-                  admin: {
-                    description: 'Branch display name (e.g. "Pondy Bazaar")',
-                  },
-                },
-                {
-                  name: "address",
-                  type: "textarea",
-                  admin: {
-                    description:
-                      "Full street address shown on Contact page and Footer",
-                  },
-                },
-                {
-                  name: "phone",
-                  type: "text",
-                  admin: { description: 'Display phone (e.g. "98400 88324")' },
-                },
-                {
-                  name: "phoneFull",
-                  type: "text",
-                  admin: {
-                    description:
-                      'Raw digits for tel: links (e.g. "9840088324")',
-                  },
-                },
-                {
-                  name: "email",
-                  type: "text",
-                  admin: { description: "Branch email address (optional)" },
-                },
-                {
-                  name: "hours",
-                  type: "text",
-                  admin: {
-                    description: 'Store hours (e.g. "Mon–Sat: 10 AM – 8 PM")',
-                  },
-                },
-                {
-                  name: "mapQ",
-                  type: "text",
-                  admin: {
-                    description:
-                      'Google Maps query string for "Get Directions" link (e.g. "Kerala+Jewellers+Pondy+Bazaar+Chennai")',
-                  },
-                },
-                {
-                  name: "mapEmbedUrl",
-                  type: "text",
-                  admin: {
-                    description:
-                      "Full Google Maps embed URL for the iframe. Go to Google Maps → Share → Embed → copy the src URL. Falls back to mapQ-based embed if empty.",
-                  },
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "Footer",
-          fields: [
-            { name: "footerAbout", type: "textarea" },
-            { name: "instagramUrl", type: "text" },
-            { name: "facebookUrl", type: "text" },
-            { name: "youtubeUrl", type: "text" },
-            { name: "phone", type: "text" },
-            { name: "whatsapp", type: "text" },
-            { name: "email", type: "text" },
-            { name: "storeTiming", type: "text" },
-          ],
-        },
-        {
-          label: "Bestsellers",
-          fields: [
-            {
-              name: "bestsellerProducts",
-              type: "text",
-              admin: {
-                description:
-                  "Comma-separated product slugs (e.g. bombay-choker,antique-jimmiki,diamond-choker-kjd005)",
-              },
-            },
-          ],
-        },
-        {
-          label: "About Page",
-          fields: [
             {
               name: "aboutPage",
               type: "group",
+              label: "About Page",
               fields: [
                 {
                   name: "goldenOccasions",
                   type: "group",
                   fields: [
-                    {
-                      name: "heading",
-                      type: "text",
-                      defaultValue: "Golden Occasions & Gleaming Beginnings",
-                    },
-                    {
-                      name: "paragraphs",
-                      type: "array",
-                      fields: [{ name: "text", type: "textarea" }],
-                    },
+                    { name: "heading", type: "text", defaultValue: "Golden Occasions & Gleaming Beginnings" },
+                    { name: "paragraphs", type: "array", fields: [{ name: "text", type: "textarea" }] },
                     { name: "image", type: "upload", relationTo: "media" },
-                    {
-                      name: "alt",
-                      type: "text",
-                      defaultValue: "About Kerala Jewellers",
-                    },
+                    { name: "alt", type: "text", defaultValue: "About Kerala Jewellers" },
                   ],
                 },
                 {
                   name: "tasteMeetsTradition",
                   type: "group",
                   fields: [
-                    {
-                      name: "heading",
-                      type: "text",
-                      defaultValue: "Taste Meets Tradition",
-                    },
+                    { name: "heading", type: "text", defaultValue: "Taste Meets Tradition" },
                     { name: "text", type: "textarea" },
                   ],
                 },
@@ -1320,77 +1112,134 @@ const SiteSettings: GlobalConfig = {
                   name: "origins",
                   type: "group",
                   fields: [
-                    {
-                      name: "heading",
-                      type: "text",
-                      defaultValue: "The Origins",
-                    },
+                    { name: "heading", type: "text", defaultValue: "The Origins" },
                     { name: "intro", type: "textarea" },
                   ],
                 },
                 {
                   name: "timeline",
                   type: "array",
+                  label: "Timeline",
                   fields: [
                     { name: "year", type: "text", required: true },
                     { name: "title", type: "text", required: true },
                     { name: "text", type: "textarea", required: true },
-                    {
-                      name: "image",
-                      type: "upload",
-                      relationTo: "media",
-                    },
+                    { name: "image", type: "upload", relationTo: "media" },
                   ],
                 },
                 {
                   name: "ventures",
                   type: "group",
                   fields: [
-                    {
-                      name: "heading",
-                      type: "text",
-                      defaultValue: "Our Ventures",
-                    },
-                    {
-                      name: "subheading",
-                      type: "text",
-                      defaultValue: "Our Dedicated Wedding Hall",
-                    },
-                    {
-                      name: "image",
-                      type: "upload",
-                      relationTo: "media",
-                    },
+                    { name: "heading", type: "text", defaultValue: "Our Ventures" },
+                    { name: "subheading", type: "text", defaultValue: "Our Dedicated Wedding Hall" },
+                    { name: "image", type: "upload", relationTo: "media" },
                     { name: "alt", type: "text" },
-                    {
-                      name: "bullets",
-                      type: "array",
-                      fields: [{ name: "text", type: "textarea" }],
-                    },
-                    {
-                      name: "cta1Text",
-                      type: "text",
-                      defaultValue: "Know More About Us",
-                    },
-                    {
-                      name: "cta1Href",
-                      type: "text",
-                      defaultValue: "https://www.ayswariyamahal.com/",
-                    },
+                    { name: "bullets", type: "array", fields: [{ name: "text", type: "textarea" }] },
+                    { name: "cta1Text", type: "text", defaultValue: "Know More About Us" },
+                    { name: "cta1Href", type: "text", defaultValue: "https://www.ayswariyamahal.com/" },
                     { name: "cta2Text", type: "text", defaultValue: "Find Us" },
-                    {
-                      name: "cta2Href",
-                      type: "text",
-                      defaultValue: "https://maps.app.goo.gl/vP759GxjSJLK4oU88",
-                    },
+                    { name: "cta2Href", type: "text", defaultValue: "https://maps.app.goo.gl/vP759GxjSJLK4oU88" },
                   ],
                 },
               ],
             },
           ],
         },
+        // ─── Business ─────────────────────────────────────────────
         {
-          label: "Default SEO",
+          label: "Business",
+          fields: [
+            {
+              name: "rateGold22",
+              type: "text",
+              label: "Gold 22K Rate",
+              admin: { description: "Number only, e.g. 7,450" },
+            },
+            {
+              name: "rateGold18",
+              type: "text",
+              label: "Gold 18K Rate",
+              admin: { description: "Number only, e.g. 6,080" },
+            },
+            {
+              name: "rateSilver",
+              type: "text",
+              label: "Silver Rate",
+              admin: { description: "Number only, e.g. 92" },
+            },
+            {
+              name: "ratePlatinum",
+              type: "text",
+              label: "Platinum Rate",
+              admin: { description: "Number only, e.g. 3,890" },
+            },
+            {
+              name: "rateUpdated",
+              type: "text",
+              label: "Rates Updated Date",
+              admin: { description: "e.g. 27-06-2026" },
+            },
+            {
+              name: "branches",
+              type: "array",
+              label: "Branches",
+              fields: [
+                { name: "name", type: "text", admin: { description: 'e.g. "Pondy Bazaar"' } },
+                { name: "address", type: "textarea" },
+                { name: "phone", type: "text", admin: { description: 'Display phone (e.g. "98400 88324")' } },
+                { name: "phoneFull", type: "text", admin: { description: 'Raw digits for tel: links (e.g. "9840088324")' } },
+                { name: "email", type: "text" },
+                { name: "hours", type: "text", admin: { description: 'e.g. "Mon–Sat: 10 AM – 8 PM"' } },
+                { name: "mapQ", type: "text", admin: { description: 'Google Maps query (e.g. "Kerala+Jewellers+Pondy+Bazaar+Chennai")' } },
+                { name: "mapEmbedUrl", type: "text", admin: { description: "Full Google Maps embed URL (optional)" } },
+              ],
+            },
+            {
+              name: "phone",
+              type: "text",
+              label: "Contact Phone",
+            },
+            {
+              name: "whatsapp",
+              type: "text",
+              label: "WhatsApp Number",
+            },
+            {
+              name: "email",
+              type: "text",
+              label: "Contact Email",
+            },
+            {
+              name: "storeTiming",
+              type: "text",
+              label: "Store Timing",
+            },
+            {
+              name: "footerAbout",
+              type: "textarea",
+              label: "Footer About Text",
+            },
+            {
+              name: "instagramUrl",
+              type: "text",
+              label: "Instagram URL",
+            },
+            {
+              name: "facebookUrl",
+              type: "text",
+              label: "Facebook URL",
+            },
+            {
+              name: "youtubeUrl",
+              type: "text",
+              label: "YouTube URL",
+            },
+          ],
+        },
+        // ─── SEO ──────────────────────────────────────────────────
+        {
+          label: "SEO",
           fields: [
             {
               name: "defaultSeo",
@@ -1399,93 +1248,55 @@ const SiteSettings: GlobalConfig = {
                 {
                   name: "title",
                   type: "text",
-                  admin: {
-                    description:
-                      "Site-wide default meta title (used when a page has no specific SEO title). Recommended: 50–60 characters.",
-                  },
+                  admin: { description: "Site-wide default meta title. Recommended: 50–60 characters." },
                 },
                 {
                   name: "description",
                   type: "textarea",
-                  admin: {
-                    description:
-                      "Site-wide default meta description (used when a page has no specific description). Recommended: 150–160 characters.",
-                  },
+                  admin: { description: "Site-wide default meta description. Recommended: 150–160 characters." },
                 },
                 {
                   name: "ogImage",
                   type: "upload",
                   relationTo: "media",
-                  admin: {
-                    description:
-                      "Site-wide default OG image (used when a page has no specific OG image). Recommended: 1200×630px.",
-                  },
+                  admin: { description: "Default OG image. Recommended: 1200×630px." },
                 },
               ],
             },
           ],
         },
+        // ─── Design ───────────────────────────────────────────────
         {
-          label: "Typography",
+          label: "Design",
           fields: [
             {
               name: "fontPairing",
               type: "select",
               defaultValue: "classic-luxury",
+              label: "Font Pairing",
               options: [
-                {
-                  label: "Classic Luxury — Com 4 DL / Mulish / Montserrat",
-                  value: "classic-luxury",
-                },
-                {
-                  label:
-                    "Modern Elegant — Playfair Display / Inter / Montserrat",
-                  value: "modern-elegant",
-                },
-                {
-                  label: "Timeless — Georgia / Mulish / Open Sans",
-                  value: "timeless",
-                },
-                {
-                  label: "Contemporary — Montserrat / Inter / Montserrat",
-                  value: "contemporary",
-                },
-                {
-                  label:
-                    "Traditional — Cormorant Garamond / Mulish / Open Sans",
-                  value: "traditional",
-                },
-                {
-                  label: "Bold Statement — Com 4 DL / Montserrat / Montserrat",
-                  value: "bold-statement",
-                },
+                { label: "Classic Luxury — Com 4 DL / Mulish / Montserrat", value: "classic-luxury" },
+                { label: "Modern Elegant — Playfair Display / Inter / Montserrat", value: "modern-elegant" },
+                { label: "Timeless — Georgia / Mulish / Open Sans", value: "timeless" },
+                { label: "Contemporary — Montserrat / Inter / Montserrat", value: "contemporary" },
+                { label: "Traditional — Cormorant Garamond / Mulish / Open Sans", value: "traditional" },
+                { label: "Bold Statement — Com 4 DL / Montserrat / Montserrat", value: "bold-statement" },
               ],
-              admin: {
-                description:
-                  "Pre-defined font pairings for headings, body, and UI. Select one to auto-configure all three.",
-              },
             },
             {
               name: "headingFont",
               type: "text",
-              admin: {
-                description:
-                  "Heading font (auto-set by pairing, or enter custom)",
-              },
+              admin: { description: "Auto-set by pairing, or enter custom font name" },
             },
             {
               name: "bodyFont",
               type: "text",
-              admin: {
-                description: "Body font (auto-set by pairing, or enter custom)",
-              },
+              admin: { description: "Auto-set by pairing, or enter custom font name" },
             },
             {
               name: "uiFont",
               type: "text",
-              admin: {
-                description: "UI font (auto-set by pairing, or enter custom)",
-              },
+              admin: { description: "Auto-set by pairing, or enter custom font name" },
             },
             {
               name: "baseFontSize",
@@ -1496,7 +1307,6 @@ const SiteSettings: GlobalConfig = {
                 { label: "16px (Default)", value: "16px" },
                 { label: "18px (Large)", value: "18px" },
               ],
-              admin: { description: "Base font size for body text" },
             },
             {
               name: "headingScale",
@@ -1508,17 +1318,93 @@ const SiteSettings: GlobalConfig = {
                 { label: "1.333 (Golden Ratio)", value: "1.333" },
                 { label: "1.5 (Spacious)", value: "1.5" },
               ],
-              admin: {
-                description: "Scale factor between heading levels (h1→h2→h3)",
-              },
             },
             {
               name: "customFonts",
               type: "textarea",
               admin: {
-                description:
-                  'Additional @font-face declarations (CSS). One per line. Example:\nfont-family: "My Font";\nsrc: url("/assets/fonts/myfont.woff2") format("woff2");',
+                description: 'Custom @font-face CSS declarations. One per line.\nfont-family: "My Font";\nsrc: url("/assets/fonts/myfont.woff2") format("woff2");',
               },
+            },
+          ],
+        },
+        // ─── Pages ─────────────────────────────────────────────────
+        {
+          label: "Pages",
+          fields: [
+            {
+              name: "homepageSections",
+              type: "group",
+              label: "Homepage Section Headers",
+              fields: [
+                { name: "bestsellersTitle", type: "text", defaultValue: "Our Bestsellers" },
+                { name: "bestsellersSubtitle", type: "textarea", defaultValue: "Choose from among trendy designs and timeless pieces. There's something for everyone and every occasion." },
+                { name: "latestTitle", type: "text", defaultValue: "Our Latest" },
+                { name: "latestSubtitle", type: "textarea", defaultValue: "Check out some of the latest designs in our ever-expanding collection." },
+                { name: "reviewsTitle", type: "text", defaultValue: "Customer Reviews" },
+                { name: "reviewsSubtitle", type: "textarea", defaultValue: "Our Jewelry Isn't Just Worn. It's Cherished. Each Piece Tells A Story, And You Can Hear It From Our Customers Who Wear Theirs With Pride." },
+              ],
+            },
+            {
+              name: "blogPage",
+              type: "group",
+              label: "Blog Page",
+              fields: [
+                { name: "promoHeading", type: "text", defaultValue: "Wedding Season is here" },
+                { name: "promoDescription", type: "textarea", defaultValue: "Embrace the magic of the wedding season with our exquisite jewellery collection. Elevate your bridal ensemble or find the perfect gift for the happy couple with our stunning array of wedding-ready pieces." },
+                { name: "promoCtaText", type: "text", defaultValue: "Shop Now" },
+                { name: "promoCtaHref", type: "text", defaultValue: "/products" },
+                { name: "promoImage", type: "upload", relationTo: "media" },
+                { name: "headerTitle", type: "text", defaultValue: "Our Blog" },
+                { name: "headerSubtitle", type: "textarea", defaultValue: "From Shopping Guides To Lifestyle Recommendations, Explore Our Blog And Learn Everything You Need To Know About Jewellery." },
+                { name: "emptyText", type: "textarea", defaultValue: "Blog posts coming soon. Stay tuned for shopping guides, lifestyle tips, and everything about jewellery." },
+              ],
+            },
+            {
+              name: "contactPage",
+              type: "group",
+              label: "Contact Page",
+              fields: [
+                { name: "heroTitle", type: "text", defaultValue: "Contact Kerala Jewellers" },
+                { name: "heroSubtitle", type: "textarea", defaultValue: "We're here to help you with store visits, jewellery enquiries, custom designs, and service support." },
+                { name: "cardTitle", type: "text", defaultValue: "Get In Touch" },
+                { name: "cardDescription", type: "textarea", defaultValue: "Looking for a specific jewellery design, bridal collection, custom order, or gold/silver rate update? Our team will guide you with product availability, store visit support, and purchase assistance." },
+                { name: "cardItems", type: "array", fields: [{ name: "text", type: "text" }] },
+                { name: "cardQuote", type: "text", defaultValue: "Send us a message and our team will get back to you shortly." },
+                { name: "branchesTitle", type: "text", defaultValue: "Our Branches" },
+                { name: "formTitle", type: "text", defaultValue: "Send Us a Message" },
+              ],
+            },
+            {
+              name: "productsPage",
+              type: "group",
+              label: "Products Page",
+              fields: [
+                {
+                  name: "goldHero",
+                  type: "group",
+                  fields: [
+                    { name: "title", type: "text", defaultValue: "Elegant & Timeless Gold Jewellery" },
+                    { name: "subtitle", type: "textarea", defaultValue: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion." },
+                  ],
+                },
+                {
+                  name: "silverHero",
+                  type: "group",
+                  fields: [
+                    { name: "title", type: "text", defaultValue: "Classic Elegance in Silver" },
+                    { name: "subtitle", type: "textarea", defaultValue: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment." },
+                  ],
+                },
+                {
+                  name: "diamondHero",
+                  type: "group",
+                  fields: [
+                    { name: "title", type: "text", defaultValue: "Timeless Brilliance in Diamonds" },
+                    { name: "subtitle", type: "textarea", defaultValue: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -1537,7 +1423,9 @@ export default buildConfig({
           max: 5,
           idleTimeoutMillis: 10000,
           connectionTimeoutMillis: 15000,
-          ssl: { rejectUnauthorized: false },
+          ...(process.env.NODE_ENV === "production"
+            ? { ssl: { rejectUnauthorized: false } }
+            : {}),
         },
         push: false,
       })
@@ -1573,9 +1461,9 @@ export default buildConfig({
     },
     components: {
       beforeDashboard: [
-        { path: "@/components/admin/DashboardStats", exportName: "default" },
+        { path: "@/components/admin/DashboardNew", exportName: "default" },
       ],
-      Nav: "@/components/admin/CustomNav",
+      Nav: "@/components/admin/AdminSidebarServer",
       graphics: {
         Icon: "@/components/admin/AdminLogo",
         Logo: "@/components/admin/AdminLogo",
@@ -1589,7 +1477,7 @@ export default buildConfig({
     importMap: {
       importMapFile: path.resolve(
         process.cwd(),
-        "app/(payload)/kj-portal-0d7cfad1/importMap.ts",
+        "app/(payload)/admin/importMap.ts",
       ),
     },
   },

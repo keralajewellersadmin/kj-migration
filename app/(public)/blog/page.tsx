@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import BlogCard from "@/components/ui/BlogCard";
-import { getBlogPosts } from "@/lib/data/cms";
+import { getBlogPosts, getSiteSettings } from "@/lib/data/cms";
 import styles from "./page.module.css";
 import { IMG } from "@/lib/image-urls";
 
@@ -22,7 +22,8 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const blogPosts = await getBlogPosts();
+  const [blogPosts, settings] = await Promise.all([getBlogPosts(), getSiteSettings()]);
+  const bp = settings.blogPage;
   return (
     <>
       <section
@@ -31,22 +32,20 @@ export default async function BlogPage() {
       >
         <div className={styles.hero}>
           <div className={styles.heroContent}>
-            <h2 className={styles.heroTitle}>Wedding Season is here</h2>
+            <h2 className={styles.heroTitle}>{bp.promoHeading}</h2>
             <Image
-              src={IMG.blogDecorative}
+              src={bp.promoImage || IMG.blogDecorative}
               alt=""
               className={styles.heroImage}
               width={280}
               height={280}
+              priority
             />
             <p className={styles.heroPara}>
-              Embrace the magic of the wedding season with our exquisite
-              jewellery collection. Elevate your bridal ensemble or find the
-              perfect gift for the happy couple with our stunning array of
-              wedding-ready pieces.
+              {bp.promoDescription}
             </p>
-            <a href="#blog-grid" className={styles.heroBtn}>
-              Show Now
+            <a href={bp.promoCtaHref} className={styles.heroBtn}>
+              {bp.promoCtaText}
             </a>
           </div>
         </div>
@@ -55,10 +54,9 @@ export default async function BlogPage() {
       <section className={styles.section} id="blog-grid">
         <div className={styles.container}>
           <div className={styles.blogHeader}>
-            <h2 className={styles.blogTitle}>Our Blog</h2>
+            <h2 className={styles.blogTitle}>{bp.headerTitle}</h2>
             <p className={styles.blogSubtitle}>
-              From Shopping Guides To Lifestyle Recommendations, Explore Our
-              Blog And Learn Everything You Need To Know About Jewellery.
+              {bp.headerSubtitle}
             </p>
           </div>
           {blogPosts.length > 0 ? (
@@ -70,8 +68,7 @@ export default async function BlogPage() {
           ) : (
             <div className={styles.emptyState}>
               <p className={styles.emptyText}>
-                Blog posts coming soon. Stay tuned for shopping guides,
-                lifestyle tips, and everything about jewellery.
+                {bp.emptyText}
               </p>
             </div>
           )}

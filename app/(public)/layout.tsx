@@ -20,8 +20,30 @@ export default async function PublicLayout({
   };
 
   return (
-    <ConditionalLayout navCategories={navCategories} settings={settings}>
-      {children}
-    </ConditionalLayout>
+    <html lang="en">
+      <head>
+        <meta name="theme-color" content="#991f23" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link
+          rel="preload"
+          href="/assets/fonts/com4tdrify.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="shortcut icon"
+          href="/assets/logo/favicon.png"
+          type="image/png"
+        />
+        <link rel="icon" href="/assets/logo/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon.png" />
+      </head>
+      <body>
+        <ConditionalLayout navCategories={navCategories} settings={settings}>
+          {children}
+        </ConditionalLayout>
+      </body>
+    </html>
   );
 }

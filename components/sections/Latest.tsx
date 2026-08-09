@@ -37,14 +37,17 @@ type LatestBanner = {
   href?: string;
   heading?: string;
   description?: string;
-  ctaLink?: string;
   bgColor?: string;
 };
 
 export default function Latest({
   banners: cmsBanners = [],
+  title = "Our Latest",
+  subtitle = "Check out some of the latest designs in our ever-expanding collection.",
 }: {
   banners?: LatestBanner[];
+  title?: string;
+  subtitle?: string;
 }) {
   const hasImages = cmsBanners.every((b) => !!b.image);
   const banners =
@@ -53,11 +56,16 @@ export default function Latest({
     <section className={styles.section}>
       <div className={styles.container}>
         <SectionHeader
-          title="Our Latest"
-          subtitle="Check out some of the latest designs in our ever-expanding collection."
+          title={title}
+          subtitle={subtitle}
         />
         <div className={styles.banners}>
           {banners.map((banner, i) => {
+            const fallback = defaultBanners[i % defaultBanners.length];
+            const title = banner.title || fallback.title || "";
+            const ctaText = banner.ctaText || fallback.ctaText;
+            const href = banner.href || fallback.href;
+
             if (banner.blockType === "textBanner") {
               return (
                 <div
@@ -69,7 +77,7 @@ export default function Latest({
                 >
                   <div className={styles.overlay}>
                     <div className={styles.bannerTitle}>
-                      {banner.heading || ""}
+                      {banner.heading || title || ""}
                     </div>
                     {banner.description && (
                       <p
@@ -83,9 +91,9 @@ export default function Latest({
                         {banner.description}
                       </p>
                     )}
-                    {banner.ctaText && (
-                      <a href={banner.ctaLink || "#"} className={styles.cta}>
-                        {banner.ctaText}
+                    {ctaText && (
+                      <a href={href || "#"} className={styles.cta}>
+                        {ctaText}
                       </a>
                     )}
                   </div>
@@ -105,12 +113,12 @@ export default function Latest({
                   />
                 )}
                 <div className={styles.overlay}>
-                  {banner.title && (
-                    <div className={styles.bannerTitle}>{banner.title}</div>
+                  {title && (
+                    <div className={styles.bannerTitle}>{title}</div>
                   )}
-                  {banner.href && banner.ctaText && (
-                    <a href={banner.href} className={styles.cta}>
-                      {banner.ctaText}
+                  {href && ctaText && (
+                    <a href={href} className={styles.cta}>
+                      {ctaText}
                     </a>
                   )}
                 </div>
