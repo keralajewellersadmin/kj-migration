@@ -3,6 +3,5 @@
     "app/(payload)/admin/**/*": {
       "maxDuration": 30
     }
-  },
-  "installCommand": "rm -rf node_modules package-lock.json && npm install --force"
+  }
 }

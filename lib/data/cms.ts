@@ -13,6 +13,7 @@ type PayloadDoc = Record<string, any>;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 let _pool: Pool | null = null;
+const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
 function getPool(): Pool {
   if (_pool) return _pool;
   const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
@@ -20,7 +21,9 @@ function getPool(): Pool {
   _pool = new Pool({
     connectionString: dbUri,
     ssl: dbUri.startsWith("postgresql") ? { rejectUnauthorized: false } : undefined,
-    max: 5,
+    max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
+      ? postgresPoolMax
+      : 1,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
   });

@@ -2,6 +2,7 @@ import { getCategories, getSiteSettings } from "@/lib/data/cms";
 import ConditionalLayout from "@/components/ui/ConditionalLayout";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function PublicLayout({
   children,
