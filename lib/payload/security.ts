@@ -36,6 +36,13 @@ export const isAuthenticated: Access = ({ req }) =>
 export const isSuperAdmin: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin"]);
 
+export const canReadAdminUsers: Access = ({ id, req }) => {
+  const user = getUser(req);
+  if (!user?.isActive) return false;
+  if (user.role === "super-admin") return true;
+  return String(user.id) === String(id);
+};
+
 export const isAdmin: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin", "admin"]);
 

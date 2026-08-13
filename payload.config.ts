@@ -28,6 +28,7 @@ import {
   canManageContent,
   canManageInquiries,
   canManageSettings,
+  canReadAdminUsers,
   canReadAuditLogs,
   canReadMedia,
   isAuthenticated,
@@ -501,7 +502,7 @@ const AdminUsers: CollectionConfig = {
     },
   ],
   access: {
-    read: isSuperAdmin,
+    read: canReadAdminUsers,
     create: isSuperAdmin,
     update: isSuperAdmin,
     delete: canDeleteAdminUsers,
