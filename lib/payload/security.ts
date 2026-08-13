@@ -63,19 +63,11 @@ export const canReadAdminUsers: Access = async ({ id, req }) => {
         token,
         new TextEncoder().encode(secret),
       );
-      const isSelfToken =
+      return (
         payload.collection === "admin-users" &&
         String(payload.id) === String(id) &&
-        typeof payload.sid === "string";
-
-      if (isSelfToken) {
-        req.user = {
-          id: payload.id,
-          collection: "admin-users",
-        } as PayloadRequest["user"];
-      }
-
-      return isSelfToken;
+        typeof payload.sid === "string"
+      );
     } catch {
       return false;
     }
