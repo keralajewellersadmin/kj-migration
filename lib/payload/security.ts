@@ -1,9 +1,8 @@
 import crypto from "crypto";
-import { jwtVerify } from "jose";
+
 import {
   APIError,
   type Access,
-  type AuthStrategyFunction,
   type FieldAccess,
   type CollectionBeforeValidateHook,
   type PayloadRequest,
@@ -32,79 +31,6 @@ function hasRole(user: UserWithRole | undefined, roles: AdminRole[]) {
   return Boolean(user?.isActive && user.role && roles.includes(user.role));
 }
 
-function getCookieValue(headers: Headers | undefined, name: string) {
-  const cookieHeader = headers?.get("cookie");
-  if (!cookieHeader) return null;
-
-  for (const part of cookieHeader.split(";")) {
-    const [key, ...valueParts] = part.trim().split("=");
-    if (key === name) return decodeURIComponent(valueParts.join("="));
-  }
-
-  return null;
-}
-
-/**
- * Custom auth strategy for `admin-users`.
- *
- * Payload's default JWT strategy validates a token by loading the user with
- * `findByID`, which respects collection read access. The `admin-users` read
- * access (`canReadAdminUsers`) authorizes reads by re-verifying the cookie
- * token present on the request — but during the default strategy's internal
- * `findByID` the request headers are not propagated, so the cookie is never
- * visible and every token validation is denied. This strategy re-issues the
- * user lookup with `overrideAccess: true` after cryptographically verifying
- * the JWT (signature + expiry + collection), which is sufficient proof of
- * authentication while keeping REST read access fully protected.
- */
-export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
-  headers,
-  payload: payloadInstance,
-}) => {
-  try {
-    const cookiePrefix = payloadInstance.config?.cookiePrefix || "payload";
-    const cookieHeader = headers.get("cookie") || "";
-    let token: string | null = null;
-
-    for (const part of cookieHeader.split(";")) {
-      const [key, ...valueParts] = part.trim().split("=");
-      if (key === `${cookiePrefix}-token`) {
-        token = decodeURIComponent(valueParts.join("="));
-        break;
-      }
-    }
-
-    const bearer = headers.get("authorization");
-    if (!token && bearer?.startsWith("Bearer ")) {
-      token = bearer.slice("Bearer ".length);
-    }
-
-    if (!token) return { user: null };
-
-    const secret = new TextEncoder().encode(payloadInstance.secret);
-    const { payload: claims } = await jwtVerify(token, secret);
-
-    if (claims.collection !== "admin-users") return { user: null };
-    if (typeof claims.id === "undefined") return { user: null };
-    if (claims.isActive === false) return { user: null };
-
-    return {
-      user: {
-        id: claims.id,
-        collection: "admin-users",
-        email: claims.email,
-        username: claims.username,
-        name: claims.name,
-        role: claims.role,
-        isActive: claims.isActive,
-        sid: claims.sid,
-        _strategy: "admin-users-jwt",
-      } as never,
-    };
-  } catch {
-    return { user: null };
-  }
-};
 
 export const isAuthenticated: Access = ({ req }) =>
   Boolean(getUser(req)?.isActive);
@@ -112,29 +38,8 @@ export const isAuthenticated: Access = ({ req }) =>
 export const isSuperAdmin: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin"]);
 
-export const canReadAdminUsers: Access = async ({ id, req }) => {
+export const canReadAdminUsers: Access = ({ id, req }) => {
   const user = getUser(req);
-  if (!user && typeof id !== "undefined") {
-    const secret = process.env.PAYLOAD_SECRET;
-    const cookiePrefix = req.payload?.config?.cookiePrefix || "payload";
-    const token = getCookieValue(req.headers, `${cookiePrefix}-token`);
-
-    if (!secret || !token) return false;
-
-    try {
-      const { payload } = await jwtVerify(
-        token,
-        new TextEncoder().encode(secret),
-      );
-      return (
-        payload.collection === "admin-users" &&
-        String(payload.id) === String(id) &&
-        typeof payload.sid === "string"
-      );
-    } catch {
-      return false;
-    }
-  }
   if (!user?.isActive) return false;
   if (user.role === "super-admin") return true;
   return String(user.id) === String(id);

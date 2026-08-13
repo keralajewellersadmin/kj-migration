@@ -253,12 +253,10 @@ async function handleLogin(request: Request) {
     const otp = generateOtp();
     const codeHash = hashValue(otp);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-    const sessionId = await withTimeout(
-      "Payload session create",
-      createPayloadAdminSession(user.id),
-      DIRECT_DB_TIMEOUT_MS,
-    );
-    const payloadToken = await signPayloadTokenWithSession(user, sessionId);
+    
+    // We use a pending-auth token rather than creating the session before OTP success
+    // This token is verified in the next step before creating the actual Payload session
+    const pendingAuthToken = crypto.randomUUID();
 
     const sql = getLoginSql();
     await withTimeout(
@@ -270,7 +268,7 @@ async function handleLogin(request: Request) {
       sql.query(
         `insert into login_otps (user_id, code_hash, expires_at, attempts, session_token, updated_at, created_at)
          values ($1, $2, $3, 0, $4, now(), now())`,
-        [user.id, codeHash, expiresAt, payloadToken],
+        [user.id, codeHash, expiresAt, pendingAuthToken],
       ),
     );
     // Send OTP to user's on-file email

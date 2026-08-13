@@ -5,6 +5,8 @@ import {
   findDirectAdminUser,
   getLoginSql,
   SESSION_MAX_AGE,
+  createPayloadAdminSession,
+  signPayloadTokenWithSession,
 } from "@/lib/auth/admin-login";
 
 const MAX_ATTEMPTS = 5;
@@ -127,6 +129,18 @@ export async function POST(request: Request) {
 
     await sql.query(`delete from login_otps where id = $1`, [otpRecord.id]);
 
+    console.log("[AUTH] OTP verified = true");
+    console.log("[AUTH] Payload authentication started = true");
+
+    // Generate real Payload session now that OTP succeeded
+    const sessionId = await createPayloadAdminSession(user.id);
+    const payloadToken = await signPayloadTokenWithSession(user, sessionId);
+
+    console.log("[AUTH] Payload authentication succeeded = true");
+    console.log(`[AUTH] user ID = ${user.id}`);
+    console.log("[AUTH] Payload session created = true");
+    console.log(`[AUTH] redirect = ${ADMIN_PATH}`);
+
     return withPayloadSession(
       {
         success: true,
@@ -138,7 +152,7 @@ export async function POST(request: Request) {
           role: user.role,
         },
       },
-      otpRecord.session_token,
+      payloadToken,
     );
   } catch (err) {
     console.error("[OTP] Verification failed:", err);

@@ -1,8 +1,9 @@
 import crypto from "crypto";
 import { neon } from "@neondatabase/serverless";
-import { SignJWT } from "jose";
+import { getPayload, jwtSign } from "payload";
+import configPromise from "@/payload.config";
 
-export const SESSION_MAX_AGE = 60 * 60 * 8;
+export const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 
 export type DirectAdminUser = {
   id: number;
@@ -23,31 +24,6 @@ export function getLoginSql() {
   if (!connectionString) throw new Error("DATABASE_URL is required");
   loginSql = neon(connectionString);
   return loginSql;
-}
-
-export async function signPayloadTokenWithSession(
-  user: DirectAdminUser,
-  sessionId: string,
-) {
-  const secret = process.env.PAYLOAD_SECRET;
-  if (!secret) throw new Error("PAYLOAD_SECRET is required");
-
-  return new SignJWT(
-    {
-      id: user.id,
-      collection: "admin-users",
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      role: user.role,
-      isActive: user.is_active,
-      sid: sessionId,
-    },
-  )
-    .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-    .setIssuedAt()
-    .setExpirationTime(`${SESSION_MAX_AGE}s`)
-    .sign(new TextEncoder().encode(secret));
 }
 
 export async function verifyPayloadPassword(
@@ -79,28 +55,61 @@ export async function findDirectAdminUser(identifier: string) {
   return rows[0] || null;
 }
 
-export async function createPayloadAdminSession(userId: number) {
-  const sql = getLoginSql();
-  const sessionId = crypto.randomUUID();
-  const expiresAt = new Date(Date.now() + SESSION_MAX_AGE * 1000).toISOString();
-  const orderRows = (await sql.query(
-    `select coalesce(max(_order) + 1, 0) as next_order
-     from admin_users_sessions
-     where _parent_id = $1`,
-    [userId],
-  )) as Array<{ next_order: number | string | null }>;
-  const nextOrder = Number(orderRows[0]?.next_order || 0);
+export async function createPayloadAdminSession(userId: number): Promise<string> {
+  const payload = await getPayload({ config: configPromise });
+  const sid = crypto.randomUUID();
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE * 1000);
 
-  await sql.query(
-    `delete from admin_users_sessions
-     where _parent_id = $1 and expires_at <= now()`,
-    [userId],
-  );
-  await sql.query(
-    `insert into admin_users_sessions (_parent_id, _order, id, created_at, expires_at)
-     values ($1, $2, $3, now(), $4)`,
-    [userId, nextOrder, sessionId, expiresAt],
-  );
+  const session = {
+    id: sid,
+    createdAt: now.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+  };
 
-  return sessionId;
+  const user = await payload.findByID({
+    collection: "admin-users",
+    id: userId,
+  });
+
+  const activeSessions = (user.sessions || []).filter(
+    (s: { expiresAt: string | Date }) => new Date(s.expiresAt) > now
+  );
+  activeSessions.push(session);
+
+  await payload.update({
+    collection: "admin-users",
+    id: userId,
+    data: { sessions: activeSessions },
+    overrideAccess: true,
+  });
+
+  return sid;
+}
+
+export async function signPayloadTokenWithSession(
+  user: DirectAdminUser,
+  sessionId: string,
+) {
+  const secret = process.env.PAYLOAD_SECRET;
+  if (!secret) throw new Error("PAYLOAD_SECRET is required");
+
+  const fieldsToSign = {
+    id: user.id,
+    collection: "admin-users",
+    email: user.email,
+    username: user.username,
+    name: user.name,
+    role: user.role,
+    isActive: user.is_active,
+    sid: sessionId,
+  };
+
+  const { token } = await jwtSign({
+    fieldsToSign,
+    secret,
+    tokenExpiration: SESSION_MAX_AGE,
+  });
+
+  return token;
 }

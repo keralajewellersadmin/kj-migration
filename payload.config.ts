@@ -39,7 +39,6 @@ canReadAdminUsers,
   enforceAdminRoleRestrictions,
   enforceAccountLimit,
   validateAdminPassword,
-  adminUsersJwtStrategy,
 } from "./lib/payload/security";
 import {
   cloudinaryUploadHook,
@@ -234,8 +233,13 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
     !parsed.hostname.includes("-pooler")
   ) {
     console.warn(
-      "[Database] Neon DATABASE_URL is not using the pooled endpoint. Use the -pooler connection string on Vercel.",
+      "[Database] Neon DATABASE_URL is not using the pooled endpoint. Injecting -pooler into connection string for Vercel production.",
     );
+    const parts = parsed.hostname.split(".");
+    if (parts.length > 0) {
+      parts[0] = `${parts[0]}-pooler`;
+      parsed.hostname = parts.join(".");
+    }
   }
   parsed.searchParams.delete("channel_binding");
   parsed.searchParams.set("sslmode", "verify-full");
@@ -477,7 +481,6 @@ const AdminUsers: CollectionConfig = {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
     },
-    strategies: [{ name: "admin-users-jwt", authenticate: adminUsersJwtStrategy }],
   },
   admin: { useAsTitle: "username" },
   hooks: {
