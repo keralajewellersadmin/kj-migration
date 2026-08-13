@@ -186,16 +186,24 @@ export default function CustomLogin() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              <form onSubmit={handleLogin} className={styles.form}>
+              <form
+                onSubmit={handleLogin}
+                className={styles.form}
+                autoComplete="off"
+              >
                 <div className={styles.field}>
                   <label htmlFor="identifier">Email or Username</label>
                   <input
                     id="identifier"
+                    name="kj-admin-identifier"
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="admin@keralajewellers.in"
-                    autoComplete="username"
+                    placeholder="Enter admin email"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
                     required
                     autoFocus
                   />
@@ -206,11 +214,12 @@ export default function CustomLogin() {
                   <div className={styles.passwordWrapper}>
                     <input
                       id="password"
+                      name="kj-admin-passcode"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      autoComplete="current-password"
+                      autoComplete="new-password"
                       required
                     />
                     <button
@@ -336,16 +345,24 @@ export default function CustomLogin() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              <form onSubmit={handleForgotPassword} className={styles.form}>
+              <form
+                onSubmit={handleForgotPassword}
+                className={styles.form}
+                autoComplete="off"
+              >
                 <div className={styles.field}>
                   <label htmlFor="forgot-id">Email or Username</label>
                   <input
                     id="forgot-id"
+                    name="kj-admin-reset-identifier"
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="admin@keralajewellers.in"
-                    autoComplete="username"
+                    placeholder="Enter admin email"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
                     required
                     autoFocus
                   />
