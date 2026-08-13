@@ -43,6 +43,7 @@ function withPayloadSession(
     secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: SESSION_MAX_AGE,
+    expires: new Date(Date.now() + SESSION_MAX_AGE * 1000),
   });
   return response;
 }
@@ -196,7 +197,7 @@ async function handleLogin(request: Request) {
         createPayloadAdminSession(user.id),
         DIRECT_DB_TIMEOUT_MS,
       );
-      const token = signPayloadTokenWithSession(user, sessionId);
+      const token = await signPayloadTokenWithSession(user, sessionId);
       return withPayloadSession(
         {
           success: true,

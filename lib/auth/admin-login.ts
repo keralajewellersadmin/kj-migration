@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { neon } from "@neondatabase/serverless";
+import { SignJWT } from "jose";
 
 export const SESSION_MAX_AGE = 60 * 60 * 8;
 
@@ -24,42 +25,28 @@ export function getLoginSql() {
   return loginSql;
 }
 
-export function base64url(input: Buffer | string) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-}
-
-export function signPayloadTokenWithSession(
+export async function signPayloadTokenWithSession(
   user: DirectAdminUser,
-  sessionId?: string,
+  sessionId: string,
 ) {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const exp = issuedAt + SESSION_MAX_AGE;
-  const header = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = base64url(
-    JSON.stringify({
+  const secret = process.env.PAYLOAD_SECRET;
+  if (!secret) throw new Error("PAYLOAD_SECRET is required");
+
+  return new SignJWT(
+    {
       id: user.id,
       collection: "admin-users",
       email: user.email,
-      name: user.name,
       username: user.username,
       role: user.role,
       isActive: user.is_active,
-      ...(sessionId ? { sid: sessionId } : {}),
-      iat: issuedAt,
-      exp,
-    }),
-  );
-  const signature = base64url(
-    crypto
-      .createHmac("sha256", process.env.PAYLOAD_SECRET || "")
-      .update(`${header}.${payload}`)
-      .digest(),
-  );
-  return `${header}.${payload}.${signature}`;
+      sid: sessionId,
+    },
+  )
+    .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+    .setIssuedAt()
+    .setExpirationTime(`${SESSION_MAX_AGE}s`)
+    .sign(new TextEncoder().encode(secret));
 }
 
 export async function verifyPayloadPassword(
