@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { Pool } from "pg";
+import { neon } from "@neondatabase/serverless";
 import { getCachedPayload } from "@/lib/payload-singleton";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import {
@@ -49,7 +49,7 @@ type LoginPayload = {
   login: (args: unknown) => Promise<AdminLoginResult>;
 };
 
-let loginPool: Pool | null = null;
+let loginSql: ReturnType<typeof neon> | null = null;
 
 function isOtpEnabled() {
   return (
@@ -61,18 +61,12 @@ function isOtpEnabled() {
   );
 }
 
-function getLoginPool() {
-  if (loginPool) return loginPool;
+function getLoginSql() {
+  if (loginSql) return loginSql;
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is required for login");
-  loginPool = new Pool({
-    connectionString,
-    ssl: { rejectUnauthorized: false },
-    max: 1,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 5000,
-  });
-  return loginPool;
+  loginSql = neon(connectionString);
+  return loginSql;
 }
 
 function base64url(input: Buffer | string) {
@@ -128,14 +122,14 @@ async function verifyPayloadPassword(
 
 async function findDirectAdminUser(identifier: string) {
   const normalized = identifier.trim().toLowerCase();
-  const result = await getLoginPool().query<DirectAdminUser>(
+  const rows = await getLoginSql().query(
     `select id, email, username, name, role::text as role, is_active, salt, hash
      from admin_users
      where lower(email) = $1 or lower(username) = $1
      limit 1`,
     [normalized],
-  );
-  return result.rows[0] || null;
+  ) as DirectAdminUser[];
+  return rows[0] || null;
 }
 
 async function directLoginFallback(identifier: string, password: string) {
