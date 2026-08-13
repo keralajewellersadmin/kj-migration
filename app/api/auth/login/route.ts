@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
+import { Pool } from "pg";
 import { getCachedPayload } from "@/lib/payload-singleton";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import {
@@ -16,6 +18,8 @@ const SESSION_MAX_AGE = 60 * 60 * 8;
 const ROUTE_TIMEOUT_MS = 30000;
 const STEP_TIMEOUT_MS = 15000;
 const RATE_LIMIT_TIMEOUT_MS = 3000;
+const PAYLOAD_INIT_TIMEOUT_MS = 8000;
+const DIRECT_DB_TIMEOUT_MS = 8000;
 
 type AdminLoginResult = {
   token: string;
@@ -27,6 +31,26 @@ type AdminLoginResult = {
   };
 };
 
+type DirectAdminUser = {
+  id: number;
+  email: string;
+  username: string | null;
+  name: string | null;
+  role: string;
+  is_active: boolean | null;
+  salt: string | null;
+  hash: string | null;
+};
+
+type LoginPayload = {
+  find: (args: unknown) => Promise<{ docs: unknown[] }>;
+  update: (args: unknown) => Promise<unknown>;
+  create: (args: unknown) => Promise<unknown>;
+  login: (args: unknown) => Promise<AdminLoginResult>;
+};
+
+let loginPool: Pool | null = null;
+
 function isOtpEnabled() {
   return (
     process.env.ADMIN_OTP_ENABLED === "true" &&
@@ -34,6 +58,119 @@ function isOtpEnabled() {
       process.env.GMAIL_OTP_SENDER_EMAIL &&
         process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
     )
+  );
+}
+
+function getLoginPool() {
+  if (loginPool) return loginPool;
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is required for login");
+  loginPool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+    max: 1,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 5000,
+  });
+  return loginPool;
+}
+
+function base64url(input: Buffer | string) {
+  return Buffer.from(input)
+    .toString("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
+function signPayloadToken(user: DirectAdminUser) {
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const exp = issuedAt + SESSION_MAX_AGE;
+  const header = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const payload = base64url(
+    JSON.stringify({
+      id: user.id,
+      collection: "admin-users",
+      email: user.email,
+      name: user.name,
+      username: user.username,
+      role: user.role,
+      isActive: user.is_active,
+      iat: issuedAt,
+      exp,
+    }),
+  );
+  const signature = base64url(
+    crypto
+      .createHmac("sha256", process.env.PAYLOAD_SECRET || "")
+      .update(`${header}.${payload}`)
+      .digest(),
+  );
+  return `${header}.${payload}.${signature}`;
+}
+
+async function verifyPayloadPassword(
+  password: string,
+  user: DirectAdminUser,
+) {
+  if (!user.salt || !user.hash) return false;
+  const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
+    crypto.pbkdf2(password, user.salt || "", 25000, 512, "sha256", (err, key) =>
+      err ? reject(err) : resolve(key),
+    );
+  });
+  const stored = Buffer.from(user.hash, "hex");
+  return (
+    hashBuffer.length === stored.length &&
+    crypto.timingSafeEqual(hashBuffer, stored)
+  );
+}
+
+async function findDirectAdminUser(identifier: string) {
+  const normalized = identifier.trim().toLowerCase();
+  const result = await getLoginPool().query<DirectAdminUser>(
+    `select id, email, username, name, role::text as role, is_active, salt, hash
+     from admin_users
+     where lower(email) = $1 or lower(username) = $1
+     limit 1`,
+    [normalized],
+  );
+  return result.rows[0] || null;
+}
+
+async function directLoginFallback(identifier: string, password: string) {
+  const user = await withTimeout(
+    "direct admin user lookup",
+    findDirectAdminUser(identifier),
+    DIRECT_DB_TIMEOUT_MS,
+  );
+  if (!user || !user.is_active) {
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  }
+
+  const validPassword = await withTimeout(
+    "direct password verify",
+    verifyPayloadPassword(password, user),
+    DIRECT_DB_TIMEOUT_MS,
+  );
+  if (!validPassword) {
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  }
+
+  const token = signPayloadToken(user);
+  return withPayloadSession(
+    {
+      success: true,
+      requiresOtp: false,
+      redirectTo: ADMIN_PATH,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    },
+    token,
   );
 }
 
@@ -99,8 +236,7 @@ function getClientIp(request: Request) {
 }
 
 async function consumeRateLimit(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload: any,
+  payload: LoginPayload,
   key: string,
   limit: number,
   windowMs: number,
@@ -154,8 +290,19 @@ async function handleLogin(request: Request) {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getCachedPayload();
+  let payload: LoginPayload;
+  try {
+    console.log("0. Before Payload init");
+    payload = await withTimeout(
+      "Payload init",
+      getCachedPayload(),
+      PAYLOAD_INIT_TIMEOUT_MS,
+    ) as LoginPayload;
+    console.log("0. After Payload init");
+  } catch (err) {
+    console.warn("[Login] Payload init unavailable; using direct login:", err);
+    return directLoginFallback(identifier, password);
+  }
 
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);
