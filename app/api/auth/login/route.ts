@@ -15,6 +15,7 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const SESSION_MAX_AGE = 60 * 60 * 8;
 const ROUTE_TIMEOUT_MS = 30000;
 const STEP_TIMEOUT_MS = 15000;
+const RATE_LIMIT_TIMEOUT_MS = 3000;
 
 type AdminLoginResult = {
   token: string;
@@ -159,15 +160,21 @@ async function handleLogin(request: Request) {
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);
   const ipHash = hashIp(ip);
-  const allowed = await withTimeout(
-    "login rate limit",
-    consumeRateLimit(
-      payload,
-      `login:ip:${ipHash}`,
-      MAX_LOGIN_ATTEMPTS,
-      WINDOW_MS,
-    ),
-  );
+  let allowed = true;
+  try {
+    allowed = await withTimeout(
+      "login rate limit",
+      consumeRateLimit(
+        payload,
+        `login:ip:${ipHash}`,
+        MAX_LOGIN_ATTEMPTS,
+        WINDOW_MS,
+      ),
+      RATE_LIMIT_TIMEOUT_MS,
+    );
+  } catch (err) {
+    console.warn("[Login] Rate limit unavailable; continuing login:", err);
+  }
   if (!allowed) {
     return NextResponse.json(
       { error: "Too many login attempts. Please try again in 15 minutes." },
