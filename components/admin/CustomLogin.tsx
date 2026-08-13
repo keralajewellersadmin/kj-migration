@@ -7,6 +7,19 @@ import styles from "./CustomLogin.module.css";
 
 type LoginStep = "login" | "otp" | "forgot" | "reset-sent";
 
+async function readAuthResponse(res: Response) {
+  const contentType = res.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return res.json();
+  }
+  return {
+    error:
+      res.status === 401 || res.status === 403
+        ? "This deployment is protected by Vercel. Disable deployment protection before sharing it with the client."
+        : "Login service is not reachable. Please try again.",
+  };
+}
+
 export default function CustomLogin() {
   const [step, setStep] = useState<LoginStep>("login");
   const [identifier, setIdentifier] = useState("");
@@ -39,10 +52,15 @@ export default function CustomLogin() {
         body: JSON.stringify({ identifier, password }),
       });
 
-      const data = await res.json();
+      const data = await readAuthResponse(res);
 
       if (!res.ok) {
-        setError(data.error || "Invalid credentials");
+        setError(
+          data.error?.message ||
+            data.error ||
+            data.protection?.error?.message ||
+            "Invalid credentials",
+        );
         return;
       }
 
@@ -52,6 +70,11 @@ export default function CustomLogin() {
         setDevOtp(data.devOtp || "");
         setStep("otp");
         setResendCooldown(60);
+        return;
+      }
+
+      if (data.success) {
+        window.location.href = data.redirectTo || ADMIN_PATH;
       }
     } catch {
       setError("Something went wrong. Please try again.");

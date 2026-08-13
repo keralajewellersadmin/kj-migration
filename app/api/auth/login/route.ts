@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCachedPayload } from "@/lib/payload-singleton";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import {
   findUserByIdentifier,
   generateOtp,
@@ -11,6 +12,80 @@ import { hashIp } from "@/lib/payload/security";
 const RATE_LIMIT_COLLECTION = "rate-limits" as never;
 const MAX_LOGIN_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const SESSION_MAX_AGE = 60 * 60 * 8;
+const ROUTE_TIMEOUT_MS = 30000;
+const STEP_TIMEOUT_MS = 15000;
+
+type AdminLoginResult = {
+  token: string;
+  user: {
+    id: string | number;
+    email?: string;
+    name?: string;
+    role?: string;
+  };
+};
+
+function isOtpEnabled() {
+  return (
+    process.env.ADMIN_OTP_ENABLED === "true" &&
+    Boolean(
+      process.env.GMAIL_OTP_SENDER_EMAIL &&
+        process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
+    )
+  );
+}
+
+function withPayloadSession(
+  body: Record<string, unknown>,
+  token: string,
+  status = 200,
+) {
+  const response = NextResponse.json(body, { status });
+  response.cookies.set("payload-token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
+  return response;
+}
+
+function timeoutResponse() {
+  return NextResponse.json(
+    {
+      error:
+        "Login service timed out. Please try again or contact support if it continues.",
+    },
+    { status: 504 },
+  );
+}
+
+function isTimeoutError(error: unknown) {
+  return error instanceof Error && error.message.includes("timed out after");
+}
+
+async function withTimeout<T>(
+  label: string,
+  promise: Promise<T>,
+  timeoutMs = STEP_TIMEOUT_MS,
+) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`${label} timed out after ${timeoutMs}ms`)),
+          timeoutMs,
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 function getClientIp(request: Request) {
   return (
@@ -64,7 +139,7 @@ async function consumeRateLimit(
   return true;
 }
 
-export async function POST(request: Request) {
+async function handleLogin(request: Request) {
   const body = await request.json();
   const { identifier, password } = body as {
     identifier?: string;
@@ -84,11 +159,14 @@ export async function POST(request: Request) {
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);
   const ipHash = hashIp(ip);
-  const allowed = await consumeRateLimit(
-    payload,
-    `login:ip:${ipHash}`,
-    MAX_LOGIN_ATTEMPTS,
-    WINDOW_MS,
+  const allowed = await withTimeout(
+    "login rate limit",
+    consumeRateLimit(
+      payload,
+      `login:ip:${ipHash}`,
+      MAX_LOGIN_ATTEMPTS,
+      WINDOW_MS,
+    ),
   );
   if (!allowed) {
     return NextResponse.json(
@@ -97,11 +175,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const { user, matchedVia } = await findUserByIdentifier(
-    payload,
-    identifier.trim(),
+  const { user, matchedVia } = await withTimeout(
+    "admin user lookup",
+    findUserByIdentifier(payload, identifier.trim()),
   );
-
   if (!user) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
@@ -128,15 +205,34 @@ export async function POST(request: Request) {
 
   // Verify password using Payload's local auth
   try {
-    const loginResult = await payload.login({
-      collection: "admin-users",
-      data: { email: userEmail, password },
-    });
-
+    const loginResult = await withTimeout<AdminLoginResult>(
+      "password verify",
+      payload.login({
+        collection: "admin-users",
+        data: { email: userEmail, password },
+      }) as Promise<AdminLoginResult>,
+    );
     if (!loginResult?.user) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 },
+      );
+    }
+
+    if (!isOtpEnabled()) {
+      return withPayloadSession(
+        {
+          success: true,
+          requiresOtp: false,
+          redirectTo: ADMIN_PATH,
+          user: {
+            id: loginResult.user.id,
+            email: loginResult.user.email,
+            name: loginResult.user.name,
+            role: loginResult.user.role,
+          },
+        },
+        loginResult.token,
       );
     }
 
@@ -146,21 +242,23 @@ export async function POST(request: Request) {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
     // Store OTP + session token in login-otps collection
-    await payload.create({
-      collection: "login-otps",
-      overrideAccess: true,
-      data: {
-        userId: loginResult.user.id,
-        codeHash,
-        expiresAt,
-        attempts: 0,
-        sessionToken: loginResult.token,
-      },
-    });
-
+    await withTimeout(
+      "OTP DB write",
+      payload.create({
+        collection: "login-otps",
+        overrideAccess: true,
+        data: {
+          userId: loginResult.user.id,
+          codeHash,
+          expiresAt,
+          attempts: 0,
+          sessionToken: loginResult.token,
+        },
+      }),
+    );
     // Send OTP to user's on-file email
     try {
-      await sendOtpEmail(userEmail, otp);
+      await withTimeout("sendOtpEmail", sendOtpEmail(userEmail, otp), 12000);
     } catch (emailErr) {
       console.error("[Login] Failed to send OTP email:", emailErr);
       return NextResponse.json(
@@ -184,6 +282,33 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.error("[Login] Authentication error:", err);
+    if (isTimeoutError(err)) {
+      return NextResponse.json(
+        {
+          error:
+            "Login service timed out while checking your account. Please try again.",
+        },
+        { status: 504 },
+      );
+    }
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    return await Promise.race([
+      handleLogin(request),
+      new Promise<NextResponse>((resolve) => {
+        setTimeout(() => resolve(timeoutResponse()), ROUTE_TIMEOUT_MS);
+      }),
+    ]);
+  } catch (err) {
+    console.error("[Login] Request failed:", err);
+    if (isTimeoutError(err)) return timeoutResponse();
+    return NextResponse.json(
+      { error: "Login service failed. Please try again." },
+      { status: 500 },
+    );
   }
 }

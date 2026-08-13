@@ -10,6 +10,9 @@ function getTransporter(): nodemailer.Transporter {
         user: process.env.GMAIL_OTP_SENDER_EMAIL,
         pass: process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   }
   return _transporter;

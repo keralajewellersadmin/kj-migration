@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCachedPayload } from "@/lib/payload-singleton";
 import { hashValue } from "@/lib/auth/email";
 
+const SESSION_MAX_AGE = 60 * 60 * 8;
+
 export async function POST(request: Request) {
   const body = await request.json();
   const { userId, code } = body as { userId?: string | number; code?: string };
@@ -94,7 +96,7 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     token: sessionToken,
     user: {
@@ -104,4 +106,12 @@ export async function POST(request: Request) {
       role: user.role,
     },
   });
+  response.cookies.set("payload-token", sessionToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
+  return response;
 }

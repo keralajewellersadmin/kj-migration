@@ -1943,6 +1943,8 @@ const SiteSettings: GlobalConfig = {
   ],
 };
 
+const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
+
 export default buildConfig({
   secret: requireProductionSecret(),
   sharp,
@@ -1950,7 +1952,9 @@ export default buildConfig({
     ? postgresAdapter({
         pool: {
           connectionString: cleanDatabaseUrl(process.env.DATABASE_URL),
-          max: 5,
+          max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
+            ? postgresPoolMax
+            : 1,
           idleTimeoutMillis: 10000,
           connectionTimeoutMillis: 15000,
           ...(process.env.NODE_ENV === "production"
