@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { jwtVerify } from "jose";
 import {
   APIError,
   type Access,
@@ -30,14 +31,47 @@ function hasRole(user: UserWithRole | undefined, roles: AdminRole[]) {
   return Boolean(user?.isActive && user.role && roles.includes(user.role));
 }
 
+function getCookieValue(headers: Headers | undefined, name: string) {
+  const cookieHeader = headers?.get("cookie");
+  if (!cookieHeader) return null;
+
+  for (const part of cookieHeader.split(";")) {
+    const [key, ...valueParts] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(valueParts.join("="));
+  }
+
+  return null;
+}
+
 export const isAuthenticated: Access = ({ req }) =>
   Boolean(getUser(req)?.isActive);
 
 export const isSuperAdmin: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin"]);
 
-export const canReadAdminUsers: Access = ({ id, req }) => {
+export const canReadAdminUsers: Access = async ({ id, req }) => {
   const user = getUser(req);
+  if (!user && typeof id !== "undefined") {
+    const secret = process.env.PAYLOAD_SECRET;
+    const cookiePrefix = req.payload?.config?.cookiePrefix || "payload";
+    const token = getCookieValue(req.headers, `${cookiePrefix}-token`);
+
+    if (!secret || !token) return false;
+
+    try {
+      const { payload } = await jwtVerify(
+        token,
+        new TextEncoder().encode(secret),
+      );
+      return (
+        payload.collection === "admin-users" &&
+        String(payload.id) === String(id) &&
+        typeof payload.sid === "string"
+      );
+    } catch {
+      return false;
+    }
+  }
   if (!user?.isActive) return false;
   if (user.role === "super-admin") return true;
   return String(user.id) === String(id);
