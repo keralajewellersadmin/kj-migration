@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { neon } from "@neondatabase/serverless";
-import { jwtSign } from "payload";
+import { getPayload, jwtSign } from "payload";
+import configPromise from "@/payload.config";
 
 export const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 
@@ -65,38 +66,33 @@ export async function findDirectAdminUser(identifier: string) {
 }
 
 export async function createPayloadAdminSession(userId: number): Promise<string> {
+  const payload = await getPayload({ config: configPromise });
   const sid = crypto.randomUUID();
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE * 1000);
-  const sql = getLoginSql();
 
-  await sql.query(
-    `delete from admin_users_sessions
-     where _parent_id = $1 and expires_at <= now()`,
-    [userId],
+  const session = {
+    id: sid,
+    createdAt: now.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+  };
+
+  const user = await payload.findByID({
+    collection: "admin-users",
+    id: userId,
+  });
+
+  const activeSessions = (user.sessions || []).filter(
+    (s: { expiresAt: string | Date }) => new Date(s.expiresAt) > now
   );
+  activeSessions.push(session);
 
-  const orderRows = (await sql.query(
-    `select coalesce(max(_order), -1) + 1 as next_order
-     from admin_users_sessions
-     where _parent_id = $1`,
-    [userId],
-  )) as Array<{ next_order: number | string | null }>;
-
-  const nextOrder = Number(orderRows[0]?.next_order ?? 0);
-
-  await sql.query(
-    `insert into admin_users_sessions
-       (_parent_id, _order, id, created_at, expires_at)
-     values ($1, $2, $3, $4, $5)`,
-    [
-      userId,
-      nextOrder,
-      sid,
-      now.toISOString(),
-      expiresAt.toISOString(),
-    ],
-  );
+  await payload.update({
+    collection: "admin-users",
+    id: userId,
+    data: { sessions: activeSessions },
+    overrideAccess: true,
+  });
 
   return sid;
 }
