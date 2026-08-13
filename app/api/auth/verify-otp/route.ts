@@ -1,112 +1,23 @@
 import { NextResponse } from "next/server";
-import { getCachedPayload } from "@/lib/payload-singleton";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import { hashValue } from "@/lib/auth/email";
+import {
+  createPayloadAdminSession,
+  findDirectAdminUser,
+  getLoginSql,
+  SESSION_MAX_AGE,
+  signPayloadTokenWithSession,
+} from "@/lib/auth/admin-login";
 
-const SESSION_MAX_AGE = 60 * 60 * 8;
+const MAX_ATTEMPTS = 5;
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const { userId, code } = body as { userId?: string | number; code?: string };
-
-  if (!userId || !code) {
-    return NextResponse.json(
-      { error: "User ID and code are required" },
-      { status: 400 },
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getCachedPayload();
-
-  // Find the latest OTP for this user
-  const result = await payload.find({
-    collection: "login-otps",
-    where: {
-      and: [{ userId: { equals: userId } }],
-    },
-    limit: 1,
-    overrideAccess: true,
-    sort: "-createdAt",
-  });
-
-  if (!result.docs.length) {
-    return NextResponse.json(
-      { error: "No verification code found. Please request a new one." },
-      { status: 400 },
-    );
-  }
-
-  const otpRecord = result.docs[0];
-  const codeHash = otpRecord.codeHash as string;
-  const expiresAt = new Date(otpRecord.expiresAt as string);
-  const attempts = (otpRecord.attempts as number) || 0;
-  const sessionToken = otpRecord.sessionToken as string | undefined;
-
-  // Check attempts
-  if (attempts >= 5) {
-    return NextResponse.json(
-      { error: "Too many failed attempts. Please request a new code." },
-      { status: 429 },
-    );
-  }
-
-  // Check expiry
-  if (new Date() > expiresAt) {
-    return NextResponse.json(
-      { error: "Verification code has expired. Please request a new one." },
-      { status: 400 },
-    );
-  }
-
-  // Verify hash
-  const inputHash = hashValue(code);
-  if (inputHash !== codeHash) {
-    // Increment attempts
-    await payload.update({
-      collection: "login-otps",
-      id: otpRecord.id,
-      data: { attempts: attempts + 1 },
-      overrideAccess: true,
-    });
-    return NextResponse.json(
-      { error: "Invalid verification code" },
-      { status: 400 },
-    );
-  }
-
-  // Delete used OTP
-  await payload.delete({
-    collection: "login-otps",
-    id: otpRecord.id,
-    overrideAccess: true,
-  });
-
-  // Get user data for response
-  const user = await payload.findByID({
-    collection: "admin-users",
-    id: userId,
-    overrideAccess: true,
-  });
-
-  // Use the session token from payload.login() (step 1) — Payload-compatible JWT
-  if (!sessionToken) {
-    return NextResponse.json(
-      { error: "Session expired. Please log in again." },
-      { status: 400 },
-    );
-  }
-
-  const response = NextResponse.json({
-    success: true,
-    token: sessionToken,
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    },
-  });
-  response.cookies.set("payload-token", sessionToken, {
+function withPayloadSession(
+  body: Record<string, unknown>,
+  token: string,
+  status = 200,
+) {
+  const response = NextResponse.json(body, { status });
+  response.cookies.set("payload-token", token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -114,4 +25,121 @@ export async function POST(request: Request) {
     maxAge: SESSION_MAX_AGE,
   });
   return response;
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { identifier, userId, code } = body as {
+      identifier?: string;
+      userId?: string | number;
+      code?: string;
+    };
+
+    if (!code || !/^\d{6}$/.test(code)) {
+      return NextResponse.json(
+        { error: "Enter the 6-digit verification code" },
+        { status: 400 },
+      );
+    }
+
+    const sql = getLoginSql();
+    let resolvedUserId = Number(userId || 0);
+    if (!resolvedUserId && identifier?.trim()) {
+      const resolvedUser = await findDirectAdminUser(identifier.trim());
+      resolvedUserId = Number(resolvedUser?.id || 0);
+    }
+
+    if (!resolvedUserId) {
+      return NextResponse.json(
+        { error: "Verification session is missing. Please log in again." },
+        { status: 400 },
+      );
+    }
+
+    const records = (await sql.query(
+      `select id, user_id, code_hash, expires_at, attempts
+       from login_otps
+       where user_id = $1
+       order by created_at desc
+       limit 1`,
+      [resolvedUserId],
+    )) as Array<{
+      id: number;
+      user_id: number;
+      code_hash: string;
+      expires_at: string;
+      attempts: number | null;
+    }>;
+
+    const otpRecord = records[0];
+    if (!otpRecord) {
+      return NextResponse.json(
+        { error: "No verification code found. Please request a new one." },
+        { status: 400 },
+      );
+    }
+
+    const attempts = Number(otpRecord.attempts || 0);
+    if (attempts >= MAX_ATTEMPTS) {
+      return NextResponse.json(
+        { error: "Too many failed attempts. Please request a new code." },
+        { status: 429 },
+      );
+    }
+
+    if (new Date() > new Date(otpRecord.expires_at)) {
+      return NextResponse.json(
+        { error: "Verification code has expired. Please request a new one." },
+        { status: 400 },
+      );
+    }
+
+    if (hashValue(code) !== otpRecord.code_hash) {
+      await sql.query(
+        `update login_otps set attempts = attempts + 1, updated_at = now() where id = $1`,
+        [otpRecord.id],
+      );
+      return NextResponse.json(
+        { error: "Invalid verification code" },
+        { status: 400 },
+      );
+    }
+
+    await sql.query(`delete from login_otps where id = $1`, [otpRecord.id]);
+
+    const userRows = (await sql.query(
+      `select email from admin_users where id = $1 limit 1`,
+      [otpRecord.user_id],
+    )) as Array<{ email: string }>;
+    const user = userRows[0]
+      ? await findDirectAdminUser(userRows[0].email)
+      : null;
+
+    if (!user || !user.is_active) {
+      return NextResponse.json({ error: "Invalid user" }, { status: 401 });
+    }
+
+    const sessionId = await createPayloadAdminSession(user.id);
+    const token = signPayloadTokenWithSession(user, sessionId);
+    return withPayloadSession(
+      {
+        success: true,
+        redirectTo: ADMIN_PATH,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
+      },
+      token,
+    );
+  } catch (err) {
+    console.error("[OTP] Verification failed:", err);
+    return NextResponse.json(
+      { error: "Verification failed. Please try again." },
+      { status: 500 },
+    );
+  }
 }

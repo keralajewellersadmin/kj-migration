@@ -1,55 +1,25 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
-import { neon } from "@neondatabase/serverless";
-import { getCachedPayload } from "@/lib/payload-singleton";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import {
-  findUserByIdentifier,
   generateOtp,
   hashValue,
   sendOtpEmail,
 } from "@/lib/auth/email";
-import { hashIp } from "@/lib/payload/security";
+import {
+  createPayloadAdminSession,
+  findDirectAdminUser,
+  getLoginSql,
+  SESSION_MAX_AGE,
+  signPayloadTokenWithSession,
+  verifyPayloadPassword,
+} from "@/lib/auth/admin-login";
 
-const RATE_LIMIT_COLLECTION = "rate-limits" as never;
 const MAX_LOGIN_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-const SESSION_MAX_AGE = 60 * 60 * 8;
 const ROUTE_TIMEOUT_MS = 30000;
-const STEP_TIMEOUT_MS = 15000;
+const STEP_TIMEOUT_MS = 8000;
 const RATE_LIMIT_TIMEOUT_MS = 3000;
-const PAYLOAD_INIT_TIMEOUT_MS = 8000;
 const DIRECT_DB_TIMEOUT_MS = 8000;
-
-type AdminLoginResult = {
-  token: string;
-  user: {
-    id: string | number;
-    email?: string;
-    name?: string;
-    role?: string;
-  };
-};
-
-type DirectAdminUser = {
-  id: number;
-  email: string;
-  username: string | null;
-  name: string | null;
-  role: string;
-  is_active: boolean | null;
-  salt: string | null;
-  hash: string | null;
-};
-
-type LoginPayload = {
-  find: (args: unknown) => Promise<{ docs: unknown[] }>;
-  update: (args: unknown) => Promise<unknown>;
-  create: (args: unknown) => Promise<unknown>;
-  login: (args: unknown) => Promise<AdminLoginResult>;
-};
-
-let loginSql: ReturnType<typeof neon> | null = null;
 
 function isOtpEnabled() {
   return (
@@ -58,113 +28,6 @@ function isOtpEnabled() {
       process.env.GMAIL_OTP_SENDER_EMAIL &&
         process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
     )
-  );
-}
-
-function getLoginSql() {
-  if (loginSql) return loginSql;
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) throw new Error("DATABASE_URL is required for login");
-  loginSql = neon(connectionString);
-  return loginSql;
-}
-
-function base64url(input: Buffer | string) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-}
-
-function signPayloadToken(user: DirectAdminUser) {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const exp = issuedAt + SESSION_MAX_AGE;
-  const header = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = base64url(
-    JSON.stringify({
-      id: user.id,
-      collection: "admin-users",
-      email: user.email,
-      name: user.name,
-      username: user.username,
-      role: user.role,
-      isActive: user.is_active,
-      iat: issuedAt,
-      exp,
-    }),
-  );
-  const signature = base64url(
-    crypto
-      .createHmac("sha256", process.env.PAYLOAD_SECRET || "")
-      .update(`${header}.${payload}`)
-      .digest(),
-  );
-  return `${header}.${payload}.${signature}`;
-}
-
-async function verifyPayloadPassword(
-  password: string,
-  user: DirectAdminUser,
-) {
-  if (!user.salt || !user.hash) return false;
-  const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
-    crypto.pbkdf2(password, user.salt || "", 25000, 512, "sha256", (err, key) =>
-      err ? reject(err) : resolve(key),
-    );
-  });
-  const stored = Buffer.from(user.hash, "hex");
-  return (
-    hashBuffer.length === stored.length &&
-    crypto.timingSafeEqual(hashBuffer, stored)
-  );
-}
-
-async function findDirectAdminUser(identifier: string) {
-  const normalized = identifier.trim().toLowerCase();
-  const rows = await getLoginSql().query(
-    `select id, email, username, name, role::text as role, is_active, salt, hash
-     from admin_users
-     where lower(email) = $1 or lower(username) = $1
-     limit 1`,
-    [normalized],
-  ) as DirectAdminUser[];
-  return rows[0] || null;
-}
-
-async function directLoginFallback(identifier: string, password: string) {
-  const user = await withTimeout(
-    "direct admin user lookup",
-    findDirectAdminUser(identifier),
-    DIRECT_DB_TIMEOUT_MS,
-  );
-  if (!user || !user.is_active) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  }
-
-  const validPassword = await withTimeout(
-    "direct password verify",
-    verifyPayloadPassword(password, user),
-    DIRECT_DB_TIMEOUT_MS,
-  );
-  if (!validPassword) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  }
-
-  const token = signPayloadToken(user);
-  return withPayloadSession(
-    {
-      success: true,
-      requiresOtp: false,
-      redirectTo: ADMIN_PATH,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
-    },
-    token,
   );
 }
 
@@ -230,43 +93,40 @@ function getClientIp(request: Request) {
 }
 
 async function consumeRateLimit(
-  payload: LoginPayload,
   key: string,
   limit: number,
   windowMs: number,
 ) {
+  const sql = getLoginSql();
   const resetAt = new Date(Date.now() + windowMs).toISOString();
   const now = new Date().toISOString();
-  const { docs } = await payload.find({
-    collection: RATE_LIMIT_COLLECTION,
-    where: { key: { equals: key } },
-    limit: 1,
-  });
+  const docs = await sql.query(
+    `select id, count, reset_at from rate_limits where key = $1 limit 1`,
+    [key],
+  ) as Array<{ id: number; count?: number; reset_at?: string }>;
 
-  const current = docs[0] as
-    { id: string | number; count?: number; resetAt?: string } | undefined;
-  if (!current || String(current.resetAt) < now) {
+  const current = docs[0];
+  if (!current || String(current.reset_at) < now) {
     if (current) {
-      await payload.update({
-        collection: RATE_LIMIT_COLLECTION,
-        id: current.id,
-        data: { count: 1, resetAt } as never,
-      });
+      await sql.query(
+        `update rate_limits set count = 1, reset_at = $2, updated_at = now() where id = $1`,
+        [current.id, resetAt],
+      );
     } else {
-      await payload.create({
-        collection: RATE_LIMIT_COLLECTION,
-        data: { key, count: 1, resetAt } as never,
-      });
+      await sql.query(
+        `insert into rate_limits (key, count, reset_at, updated_at, created_at)
+         values ($1, 1, $2, now(), now())`,
+        [key, resetAt],
+      );
     }
     return true;
   }
 
   if ((Number(current.count) || 0) >= limit) return false;
-  await payload.update({
-    collection: RATE_LIMIT_COLLECTION,
-    id: current.id,
-    data: { count: (Number(current.count) || 0) + 1 } as never,
-  });
+  await sql.query(
+    `update rate_limits set count = count + 1, updated_at = now() where id = $1`,
+    [current.id],
+  );
   return true;
 }
 
@@ -284,34 +144,14 @@ async function handleLogin(request: Request) {
     );
   }
 
-  if (!isOtpEnabled()) {
-    console.log("[Login] OTP disabled; using direct login path");
-    return directLoginFallback(identifier, password);
-  }
-
-  let payload: LoginPayload;
-  try {
-    console.log("0. Before Payload init");
-    payload = await withTimeout(
-      "Payload init",
-      getCachedPayload(),
-      PAYLOAD_INIT_TIMEOUT_MS,
-    ) as LoginPayload;
-    console.log("0. After Payload init");
-  } catch (err) {
-    console.warn("[Login] Payload init unavailable; using direct login:", err);
-    return directLoginFallback(identifier, password);
-  }
-
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);
-  const ipHash = hashIp(ip);
+  const ipHash = hashValue(ip);
   let allowed = true;
   try {
     allowed = await withTimeout(
       "login rate limit",
       consumeRateLimit(
-        payload,
         `login:ip:${ipHash}`,
         MAX_LOGIN_ATTEMPTS,
         WINDOW_MS,
@@ -328,44 +168,22 @@ async function handleLogin(request: Request) {
     );
   }
 
-  const { user, matchedVia } = await withTimeout(
+  const user = await withTimeout(
     "admin user lookup",
-    findUserByIdentifier(payload, identifier.trim()),
+    findDirectAdminUser(identifier.trim()),
+    DIRECT_DB_TIMEOUT_MS,
   );
-  if (!user) {
+  if (!user || !user.is_active) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
-  const userRole = user.role as string;
-  const userEmail = user.email as string;
-
-  // Role-based login method enforcement
-  if (userRole === "super-admin" && matchedVia !== "email") {
-    return NextResponse.json(
-      { error: "Please log in with your email address" },
-      { status: 400 },
-    );
-  }
-  if (
-    (userRole === "admin" || userRole === "enquiry-manager") &&
-    matchedVia !== "username"
-  ) {
-    return NextResponse.json(
-      { error: "Please log in with your username" },
-      { status: 400 },
-    );
-  }
-
-  // Verify password using Payload's local auth
   try {
-    const loginResult = await withTimeout<AdminLoginResult>(
+    const validPassword = await withTimeout(
       "password verify",
-      payload.login({
-        collection: "admin-users",
-        data: { email: userEmail, password },
-      }) as Promise<AdminLoginResult>,
+      verifyPayloadPassword(password, user),
+      DIRECT_DB_TIMEOUT_MS,
     );
-    if (!loginResult?.user) {
+    if (!validPassword) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 },
@@ -373,19 +191,25 @@ async function handleLogin(request: Request) {
     }
 
     if (!isOtpEnabled()) {
+      const sessionId = await withTimeout(
+        "Payload session create",
+        createPayloadAdminSession(user.id),
+        DIRECT_DB_TIMEOUT_MS,
+      );
+      const token = signPayloadTokenWithSession(user, sessionId);
       return withPayloadSession(
         {
           success: true,
           requiresOtp: false,
           redirectTo: ADMIN_PATH,
           user: {
-            id: loginResult.user.id,
-            email: loginResult.user.email,
-            name: loginResult.user.name,
-            role: loginResult.user.role,
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
           },
         },
-        loginResult.token,
+        token,
       );
     }
 
@@ -394,24 +218,22 @@ async function handleLogin(request: Request) {
     const codeHash = hashValue(otp);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    // Store OTP + session token in login-otps collection
+    const sql = getLoginSql();
+    await withTimeout(
+      "old OTP cleanup",
+      sql.query(`delete from login_otps where user_id = $1`, [user.id]),
+    );
     await withTimeout(
       "OTP DB write",
-      payload.create({
-        collection: "login-otps",
-        overrideAccess: true,
-        data: {
-          userId: loginResult.user.id,
-          codeHash,
-          expiresAt,
-          attempts: 0,
-          sessionToken: loginResult.token,
-        },
-      }),
+      sql.query(
+        `insert into login_otps (user_id, code_hash, expires_at, attempts, updated_at, created_at)
+         values ($1, $2, $3, 0, now(), now())`,
+        [user.id, codeHash, expiresAt],
+      ),
     );
     // Send OTP to user's on-file email
     try {
-      await withTimeout("sendOtpEmail", sendOtpEmail(userEmail, otp), 12000);
+      await withTimeout("sendOtpEmail", sendOtpEmail(user.email, otp), 12000);
     } catch (emailErr) {
       console.error("[Login] Failed to send OTP email:", emailErr);
       return NextResponse.json(
@@ -421,7 +243,7 @@ async function handleLogin(request: Request) {
     }
 
     // Mask email for display (e.g. "u***@gmail.com")
-    const [localPart, domain] = userEmail.split("@");
+    const [localPart, domain] = user.email.split("@");
     const maskedEmail = localPart.length > 0
       ? `${localPart[0]}***@${domain}`
       : `***@${domain}`;
@@ -430,8 +252,7 @@ async function handleLogin(request: Request) {
       success: true,
       requiresOtp: true,
       maskedEmail,
-      userId: loginResult.user.id,
-      ...(process.env.NODE_ENV !== "production" ? { devOtp: otp } : {}),
+      userId: user.id,
     });
   } catch (err) {
     console.error("[Login] Authentication error:", err);

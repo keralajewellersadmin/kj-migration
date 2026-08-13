@@ -148,43 +148,6 @@
   font-weight: 700;
 }
 
-.devOtp {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 10px 14px;
-  border: 1px solid rgba(48, 78, 81, 0.2);
-  border-radius: 8px;
-  background: rgba(48, 78, 81, 0.05);
-  color: var(--color-emerald, #304e51);
-  font-size: 13px;
-}
-
-.devOtp strong {
-  font-family: monospace;
-  font-size: 15px;
-  letter-spacing: 0.15em;
-}
-
-.devCopyBtn {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border: 1px solid var(--color-emerald, #304e51);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-emerald, #304e51);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.devCopyBtn:hover {
-  background: rgba(48, 78, 81, 0.08);
-}
-
 .error {
   margin-bottom: 20px;
   padding: 12px 14px;

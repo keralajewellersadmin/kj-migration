@@ -29,7 +29,6 @@ export default function CustomLogin() {
   const [userId, setUserId] = useState<string | number>("");
   const [error, setError] = useState("");
   const [devResetUrl, setDevResetUrl] = useState("");
-  const [devOtp, setDevOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -67,7 +66,6 @@ export default function CustomLogin() {
       if (data.requiresOtp) {
         setMaskedEmail(data.maskedEmail);
         setUserId(data.userId);
-        setDevOtp(data.devOtp || "");
         setStep("otp");
         setResendCooldown(60);
         return;
@@ -92,7 +90,7 @@ export default function CustomLogin() {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, code: otpCode }),
+        body: JSON.stringify({ userId, identifier, code: otpCode }),
       });
 
       const data = await res.json();
@@ -102,9 +100,8 @@ export default function CustomLogin() {
         return;
       }
 
-      if (data.token) {
-        document.cookie = `payload-token=${data.token}; path=/; max-age=${60 * 60 * 8}`;
-        window.location.href = `${ADMIN_PATH}`;
+      if (data.success) {
+        window.location.href = data.redirectTo || ADMIN_PATH;
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -272,21 +269,6 @@ export default function CustomLogin() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              {devOtp && (
-                <div className={styles.devOtp}>
-                  <span>Dev OTP: <strong>{devOtp}</strong></span>
-                  <button
-                    type="button"
-                    className={styles.devCopyBtn}
-                    onClick={() => {
-                      setOtpCode(devOtp);
-                    }}
-                  >
-                    Auto-fill
-                  </button>
-                </div>
-              )}
-
               <form onSubmit={handleVerifyOtp} className={styles.form}>
                 <div className={styles.field}>
                   <label htmlFor="otp">Verification code</label>
@@ -337,7 +319,6 @@ export default function CustomLogin() {
                     setStep("login");
                     setError("");
                     setOtpCode("");
-                    setDevOtp("");
                   }}
                 >
                   Back to sign in

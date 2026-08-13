@@ -1,102 +1,66 @@
 import { NextResponse } from "next/server";
-import { getCachedPayload } from "@/lib/payload-singleton";
+import {
+  findDirectAdminUser,
+  getLoginSql,
+} from "@/lib/auth/admin-login";
 import { generateOtp, hashValue, sendOtpEmail } from "@/lib/auth/email";
 
+const RESEND_COOLDOWN_MS = 60 * 1000;
+
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { userId } = body as { userId?: string | number };
+  try {
+    const body = await request.json();
+    const { userId } = body as { userId?: string | number };
 
-  if (!userId) {
-    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload: any = await getCachedPayload();
-
-  // Get user
-  const user = await payload.findByID({
-    collection: "admin-users",
-    id: userId,
-    overrideAccess: true,
-  });
-
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
-
-  // Check rate limit: only 1 resend per 60 seconds
-  const recentOtps = await payload.find({
-    collection: "login-otps",
-    where: {
-      and: [{ userId: { equals: userId } }],
-    },
-    limit: 1,
-    overrideAccess: true,
-    sort: "-createdAt",
-  });
-
-  if (recentOtps.docs.length) {
-    const lastOtp = recentOtps.docs[0];
-    const createdAt = new Date(lastOtp.createdAt as string);
-    const diffMs = Date.now() - createdAt.getTime();
-    if (diffMs < 60 * 1000) {
+    if (!userId) {
       return NextResponse.json(
-        { error: "Please wait before requesting a new code" },
-        { status: 429 },
+        { error: "Verification session is missing" },
+        { status: 400 },
       );
     }
-  }
 
-  // Delete old OTPs for this user, but preserve the sessionToken from the original login
-  const oldOtps = await payload.find({
-    collection: "login-otps",
-    where: {
-      and: [{ userId: { equals: userId } }],
-    },
-    limit: 10,
-    overrideAccess: true,
-  });
+    const sql = getLoginSql();
+    const users = (await sql.query(
+      `select email from admin_users where id = $1 and is_active = true limit 1`,
+      [Number(userId)],
+    )) as Array<{ email: string }>;
+    const user = users[0] ? await findDirectAdminUser(users[0].email) : null;
 
-  // Extract sessionToken from the most recent OTP (set during initial login)
-  let sessionToken: string | undefined;
-  if (oldOtps.docs.length > 0) {
-    sessionToken = (oldOtps.docs[0].sessionToken as string) || undefined;
-  }
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
-  for (const oldOtp of oldOtps.docs) {
-    await payload.delete({
-      collection: "login-otps",
-      id: oldOtp.id,
-      overrideAccess: true,
-    });
-  }
+    const recent = (await sql.query(
+      `select created_at from login_otps where user_id = $1 order by created_at desc limit 1`,
+      [user.id],
+    )) as Array<{ created_at: string }>;
 
-  // Generate new OTP
-  const otp = generateOtp();
-  const codeHash = hashValue(otp);
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    if (recent[0]) {
+      const diffMs = Date.now() - new Date(recent[0].created_at).getTime();
+      if (diffMs < RESEND_COOLDOWN_MS) {
+        return NextResponse.json(
+          { error: "Please wait before requesting a new code" },
+          { status: 429 },
+        );
+      }
+    }
 
-  await payload.create({
-    collection: "login-otps",
-    overrideAccess: true,
-    data: {
-      userId,
-      codeHash,
-      expiresAt,
-      attempts: 0,
-      ...(sessionToken ? { sessionToken } : {}),
-    },
-  });
+    await sql.query(`delete from login_otps where user_id = $1`, [user.id]);
 
-  // Send OTP
-  try {
-    await sendOtpEmail(user.email as string, otp);
-  } catch {
+    const otp = generateOtp();
+    await sql.query(
+      `insert into login_otps (user_id, code_hash, expires_at, attempts, updated_at, created_at)
+       values ($1, $2, $3, 0, now(), now())`,
+      [user.id, hashValue(otp), new Date(Date.now() + 10 * 60 * 1000)],
+    );
+
+    await sendOtpEmail(user.email, otp);
+    return NextResponse.json({ success: true, message: "New code sent" });
+  } catch (err) {
+    console.error("[OTP] Resend failed:", err);
     return NextResponse.json(
-      { error: "Failed to send verification email" },
+      { error: "Failed to resend code" },
       { status: 500 },
     );
   }
-
-  return NextResponse.json({ success: true, message: "New code sent" });
 }
