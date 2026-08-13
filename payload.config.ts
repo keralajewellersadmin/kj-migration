@@ -2009,6 +2009,7 @@ export default buildConfig({
   sharp,
   db: usePostgres
     ? postgresAdapter({
+        pg: process.env.NODE_ENV === "production" ? require("@neondatabase/serverless") : undefined,
         pool: {
           connectionString: cleanDatabaseUrl(process.env.DATABASE_URL),
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
