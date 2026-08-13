@@ -31,9 +31,9 @@ export async function POST(request: Request) {
     }
 
     const recent = (await sql.query(
-      `select created_at from login_otps where user_id = $1 order by created_at desc limit 1`,
+      `select created_at, session_token from login_otps where user_id = $1 order by created_at desc limit 1`,
       [user.id],
-    )) as Array<{ created_at: string }>;
+    )) as Array<{ created_at: string; session_token: string | null }>;
 
     if (recent[0]) {
       const diffMs = Date.now() - new Date(recent[0].created_at).getTime();
@@ -49,9 +49,14 @@ export async function POST(request: Request) {
 
     const otp = generateOtp();
     await sql.query(
-      `insert into login_otps (user_id, code_hash, expires_at, attempts, updated_at, created_at)
-       values ($1, $2, $3, 0, now(), now())`,
-      [user.id, hashValue(otp), new Date(Date.now() + 10 * 60 * 1000)],
+      `insert into login_otps (user_id, code_hash, expires_at, attempts, session_token, updated_at, created_at)
+       values ($1, $2, $3, 0, $4, now(), now())`,
+      [
+        user.id,
+        hashValue(otp),
+        new Date(Date.now() + 10 * 60 * 1000),
+        recent[0]?.session_token ?? null,
+      ],
     );
 
     await sendOtpEmail(user.email, otp);

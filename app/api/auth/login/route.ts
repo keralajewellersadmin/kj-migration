@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 import { ADMIN_PATH } from "@/lib/admin-path";
+import { getCachedPayload } from "@/lib/payload-singleton";
 import {
   generateOtp,
   hashValue,
   sendOtpEmail,
 } from "@/lib/auth/email";
 import {
-  createPayloadAdminSession,
   findDirectAdminUser,
   getLoginSql,
   SESSION_MAX_AGE,
-  signPayloadTokenWithSession,
   verifyPayloadPassword,
 } from "@/lib/auth/admin-login";
 
@@ -20,6 +19,17 @@ const ROUTE_TIMEOUT_MS = 30000;
 const STEP_TIMEOUT_MS = 8000;
 const RATE_LIMIT_TIMEOUT_MS = 3000;
 const DIRECT_DB_TIMEOUT_MS = 8000;
+const PAYLOAD_LOGIN_TIMEOUT_MS = 12000;
+
+type PayloadLoginResult = {
+  token?: string;
+  user?: {
+    id: string | number;
+    email?: string;
+    name?: string;
+    role?: string;
+  };
+};
 
 function isOtpEnabled() {
   if (process.env.ADMIN_OTP_ENABLED === "false") return false;
@@ -146,6 +156,17 @@ async function resetRateLimit(key: string) {
   await getLoginSql().query(`delete from rate_limits where key = $1`, [key]);
 }
 
+async function createPayloadLoginToken(email: string, password: string) {
+  const payload = await getCachedPayload();
+  const result = await payload.login({
+    collection: "admin-users",
+    data: { email, password },
+  }) as PayloadLoginResult;
+
+  if (!result.token) throw new Error("Payload login did not return a token");
+  return result.token;
+}
+
 async function handleLogin(request: Request) {
   const body = await request.json();
   const { identifier, password } = body as {
@@ -227,12 +248,11 @@ async function handleLogin(request: Request) {
     }
 
     if (!isOtpEnabled()) {
-      const sessionId = await withTimeout(
-        "Payload session create",
-        createPayloadAdminSession(user.id),
-        DIRECT_DB_TIMEOUT_MS,
+      const token = await withTimeout(
+        "Payload login token create",
+        createPayloadLoginToken(user.email, password),
+        PAYLOAD_LOGIN_TIMEOUT_MS,
       );
-      const token = await signPayloadTokenWithSession(user, sessionId);
       return withPayloadSession(
         {
           success: true,
@@ -253,6 +273,11 @@ async function handleLogin(request: Request) {
     const otp = generateOtp();
     const codeHash = hashValue(otp);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const payloadToken = await withTimeout(
+      "Payload login token create",
+      createPayloadLoginToken(user.email, password),
+      PAYLOAD_LOGIN_TIMEOUT_MS,
+    );
 
     const sql = getLoginSql();
     await withTimeout(
@@ -262,9 +287,9 @@ async function handleLogin(request: Request) {
     await withTimeout(
       "OTP DB write",
       sql.query(
-        `insert into login_otps (user_id, code_hash, expires_at, attempts, updated_at, created_at)
-         values ($1, $2, $3, 0, now(), now())`,
-        [user.id, codeHash, expiresAt],
+        `insert into login_otps (user_id, code_hash, expires_at, attempts, session_token, updated_at, created_at)
+         values ($1, $2, $3, 0, $4, now(), now())`,
+        [user.id, codeHash, expiresAt, payloadToken],
       ),
     );
     // Send OTP to user's on-file email

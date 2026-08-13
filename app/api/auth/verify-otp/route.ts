@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import { hashValue } from "@/lib/auth/email";
 import {
-  createPayloadAdminSession,
   findDirectAdminUser,
   getLoginSql,
   SESSION_MAX_AGE,
-  signPayloadTokenWithSession,
 } from "@/lib/auth/admin-login";
 
 const MAX_ATTEMPTS = 5;
@@ -59,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     const records = (await sql.query(
-      `select id, user_id, code_hash, expires_at, attempts
+      `select id, user_id, code_hash, expires_at, attempts, session_token
        from login_otps
        where user_id = $1
        order by created_at desc
@@ -71,6 +69,7 @@ export async function POST(request: Request) {
       code_hash: string;
       expires_at: string;
       attempts: number | null;
+      session_token: string | null;
     }>;
 
     const otpRecord = records[0];
@@ -107,8 +106,6 @@ export async function POST(request: Request) {
       );
     }
 
-    await sql.query(`delete from login_otps where id = $1`, [otpRecord.id]);
-
     const userRows = (await sql.query(
       `select email from admin_users where id = $1 limit 1`,
       [otpRecord.user_id],
@@ -121,8 +118,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid user" }, { status: 401 });
     }
 
-    const sessionId = await createPayloadAdminSession(user.id);
-    const token = await signPayloadTokenWithSession(user, sessionId);
+    if (!otpRecord.session_token) {
+      return NextResponse.json(
+        { error: "Session expired. Please log in again." },
+        { status: 400 },
+      );
+    }
+
+    await sql.query(`delete from login_otps where id = $1`, [otpRecord.id]);
+
     return withPayloadSession(
       {
         success: true,
@@ -134,7 +138,7 @@ export async function POST(request: Request) {
           role: user.role,
         },
       },
-      token,
+      otpRecord.session_token,
     );
   } catch (err) {
     console.error("[OTP] Verification failed:", err);
