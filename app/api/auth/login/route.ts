@@ -131,6 +131,10 @@ async function consumeRateLimit(
   return true;
 }
 
+async function resetRateLimit(key: string) {
+  await getLoginSql().query(`delete from rate_limits where key = $1`, [key]);
+}
+
 async function handleLogin(request: Request) {
   const body = await request.json();
   const { identifier, password } = body as {
@@ -148,12 +152,13 @@ async function handleLogin(request: Request) {
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);
   const ipHash = hashValue(ip);
+  const rateLimitKey = `login:ip:${ipHash}`;
   let allowed = true;
   try {
     allowed = await withTimeout(
       "login rate limit",
       consumeRateLimit(
-        `login:ip:${ipHash}`,
+        rateLimitKey,
         MAX_LOGIN_ATTEMPTS,
         WINDOW_MS,
       ),
@@ -189,6 +194,16 @@ async function handleLogin(request: Request) {
         { error: "Invalid credentials" },
         { status: 401 },
       );
+    }
+
+    try {
+      await withTimeout(
+        "login rate limit reset",
+        resetRateLimit(rateLimitKey),
+        RATE_LIMIT_TIMEOUT_MS,
+      );
+    } catch (err) {
+      console.warn("[Login] Rate limit reset unavailable:", err);
     }
 
     if (!isOtpEnabled()) {
