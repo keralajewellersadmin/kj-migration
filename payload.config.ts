@@ -228,7 +228,9 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
   const parsed = new URL(url);
   parsed.searchParams.delete("channel_binding");
-  parsed.searchParams.set("sslmode", "verify-full");
+  // Use libpq compatibility mode with sslmode=require to prevent Vercel TCP hangs
+  parsed.searchParams.set("sslmode", "require");
+  parsed.searchParams.set("uselibpqcompat", "1");
   return parsed.toString();
 }
 
