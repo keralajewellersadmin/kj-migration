@@ -36,7 +36,7 @@ test.describe('Admin Panel — Login Flow', () => {
     await page.waitForTimeout(2000);
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
     if (await emailInput.isVisible()) {
-      await emailInput.fill('superadmin@keralajewellers.in');
+      await emailInput.fill('keralajewellersadmin@gmail.com');
       const passInput = page.locator('input[type="password"]').first();
       await passInput.fill('SuperAdmin@12345');
       const submitBtn = page.locator('button[type="submit"], input[type="submit"]').first();

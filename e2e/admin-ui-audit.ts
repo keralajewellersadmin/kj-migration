@@ -16,7 +16,7 @@ async function login(page: import('playwright').Page): Promise<string> {
     const r = await fetch(`${base}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'superadmin@keralajewellers.in', password: 'SuperAdmin@12345' }),
+      body: JSON.stringify({ identifier: 'keralajewellersadmin@gmail.com', password: 'SuperAdmin@12345' }),
     })
     return r.json()
   }, BASE)
