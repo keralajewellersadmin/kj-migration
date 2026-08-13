@@ -337,6 +337,77 @@ export const swarnavarshaSections: LegalSection[] = [
   },
 ];
 
+export const thangaMazhaiSections: LegalSection[] = [
+  {
+    title: "",
+    blocks: [
+      {
+        type: "p",
+        text: "THANGA MAZHAI IS A ONE TIME INVESTMENT SCHEME WHERE YOU CAN DEPOSIT",
+      },
+      {
+        type: "p",
+        text: "Old gold ornaments of 916 purity or equivalent cash value (via card, UPI, etc.)",
+      },
+      {
+        type: "p",
+        text: "AFTER 11 MONTHS (335 DAYS), WALK IN AND CHOOSE FROM Our latest jewellery collections redeem your deposit for new gold, diamond, or silver jewellery.",
+      },
+      {
+        type: "ul",
+        items: [
+          "NO WASTAGE",
+          "NO MAKING CHARGES",
+          "ONLY PAY GST ON REDEEMED WEIGHT",
+        ],
+      },
+      {
+        type: "p",
+        text: "YOU CAN ALSO EXCHANGE YOUR OLD JEWELLERY TO JOIN THE PRE-BOOKING.",
+      },
+      {
+        type: "p",
+        text: "WHY CHOOSE THANGA MAZHAI",
+      },
+      {
+        type: "ul",
+        items: [
+          "One-time deposit: old gold or equivalent cash",
+          "11-month maturity period",
+          "Redeem in gold, diamond, silver",
+          "Pay only GST, no extra charges",
+          "100% purity & transparent valuation",
+          "Available at 3 Chennai outlets",
+          "Only one-time deposit allowed",
+          "Redemption strictly in jewellery, not cash",
+          "Aadhar & address proof required",
+          "Scheme cannot be clubbed with offers",
+          "Early closure allowed (V.A. Charges apply)",
+          "Redeem only at the original outlet",
+          "Scheme for individuals aged 18+",
+          "Kerala Jewellers reserves the rights to modify the terms",
+        ],
+      },
+      {
+        type: "p",
+        text: "All scheme redemptions must be done at the same branch where you enrolled. T&C apply.",
+      },
+      {
+        type: "p",
+        text: "You get new jewellery of exactly the same weight as your old jewel. (Just one percent (1%) will be deducted as melting and purifying charges).\nValuation of your old jewels will be based on BIS 916 hallmark standards.",
+      },
+      {
+        type: "p",
+        text: "Questions & Contact Information",
+      },
+      {
+        type: "p",
+        text: "If you have any questions, please do not hesitate to contact us via mobile at +91 95660 11899, +91 93810 11742, +91 74488 42244 or email us at pondybazaar@keralajewellers.in or visit us at our other branches in Pondy Bazaar, Purasaiwalkam or Porur.",
+      },
+    ],
+  },
+];
+
 export const privacySections: LegalSection[] = [
   {
     title: "",
