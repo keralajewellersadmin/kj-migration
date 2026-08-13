@@ -28,7 +28,7 @@ import {
   canManageContent,
   canManageInquiries,
   canManageSettings,
-  canReadAdminUsers,
+canReadAdminUsers,
   canReadAuditLogs,
   canReadMedia,
   isAuthenticated,
@@ -39,6 +39,7 @@ import {
   enforceAdminRoleRestrictions,
   enforceAccountLimit,
   validateAdminPassword,
+  adminUsersJwtStrategy,
 } from "./lib/payload/security";
 import {
   cloudinaryUploadHook,
@@ -476,6 +477,7 @@ const AdminUsers: CollectionConfig = {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
     },
+    strategies: [{ name: "admin-users-jwt", authenticate: adminUsersJwtStrategy }],
   },
   admin: { useAsTitle: "username" },
   hooks: {

@@ -3,6 +3,7 @@ import { jwtVerify } from "jose";
 import {
   APIError,
   type Access,
+  type AuthStrategyFunction,
   type FieldAccess,
   type CollectionBeforeValidateHook,
   type PayloadRequest,
@@ -42,6 +43,69 @@ function getCookieValue(headers: Headers | undefined, name: string) {
 
   return null;
 }
+
+/**
+ * Custom auth strategy for `admin-users`.
+ *
+ * Payload's default JWT strategy validates a token by loading the user with
+ * `findByID`, which respects collection read access. The `admin-users` read
+ * access (`canReadAdminUsers`) authorizes reads by re-verifying the cookie
+ * token present on the request — but during the default strategy's internal
+ * `findByID` the request headers are not propagated, so the cookie is never
+ * visible and every token validation is denied. This strategy re-issues the
+ * user lookup with `overrideAccess: true` after cryptographically verifying
+ * the JWT (signature + expiry + collection), which is sufficient proof of
+ * authentication while keeping REST read access fully protected.
+ */
+export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
+  headers,
+  payload: payloadInstance,
+}) => {
+  try {
+    const cookiePrefix = payloadInstance.config?.cookiePrefix || "payload";
+    const cookieHeader = headers.get("cookie") || "";
+    let token: string | null = null;
+
+    for (const part of cookieHeader.split(";")) {
+      const [key, ...valueParts] = part.trim().split("=");
+      if (key === `${cookiePrefix}-token`) {
+        token = decodeURIComponent(valueParts.join("="));
+        break;
+      }
+    }
+
+    const bearer = headers.get("authorization");
+    if (!token && bearer?.startsWith("Bearer ")) {
+      token = bearer.slice("Bearer ".length);
+    }
+
+    if (!token) return { user: null };
+
+    const secret = new TextEncoder().encode(payloadInstance.secret);
+    const { payload: claims } = await jwtVerify(token, secret);
+
+    if (claims.collection !== "admin-users") return { user: null };
+    if (typeof claims.id === "undefined") return { user: null };
+
+    const user = await payloadInstance.findByID({
+      collection: "admin-users" as never,
+      id: claims.id as unknown as number,
+      overrideAccess: true,
+      depth: 0,
+    });
+
+    if (!user || (user as { isActive?: boolean | null }).isActive === false) {
+      return { user: null };
+    }
+
+    (user as Record<string, unknown>).collection = "admin-users";
+    (user as Record<string, unknown>)._strategy = "admin-users-jwt";
+
+    return { user: user as never };
+  } catch {
+    return { user: null };
+  }
+};
 
 export const isAuthenticated: Access = ({ req }) =>
   Boolean(getUser(req)?.isActive);
