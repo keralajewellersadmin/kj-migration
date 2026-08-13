@@ -22,7 +22,17 @@ export function getLoginSql() {
   if (loginSql) return loginSql;
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is required");
-  loginSql = neon(connectionString);
+
+  // The neon() HTTP driver does not work with the PgBouncer -pooler endpoint.
+  // If the URL contains -pooler (which is required for Payload's TCP driver), we must strip it.
+  const parsed = new URL(connectionString);
+  if (parsed.hostname.includes("-pooler")) {
+    parsed.hostname = parsed.hostname.replace("-pooler", "");
+  }
+
+  console.log("[DB] HTTP Driver Hostname:", parsed.hostname);
+  
+  loginSql = neon(parsed.toString());
   return loginSql;
 }
 

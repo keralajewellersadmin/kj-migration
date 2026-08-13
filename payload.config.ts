@@ -227,20 +227,6 @@ const usePostgres =
 function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
   const parsed = new URL(url);
-  if (
-    process.env.NODE_ENV === "production" &&
-    parsed.hostname.endsWith(".neon.tech") &&
-    !parsed.hostname.includes("-pooler")
-  ) {
-    console.warn(
-      "[Database] Neon DATABASE_URL is not using the pooled endpoint. Injecting -pooler into connection string for Vercel production.",
-    );
-    const parts = parsed.hostname.split(".");
-    if (parts.length > 0) {
-      parts[0] = `${parts[0]}-pooler`;
-      parsed.hostname = parts.join(".");
-    }
-  }
   parsed.searchParams.delete("channel_binding");
   parsed.searchParams.set("sslmode", "verify-full");
   return parsed.toString();
