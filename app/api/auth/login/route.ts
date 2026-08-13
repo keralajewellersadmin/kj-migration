@@ -290,6 +290,11 @@ async function handleLogin(request: Request) {
     );
   }
 
+  if (!isOtpEnabled()) {
+    console.log("[Login] OTP disabled; using direct login path");
+    return directLoginFallback(identifier, password);
+  }
+
   let payload: LoginPayload;
   try {
     console.log("0. Before Payload init");
