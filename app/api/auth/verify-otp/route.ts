@@ -130,13 +130,13 @@ export async function POST(request: Request) {
     await sql.query(`delete from login_otps where id = $1`, [otpRecord.id]);
 
     console.log("[AUTH] OTP verified = true");
-    console.log("[AUTH] Payload authentication started = true");
+    console.log("[AUTH] Direct Payload session creation started = true");
 
-    // Generate real Payload session now that OTP succeeded
+    // Generate a Payload-compatible session row directly to avoid Vercel TCP DB timeouts.
     const sessionId = await createPayloadAdminSession(user.id);
     const payloadToken = await signPayloadTokenWithSession(user, sessionId);
 
-    console.log("[AUTH] Payload authentication succeeded = true");
+    console.log("[AUTH] Direct Payload session creation succeeded = true");
     console.log(`[AUTH] user ID = ${user.id}`);
     console.log("[AUTH] Payload session created = true");
     console.log(`[AUTH] redirect = ${ADMIN_PATH}`);

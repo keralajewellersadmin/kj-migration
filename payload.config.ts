@@ -228,9 +228,11 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
   const parsed = new URL(url);
   parsed.searchParams.delete("channel_binding");
-  // Use libpq compatibility mode with sslmode=require to prevent Vercel TCP hangs
-  parsed.searchParams.set("sslmode", "require");
-  parsed.searchParams.set("uselibpqcompat", "1");
+  // The neon serverless driver (both HTTP and WebSockets) runs on the compute endpoint.
+  // We must strip -pooler from the hostname if it exists.
+  if (parsed.hostname.includes("-pooler")) {
+    parsed.hostname = parsed.hostname.replace("-pooler", "");
+  }
   return parsed.toString();
 }
 
