@@ -59,15 +59,15 @@ const canUpdateProtectedField = ({
 }) => Boolean(canManageSettings({ req }));
 
 const canReadAdminUserField = ({
-  doc,
+  id,
   req,
 }: {
-  doc?: { id?: string | number };
+  id?: string | number;
   req: Parameters<typeof canManageSettings>[0]["req"];
 }) =>
   Boolean(
     canReadAdminUsers({
-      id: Number(doc?.id),
+      id: Number(id),
       req,
     }),
   );
