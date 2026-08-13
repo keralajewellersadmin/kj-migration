@@ -1,8 +1,10 @@
 import crypto from "crypto";
+import { jwtVerify } from "jose";
 
 import {
   APIError,
   type Access,
+  type AuthStrategyFunction,
   type FieldAccess,
   type CollectionBeforeValidateHook,
   type PayloadRequest,
@@ -31,6 +33,63 @@ function hasRole(user: UserWithRole | undefined, roles: AdminRole[]) {
   return Boolean(user?.isActive && user.role && roles.includes(user.role));
 }
 
+
+/**
+ * Custom auth strategy for `admin-users`.
+ *
+ * Payload's default JWT strategy validates a token by calling `findByID`,
+ * which goes through the pg adapter's TCP Pool. On Vercel + Neon, that TCP
+ * connection hangs (15s timeout). This strategy verifies the JWT signature
+ * and returns user claims directly — no database round-trip needed.
+ */
+export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
+  headers,
+  payload: payloadInstance,
+}) => {
+  try {
+    const cookiePrefix = payloadInstance.config?.cookiePrefix || "payload";
+    const cookieHeader = headers.get("cookie") || "";
+    let token: string | null = null;
+
+    for (const part of cookieHeader.split(";")) {
+      const [key, ...valueParts] = part.trim().split("=");
+      if (key === `${cookiePrefix}-token`) {
+        token = decodeURIComponent(valueParts.join("="));
+        break;
+      }
+    }
+
+    const bearer = headers.get("authorization");
+    if (!token && bearer?.startsWith("Bearer ")) {
+      token = bearer.slice("Bearer ".length);
+    }
+
+    if (!token) return { user: null };
+
+    const secret = new TextEncoder().encode(payloadInstance.secret);
+    const { payload: claims } = await jwtVerify(token, secret);
+
+    if (claims.collection !== "admin-users") return { user: null };
+    if (typeof claims.id === "undefined") return { user: null };
+    if (claims.isActive === false) return { user: null };
+
+    return {
+      user: {
+        id: claims.id,
+        collection: "admin-users",
+        email: claims.email,
+        username: claims.username,
+        name: claims.name,
+        role: claims.role,
+        isActive: claims.isActive,
+        sid: claims.sid,
+        _strategy: "admin-users-jwt",
+      } as never,
+    };
+  } catch {
+    return { user: null };
+  }
+};
 
 export const isAuthenticated: Access = ({ req }) =>
   Boolean(getUser(req)?.isActive);

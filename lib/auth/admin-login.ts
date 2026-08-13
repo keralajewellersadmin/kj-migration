@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import { neon } from "@neondatabase/serverless";
-import { getPayload, jwtSign } from "payload";
-import configPromise from "@/payload.config";
+import { jwtSign } from "payload";
 
 export const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 
@@ -24,14 +23,12 @@ export function getLoginSql() {
   if (!connectionString) throw new Error("DATABASE_URL is required");
 
   // The neon() HTTP driver does not work with the PgBouncer -pooler endpoint.
-  // If the URL contains -pooler (which is required for Payload's TCP driver), we must strip it.
+  // Strip -pooler so queries go to the direct compute endpoint over HTTP.
   const parsed = new URL(connectionString);
   if (parsed.hostname.includes("-pooler")) {
     parsed.hostname = parsed.hostname.replace("-pooler", "");
   }
 
-  console.log("[DB] HTTP Driver Hostname:", parsed.hostname);
-  
   loginSql = neon(parsed.toString());
   return loginSql;
 }
@@ -65,34 +62,49 @@ export async function findDirectAdminUser(identifier: string) {
   return rows[0] || null;
 }
 
+/**
+ * Create a session row directly via raw SQL (neon HTTP driver).
+ *
+ * We cannot use Payload's ORM here because the postgresAdapter's TCP-based
+ * pg.Pool cannot reliably connect to Neon from Vercel's serverless functions
+ * (15s timeout). The neon() HTTP driver bypasses this entirely.
+ */
 export async function createPayloadAdminSession(userId: number): Promise<string> {
-  const payload = await getPayload({ config: configPromise });
   const sid = crypto.randomUUID();
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE * 1000);
+  const sql = getLoginSql();
 
-  const session = {
-    id: sid,
-    createdAt: now.toISOString(),
-    expiresAt: expiresAt.toISOString(),
-  };
-
-  const user = await payload.findByID({
-    collection: "admin-users",
-    id: userId,
-  });
-
-  const activeSessions = (user.sessions || []).filter(
-    (s: { expiresAt: string | Date }) => new Date(s.expiresAt) > now
+  // Clean up expired sessions
+  await sql.query(
+    `delete from admin_users_sessions
+     where _parent_id = $1 and expires_at <= now()`,
+    [userId],
   );
-  activeSessions.push(session);
 
-  await payload.update({
-    collection: "admin-users",
-    id: userId,
-    data: { sessions: activeSessions },
-    overrideAccess: true,
-  });
+  // Get next _order value
+  const orderRows = (await sql.query(
+    `select coalesce(max(_order), -1) + 1 as next_order
+     from admin_users_sessions
+     where _parent_id = $1`,
+    [userId],
+  )) as Array<{ next_order: number | string | null }>;
+
+  const nextOrder = Number(orderRows[0]?.next_order ?? 0);
+
+  // Insert the session row
+  await sql.query(
+    `insert into admin_users_sessions
+       (_parent_id, _order, id, created_at, expires_at)
+     values ($1, $2, $3, $4, $5)`,
+    [
+      userId,
+      nextOrder,
+      sid,
+      now.toISOString(),
+      expiresAt.toISOString(),
+    ],
+  );
 
   return sid;
 }

@@ -39,6 +39,7 @@ canReadAdminUsers,
   enforceAdminRoleRestrictions,
   enforceAccountLimit,
   validateAdminPassword,
+  adminUsersJwtStrategy,
 } from "./lib/payload/security";
 import {
   cloudinaryUploadHook,
@@ -228,11 +229,6 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
   const parsed = new URL(url);
   parsed.searchParams.delete("channel_binding");
-  // The neon serverless driver (both HTTP and WebSockets) runs on the compute endpoint.
-  // We must strip -pooler from the hostname if it exists.
-  if (parsed.hostname.includes("-pooler")) {
-    parsed.hostname = parsed.hostname.replace("-pooler", "");
-  }
   return parsed.toString();
 }
 
@@ -471,6 +467,7 @@ const AdminUsers: CollectionConfig = {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
     },
+    strategies: [{ name: "admin-users-jwt", authenticate: adminUsersJwtStrategy }],
   },
   admin: { useAsTitle: "username" },
   hooks: {
@@ -2011,7 +2008,6 @@ export default buildConfig({
   sharp,
   db: usePostgres
     ? postgresAdapter({
-        pg: process.env.NODE_ENV === "production" ? require("@neondatabase/serverless") : undefined,
         pool: {
           connectionString: cleanDatabaseUrl(process.env.DATABASE_URL),
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
