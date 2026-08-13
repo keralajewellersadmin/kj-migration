@@ -58,6 +58,20 @@ const canUpdateProtectedField = ({
   req: Parameters<typeof canManageSettings>[0]["req"];
 }) => Boolean(canManageSettings({ req }));
 
+const canReadAdminUserField = ({
+  doc,
+  req,
+}: {
+  doc?: { id?: string | number };
+  req: Parameters<typeof canManageSettings>[0]["req"];
+}) =>
+  Boolean(
+    canReadAdminUsers({
+      id: Number(doc?.id),
+      req,
+    }),
+  );
+
 const revalidateProduct: CollectionAfterChangeHook = async ({ doc }) => {
   revalidatePath("/");
   revalidatePath("/products");
@@ -535,6 +549,20 @@ const AdminUsers: CollectionConfig = {
         create: adminIsActiveFieldAccess,
         update: adminIsActiveFieldAccess,
       },
+    },
+    {
+      name: "sessions",
+      type: "array",
+      access: {
+        read: canReadAdminUserField,
+        update: () => false,
+      },
+      admin: { disabled: true },
+      fields: [
+        { name: "id", type: "text", required: true },
+        { name: "createdAt", type: "date", defaultValue: () => new Date() },
+        { name: "expiresAt", type: "date", required: true },
+      ],
     },
   ],
 };
