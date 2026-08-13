@@ -22,13 +22,24 @@ const RATE_LIMIT_TIMEOUT_MS = 3000;
 const DIRECT_DB_TIMEOUT_MS = 8000;
 
 function isOtpEnabled() {
+  if (process.env.ADMIN_OTP_ENABLED === "false") return false;
   return (
-    process.env.ADMIN_OTP_ENABLED === "true" &&
-    Boolean(
-      process.env.GMAIL_OTP_SENDER_EMAIL &&
-        process.env.GMAIL_OTP_SENDER_APP_PASSWORD,
-    )
+    Boolean(process.env.GMAIL_OTP_SENDER_EMAIL) &&
+    Boolean(process.env.GMAIL_OTP_SENDER_APP_PASSWORD)
   );
+}
+
+function getOtpConfigError() {
+  if (process.env.ADMIN_OTP_ENABLED === "false") return null;
+  const missing = [
+    !process.env.GMAIL_OTP_SENDER_EMAIL && "GMAIL_OTP_SENDER_EMAIL",
+    !process.env.GMAIL_OTP_SENDER_APP_PASSWORD &&
+      "GMAIL_OTP_SENDER_APP_PASSWORD",
+  ].filter(Boolean);
+
+  return missing.length
+    ? `OTP email is not configured. Missing: ${missing.join(", ")}`
+    : null;
 }
 
 function withPayloadSession(
@@ -204,6 +215,15 @@ async function handleLogin(request: Request) {
       );
     } catch (err) {
       console.warn("[Login] Rate limit reset unavailable:", err);
+    }
+
+    const otpConfigError = getOtpConfigError();
+    if (otpConfigError) {
+      console.error("[Login] OTP configuration missing:", otpConfigError);
+      return NextResponse.json(
+        { error: "OTP email is not configured in production." },
+        { status: 500 },
+      );
     }
 
     if (!isOtpEnabled()) {
