@@ -38,6 +38,7 @@ export async function signPayloadTokenWithSession(
       collection: "admin-users",
       email: user.email,
       username: user.username,
+      name: user.name,
       role: user.role,
       isActive: user.is_active,
       sid: sessionId,

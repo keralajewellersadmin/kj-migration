@@ -86,22 +86,21 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
 
     if (claims.collection !== "admin-users") return { user: null };
     if (typeof claims.id === "undefined") return { user: null };
+    if (claims.isActive === false) return { user: null };
 
-    const user = await payloadInstance.findByID({
-      collection: "admin-users" as never,
-      id: claims.id as unknown as number,
-      overrideAccess: true,
-      depth: 0,
-    });
-
-    if (!user || (user as { isActive?: boolean | null }).isActive === false) {
-      return { user: null };
-    }
-
-    (user as Record<string, unknown>).collection = "admin-users";
-    (user as Record<string, unknown>)._strategy = "admin-users-jwt";
-
-    return { user: user as never };
+    return {
+      user: {
+        id: claims.id,
+        collection: "admin-users",
+        email: claims.email,
+        username: claims.username,
+        name: claims.name,
+        role: claims.role,
+        isActive: claims.isActive,
+        sid: claims.sid,
+        _strategy: "admin-users-jwt",
+      } as never,
+    };
   } catch {
     return { user: null };
   }
