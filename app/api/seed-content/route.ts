@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 }
 
 async function seed() {
-
+ try {
   const payload = await getCachedPayload();
   const results: Record<string, unknown> = {};
 
@@ -180,4 +180,8 @@ async function seed() {
   results.blogPosts = blogResults;
 
   return NextResponse.json({ success: true, results });
+ } catch (e: any) {
+  console.error("SEED ERROR:", e);
+  return NextResponse.json({ success: false, error: e?.message || String(e), stack: e?.stack?.slice(0, 800) }, { status: 500 });
+ }
 }
