@@ -14,6 +14,7 @@ import sharp from "sharp";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { s3Storage } from "@payloadcms/storage-s3";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import {
@@ -31,7 +32,6 @@ import {
   canReadMedia,
   isAuthenticated,
   isSuperAdmin,
-  isAdmin,
   canDeleteAdminUsers,
   adminRoleFieldAccess,
   adminIsActiveFieldAccess,
@@ -208,14 +208,21 @@ const usePostgres =
   (process.env.NODE_ENV === "production" ||
     process.env.PAYLOAD_DATABASE_ADAPTER === "postgres");
 
-// Strip channel_binding from Neon URL (Vercel integration adds it; pg driver doesn't support it and it adds latency)
 function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
-  const cleaned = url
-    .replace(/&channel_binding=require/, "")
-    .replace(/\?channel_binding=require&/, "?")
-    .replace(/\?channel_binding=require$/, "");
-  return cleaned;
+  const parsed = new URL(url);
+  if (
+    process.env.NODE_ENV === "production" &&
+    parsed.hostname.endsWith(".neon.tech") &&
+    !parsed.hostname.includes("-pooler")
+  ) {
+    console.warn(
+      "[Database] Neon DATABASE_URL is not using the pooled endpoint. Use the -pooler connection string on Vercel.",
+    );
+  }
+  parsed.searchParams.delete("channel_binding");
+  parsed.searchParams.set("sslmode", "verify-full");
+  return parsed.toString();
 }
 
 const publicRead = () => true;
@@ -1945,6 +1952,32 @@ const SiteSettings: GlobalConfig = {
 
 const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
 
+const storagePlugins =
+  process.env.S3_BUCKET &&
+  process.env.S3_ACCESS_KEY_ID &&
+  process.env.S3_SECRET_ACCESS_KEY &&
+  process.env.S3_REGION
+    ? [
+        s3Storage({
+          collections: {
+            media: {
+              prefix: process.env.S3_PREFIX || "media",
+            },
+          },
+          bucket: process.env.S3_BUCKET,
+          config: {
+            credentials: {
+              accessKeyId: process.env.S3_ACCESS_KEY_ID,
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+            },
+            endpoint: process.env.S3_ENDPOINT,
+            forcePathStyle: process.env.S3_FORCE_PATH_STYLE === "true",
+            region: process.env.S3_REGION,
+          },
+        }),
+      ]
+    : [];
+
 export default buildConfig({
   secret: requireProductionSecret(),
   sharp,
@@ -2027,7 +2060,7 @@ export default buildConfig({
       ),
     },
   },
-  plugins: [],
+  plugins: storagePlugins,
   graphQL: { disable: true },
   email: resendAdapter({
     apiKey: process.env.RESEND_API_KEY || "",
