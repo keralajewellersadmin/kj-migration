@@ -44,6 +44,7 @@ import {
   cloudinaryUploadHook,
   cloudinaryDeleteHook,
 } from "./lib/cloudinaryUploadHook";
+import { ADMIN_PATH } from "./lib/admin-path";
 
 const canReadProtectedField = ({
   req,
@@ -1981,6 +1982,9 @@ const storagePlugins =
 
 export default buildConfig({
   secret: requireProductionSecret(),
+  routes: {
+    admin: ADMIN_PATH,
+  },
   sharp,
   db: usePostgres
     ? postgresAdapter({

@@ -44,18 +44,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/kj-portal-0d7cfad1",
-        destination: "/admin",
-      },
-      {
-        source: "/kj-portal-0d7cfad1/:path*",
-        destination: "/admin/:path*",
-      },
-    ];
-  },
   async headers() {
     return [
       {
