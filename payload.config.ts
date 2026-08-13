@@ -4,9 +4,11 @@ import {
   type CollectionConfig,
   type GlobalConfig,
   type CollectionAfterChangeHook,
+  type CollectionAfterDeleteHook,
   type CollectionBeforeValidateHook,
   type CollectionBeforeDeleteHook,
   type GlobalAfterChangeHook,
+  type Field,
 } from "payload";
 import sharp from "sharp";
 import { resendAdapter } from "@payloadcms/email-resend";
@@ -14,7 +16,6 @@ import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import path from "path";
 import { revalidatePath } from "next/cache";
-import { clearSiteSettingsCache } from "./lib/data/cms";
 import {
   auditLogAfterChange,
   auditLogAfterDelete,
@@ -49,12 +50,31 @@ const canReadProtectedField = ({
   req: Parameters<typeof canManageSettings>[0]["req"];
 }) => Boolean(canManageSettings({ req }));
 
+const canUpdateProtectedField = ({
+  req,
+}: {
+  req: Parameters<typeof canManageSettings>[0]["req"];
+}) => Boolean(canManageSettings({ req }));
+
 const revalidateProduct: CollectionAfterChangeHook = async ({ doc }) => {
   revalidatePath("/");
   revalidatePath("/products");
   revalidatePath("/products/gold");
   revalidatePath("/products/silver");
   revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
+  if (doc?.slug) {
+    revalidatePath(`/product/${doc.slug}`);
+  }
+};
+
+const revalidateProductAfterDelete: CollectionAfterDeleteHook = async ({ doc }) => {
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/products/gold");
+  revalidatePath("/products/silver");
+  revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
   if (doc?.slug) {
     revalidatePath(`/product/${doc.slug}`);
   }
@@ -73,13 +93,44 @@ const revalidateLegal: CollectionAfterChangeHook = () => {
   revalidatePath("/swarnavarsha");
 };
 
-const revalidateSiteSettings: GlobalAfterChangeHook = () => {
-  clearSiteSettingsCache();
+const revalidateCoreContent: CollectionAfterChangeHook = () => {
+  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
   revalidatePath("/");
   revalidatePath("/products");
   revalidatePath("/products/gold");
   revalidatePath("/products/silver");
   revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
+  revalidatePath("/about");
+  revalidatePath("/contact");
+  revalidatePath("/blog");
+  revalidatePath("/swarnavarsha");
+  revalidatePath("/thanga-mazhai");
+};
+
+const revalidateCoreContentAfterDelete: CollectionAfterDeleteHook = () => {
+  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/products/gold");
+  revalidatePath("/products/silver");
+  revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
+  revalidatePath("/about");
+  revalidatePath("/contact");
+  revalidatePath("/blog");
+  revalidatePath("/swarnavarsha");
+  revalidatePath("/thanga-mazhai");
+};
+
+const revalidateSiteSettings: GlobalAfterChangeHook = () => {
+  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/products/gold");
+  revalidatePath("/products/silver");
+  revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
   revalidatePath("/contact");
   revalidatePath("/blog");
 };
@@ -112,8 +163,45 @@ const metalSelect = {
     { label: "Gold", value: "gold" },
     { label: "Silver", value: "silver" },
     { label: "Diamond", value: "diamond" },
+    { label: "Platinum", value: "platinum" },
   ],
 } as const;
+
+const statusSelect = {
+  defaultValue: "published",
+  options: [
+    { label: "Draft", value: "draft" },
+    { label: "Published", value: "published" },
+    { label: "Archived", value: "archived" },
+  ],
+};
+
+const seoFields = [
+  {
+    name: "seo",
+    type: "group" as const,
+    fields: [
+      { name: "title", type: "text" as const },
+      { name: "description", type: "textarea" as const },
+      { name: "ogImage", type: "upload" as const, relationTo: "media" },
+    ],
+  },
+] satisfies Field[];
+
+const ctaFields = [
+  { name: "ctaText", type: "text" as const },
+  { name: "ctaHref", type: "text" as const },
+] satisfies Field[];
+
+const pageSectionFields = [
+  { name: "label", type: "text" as const, required: true },
+  { name: "heading", type: "text" as const },
+  { name: "description", type: "textarea" as const },
+  { name: "image", type: "upload" as const, relationTo: "media" },
+  ...ctaFields,
+  { name: "visible", type: "checkbox" as const, defaultValue: true },
+  { name: "sortOrder", type: "number" as const, defaultValue: 0 },
+] satisfies Field[];
 
 const usePostgres =
   Boolean(process.env.DATABASE_URL) &&
@@ -269,7 +357,13 @@ function makeAutoSlug(collectionSlug: string): CollectionBeforeValidateHook {
 
 const Media: CollectionConfig = {
   slug: "media",
-  admin: { useAsTitle: "alt" },
+  admin: {
+    useAsTitle: "alt",
+    defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
+    components: {
+      beforeList: ["@/components/admin/MediaFolderFilters"],
+    },
+  },
   access: {
     read: canReadMedia,
     create: canManageContent,
@@ -324,18 +418,21 @@ const Media: CollectionConfig = {
     {
       name: "mediaType",
       type: "select",
+      label: "Folder",
       options: [
-        { label: "Product", value: "product" },
-        { label: "Category", value: "category" },
-        { label: "Banner", value: "banner" },
+        { label: "Products", value: "product" },
+        { label: "Categories", value: "category" },
+        { label: "Banners", value: "banner" },
+        { label: "Hero Images", value: "hero" },
         { label: "Gallery", value: "gallery" },
         { label: "Blog", value: "blog" },
+        { label: "Pages", value: "page" },
         { label: "Heritage", value: "heritage" },
         { label: "Timeline", value: "timeline" },
-        { label: "Campaign", value: "campaign" },
-        { label: "Store", value: "store" },
-        { label: "Collection", value: "collection" },
+        { label: "Collections", value: "collection" },
+        { label: "Other", value: "misc" },
       ],
+      defaultValue: "misc",
     },
     {
       name: "cloudinaryPublicId",
@@ -380,8 +477,24 @@ const AdminUsers: CollectionConfig = {
     afterDelete: [auditLogAfterDelete],
     afterLogin: [auditLogAfterLogin],
   },
+  endpoints: [
+    {
+      // 2FA (OTP) is enforced via the custom /api/auth/* flow. Disable Payload's
+      // built-in password-only login so it cannot be used to bypass OTP.
+      path: "/login",
+      method: "post",
+      handler: () =>
+        Response.json(
+          {
+            error:
+              "Password-only login is disabled. Use the OTP login flow at /api/auth/login.",
+          },
+          { status: 403 },
+        ),
+    },
+  ],
   access: {
-    read: isAdmin,
+    read: isSuperAdmin,
     create: isSuperAdmin,
     update: isSuperAdmin,
     delete: canDeleteAdminUsers,
@@ -414,6 +527,145 @@ const AdminUsers: CollectionConfig = {
         update: adminIsActiveFieldAccess,
       },
     },
+  ],
+};
+
+const MetalRate: CollectionConfig = {
+  slug: "metal-rates",
+  labels: { singular: "Metal Rate", plural: "Metal Rates" },
+  admin: {
+    useAsTitle: "metal",
+    defaultColumns: ["metal", "rate", "unit", "effectiveDate", "active", "updatedAt"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageSettings,
+    update: canManageSettings,
+    delete: canManageSettings,
+  },
+  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
+  fields: [
+    {
+      name: "metal",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Gold 22K", value: "gold22" },
+        { label: "Gold 18K", value: "gold18" },
+        { label: "Silver", value: "silver" },
+        { label: "Platinum", value: "platinum" },
+      ],
+    },
+    { name: "rate", type: "text", required: true, admin: { description: "Display value, e.g. 7,450" } },
+    { name: "unit", type: "text", defaultValue: "gram" },
+    { name: "effectiveDate", type: "date", required: true, defaultValue: () => new Date().toISOString(), admin: { date: { pickerAppearance: "dayAndTime" } } },
+    { name: "active", type: "checkbox", defaultValue: true },
+  ],
+};
+
+const WebsitePage: CollectionConfig = {
+  slug: "website-pages",
+  labels: { singular: "Website Page", plural: "Pages" },
+  admin: {
+    useAsTitle: "title",
+    defaultColumns: ["title", "pageType", "status", "updatedAt"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageSettings,
+  },
+  hooks: {
+    beforeValidate: [makeAutoSlug("website-pages")],
+    afterChange: [revalidateCoreContent, auditLogAfterChange],
+    afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete],
+  },
+  fields: [
+    { name: "title", type: "text", required: true },
+    {
+      name: "slug",
+      type: "text",
+      required: true,
+      unique: true,
+      admin: { readOnly: true, description: "Auto-generated from page title." },
+    },
+    {
+      name: "pageType",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Home", value: "home" },
+        { label: "Gold Products", value: "gold-products" },
+        { label: "Silver Products", value: "silver-products" },
+        { label: "Diamond Products", value: "diamond-products" },
+        { label: "Platinum Products", value: "platinum-products" },
+        { label: "Scheme Page", value: "scheme" },
+        { label: "About", value: "about" },
+        { label: "Contact", value: "contact" },
+        { label: "Enquiry", value: "enquiry" },
+        { label: "Heritage", value: "heritage" },
+        { label: "Blog", value: "blog" },
+        { label: "Campaign", value: "campaign" },
+      ],
+    },
+    { name: "status", type: "select", ...statusSelect },
+    {
+      name: "hero",
+      type: "group",
+      fields: [
+        { name: "eyebrow", type: "text" },
+        { name: "title", type: "text" },
+        { name: "description", type: "textarea" },
+        { name: "image", type: "upload", relationTo: "media" },
+        ...ctaFields,
+        { name: "visible", type: "checkbox", defaultValue: true },
+      ],
+    },
+    { name: "sections", type: "array", fields: pageSectionFields },
+    {
+      name: "relatedProducts",
+      type: "relationship",
+      relationTo: "products",
+      hasMany: true,
+      admin: { description: "Optional curated products for this page." },
+    },
+    {
+      name: "relatedCampaign",
+      type: "relationship",
+      relationTo: "campaigns" as never,
+      admin: { description: "Optional campaign associated with this page." },
+    },
+    ...seoFields,
+  ],
+};
+
+const JewelleryCollection: CollectionConfig = {
+  slug: "jewellery-collections",
+  labels: { singular: "Collection", plural: "Collections" },
+  admin: { useAsTitle: "name", defaultColumns: ["name", "metal", "status", "sortOrder"] },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageSettings,
+  },
+  hooks: {
+    beforeValidate: [makeAutoSlug("jewellery-collections")],
+    afterChange: [revalidateProduct, auditLogAfterChange],
+    afterDelete: [revalidateProductAfterDelete, auditLogAfterDelete],
+  },
+  fields: [
+    { name: "name", type: "text", required: true },
+    { name: "slug", type: "text", required: true, unique: true, admin: { readOnly: true } },
+    { name: "metal", type: "select", options: [...metalSelect.options] },
+    { name: "description", type: "textarea" },
+    { name: "image", type: "upload", relationTo: "media" },
+    { name: "banner", type: "upload", relationTo: "media" },
+    { name: "products", type: "relationship", relationTo: "products", hasMany: true },
+    { name: "status", type: "select", ...statusSelect },
+    { name: "sortOrder", type: "number", defaultValue: 0 },
+    ...seoFields,
   ],
 };
 
@@ -460,6 +712,14 @@ const Product: CollectionConfig = {
       type: "relationship",
       relationTo: "categories",
     },
+    {
+      name: "collection",
+      type: "relationship",
+      relationTo: "jewellery-collections" as never,
+      admin: { description: "Optional jewellery collection this product belongs to." },
+    },
+    { name: "productType", type: "text" },
+    { name: "shortDescription", type: "textarea" },
     { name: "weight", type: "text" },
     { name: "purity", type: "text" },
     { name: "description", type: "textarea" },
@@ -477,7 +737,16 @@ const Product: CollectionConfig = {
           "Optional. Leave blank to auto-use the main image for all sizes.",
       },
     },
+    {
+      name: "gallery",
+      type: "array",
+      fields: [
+        { name: "image", type: "upload", relationTo: "media", required: true },
+        { name: "alt", type: "text" },
+      ],
+    },
     { name: "availability", type: "checkbox", defaultValue: true },
+    { name: "status", type: "select", ...statusSelect },
     {
       name: "priceMode",
       type: "select",
@@ -489,7 +758,10 @@ const Product: CollectionConfig = {
       ],
     },
     { name: "price", type: "number" },
+    { name: "tags", type: "text", hasMany: true },
     { name: "featured", type: "checkbox", defaultValue: false },
+    { name: "bestSeller", type: "checkbox", defaultValue: false },
+    { name: "sortOrder", type: "number", defaultValue: 0 },
     {
       name: "seo",
       type: "group",
@@ -577,6 +849,10 @@ const Category: CollectionConfig = {
         description: "Order in navbar mega menu & filter dropdown (0 = first).",
       },
     },
+    { name: "description", type: "textarea" },
+    { name: "image", type: "upload", relationTo: "media" },
+    { name: "banner", type: "upload", relationTo: "media" },
+    { name: "active", type: "checkbox", defaultValue: true },
     {
       name: "seo",
       type: "group",
@@ -785,44 +1061,200 @@ const LegalPage: CollectionConfig = {
   ],
 };
 
+const BestSeller: CollectionConfig = {
+  slug: "best-sellers",
+  labels: { singular: "Best Seller", plural: "Best Sellers" },
+  admin: {
+    useAsTitle: "label",
+    defaultColumns: ["label", "product", "enabled", "sortOrder"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageContent,
+  },
+  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
+  fields: [
+    { name: "label", type: "text", required: true, admin: { description: "Internal label for CMS list view." } },
+    { name: "product", type: "relationship", relationTo: "products", required: true },
+    { name: "enabled", type: "checkbox", defaultValue: true },
+    { name: "featured", type: "checkbox", defaultValue: true },
+    { name: "sortOrder", type: "number", defaultValue: 0 },
+  ],
+};
+
+const Review: CollectionConfig = {
+  slug: "reviews",
+  labels: { singular: "Review", plural: "Reviews" },
+  admin: {
+    useAsTitle: "customerName",
+    defaultColumns: ["customerName", "rating", "status", "featured", "sortOrder"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageContent,
+  },
+  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
+  fields: [
+    { name: "customerName", type: "text", required: true },
+    { name: "location", type: "text" },
+    { name: "review", type: "textarea", required: true },
+    { name: "rating", type: "number", min: 1, max: 5, defaultValue: 5 },
+    { name: "image", type: "upload", relationTo: "media" },
+    { name: "date", type: "date", defaultValue: () => new Date().toISOString() },
+    { name: "status", type: "select", ...statusSelect },
+    { name: "featured", type: "checkbox", defaultValue: false },
+    { name: "sortOrder", type: "number", defaultValue: 0 },
+  ],
+};
+
+const Campaign: CollectionConfig = {
+  slug: "campaigns",
+  labels: { singular: "Campaign", plural: "Campaigns / Promotions" },
+  admin: {
+    useAsTitle: "name",
+    defaultColumns: ["name", "status", "startDate", "endDate", "pageAssociation"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageContent,
+  },
+  hooks: {
+    beforeValidate: [makeAutoSlug("campaigns")],
+    afterChange: [revalidateCoreContent, auditLogAfterChange],
+    afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete],
+  },
+  fields: [
+    { name: "name", type: "text", required: true },
+    { name: "slug", type: "text", required: true, unique: true, admin: { readOnly: true } },
+    { name: "status", type: "select", ...statusSelect },
+    { name: "startDate", type: "date" },
+    { name: "endDate", type: "date" },
+    {
+      name: "pageAssociation",
+      type: "select",
+      options: [
+        { label: "Home", value: "home" },
+        { label: "Thanga Mazhai", value: "thanga-mazhai" },
+        { label: "Swarna Varsha", value: "swarna-varsha" },
+        { label: "Products", value: "products" },
+        { label: "Blog", value: "blog" },
+      ],
+    },
+    {
+      name: "hero",
+      type: "group",
+      fields: [
+        { name: "title", type: "text" },
+        { name: "description", type: "textarea" },
+        { name: "image", type: "upload", relationTo: "media" },
+        ...ctaFields,
+      ],
+    },
+    { name: "banner", type: "upload", relationTo: "media" },
+    { name: "sections", type: "array", fields: pageSectionFields },
+    ...seoFields,
+  ],
+};
+
 const Inquiry: CollectionConfig = {
   slug: "inquiries",
-  admin: { useAsTitle: "name" },
+  admin: {
+    useAsTitle: "name",
+    defaultColumns: ["sourcePage", "name", "email", "product", "status", "submittedAt"],
+    listSearchableFields: ["name", "email"],
+    components: {
+      beforeList: ["@/components/admin/InquiryQuickFilters"],
+      edit: {
+        beforeDocumentControls: [
+          "@/components/admin/InquiryDetail",
+        ],
+      },
+    },
+  },
   access: {
     read: canManageInquiries,
-    create: ({ req: { user } }) => !user,
+    // Public submissions go ONLY through the hardened /api/inquiry route
+    // (validation, honeypot, rate limiting, HTML escaping). Direct REST writes
+    // are blocked; the route uses overrideAccess to create the record.
+    create: () => false,
     update: canManageInquiries,
     delete: canManageSettings,
   },
   fields: [
-    { name: "name", type: "text", required: true },
-    { name: "email", type: "text", required: true },
-    { name: "phone", type: "text" },
-    { name: "message", type: "textarea" },
-    { name: "product", type: "relationship", relationTo: "products" },
-    { name: "sourcePage", type: "text" },
+    {
+      name: "type",
+      type: "select",
+      defaultValue: "contact",
+      options: [
+        { label: "Product Enquiry", value: "enquiry" },
+        { label: "Contact Enquiry", value: "contact" },
+        { label: "General Enquiry", value: "general" },
+      ],
+      admin: { readOnly: true },
+    },
+    { name: "name", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "phone", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: canUpdateProtectedField } },
+    { name: "productId", type: "text", label: "Product ID", admin: { readOnly: true } },
+    {
+      name: "product",
+      type: "relationship",
+      relationTo: "products",
+      admin: {
+        components: {
+          Cell: "@/components/admin/InquiryProductCell",
+        },
+      },
+    },
+    {
+      name: "sourcePage",
+      type: "text",
+      label: "Source",
+      admin: {
+        readOnly: true,
+        components: {
+          Cell: "@/components/admin/InquirySourceCell",
+        },
+      },
+    },
     {
       name: "status",
       type: "select",
       defaultValue: "new",
-      options: ["new", "contacted", "closed", "spam"],
+      options: [
+        { label: "New", value: "new" },
+        { label: "Contacted", value: "contacted" },
+        { label: "In Progress", value: "in-progress" },
+        { label: "Resolved", value: "resolved" },
+        { label: "Closed", value: "closed" },
+        { label: "Spam", value: "spam" },
+      ],
     },
     {
       name: "emailNotificationStatus",
       type: "select",
       defaultValue: "not-sent",
       options: ["not-sent", "sent", "failed"],
+      admin: { readOnly: true, disableListFilter: true },
     },
     {
       name: "submittedIp",
       type: "text",
-      admin: { readOnly: true },
+      admin: { readOnly: true, disableListFilter: true },
       access: { read: canReadProtectedField },
     },
     {
       name: "submittedAt",
       type: "date",
       defaultValue: () => new Date().toISOString(),
+      admin: { readOnly: true },
     },
   ],
 };
@@ -832,8 +1264,10 @@ const RateLimit: CollectionConfig = {
   admin: { hidden: true },
   access: {
     read: canReadAuditLogs,
-    create: () => true,
-    update: () => true,
+    // Written only by server-side rate-limit logic (overrideAccess in API routes).
+    // Public REST writes are blocked to prevent DB flooding / counter tampering.
+    create: canReadAuditLogs,
+    update: canReadAuditLogs,
     delete: isSuperAdmin,
   },
   fields: [
@@ -1086,10 +1520,42 @@ const SiteSettings: GlobalConfig = {
               ],
             },
             {
+              name: "navigation",
+              type: "group",
+              label: "Header / Navigation",
+              fields: [
+                { name: "announcementText", type: "text", label: "Announcement Text" },
+                { name: "showMetalRates", type: "checkbox", label: "Show Metal Rates", defaultValue: true },
+                {
+                  name: "menuItems",
+                  type: "array",
+                  label: "Menu Items",
+                  fields: [
+                    { name: "label", type: "text", required: true },
+                    { name: "href", type: "text", required: true },
+                    { name: "visible", type: "checkbox", defaultValue: true },
+                    { name: "sortOrder", type: "number", defaultValue: 0 },
+                  ],
+                },
+                {
+                  name: "quickLinks",
+                  type: "array",
+                  label: "Quick Links",
+                  fields: [
+                    { name: "label", type: "text", required: true },
+                    { name: "href", type: "text", required: true },
+                    { name: "visible", type: "checkbox", defaultValue: true },
+                    { name: "sortOrder", type: "number", defaultValue: 0 },
+                  ],
+                },
+              ],
+            },
+            {
               name: "aboutPage",
               type: "group",
               label: "About Page",
               fields: [
+                { name: "title", type: "text", defaultValue: "About Us" },
                 {
                   name: "goldenOccasions",
                   type: "group",
@@ -1146,40 +1612,10 @@ const SiteSettings: GlobalConfig = {
             },
           ],
         },
-        // ─── Business ─────────────────────────────────────────────
+        // ─── Footer & Contact Details ────────────────────────────────
         {
-          label: "Business",
+          label: "Footer & Contact Details",
           fields: [
-            {
-              name: "rateGold22",
-              type: "text",
-              label: "Gold 22K Rate",
-              admin: { description: "Number only, e.g. 7,450" },
-            },
-            {
-              name: "rateGold18",
-              type: "text",
-              label: "Gold 18K Rate",
-              admin: { description: "Number only, e.g. 6,080" },
-            },
-            {
-              name: "rateSilver",
-              type: "text",
-              label: "Silver Rate",
-              admin: { description: "Number only, e.g. 92" },
-            },
-            {
-              name: "ratePlatinum",
-              type: "text",
-              label: "Platinum Rate",
-              admin: { description: "Number only, e.g. 3,890" },
-            },
-            {
-              name: "rateUpdated",
-              type: "text",
-              label: "Rates Updated Date",
-              admin: { description: "e.g. 27-06-2026" },
-            },
             {
               name: "branches",
               type: "array",
@@ -1235,6 +1671,72 @@ const SiteSettings: GlobalConfig = {
               type: "text",
               label: "YouTube URL",
             },
+            {
+              name: "footerLinks",
+              type: "array",
+              label: "Footer Links",
+              fields: [
+                { name: "label", type: "text", required: true },
+                { name: "href", type: "text", required: true },
+                { name: "column", type: "text", admin: { description: "Optional footer column/group name" } },
+                { name: "visible", type: "checkbox", defaultValue: true },
+                { name: "sortOrder", type: "number", defaultValue: 0 },
+              ],
+            },
+            {
+              name: "copyrightText",
+              type: "text",
+              label: "Copyright Text",
+            },
+          ],
+        },
+        // ─── Metal Rates ──────────────────────────────────────────
+        {
+          label: "Metal Rates",
+          fields: [
+            {
+              name: "rateUpdated",
+              type: "date",
+              label: "Rates Updated Date",
+              admin: {
+                date: { pickerAppearance: "dayOnly", displayFormat: "dd-MM-yyyy" },
+                description: "Auto-set when you save. Manually editable.",
+              },
+              hooks: {
+                beforeValidate: [
+                  ({ value, operation }) => {
+                    if (operation === "update" || !value) {
+                      return new Date().toISOString();
+                    }
+                    return value;
+                  },
+                ],
+              },
+            },
+            {
+              name: "rateGold22",
+              type: "text",
+              label: "Gold 22K Rate (₹/gram)",
+              admin: { description: "e.g. 7,450" },
+            },
+            {
+              name: "rateGold18",
+              type: "text",
+              label: "Gold 18K Rate (₹/gram)",
+              admin: { description: "e.g. 6,080" },
+            },
+            {
+              name: "rateSilver",
+              type: "text",
+              label: "Silver Rate (₹/gram)",
+              admin: { description: "e.g. 92" },
+            },
+            {
+              name: "ratePlatinum",
+              type: "text",
+              label: "Platinum Rate (₹/gram)",
+              admin: { description: "e.g. 3,890" },
+            },
           ],
         },
         // ─── SEO ──────────────────────────────────────────────────
@@ -1263,11 +1765,23 @@ const SiteSettings: GlobalConfig = {
                 },
               ],
             },
+            {
+              name: "generalSettings",
+              type: "group",
+              label: "General Settings",
+              fields: [
+                { name: "siteName", type: "text", defaultValue: "Kerala Jewellers" },
+                { name: "adminPanelName", type: "text", defaultValue: "Kerala Jewellers CMS" },
+                { name: "canonicalUrl", type: "text" },
+                { name: "robotsIndex", type: "checkbox", defaultValue: true },
+                { name: "maintenanceMode", type: "checkbox", defaultValue: false },
+              ],
+            },
           ],
         },
-        // ─── Design ───────────────────────────────────────────────
+        // ─── Fonts / Typography ──────────────────────────────────────
         {
-          label: "Design",
+          label: "Fonts / Typography",
           fields: [
             {
               name: "fontPairing",
@@ -1404,6 +1918,22 @@ const SiteSettings: GlobalConfig = {
                     { name: "subtitle", type: "textarea", defaultValue: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
                   ],
                 },
+                {
+                  name: "platinumHero",
+                  type: "group",
+                  fields: [
+                    { name: "title", type: "text", defaultValue: "Platinum Collection — Coming Soon" },
+                    { name: "subtitle", type: "textarea", defaultValue: "We're curating an exclusive range of platinum jewellery. Stay tuned for something extraordinary." },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "comingSoonPage",
+              type: "group",
+              label: "Coming Soon Page",
+              fields: [
+                { name: "message", type: "text", defaultValue: "Coming Soon" },
               ],
             },
           ],
@@ -1433,12 +1963,19 @@ export default buildConfig({
         client: {
           url: process.env.DATABASE_URI || "file:./dev.db",
         },
+        push: false,
       }),
   collections: [
     AdminUsers,
     Media,
+    MetalRate,
+    WebsitePage,
+    JewelleryCollection,
     Product,
     Category,
+    BestSeller,
+    Review,
+    Campaign,
     BlogPost,
     LegalPage,
     Inquiry,
@@ -1472,6 +2009,11 @@ export default buildConfig({
         login: {
           Component: "@/components/admin/CustomLogin",
         },
+        pages: {
+          Component: "@/components/admin/PagesHub",
+          path: "/pages",
+          exact: false,
+        },
       },
     },
     importMap: {
@@ -1482,6 +2024,7 @@ export default buildConfig({
     },
   },
   plugins: [],
+  graphQL: { disable: true },
   email: resendAdapter({
     apiKey: process.env.RESEND_API_KEY || "",
     defaultFromAddress: "enquiry@mail.keralajewellers.in",

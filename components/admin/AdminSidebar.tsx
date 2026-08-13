@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { useState, useEffect, Suspense, useCallback } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./AdminSidebar.module.css";
 
@@ -22,6 +22,8 @@ type NavSection = {
 
 function getNavSections(role: string, inquiryCount: number): NavSection[] {
   const sections: NavSection[] = [];
+  const canManageContent = role === "super-admin" || role === "admin";
+  const settingsPath = `${ADMIN_PATH}/globals/site-settings`;
 
   // Dashboard — all roles
   sections.push({
@@ -29,31 +31,55 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     items: [{ href: ADMIN_PATH, icon: "dashboard", label: "Dashboard", exact: true }],
   });
 
-  // Daily Tasks
-  const dailyItems: NavItem[] = [];
-  dailyItems.push({ href: `${ADMIN_PATH}/collections/inquiries`, icon: "inquiries", label: "Inquiries", badge: inquiryCount });
-  sections.push({ label: "Daily Tasks", items: dailyItems });
+  // Daily Tasks — Inquiries visible to all roles; Metal Rates only to content managers
+  sections.push({
+    label: "Daily Tasks",
+    items: [
+      { href: `${ADMIN_PATH}/collections/inquiries`, icon: "inquiries", label: "Inquiries", badge: inquiryCount },
+      ...(canManageContent
+        ? [{ href: `${ADMIN_PATH}/collections/metal-rates`, icon: "rates", label: "Metal Rates" }]
+        : []),
+    ],
+  });
 
-  // Quick Access — super-admin, admin
-  if (role === "super-admin" || role === "admin") {
+  // Pages — super-admin, admin
+  if (canManageContent) {
     sections.push({
-      label: "Quick Access",
+      label: "Pages",
       items: [
-        { href: `${ADMIN_PATH}/globals/site-settings`, icon: "rates", label: "Metal Rates" },
+        { href: `${ADMIN_PATH}/pages/home`, icon: "home", label: "Home" },
+        { href: `${ADMIN_PATH}/pages/gold`, icon: "gold", label: "Gold Products Page" },
+        { href: `${ADMIN_PATH}/pages/silver`, icon: "silver", label: "Silver Products Page" },
+        { href: `${ADMIN_PATH}/pages/diamond`, icon: "diamond", label: "Diamond Products Page" },
+        { href: `${ADMIN_PATH}/pages/platinum`, icon: "platinum", label: "Platinum Products Page" },
+        { href: `${ADMIN_PATH}/pages/swarnavarsha`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
+        { href: `${ADMIN_PATH}/pages/thanga-mazhai`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
+        { href: `${ADMIN_PATH}/pages/about`, icon: "about", label: "About Page" },
+        { href: `${ADMIN_PATH}/pages/contact`, icon: "contact", label: "Contact Page" },
       ],
     });
   }
 
   // Content — super-admin, admin
-  if (role === "super-admin" || role === "admin") {
+  if (canManageContent) {
     sections.push({
       label: "Content",
       items: [
         { href: `${ADMIN_PATH}/collections/products`, icon: "products", label: "Products" },
         { href: `${ADMIN_PATH}/collections/categories`, icon: "categories", label: "Categories" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "blog", label: "Blog Posts" },
-        { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "legal", label: "Legal Pages" },
+        { href: `${ADMIN_PATH}/collections/best-sellers`, icon: "star", label: "Bestsellers" },
+        { href: `${ADMIN_PATH}/collections/reviews`, icon: "reviews", label: "Reviews" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "media", label: "Media" },
+      ],
+    });
+
+    sections.push({
+      label: "Site Settings",
+      items: [
+        { href: `${settingsPath}?tab=footer+%26+contact+details`, icon: "contact", label: "Footer & Contact Details" },
+        { href: `${settingsPath}?tab=fonts+%2F+typography`, icon: "typography", label: "Fonts / Typography" },
+        { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "legal", label: "Legal Pages" },
       ],
     });
   }
@@ -99,6 +125,61 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <path d="M12 6v12M8 10l4-4 4 4M8 14l4 4 4-4" />
       </svg>
     ),
+    home: (
+      <svg {...props}>
+        <path d="M3 11.5 12 4l9 7.5" />
+        <path d="M5 10.5V20h14v-9.5" />
+        <path d="M9.5 20v-6h5v6" />
+      </svg>
+    ),
+    gold: (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M9 9.5h4.5a2 2 0 0 1 0 4H10" />
+        <path d="M10 6.5v11" />
+      </svg>
+    ),
+    silver: (
+      <svg {...props}>
+        <path d="M18 8a6 6 0 1 0 0 8" />
+        <path d="M14 12h7" />
+      </svg>
+    ),
+    diamond: (
+      <svg {...props}>
+        <path d="M6 3h12l4 6-10 12L2 9l4-6Z" />
+        <path d="M2 9h20" />
+        <path d="m8 9 4 12 4-12" />
+        <path d="m6 3 2 6 4-6 4 6 2-6" />
+      </svg>
+    ),
+    platinum: (
+      <svg {...props}>
+        <path d="M4 17V7h6a3 3 0 0 1 0 6H4" />
+        <path d="M15 7v10" />
+        <path d="M13 7h6" />
+      </svg>
+    ),
+    scheme: (
+      <svg {...props}>
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 10h18" />
+        <path d="m9 15 2 2 4-5" />
+      </svg>
+    ),
+    about: (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4" />
+        <path d="M12 8h.01" />
+      </svg>
+    ),
+    contact: (
+      <svg {...props}>
+        <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    ),
     inquiries: (
       <svg {...props}>
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -128,13 +209,6 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <line x1="16" y1="17" x2="8" y2="17" />
       </svg>
     ),
-    banners: (
-      <svg {...props}>
-        <rect x="2" y="3" width="20" height="14" rx="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
     legal: (
       <svg {...props}>
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -147,10 +221,30 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <polyline points="21 15 16 10 5 21" />
       </svg>
     ),
-    "site-settings": (
+    star: (
       <svg {...props}>
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        <path d="m12 3 2.7 5.47 6.03.88-4.37 4.25 1.03 6-5.39-2.83-5.39 2.83 1.03-6-4.37-4.25 6.03-.88L12 3Z" />
+      </svg>
+    ),
+    reviews: (
+      <svg {...props}>
+        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z" />
+        <path d="M8 9h8M8 13h5" />
+      </svg>
+    ),
+    typography: (
+      <svg {...props}>
+        <path d="M4 7V4h16v3" />
+        <path d="M9 20h6" />
+        <path d="M12 4v16" />
+      </svg>
+    ),
+    seo: (
+      <svg {...props}>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+        <path d="M8 11h6" />
+        <path d="M11 8v6" />
       </svg>
     ),
     users: (
@@ -200,40 +294,16 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
 function isActive(pathname: string, searchParams: URLSearchParams, href: string, exact?: boolean) {
   const [hrefPathname, hrefQuery] = href.split("?");
   if (exact) {
-    if (pathname !== hrefPathname) return false;
-    const allItems = getNavSections("super-admin", 0).flatMap((s) => s.items);
-    for (const item of allItems) {
-      if (item.href === href) continue;
-      const [itemPath] = item.href.split("?");
-      if (itemPath !== hrefPathname && (pathname === itemPath || pathname.startsWith(`${itemPath}/`))) {
-        return false;
-      }
-    }
-    return true;
+    return pathname === hrefPathname;
   }
   const pathMatches = pathname === hrefPathname || pathname.startsWith(`${hrefPathname}/`);
   if (!pathMatches) return false;
-  // If this link has query params, match only when those params are present
-  if (hrefQuery) {
-    const hrefParams = new URLSearchParams(hrefQuery);
-    for (const [key, value] of Array.from(hrefParams.entries())) {
-      if (searchParams.get(key) !== value) return false;
-    }
-    return true;
-  }
-  // Link has NO query params — only match if no more-specific link (with params) also matches
-  const allItems = getNavSections("super-admin", 0).flatMap((s) => s.items);
-  for (const item of allItems) {
-    if (item.href === href) continue;
-    const [itemPath] = item.href.split("?");
-    if (itemPath === hrefPathname && item.href.includes("?")) {
-      const itemParams = new URLSearchParams(item.href.split("?")[1]);
-      let matchesAll = true;
-      for (const [key, value] of Array.from(itemParams.entries())) {
-        if (searchParams.get(key) !== value) { matchesAll = false; break; }
-      }
-      if (matchesAll) return false;
-    }
+
+  if (!hrefQuery) return true;
+
+  const hrefParams = new URLSearchParams(hrefQuery);
+  for (const [key, value] of Array.from(hrefParams.entries())) {
+    if (searchParams.get(key) !== value) return false;
   }
   return true;
 }
@@ -267,23 +337,29 @@ function SidebarInner({
   const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const sections = getNavSections(role, inquiryCount);
+  const searchParamsString = searchParams.toString();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
     const saved = localStorage.getItem("sidebar-collapsed");
     const initial = saved === "true";
     setCollapsed(initial);
-    document.documentElement.style.setProperty("--sidebar-width", initial ? "72px" : "260px");
+    document.documentElement.style.setProperty("--sidebar-width", initial ? "72px" : "304px");
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
     localStorage.setItem("sidebar-collapsed", String(collapsed));
-    document.documentElement.style.setProperty("--sidebar-width", collapsed ? "72px" : "260px");
-  }, [collapsed]);
+    document.documentElement.style.setProperty("--sidebar-width", collapsed ? "72px" : "304px");
+  }, [collapsed, mounted]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileOpen(false);
-  }, [pathname, searchParams]);
+  }, [pathname, searchParamsString]);
 
   const initials = displayName
     .split(/[\s._-]+/)
