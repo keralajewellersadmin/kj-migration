@@ -210,8 +210,8 @@ async function sqlFindProducts(
     mainErrMsg = mainErr instanceof Error ? mainErr.message : String(mainErr);
     // eslint-disable-next-line no-console
     console.error("[sqlFindProducts] MAIN query failed:", mainErrMsg);
-    if (process.env.NODE_ENV !== "production") {
-      throw mainErr;
+    if (process.env.FORCE_MAIN_THROW !== "false") {
+      throw new Error(`MAIN_ONLY_FAIL=[${mainErrMsg}]`);
     }
     const SIMPLE_BASE = `
       SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
