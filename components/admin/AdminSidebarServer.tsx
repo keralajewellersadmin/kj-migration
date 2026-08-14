@@ -16,8 +16,9 @@ export default async function AdminSidebarServer({ payload, user }: ServerProps)
     // ignore
   }
 
-  const displayName = (user as any).name || (user as any).username || user.email || "Admin";
-  const role = (user as any).role || "admin";
+  const userMap = user as unknown as Record<string, unknown>;
+  const displayName = String(userMap.name || userMap.username || user.email || "Admin");
+  const role = String(userMap.role || "admin");
 
   return (
     <AdminSidebar

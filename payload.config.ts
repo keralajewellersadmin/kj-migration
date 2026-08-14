@@ -532,20 +532,21 @@ const AdminUsers: CollectionConfig = {
           }
 
           if (!token) {
-            return Response.json({ user: null, _debug: "no_token", cookiePrefix, cookieLen: cookieHeader.length }, { status: 401 });
+            return Response.json({ user: null }, { status: 401 });
           }
 
-          const secret = new TextEncoder().encode(req.payload.secret);
+          const rawSecret = process.env.PAYLOAD_SECRET || req.payload.secret;
+          const secret = new TextEncoder().encode(rawSecret);
           const { payload: claims } = await jwtVerify(token, secret);
 
           if (claims.collection !== "admin-users") {
-            return Response.json({ user: null, _debug: "wrong_collection", c: claims.collection }, { status: 401 });
+            return Response.json({ user: null }, { status: 401 });
           }
           if (typeof claims.id === "undefined") {
-            return Response.json({ user: null, _debug: "no_id" }, { status: 401 });
+            return Response.json({ user: null }, { status: 401 });
           }
           if (claims.isActive === false) {
-            return Response.json({ user: null, _debug: "inactive" }, { status: 401 });
+            return Response.json({ user: null }, { status: 401 });
           }
 
           const decoded = decodeJwt(token);
@@ -564,12 +565,8 @@ const AdminUsers: CollectionConfig = {
             },
             exp: decoded.exp,
           });
-        } catch (err) {
-          // Log secret length for debugging — does NOT expose the value
-          const secLen = req.payload.secret?.length ?? 0;
-          const tokPrefix = cookieHeader.includes("payload-token") ? "yes" : "no";
-          console.error(`[/me] FAIL secretLen=${secLen} hasCookie=${tokPrefix} err=${err instanceof Error ? err.message : err}`);
-          return Response.json({ user: null, _debug: "catch", error: err instanceof Error ? err.message : String(err), secretLen: secLen }, { status: 401 });
+        } catch {
+          return Response.json({ user: null }, { status: 401 });
         }
       },
     },
@@ -2091,7 +2088,7 @@ export default buildConfig({
         client: {
           url: process.env.DATABASE_URI || "file:./dev.db",
         },
-        push: false,
+        push: process.env.NODE_ENV !== "production",
       }),
   collections: [
     AdminUsers,
@@ -2136,11 +2133,6 @@ export default buildConfig({
       views: {
         login: {
           Component: "@/components/admin/CustomLogin",
-        },
-        pages: {
-          Component: "@/components/admin/PagesHub",
-          path: "/pages",
-          exact: false,
         },
       },
     },

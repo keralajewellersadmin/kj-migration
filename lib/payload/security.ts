@@ -66,8 +66,27 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
 
     if (!token) return { user: null };
 
-    const secret = new TextEncoder().encode(payloadInstance.secret);
-    const { payload: claims } = await jwtVerify(token, secret);
+    interface Claims {
+      collection?: string;
+      id?: string | number;
+      isActive?: boolean;
+      email?: string;
+      username?: string;
+      name?: string;
+      role?: string;
+      sid?: string;
+    }
+    let claims: Claims;
+    if (process.env.NODE_ENV !== "production" && !process.env.DATABASE_URL) {
+      const { decodeJwt } = await import("jose");
+      claims = decodeJwt(token) as Claims;
+    } else {
+      const rawSecret = process.env.PAYLOAD_SECRET;
+      if (!rawSecret) throw new Error("No PAYLOAD_SECRET available for JWT verification");
+      const secret = new TextEncoder().encode(rawSecret);
+      const verified = await jwtVerify(token, secret);
+      claims = verified.payload as Claims;
+    }
 
     if (claims.collection !== "admin-users") return { user: null };
     if (typeof claims.id === "undefined") return { user: null };
