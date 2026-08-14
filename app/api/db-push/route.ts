@@ -9,16 +9,16 @@ export async function POST(request: Request) {
   }
   try {
     const payload = await getPayload({ config });
-    // @ts-expect-error db adapter typing
-    const db = payload.db;
-    const proto = Object.getPrototypeOf(db);
-    const methods = Object.getOwnPropertyNames(proto).filter(
-      (m) => typeof db[m] === "function",
+    const db = payload.db as unknown as Record<string, unknown>;
+    const methods = Object.getOwnPropertyNames(
+      Object.getPrototypeOf(payload.db),
+    ).filter(
+      (m) =>
+        typeof (payload.db as unknown as Record<string, unknown>)[m] === "function",
     );
-    // @ts-expect-error push may exist
-    if (typeof db.push === "function") {
-      // @ts-expect-error force push
-      await db.push({ force: true });
+    const pushFn = db.push as ((opts?: { force?: boolean }) => Promise<void>) | undefined;
+    if (typeof pushFn === "function") {
+      await pushFn({ force: true });
       return NextResponse.json({ ok: true, methods });
     }
     return NextResponse.json({ ok: false, methods });
