@@ -532,20 +532,20 @@ const AdminUsers: CollectionConfig = {
           }
 
           if (!token) {
-            return Response.json({ user: null }, { status: 401 });
+            return Response.json({ user: null, _debug: "no_token", cookiePrefix, cookieLen: cookieHeader.length }, { status: 401 });
           }
 
           const secret = new TextEncoder().encode(req.payload.secret);
           const { payload: claims } = await jwtVerify(token, secret);
 
           if (claims.collection !== "admin-users") {
-            return Response.json({ user: null }, { status: 401 });
+            return Response.json({ user: null, _debug: "wrong_collection", collection: claims.collection }, { status: 401 });
           }
           if (typeof claims.id === "undefined") {
-            return Response.json({ user: null }, { status: 401 });
+            return Response.json({ user: null, _debug: "no_id" }, { status: 401 });
           }
           if (claims.isActive === false) {
-            return Response.json({ user: null }, { status: 401 });
+            return Response.json({ user: null, _debug: "inactive" }, { status: 401 });
           }
 
           const decoded = decodeJwt(token);
@@ -566,7 +566,7 @@ const AdminUsers: CollectionConfig = {
           });
         } catch (err) {
           console.error("[/api/admin-users/me] JWT verification failed:", err instanceof Error ? err.message : err);
-          return Response.json({ user: null }, { status: 401 });
+          return Response.json({ user: null, _debug: "catch", error: err instanceof Error ? err.message : String(err) }, { status: 401 });
         }
       },
     },
