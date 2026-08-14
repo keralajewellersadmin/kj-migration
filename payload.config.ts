@@ -463,6 +463,7 @@ const AdminUsers: CollectionConfig = {
   slug: "admin-users",
   auth: {
     tokenExpiration: 60 * 60 * 8,
+    disableLocalStrategy: true,
     cookies: {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
@@ -506,6 +507,58 @@ const AdminUsers: CollectionConfig = {
           },
           { status: 403 },
         ),
+    },
+    {
+      // Override the default /me endpoint to skip Payload's findByID call.
+      // Payload's default meOperation calls findByID through the postgres
+      // adapter's TCP pool, which hangs on Vercel + Neon (15s timeout).
+      // The custom auth strategy already set req.user from the JWT — return
+      // it directly without any database round-trip.
+      path: "/me",
+      method: "get",
+      handler: async (req) => {
+        if (!req.user) {
+          return Response.json({ user: null }, { status: 401 });
+        }
+
+        const user = req.user as unknown as Record<string, unknown>;
+
+        // Verify the user belongs to this collection
+        if (user.collection !== "admin-users") {
+          return Response.json({ user: null }, { status: 401 });
+        }
+
+        // Decode JWT to get expiration (needed by admin panel for token refresh)
+        let exp: number | undefined;
+        try {
+          const cookiePrefix = req.payload.config?.cookiePrefix || "payload";
+          const cookieHeader = req.headers.get("cookie") || "";
+          let token: string | null = null;
+          for (const part of cookieHeader.split(";")) {
+            const [key, ...valueParts] = part.trim().split("=");
+            if (key === `${cookiePrefix}-token`) {
+              token = decodeURIComponent(valueParts.join("="));
+              break;
+            }
+          }
+          if (token) {
+            const { decodeJwt } = await import("jose");
+            const decoded = decodeJwt(token);
+            exp = decoded.exp;
+          }
+        } catch {
+          // exp is optional — continue without it
+        }
+
+        return Response.json({
+          user: {
+            ...user,
+            collection: user.collection,
+            _strategy: user._strategy || "admin-users-jwt",
+          },
+          exp,
+        });
+      },
     },
   ],
   access: {

@@ -86,7 +86,8 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
         _strategy: "admin-users-jwt",
       } as never,
     };
-  } catch {
+  } catch (err) {
+    console.error("[adminUsersJwtStrategy] Auth failed:", err instanceof Error ? err.message : err);
     return { user: null };
   }
 };
