@@ -172,7 +172,7 @@ function mapSqlProduct(row: any): Product {
 
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-         p.description, p.image_srcset, p.seo,
+         p.description, p.image_srcset,
          c.name AS category_name,
          m.url AS image_url, m.alt AS image_alt,
          m.cloudinary_public_id AS cloudinary_public_id
@@ -199,41 +199,11 @@ async function sqlFindProducts(
     params,
   );
   const totalDocs: number = countQ.rows[0]?.cnt ?? 0;
-  let rows;
-  let mainErrMsg: string | null = null;
-  try {
-    rows = await pool.query(
-      `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-      [...params, limit, offset],
-    );
-  } catch (mainErr) {
-    mainErrMsg = mainErr instanceof Error ? mainErr.message : String(mainErr);
-    // eslint-disable-next-line no-console
-    console.error("[sqlFindProducts] MAIN query failed:", mainErrMsg);
-    if (process.env.FORCE_MAIN_THROW !== "false") {
-      throw new Error(`MAIN_ONLY_FAIL=[${mainErrMsg}]`);
-    }
-    const SIMPLE_BASE = `
-      SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-             p.description, p.image_srcset,
-             c.name AS category_name,
-             m.url AS image_url, m.alt AS image_alt,
-             m.cloudinary_public_id AS cloudinary_public_id
-      FROM products p
-      LEFT JOIN categories c ON p.category_id = c.id
-      LEFT JOIN media m ON p.image_id = m.id
-    `;
-    try {
-      rows = await pool.query(
-        `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-        [...params, limit, offset],
-      );
-    } catch (simpleErr) {
-      const simpleMsg = simpleErr instanceof Error ? simpleErr.message : String(simpleErr);
-      throw new Error(`MAIN_FAIL=[${mainErrMsg}] SIMPLE_FAIL=[${simpleMsg}]`);
-    }
-  }
-  return { products: rows.rows.map(mapSqlProduct), totalDocs };
+  const result = await pool.query(
+    `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+    [...params, limit, offset],
+  );
+  return { products: result.rows.map(mapSqlProduct), totalDocs };
 }
 
 function mapProduct(doc: PayloadDoc): Product {
@@ -419,7 +389,6 @@ export async function getProductsByMetalPaginated(
   limit: number = 24,
   categorySlug?: string,
 ): Promise<PaginatedProducts> {
-  let sqlError: string | null = null;
   if (isPostgres()) {
     try {
       let where = "WHERE p.metal = $1";
@@ -439,50 +408,40 @@ export async function getProductsByMetalPaginated(
         page,
         hasNextPage: page < totalPages,
       };
-    } catch (sqlErr) {
-      sqlError = sqlErr instanceof Error ? `${sqlErr.name}: ${sqlErr.message}` : String(sqlErr);
-      // eslint-disable-next-line no-console
-      console.error("[getProductsByMetalPaginated] SQL path failed:", sqlError);
+    } catch {
       // fall through to Payload
     }
   }
-  try {
-    const payload = await getPayload({ config });
+  const payload = await getPayload({ config });
 
-    const where: PayloadDoc = { metal: { equals: metal } };
+  const where: PayloadDoc = { metal: { equals: metal } };
 
-    if (categorySlug) {
-      const { docs: catDocs } = await payload.find({
-        collection: "categories",
-        where: { slug: { equals: categorySlug } },
-        limit: 1,
-      });
-      if (catDocs.length > 0) {
-        where.category = { equals: catDocs[0].id };
-      }
-    }
-
-    const { docs, totalDocs, totalPages } = await payload.find({
-      collection: "products",
-      where,
-      page,
-      limit,
-      depth: 1,
+  if (categorySlug) {
+    const { docs: catDocs } = await payload.find({
+      collection: "categories",
+      where: { slug: { equals: categorySlug } },
+      limit: 1,
     });
-
-    return {
-      products: docs.map(mapProduct),
-      totalDocs,
-      totalPages,
-      page,
-      hasNextPage: page < totalPages,
-    };
-  } catch (payloadErr) {
-    const pMsg = payloadErr instanceof Error ? `${payloadErr.name}: ${payloadErr.message}` : String(payloadErr);
-    throw new Error(
-      `BOTH_PATHS_FAILED sql=[${sqlError}] payload=[${pMsg}]`,
-    );
+    if (catDocs.length > 0) {
+      where.category = { equals: catDocs[0].id };
+    }
   }
+
+  const { docs, totalDocs, totalPages } = await payload.find({
+    collection: "products",
+    where,
+    page,
+    limit,
+    depth: 1,
+  });
+
+  return {
+    products: docs.map(mapProduct),
+    totalDocs,
+    totalPages,
+    page,
+    hasNextPage: page < totalPages,
+  };
 }
 
 export async function getProductBySlug(
