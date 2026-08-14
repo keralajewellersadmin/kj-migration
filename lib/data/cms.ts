@@ -210,6 +210,9 @@ async function sqlFindProducts(
     mainErrMsg = mainErr instanceof Error ? mainErr.message : String(mainErr);
     // eslint-disable-next-line no-console
     console.error("[sqlFindProducts] MAIN query failed:", mainErrMsg);
+    if (process.env.NODE_ENV !== "production") {
+      throw mainErr;
+    }
     const SIMPLE_BASE = `
       SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
              p.description, p.image_srcset,
@@ -423,7 +426,7 @@ export async function getProductsByMetalPaginated(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any[] = [metal];
       if (categorySlug) {
-        where += " AND c.slug = $2";
+        where += " AND p.category_id IN (SELECT id FROM categories WHERE slug = $2)";
         params.push(categorySlug);
       }
       const offset = (page - 1) * limit;
