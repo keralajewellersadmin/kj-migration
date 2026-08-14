@@ -407,6 +407,7 @@ export async function getProductsByMetalPaginated(
   limit: number = 24,
   categorySlug?: string,
 ): Promise<PaginatedProducts> {
+  let sqlError: string | null = null;
   if (isPostgres()) {
     try {
       let where = "WHERE p.metal = $1";
@@ -426,40 +427,50 @@ export async function getProductsByMetalPaginated(
         page,
         hasNextPage: page < totalPages,
       };
-    } catch {
+    } catch (sqlErr) {
+      sqlError = sqlErr instanceof Error ? `${sqlErr.name}: ${sqlErr.message}` : String(sqlErr);
+      // eslint-disable-next-line no-console
+      console.error("[getProductsByMetalPaginated] SQL path failed:", sqlError);
       // fall through to Payload
     }
   }
-  const payload = await getPayload({ config });
+  try {
+    const payload = await getPayload({ config });
 
-  const where: PayloadDoc = { metal: { equals: metal } };
+    const where: PayloadDoc = { metal: { equals: metal } };
 
-  if (categorySlug) {
-    const { docs: catDocs } = await payload.find({
-      collection: "categories",
-      where: { slug: { equals: categorySlug } },
-      limit: 1,
-    });
-    if (catDocs.length > 0) {
-      where.category = { equals: catDocs[0].id };
+    if (categorySlug) {
+      const { docs: catDocs } = await payload.find({
+        collection: "categories",
+        where: { slug: { equals: categorySlug } },
+        limit: 1,
+      });
+      if (catDocs.length > 0) {
+        where.category = { equals: catDocs[0].id };
+      }
     }
+
+    const { docs, totalDocs, totalPages } = await payload.find({
+      collection: "products",
+      where,
+      page,
+      limit,
+      depth: 1,
+    });
+
+    return {
+      products: docs.map(mapProduct),
+      totalDocs,
+      totalPages,
+      page,
+      hasNextPage: page < totalPages,
+    };
+  } catch (payloadErr) {
+    const pMsg = payloadErr instanceof Error ? `${payloadErr.name}: ${payloadErr.message}` : String(payloadErr);
+    throw new Error(
+      `BOTH_PATHS_FAILED sql=[${sqlError}] payload=[${pMsg}]`,
+    );
   }
-
-  const { docs, totalDocs, totalPages } = await payload.find({
-    collection: "products",
-    where,
-    page,
-    limit,
-    depth: 1,
-  });
-
-  return {
-    products: docs.map(mapProduct),
-    totalDocs,
-    totalPages,
-    page,
-    hasNextPage: page < totalPages,
-  };
 }
 
 export async function getProductBySlug(

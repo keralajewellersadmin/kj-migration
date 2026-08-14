@@ -220,10 +220,10 @@ const pageSectionFields = [
   { name: "sortOrder", type: "number" as const, defaultValue: 0 },
 ] satisfies Field[];
 
+const resolvedDbUrl =
+  process.env.DATABASE_URL || process.env.DATABASE_URI || "";
 const usePostgres =
-  Boolean(process.env.DATABASE_URL) &&
-  (process.env.NODE_ENV === "production" ||
-    process.env.PAYLOAD_DATABASE_ADAPTER === "postgres");
+  resolvedDbUrl.startsWith("postgresql");
 
 function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
@@ -2072,7 +2072,7 @@ export default buildConfig({
   db: usePostgres
     ? postgresAdapter({
         pool: {
-          connectionString: cleanDatabaseUrl(process.env.DATABASE_URL),
+          connectionString: cleanDatabaseUrl(resolvedDbUrl),
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
             ? postgresPoolMax
             : 1,
@@ -2086,7 +2086,7 @@ export default buildConfig({
       })
     : sqliteAdapter({
         client: {
-          url: process.env.DATABASE_URI || "file:./dev.db",
+          url: resolvedDbUrl || process.env.DATABASE_URI || "file:./dev.db",
         },
         push: process.env.NODE_ENV !== "production",
       }),
