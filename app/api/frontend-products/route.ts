@@ -11,11 +11,18 @@ export async function GET(request: NextRequest) {
   );
   const category = searchParams.get("category") || undefined;
 
-  const result = await getProductsByMetalPaginated(
-    metal,
-    page,
-    limit,
-    category,
-  );
-  return NextResponse.json(result);
+  try {
+    const result = await getProductsByMetalPaginated(
+      metal,
+      page,
+      limit,
+      category,
+    );
+    return NextResponse.json(result);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err), stack: err instanceof Error ? err.stack : undefined },
+      { status: 500 },
+    );
+  }
 }
