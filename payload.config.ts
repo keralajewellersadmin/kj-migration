@@ -512,25 +512,14 @@ const AdminUsers: CollectionConfig = {
       // Override the default /me endpoint to skip Payload's findByID call.
       // Payload's default meOperation calls findByID through the postgres
       // adapter's TCP pool, which hangs on Vercel + Neon (15s timeout).
-      // The custom auth strategy already set req.user from the JWT — return
-      // it directly without any database round-trip.
+      // This endpoint reads the JWT directly from the cookie, verifies it,
+      // and returns the user claims without any database round-trip.
       path: "/me",
       method: "get",
       handler: async (req) => {
-        if (!req.user) {
-          return Response.json({ user: null }, { status: 401 });
-        }
-
-        const user = req.user as unknown as Record<string, unknown>;
-
-        // Verify the user belongs to this collection
-        if (user.collection !== "admin-users") {
-          return Response.json({ user: null }, { status: 401 });
-        }
-
-        // Decode JWT to get expiration (needed by admin panel for token refresh)
-        let exp: number | undefined;
         try {
+          const { jwtVerify, decodeJwt } = await import("jose");
+
           const cookiePrefix = req.payload.config?.cookiePrefix || "payload";
           const cookieHeader = req.headers.get("cookie") || "";
           let token: string | null = null;
@@ -541,23 +530,44 @@ const AdminUsers: CollectionConfig = {
               break;
             }
           }
-          if (token) {
-            const { decodeJwt } = await import("jose");
-            const decoded = decodeJwt(token);
-            exp = decoded.exp;
-          }
-        } catch {
-          // exp is optional — continue without it
-        }
 
-        return Response.json({
-          user: {
-            ...user,
-            collection: user.collection,
-            _strategy: user._strategy || "admin-users-jwt",
-          },
-          exp,
-        });
+          if (!token) {
+            return Response.json({ user: null }, { status: 401 });
+          }
+
+          const secret = new TextEncoder().encode(req.payload.secret);
+          const { payload: claims } = await jwtVerify(token, secret);
+
+          if (claims.collection !== "admin-users") {
+            return Response.json({ user: null }, { status: 401 });
+          }
+          if (typeof claims.id === "undefined") {
+            return Response.json({ user: null }, { status: 401 });
+          }
+          if (claims.isActive === false) {
+            return Response.json({ user: null }, { status: 401 });
+          }
+
+          const decoded = decodeJwt(token);
+
+          return Response.json({
+            user: {
+              id: claims.id,
+              collection: "admin-users",
+              email: claims.email,
+              username: claims.username,
+              name: claims.name,
+              role: claims.role,
+              isActive: claims.isActive,
+              sid: claims.sid,
+              _strategy: "admin-users-jwt",
+            },
+            exp: decoded.exp,
+          });
+        } catch (err) {
+          console.error("[/api/admin-users/me] JWT verification failed:", err instanceof Error ? err.message : err);
+          return Response.json({ user: null }, { status: 401 });
+        }
       },
     },
   ],
