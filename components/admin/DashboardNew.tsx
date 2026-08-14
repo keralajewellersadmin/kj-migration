@@ -6,6 +6,16 @@ import styles from "./DashboardNew.module.css";
 
 import { timeAgo } from "@/lib/utils";
 
+interface DashboardInquiry {
+  id: string | number;
+  name?: string | null;
+  status: string;
+  product?: string | { title?: string } | null;
+  sourcePage?: string | null;
+  submittedAt?: string | null;
+}
+
+
 async function getStats(payload: ServerProps["payload"]) {
   const [products, categories, media, inquiries, newInquiries, blogPosts] = await Promise.all([
     payload.count({ collection: "products" }).catch(() => ({ totalDocs: 0 })),
@@ -20,9 +30,9 @@ async function getStats(payload: ServerProps["payload"]) {
     .find({ collection: "inquiries", sort: "-submittedAt", limit: 5, depth: 1 })
     .catch(() => ({ docs: [] }));
 
-  const settings = await payload
+  const settings = (await payload
     .findGlobal({ slug: "site-settings" })
-    .catch(() => ({} as any));
+    .catch(() => ({}))) as Record<string, unknown>;
 
   return {
     products: products.totalDocs,
@@ -33,11 +43,11 @@ async function getStats(payload: ServerProps["payload"]) {
     blogPosts: blogPosts.totalDocs,
     recentInquiries: recentInquiries.docs,
     rates: {
-      gold22: (settings as any)?.rateGold22 || "—",
-      gold18: (settings as any)?.rateGold18 || "—",
-      silver: (settings as any)?.rateSilver || "—",
-      platinum: (settings as any)?.ratePlatinum || "—",
-      updated: (settings as any)?.rateUpdated || "",
+      gold22: String(settings?.rateGold22 || "—"),
+      gold18: String(settings?.rateGold18 || "—"),
+      silver: String(settings?.rateSilver || "—"),
+      platinum: String(settings?.ratePlatinum || "—"),
+      updated: String(settings?.rateUpdated || ""),
     },
   };
 }
@@ -161,8 +171,8 @@ export default async function DashboardNew({ payload }: ServerProps) {
             <div className={styles.empty}>No inquiries yet.</div>
           ) : (
             <div className={styles.inquiryList}>
-              {stats.recentInquiries.map((inquiry: any) => {
-                const product = typeof inquiry.product === "object" && inquiry.product !== null ? inquiry.product : null;
+              {(stats.recentInquiries as DashboardInquiry[]).map((inquiry) => {
+                const product = typeof inquiry.product === "object" && inquiry.product !== null ? (inquiry.product as { title?: string }) : null;
                 const name = inquiry.name || "Unknown";
                 const initials = name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
                 return (

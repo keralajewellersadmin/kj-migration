@@ -1,5 +1,24 @@
+import type { Metadata } from "next";
 import { getCategories, getSiteSettings } from "@/lib/data/cms";
 import ConditionalLayout from "@/components/ui/ConditionalLayout";
+
+import "@/styles/tokens.css";
+import "@/app/globals.css";
+
+export const metadata: Metadata = {
+  title: "Kerala Jewellers",
+  description:
+    "Kerala Jewellers offers exquisite gold, silver, and diamond jewellery crafted with precision. Shop traditional and modern designs.",
+  metadataBase: new URL("https://keralajewellers.in"),
+  openGraph: {
+    siteName: "Kerala Jewellers",
+    type: "website",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
 
 export const revalidate = 300;
 export const dynamic = "force-dynamic";

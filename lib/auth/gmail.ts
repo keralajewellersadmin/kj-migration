@@ -31,11 +31,6 @@ export async function sendEmail({
 }: SendEmailOptions): Promise<void> {
   const from = process.env.GMAIL_OTP_SENDER_EMAIL || "keralajewellersadmin@gmail.com";
 
-  // In development, skip sending email entirely
-  if (process.env.NODE_ENV !== "production") {
-    return;
-  }
-
   await getTransporter().sendMail({
     from,
     to,

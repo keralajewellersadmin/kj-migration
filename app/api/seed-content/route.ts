@@ -180,8 +180,9 @@ async function seed() {
   results.blogPosts = blogResults;
 
   return NextResponse.json({ success: true, results });
- } catch (e: any) {
-  console.error("SEED ERROR:", e);
-  return NextResponse.json({ success: false, error: e?.message || String(e), stack: e?.stack?.slice(0, 800) }, { status: 500 });
+ } catch (e) {
+  const err = e instanceof Error ? e : new Error(String(e));
+  console.error("SEED ERROR:", err);
+  return NextResponse.json({ success: false, error: err.message || String(err), stack: err.stack?.slice(0, 800) }, { status: 500 });
  }
 }

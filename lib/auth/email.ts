@@ -14,14 +14,13 @@ export function hashValue(value: string): string {
 }
 
 export async function sendOtpEmail(toEmail: string, code: string) {
-  // In development, log OTP to console — skip email entirely
+  // In development, log OTP to console as well
   if (process.env.NODE_ENV !== "production") {
     console.log("\n╔══════════════════════════════════════╗");
     console.log("║       DEV MODE — OTP CODE           ║");
     console.log(`║  To: ${toEmail}`);
     console.log(`║  Code: ${code}`);
     console.log("╚══════════════════════════════════════╝\n");
-    return;
   }
 
   try {

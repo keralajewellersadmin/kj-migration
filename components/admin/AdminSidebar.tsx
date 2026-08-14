@@ -42,23 +42,7 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     ],
   });
 
-  // Pages — super-admin, admin
-  if (canManageContent) {
-    sections.push({
-      label: "Pages",
-      items: [
-        { href: `${ADMIN_PATH}/pages/home`, icon: "home", label: "Home" },
-        { href: `${ADMIN_PATH}/pages/gold`, icon: "gold", label: "Gold Products Page" },
-        { href: `${ADMIN_PATH}/pages/silver`, icon: "silver", label: "Silver Products Page" },
-        { href: `${ADMIN_PATH}/pages/diamond`, icon: "diamond", label: "Diamond Products Page" },
-        { href: `${ADMIN_PATH}/pages/platinum`, icon: "platinum", label: "Platinum Products Page" },
-        { href: `${ADMIN_PATH}/pages/swarnavarsha`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
-        { href: `${ADMIN_PATH}/pages/thanga-mazhai`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
-        { href: `${ADMIN_PATH}/pages/about`, icon: "about", label: "About Page" },
-        { href: `${ADMIN_PATH}/pages/contact`, icon: "contact", label: "Contact Page" },
-      ],
-    });
-  }
+
 
   // Content — super-admin, admin
   if (canManageContent) {
