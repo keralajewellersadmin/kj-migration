@@ -2082,7 +2082,7 @@ export default buildConfig({
             ? { ssl: { rejectUnauthorized: false } }
             : {}),
         },
-        push: false,
+        push: true,
       })
     : sqliteAdapter({
         client: {

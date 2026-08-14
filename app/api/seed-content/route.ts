@@ -3,7 +3,10 @@ import { getCachedPayload } from "@/lib/payload-singleton";
 import { termsSections, privacySections, swarnavarshaSections, thangaMazhaiSections } from "@/lib/data/legal";
 
 export async function GET() {
-  return seed();
+  return NextResponse.json(
+    { error: "Forbidden. Use authenticated POST with SEED_SECRET." },
+    { status: 403 },
+  );
 }
 
 export async function POST(request: Request) {
