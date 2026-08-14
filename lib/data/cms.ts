@@ -200,12 +200,16 @@ async function sqlFindProducts(
   );
   const totalDocs: number = countQ.rows[0]?.cnt ?? 0;
   let rows;
+  let mainErrMsg: string | null = null;
   try {
     rows = await pool.query(
       `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
       [...params, limit, offset],
     );
-  } catch {
+  } catch (mainErr) {
+    mainErrMsg = mainErr instanceof Error ? mainErr.message : String(mainErr);
+    // eslint-disable-next-line no-console
+    console.error("[sqlFindProducts] MAIN query failed:", mainErrMsg);
     const SIMPLE_BASE = `
       SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
              p.description, p.image_srcset,
@@ -213,13 +217,18 @@ async function sqlFindProducts(
              m.url AS image_url, m.alt AS image_alt,
              m.cloudinary_public_id AS cloudinary_public_id
       FROM products p
-      LEFT JOIN categories c ON p.category = c.id
-      LEFT JOIN media m ON p.image = m.id
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN media m ON p.image_id = m.id
     `;
-    rows = await pool.query(
-      `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-      [...params, limit, offset],
-    );
+    try {
+      rows = await pool.query(
+        `${SIMPLE_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+        [...params, limit, offset],
+      );
+    } catch (simpleErr) {
+      const simpleMsg = simpleErr instanceof Error ? simpleErr.message : String(simpleErr);
+      throw new Error(`MAIN_FAIL=[${mainErrMsg}] SIMPLE_FAIL=[${simpleMsg}]`);
+    }
   }
   return { products: rows.rows.map(mapSqlProduct), totalDocs };
 }
@@ -490,8 +499,8 @@ export async function getProductBySlug(
                  m.url AS image_url, m.alt AS image_alt,
                  m.cloudinary_public_id AS cloudinary_public_id
           FROM products p
-          LEFT JOIN categories c ON p.category = c.id
-          LEFT JOIN media m ON p.image = m.id
+          LEFT JOIN categories c ON p.category_id = c.id
+          LEFT JOIN media m ON p.image_id = m.id
         `;
         rows = await pool.query(`${SIMPLE} WHERE p.slug = $1 LIMIT 1`, [slug]);
       }
