@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import config from "@payload-config";
-import { getPayload } from "payload";
 import { Resend } from "resend";
 import { z } from "zod";
 import { hashIp } from "../../../lib/payload/security";
+import { getLoginSql } from "@/lib/auth/admin-login";
 
 const MAX_REQUESTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const SUCCESS_MESSAGE = "Your inquiry has been received successfully.";
-const RATE_LIMITS_COLLECTION = "rate-limits" as never;
 
 function escapeHtml(str: string): string {
   return str
@@ -46,43 +44,45 @@ function getClientIp(request: Request) {
 }
 
 async function consumeRateLimit(
-  payload: Awaited<ReturnType<typeof getPayload>>,
   key: string,
   limit: number,
   windowMs: number,
 ) {
+  const sql = getLoginSql();
   const resetAt = new Date(Date.now() + windowMs).toISOString();
   const now = new Date().toISOString();
-  const { docs } = await payload.find({
-    collection: RATE_LIMITS_COLLECTION,
-    where: { key: { equals: key } },
-    limit: 1,
-  });
+  const docs = (await sql.query(
+    `select id, count, reset_at from rate_limits where key = $1 limit 1`,
+    [key],
+  )) as Array<{ id: number; count?: number; reset_at?: string }>;
 
   const current = docs[0] as
-    { id: string | number; count?: number; resetAt?: string } | undefined;
-  if (!current || String(current.resetAt) < now) {
+    { id: string | number; count?: number; reset_at?: string } | undefined;
+  if (!current || String(current.reset_at) < now) {
     if (current) {
-      await payload.update({
-        collection: RATE_LIMITS_COLLECTION,
-        id: current.id,
-        data: { count: 1, resetAt } as never,
-      });
+      await sql.query(
+        `update rate_limits
+         set count = 1, reset_at = $2, updated_at = now()
+         where id = $1`,
+        [current.id, resetAt],
+      );
     } else {
-      await payload.create({
-        collection: RATE_LIMITS_COLLECTION,
-        data: { key, count: 1, resetAt } as never,
-      });
+      await sql.query(
+        `insert into rate_limits (key, count, reset_at, updated_at, created_at)
+         values ($1, 1, $2, now(), now())`,
+        [key, resetAt],
+      );
     }
     return true;
   }
 
   if ((Number(current.count) || 0) >= limit) return false;
-  await payload.update({
-    collection: RATE_LIMITS_COLLECTION,
-    id: current.id,
-    data: { count: (Number(current.count) || 0) + 1 } as never,
-  });
+  await sql.query(
+    `update rate_limits
+     set count = count + 1, updated_at = now()
+     where id = $1`,
+    [current.id],
+  );
   return true;
 }
 
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const payload = await getPayload({ config });
+    const sql = getLoginSql();
 
     if (
       parsed.honeypot ||
@@ -112,13 +112,11 @@ export async function POST(request: Request) {
     }
 
     const ipAllowed = await consumeRateLimit(
-      payload,
       `inquiry:ip:${ipHash}`,
       MAX_REQUESTS,
       WINDOW_MS,
     );
     const emailAllowed = await consumeRateLimit(
-      payload,
       `inquiry:email:${parsed.email}`,
       3,
       60 * 60 * 1000,
@@ -130,21 +128,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const inquiry = await payload.create({
-      collection: "inquiries",
-      data: {
-        name: parsed.name,
-        email: parsed.email,
-        phone: parsed.phone,
-        message: parsed.message,
-        product: parsed.productId,
-        sourcePage: parsed.sourcePage,
-        submittedIp: ipHash,
-        submittedAt: new Date().toISOString(),
-        status: "new",
-        emailNotificationStatus: "not-sent",
-      } as never,
-    });
+    const productId = parsed.productId ? Number(parsed.productId) : null;
+    const inquiryRows = (await sql.query(
+      `insert into inquiries
+         (name, email, phone, message, product_id, source_page, submitted_ip,
+          submitted_at, status, email_notification_status, updated_at, created_at)
+       values ($1, $2, $3, $4, $5, $6, $7, now(), 'new', 'not-sent', now(), now())
+       returning id`,
+      [
+        parsed.name,
+        parsed.email,
+        parsed.phone,
+        parsed.message,
+        Number.isFinite(productId) ? productId : null,
+        parsed.sourcePage,
+        ipHash,
+      ],
+    )) as Array<{ id: number }>;
+    const inquiryId = inquiryRows[0]?.id;
 
     if (
       process.env.RESEND_API_KEY &&
@@ -166,18 +167,24 @@ export async function POST(request: Request) {
             `<p><strong>Message:</strong></p><p>${escapeHtml(parsed.message || "-")}</p>`,
           ].join(""),
         });
-        await payload.update({
-          collection: "inquiries",
-          id: inquiry.id,
-          data: { emailNotificationStatus: "sent" } as never,
-        });
+        if (inquiryId) {
+          await sql.query(
+            `update inquiries
+             set email_notification_status = 'sent', updated_at = now()
+             where id = $1`,
+            [inquiryId],
+          );
+        }
       } catch (emailErr) {
         console.error("[Inquiry] Failed to send notification email:", emailErr);
-        await payload.update({
-          collection: "inquiries",
-          id: inquiry.id,
-          data: { emailNotificationStatus: "failed" } as never,
-        });
+        if (inquiryId) {
+          await sql.query(
+            `update inquiries
+             set email_notification_status = 'failed', updated_at = now()
+             where id = $1`,
+            [inquiryId],
+          );
+        }
       }
     }
 

@@ -1,6 +1,6 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { Pool } from "pg";
+import { Pool } from "@neondatabase/serverless";
 import {
   type Product,
   type BlogPost,
@@ -14,18 +14,31 @@ type PayloadDoc = Record<string, any>;
 
 let _pool: Pool | null = null;
 const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
+
+function cleanPostgresUrl(url: string): string {
+  if (!url.startsWith("postgresql")) return url;
+  const parsed = new URL(url);
+  parsed.searchParams.delete("channel_binding");
+  const sslMode = parsed.searchParams.get("sslmode");
+  if (sslMode === "prefer" || sslMode === "require" || sslMode === "verify-ca") {
+    parsed.searchParams.set("sslmode", "verify-full");
+  }
+  if (parsed.hostname.includes("-pooler")) {
+    parsed.hostname = parsed.hostname.replace("-pooler", "");
+  }
+  return parsed.toString();
+}
+
 function getPool(): Pool {
   if (_pool) return _pool;
   const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
   if (!dbUri) throw new Error("No DB URI");
   _pool = new Pool({
-    connectionString: dbUri,
-    ssl: dbUri.startsWith("postgresql") ? { rejectUnauthorized: false } : undefined,
+    connectionString: cleanPostgresUrl(dbUri),
     max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
       ? postgresPoolMax
       : 1,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
   });
   return _pool;
 }
@@ -297,6 +310,77 @@ function mapBlogPost(doc: PayloadDoc): BlogPost {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapSqlBlogPost(row: any, body?: BlogPost["body"]): BlogPost {
+  const thumbnail = row.cloudinary_public_id
+    ? cloudinaryUrl(row.cloudinary_public_id)
+    : row.thumbnail_url
+      ? normalizeCloudinaryDeliveryUrl(row.thumbnail_url)
+      : "";
+
+  return {
+    slug: row.slug || "",
+    title: row.title || "",
+    thumbnail,
+    excerpt: row.excerpt || "",
+    date: row.date || undefined,
+    body,
+    seo: {
+      title: row.seo_title || undefined,
+      description: row.seo_description || undefined,
+      ogImage: row.seo_og_public_id
+        ? cloudinaryUrl(row.seo_og_public_id)
+        : row.seo_og_url
+          ? normalizeCloudinaryDeliveryUrl(row.seo_og_url)
+          : undefined,
+    },
+  };
+}
+
+const BLOG_SQL_BASE = `
+  SELECT b.id, b.title, b.slug, b.excerpt, b.date,
+         t.url AS thumbnail_url, t.cloudinary_public_id AS cloudinary_public_id,
+         b.seo_title, b.seo_description,
+         og.url AS seo_og_url, og.cloudinary_public_id AS seo_og_public_id
+  FROM blog_posts b
+  LEFT JOIN media t ON b.thumbnail_id = t.id
+  LEFT JOIN media og ON b.seo_og_image_id = og.id
+`;
+
+async function getSqlBlogBody(postId: number): Promise<BlogPost["body"]> {
+  const pool = getPool();
+  const { rows: blocks } = await pool.query(
+    `SELECT id, type, text
+     FROM blog_posts_body
+     WHERE _parent_id = $1
+     ORDER BY _order`,
+    [postId],
+  );
+  const body: NonNullable<BlogPost["body"]> = [];
+  for (const block of blocks) {
+    if (block.type === "ul") {
+      const { rows: items } = await pool.query(
+        `SELECT item
+         FROM blog_posts_body_items
+         WHERE _parent_id = $1
+         ORDER BY _order`,
+        [block.id],
+      );
+      body.push({
+        type: "ul",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        items: items.map((itemRow: any) => itemRow.item || ""),
+      });
+    } else {
+      body.push({
+        type: block.type === "h2" ? "h2" : "p",
+        text: block.text || "",
+      });
+    }
+  }
+  return body;
+}
+
 export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
   if (!slugs.length) return [];
   if (isPostgres()) {
@@ -309,7 +393,7 @@ export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
       );
       return rows.rows.map(mapSqlProduct);
     } catch {
-      // fall through to Payload
+      return [];
     }
   }
   const payload = await getPayload({ config });
@@ -330,7 +414,7 @@ export async function getAllProductSlugs(): Promise<string[]> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return rows.map((r: any) => r.slug);
     } catch {
-      // fall through
+      return [];
     }
   }
   const payload = await getPayload({ config });
@@ -357,7 +441,7 @@ export async function getRelatedProducts(
       );
       return rows.rows.map(mapSqlProduct);
     } catch {
-      // fall through to Payload
+      return [];
     }
   }
   const payload = await getPayload({ config });
@@ -409,7 +493,13 @@ export async function getProductsByMetalPaginated(
         hasNextPage: page < totalPages,
       };
     } catch {
-      // fall through to Payload
+      return {
+        products: [],
+        totalDocs: 0,
+        totalPages: 0,
+        page,
+        hasNextPage: false,
+      };
     }
   }
   const payload = await getPayload({ config });
@@ -468,7 +558,7 @@ export async function getProductBySlug(
       }
       return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
     } catch {
-      // fall through to Payload
+      return undefined;
     }
   }
   const payload = await getPayload({ config });
@@ -482,6 +572,18 @@ export async function getProductBySlug(
 }
 
 export async function getBlogPosts(limit = 100): Promise<BlogPost[]> {
+  if (isPostgres()) {
+    try {
+      const pool = getPool();
+      const { rows } = await pool.query(
+        `${BLOG_SQL_BASE} ORDER BY b.id DESC LIMIT $1`,
+        [limit],
+      );
+      return rows.map((row) => mapSqlBlogPost(row));
+    } catch {
+      return [];
+    }
+  }
   const payload = await getPayload({ config });
   const { docs } = await payload.find({ collection: "blog-posts", limit });
   return docs.map(mapBlogPost);
@@ -491,6 +593,21 @@ export async function getRelatedBlogPosts(
   excludeSlug: string,
   limit = 3,
 ): Promise<BlogPost[]> {
+  if (isPostgres()) {
+    try {
+      const pool = getPool();
+      const { rows } = await pool.query(
+        `${BLOG_SQL_BASE}
+         WHERE b.slug != $1
+         ORDER BY b.id DESC
+         LIMIT $2`,
+        [excludeSlug, limit],
+      );
+      return rows.map((row) => mapSqlBlogPost(row));
+    } catch {
+      return [];
+    }
+  }
   const payload = await getPayload({ config });
   const { docs } = await payload.find({
     collection: "blog-posts",
@@ -503,6 +620,20 @@ export async function getRelatedBlogPosts(
 export async function getBlogPostBySlug(
   slug: string,
 ): Promise<BlogPost | undefined> {
+  if (isPostgres()) {
+    try {
+      const pool = getPool();
+      const { rows } = await pool.query(
+        `${BLOG_SQL_BASE} WHERE b.slug = $1 LIMIT 1`,
+        [slug],
+      );
+      if (!rows[0]) return undefined;
+      const body = await getSqlBlogBody(Number(rows[0].id));
+      return mapSqlBlogPost(rows[0], body);
+    } catch {
+      return undefined;
+    }
+  }
   const payload = await getPayload({ config });
   const { docs } = await payload.find({
     collection: "blog-posts",

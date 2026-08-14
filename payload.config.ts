@@ -14,6 +14,7 @@ import sharp from "sharp";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import * as neonServerless from "@neondatabase/serverless";
 import { s3Storage } from "@payloadcms/storage-s3";
 import path from "path";
 import { revalidatePath } from "next/cache";
@@ -229,6 +230,10 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
   if (!url) return url;
   const parsed = new URL(url);
   parsed.searchParams.delete("channel_binding");
+  const sslMode = parsed.searchParams.get("sslmode");
+  if (sslMode === "prefer" || sslMode === "require" || sslMode === "verify-ca") {
+    parsed.searchParams.set("sslmode", "verify-full");
+  }
   return parsed.toString();
 }
 
@@ -2071,6 +2076,10 @@ export default buildConfig({
   sharp,
   db: usePostgres
     ? postgresAdapter({
+        pg:
+          process.env.NODE_ENV === "production"
+            ? (neonServerless as unknown as typeof import("pg"))
+            : undefined,
         pool: {
           connectionString: cleanDatabaseUrl(resolvedDbUrl),
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
@@ -2082,7 +2091,9 @@ export default buildConfig({
             ? { ssl: { rejectUnauthorized: false } }
             : {}),
         },
-        push: true,
+        push:
+          process.env.NODE_ENV !== "production" &&
+          process.env.PAYLOAD_DB_PUSH === "true",
       })
     : sqliteAdapter({
         client: {
