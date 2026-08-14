@@ -539,7 +539,7 @@ const AdminUsers: CollectionConfig = {
           const { payload: claims } = await jwtVerify(token, secret);
 
           if (claims.collection !== "admin-users") {
-            return Response.json({ user: null, _debug: "wrong_collection", collection: claims.collection }, { status: 401 });
+            return Response.json({ user: null, _debug: "wrong_collection", c: claims.collection }, { status: 401 });
           }
           if (typeof claims.id === "undefined") {
             return Response.json({ user: null, _debug: "no_id" }, { status: 401 });
@@ -565,8 +565,11 @@ const AdminUsers: CollectionConfig = {
             exp: decoded.exp,
           });
         } catch (err) {
-          console.error("[/api/admin-users/me] JWT verification failed:", err instanceof Error ? err.message : err);
-          return Response.json({ user: null, _debug: "catch", error: err instanceof Error ? err.message : String(err) }, { status: 401 });
+          // Log secret length for debugging — does NOT expose the value
+          const secLen = req.payload.secret?.length ?? 0;
+          const tokPrefix = cookieHeader.includes("payload-token") ? "yes" : "no";
+          console.error(`[/me] FAIL secretLen=${secLen} hasCookie=${tokPrefix} err=${err instanceof Error ? err.message : err}`);
+          return Response.json({ user: null, _debug: "catch", error: err instanceof Error ? err.message : String(err), secretLen: secLen }, { status: 401 });
         }
       },
     },
