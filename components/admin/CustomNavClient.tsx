@@ -42,7 +42,7 @@ function getVisibleSections(role: string): NavSection[] {
     {
       label: "Content",
       items: [
-        { href: `${ADMIN_PATH}/site-settings`, icon: "page", label: "Pages" },
+        { href: `${ADMIN_PATH}/globals/site-settings`, icon: "page", label: "Pages" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "folder", label: "Blog Posts" },
         { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "page", label: "Legal Pages" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "image", label: "Media" },

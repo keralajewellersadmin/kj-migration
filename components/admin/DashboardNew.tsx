@@ -113,7 +113,7 @@ export default async function DashboardNew({ payload }: ServerProps) {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <h3 className={styles.cardTitle}>Metal Rates</h3>
-            <Link href={`${ADMIN_PATH}/site-settings`} className={styles.cardLink}>Update</Link>
+            <Link href={`${ADMIN_PATH}/globals/site-settings`} className={styles.cardLink}>Update</Link>
           </div>
           <div className={styles.ratesGrid}>
             <div className={styles.rateItem}>
@@ -146,7 +146,7 @@ export default async function DashboardNew({ payload }: ServerProps) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Add Product
             </Link>
-            <Link href={`${ADMIN_PATH}/site-settings`} className={styles.actionBtn}>
+            <Link href={`${ADMIN_PATH}/globals/site-settings`} className={styles.actionBtn}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4"/></svg>
               Update Rates
             </Link>
