@@ -163,12 +163,12 @@
     padding: 40px 16px;
   }
   .heroOuter {
-    padding: 40px 16px; /* one-off */
+    padding: 28px 16px 34px; /* one-off */
   }
   .hero {
     height: auto; /* one-off */
-    min-height: 330px; /* one-off */
-    padding: 34px 0;
+    min-height: 0; /* one-off */
+    padding: 28px 0;
   }
   .heroContent {
     width: 88%;

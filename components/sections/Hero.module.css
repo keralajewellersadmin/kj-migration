@@ -253,7 +253,7 @@
 
   .banner {
     height: auto;
-    min-height: clamp(340px, 56vh, 400px);
+    min-height: clamp(310px, 52vh, 370px);
     background-size: cover;
     background-position: 65% center;
     align-items: stretch;
@@ -273,8 +273,8 @@
     margin-left: 0;
     margin-right: 0;
     min-height: inherit;
-    padding: 22px 16px 18px;
-    justify-content: flex-end;
+    padding: 22px 16px;
+    justify-content: center;
   }
 
   .heading {
@@ -306,7 +306,7 @@
 /* Responsive: Small Mobile */
 @media (max-width: 479px) {
   .banner {
-    min-height: 335px;
+    min-height: 310px;
   }
 
   .content {

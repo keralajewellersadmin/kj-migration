@@ -140,7 +140,7 @@
 
 @media (max-width: 479px) {
   .card {
-    padding: 8px;
+    padding: 10px;
   }
 
   .media {
@@ -148,17 +148,20 @@
   }
 
   .title {
-    font-size: 12.5px;
+    font-size: 15px;
     line-height: 1.22;
   }
 
   .category {
-    font-size: 10px;
-    letter-spacing: 0.08em;
+    font-size: 12px;
+    letter-spacing: 0.1em;
   }
 
   .viewBtn {
-    font-size: 11px;
-    padding: 7px 8px;
+    width: auto;
+    min-width: 120px;
+    min-height: 38px;
+    font-size: 12px;
+    padding: 9px 14px;
   }
 }

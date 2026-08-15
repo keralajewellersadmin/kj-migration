@@ -3,6 +3,7 @@
   background-color: var(--color-white);
   padding-top: var(--space-12);
   padding-bottom: var(--space-12);
+  overflow-x: hidden;
 }
 
 .container {
@@ -135,7 +136,8 @@
   .carouselTrack {
     align-items: center;
     display: flex;
-    height: clamp(430px, 78vh, 560px);
+    box-sizing: border-box;
+    height: clamp(360px, 66vh, 500px);
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
@@ -174,14 +176,14 @@
   /* ── Position: prev ── */
   .pos-prev {
     opacity: 0.26;
-    transform: translate(calc(-50% - min(53vw, 230px)), -50%) scale(0.66);
+    transform: translate(calc(-50% - min(46vw, 190px)), -50%) scale(0.58);
     z-index: 2;
   }
 
   /* ── Position: next ── */
   .pos-next {
     opacity: 0.26;
-    transform: translate(calc(-50% + min(53vw, 230px)), -50%) scale(0.66);
+    transform: translate(calc(-50% + min(46vw, 190px)), -50%) scale(0.58);
     z-index: 2;
   }
 
@@ -255,6 +257,18 @@
     opacity: 1;
     text-align: center;
     visibility: visible;
+  }
+}
+
+@media (max-width: 767px) {
+  .featuresSection {
+    padding-top: 34px;
+    padding-bottom: 48px;
+  }
+
+  .carouselTrack {
+    height: clamp(410px, 62vh, 460px);
+    padding: 12px 0 18px;
   }
 }
 

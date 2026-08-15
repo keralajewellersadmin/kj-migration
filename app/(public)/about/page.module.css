@@ -633,8 +633,10 @@
     grid-row-gap: 20px; /* one-off */
   }
   .goldenHeading {
-    text-align: justify;
-    font-size: clamp(32px, 9vw, 42px);
+    text-align: left;
+    font-size: clamp(30px, 8vw, 38px);
+    line-height: 1.14;
+    text-wrap: balance;
   }
   .goldenText {
     text-align: justify;
@@ -681,6 +683,10 @@
   .goldenText {
     text-align: left;
     line-height: 1.6; /* one-off */
+  }
+  .goldenHeading {
+    font-size: 30px;
+    line-height: 1.16;
   }
   .tasteHeading {
     font-size: 36px; /* one-off */

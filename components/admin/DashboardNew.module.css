@@ -1,16 +1,18 @@
 .dashboard {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 24px clamp(16px, 2vw, 24px) 32px;
+  padding: 22px clamp(18px, 2.4vw, 28px) 36px;
   box-sizing: border-box;
   overflow-x: clip;
+  color: #1a1512;
+  font-family: var(--font-body), "Mulish", system-ui, sans-serif;
 }
 
 /* ── Stat Cards ── */
 .statGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -21,7 +23,7 @@
   gap: 14px;
   padding: 18px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid #f0ebe3;
   text-decoration: none;
   color: inherit;
@@ -95,7 +97,7 @@
 
 .card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid #f0ebe3;
   padding: 20px;
   min-width: 0;
@@ -308,10 +310,11 @@
 
 @media (max-width: 768px) {
   .dashboard {
-    padding: 16px;
+    padding: 72px 16px 28px;
   }
   .statGrid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   .contentGrid {
     grid-template-columns: 1fr;
@@ -321,5 +324,13 @@
   }
   .actionsGrid {
     grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .statCard {
+    padding: 16px;
   }
 }
