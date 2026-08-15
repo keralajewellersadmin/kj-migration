@@ -292,6 +292,11 @@
 
   .branches {
     grid-template-columns: 1fr 1fr;
+    gap: 28px 30px;
+  }
+
+  .branchMap {
+    height: 130px;
   }
 
   .infoGrid,
@@ -327,7 +332,7 @@
 
   .branches {
     grid-template-columns: 1fr;
-    gap: 16px; /* one-off */
+    gap: 24px; /* one-off */
   }
 
   .branchCard {
@@ -340,7 +345,7 @@
   }
 
   .branchMap {
-    height: 150px;
+    height: 128px;
   }
 
   .featuresList {

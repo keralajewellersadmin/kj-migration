@@ -194,7 +194,7 @@
 /* Responsive: Mobile — stacked column */
 @media (max-width: 991px) {
   .categoriesSection {
-    padding: var(--space-10) var(--space-4);
+    padding: 30px var(--space-4);
   }
 
   .grid {
@@ -205,24 +205,30 @@
   }
 
   .card {
-    min-height: 280px;
+    min-height: 245px;
   }
 
   .cardContent {
-    max-width: 78%;
+    max-width: 84%;
     min-height: 100%;
-    padding: 34px 22px;
+    padding: 26px 22px;
   }
 
   .heading {
-    font-size: clamp(42px, 7vw, 56px);
+    font-size: clamp(32px, 5vw, 42px);
     line-height: 1.05;
+    margin-bottom: 10px;
   }
 
   .description {
-    max-width: 86%;
-    font-size: 17px;
+    max-width: 92%;
+    font-size: 15px;
     line-height: 1.35;
+  }
+
+  .cta {
+    min-height: 44px;
+    padding: 8px 16px;
   }
 }
 
@@ -232,13 +238,13 @@
   }
 
   .card {
-    min-height: 285px;
+    min-height: 240px;
   }
 }
 
 @media (max-width: 479px) {
   .categoriesSection {
-    padding: var(--space-6) var(--space-2);
+    padding: 24px 12px;
   }
   
   .grid {
@@ -246,37 +252,37 @@
   }
 
   .card {
-    min-height: 300px;
+    min-height: 230px;
   }
 
   .cardContent {
     max-width: 100%;
     width: 100%;
-    padding: 30px 20px;
+    padding: 24px 18px;
     align-items: center;
     text-align: center;
     background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 100%);
   }
 
   .heading {
-    font-size: 36px;
-    line-height: 1.1;
+    font-size: 30px;
+    line-height: 1.08;
     margin-bottom: var(--space-2);
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   }
 
   .description {
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.35;
     margin-bottom: var(--space-4);
     max-width: 100%;
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
 
   .cta {
-    font-size: 16px;
-    min-height: 48px;
-    padding: 12px 24px;
+    font-size: 15px;
+    min-height: 44px;
+    padding: 10px 18px;
     width: 100%;
   }
 }

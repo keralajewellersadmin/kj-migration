@@ -122,3 +122,54 @@
   border-color: var(--color-maroon);
   color: var(--color-gold-light);
 }
+
+@media (max-width: 991px) {
+  .section {
+    padding: 34px 20px 64px;
+  }
+
+  .metalIntro {
+    font-size: clamp(20px, 3.2vw, 25px);
+    line-height: 1.35;
+    max-width: 680px;
+    margin-bottom: 26px;
+  }
+
+  .filterWrapper {
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 24px;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding: 28px 14px 48px;
+  }
+
+  .metalIntro {
+    font-size: 18px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+  }
+
+  .resetBtn {
+    width: 100%;
+    height: 42px;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .section {
+    padding-top: 24px;
+  }
+
+  .filterWrapper {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+}

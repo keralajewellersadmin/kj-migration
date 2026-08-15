@@ -52,8 +52,8 @@
   }
 
   .title {
-    font-size: clamp(30px, 9vw, 40px);
-    line-height: 1.2;
+    font-size: clamp(28px, 8vw, 34px);
+    line-height: 1.14;
   }
 
   .subtitle {

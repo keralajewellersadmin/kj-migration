@@ -189,25 +189,25 @@
   }
 
   .banner {
-    height: clamp(360px, 54vw, 430px);
+    height: clamp(330px, 44vw, 390px);
     overflow: hidden;
     background-position: 62% center;
   }
 
   .silver .banner,
   .diamond .banner {
-    height: clamp(360px, 54vw, 430px);
+    height: clamp(330px, 44vw, 390px);
   }
 
   .heading {
-    font-size: clamp(42px, 7vw, 58px);
+    font-size: clamp(34px, 5.7vw, 46px);
     line-height: 1.05;
     width: min(100%, 420px);
   }
 
   .silver .heading,
   .diamond .heading {
-    font-size: clamp(42px, 7vw, 58px);
+    font-size: clamp(34px, 5.7vw, 46px);
     line-height: 1.05;
   }
 
@@ -241,16 +241,16 @@
 
   .banner {
     height: auto;
-    min-height: 390px;
-    padding: 28px 0;
+    min-height: 315px;
+    padding: 22px 0;
     background-position: 66% center;
   }
 
   .silver .banner,
   .diamond .banner {
     height: auto;
-    min-height: 390px;
-    padding: 30px 0;
+    min-height: 315px;
+    padding: 22px 0;
   }
 
   .banner::before {
@@ -268,20 +268,20 @@
   .content {
     position: relative;
     z-index: 1;
-    width: 82%;
-    padding: 0 22px;
+    width: 86%;
+    padding: 0 20px;
   }
 
   .heading {
-    font-size: clamp(38px, 11vw, 50px);
+    font-size: clamp(30px, 8.5vw, 38px);
     line-height: 1.08;
-    width: 90%;
+    width: 100%;
   }
 
   .silver .heading,
   .diamond .heading {
-    font-size: 50px;
-    line-height: 64px;
+    font-size: clamp(30px, 8.5vw, 38px);
+    line-height: 1.12;
   }
 
   .description {
@@ -306,23 +306,23 @@
 /* Responsive: Small Mobile */
 @media (max-width: 479px) {
   .banner {
-    min-height: 340px;
+    min-height: 300px;
   }
 
   .silver .banner,
   .diamond .banner {
-    min-height: 340px;
+    min-height: 300px;
   }
 
   .heading {
-    font-size: 36px;
+    font-size: 30px;
     line-height: 1.1;
   }
 
   .silver .heading,
   .diamond .heading {
-    font-size: 36px;
-    line-height: 48px;
+    font-size: 30px;
+    line-height: 1.12;
   }
 
   .description {
