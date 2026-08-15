@@ -672,39 +672,6 @@ const AdminUsers: CollectionConfig = {
   ],
 };
 
-const MetalRate: CollectionConfig = {
-  slug: "metal-rates",
-  labels: { singular: "Metal Rate", plural: "Metal Rates" },
-  admin: {
-    useAsTitle: "metal",
-    defaultColumns: ["metal", "rate", "unit", "effectiveDate", "active", "updatedAt"],
-  },
-  access: {
-    read: publicRead,
-    create: canManageSettings,
-    update: canManageSettings,
-    delete: canManageSettings,
-  },
-  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
-  fields: [
-    {
-      name: "metal",
-      type: "select",
-      required: true,
-      options: [
-        { label: "Gold 22K", value: "gold22" },
-        { label: "Gold 18K", value: "gold18" },
-        { label: "Silver", value: "silver" },
-        { label: "Platinum", value: "platinum" },
-      ],
-    },
-    { name: "rate", type: "text", required: true, admin: { description: "Display value, e.g. 7,450" } },
-    { name: "unit", type: "text", defaultValue: "gram" },
-    { name: "effectiveDate", type: "date", required: true, defaultValue: () => new Date().toISOString(), admin: { date: { pickerAppearance: "dayAndTime" } } },
-    { name: "active", type: "checkbox", defaultValue: true },
-  ],
-};
-
 const WebsitePage: CollectionConfig = {
   slug: "website-pages",
   labels: { singular: "Website Page", plural: "Pages" },
@@ -2149,7 +2116,6 @@ export default buildConfig({
   collections: [
     AdminUsers,
     Media,
-    MetalRate,
     WebsitePage,
     JewelleryCollection,
     Product,
@@ -2189,6 +2155,10 @@ export default buildConfig({
         },
         login: {
           Component: "@/components/admin/CustomLogin",
+        },
+        "update-rates": {
+          Component: "@/components/admin/UpdateRates",
+          path: "/update-rates",
         },
       },
     },

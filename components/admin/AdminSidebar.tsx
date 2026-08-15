@@ -31,14 +31,11 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     items: [{ href: ADMIN_PATH, icon: "dashboard", label: "Dashboard", exact: true }],
   });
 
-  // Daily Tasks — Inquiries visible to all roles; Metal Rates only to content managers
+  // Daily Tasks
   sections.push({
     label: "Daily Tasks",
     items: [
       { href: `${ADMIN_PATH}/collections/inquiries`, icon: "inquiries", label: "Inquiries", badge: inquiryCount },
-      ...(canManageContent
-        ? [{ href: `${ADMIN_PATH}/collections/metal-rates`, icon: "rates", label: "Metal Rates" }]
-        : []),
     ],
   });
 
