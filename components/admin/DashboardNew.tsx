@@ -64,6 +64,14 @@ export default async function DashboardNew({ payload }: ServerProps) {
 
   return (
     <div className={styles.dashboard}>
+      {/* Page Header */}
+      <div className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.pageTitle}>Dashboard</h1>
+          <p className={styles.pageSubtitle}>Manage your jewellery store</p>
+        </div>
+      </div>
+
       {/* Stat Cards */}
       <div className={styles.statGrid}>
         <Link href={`${ADMIN_PATH}/collections/products`} className={styles.statCard}>

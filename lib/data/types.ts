@@ -15,7 +15,6 @@ export interface Product {
   description: string;
   image: string;
   imageAlt?: string;
-  imageSrcset: string;
   seo?: SeoFields;
 }
 

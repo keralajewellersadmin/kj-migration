@@ -4,11 +4,9 @@ import {
   type CollectionConfig,
   type GlobalConfig,
   type CollectionAfterChangeHook,
-  type CollectionAfterDeleteHook,
   type CollectionBeforeValidateHook,
   type CollectionBeforeDeleteHook,
   type GlobalAfterChangeHook,
-  type Field,
 } from "payload";
 import sharp from "sharp";
 import { resendAdapter } from "@payloadcms/email-resend";
@@ -88,18 +86,6 @@ const revalidateProduct: CollectionAfterChangeHook = async ({ doc }) => {
   }
 };
 
-const revalidateProductAfterDelete: CollectionAfterDeleteHook = async ({ doc }) => {
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
-  if (doc?.slug) {
-    revalidatePath(`/product/${doc.slug}`);
-  }
-};
-
 const revalidateBlog: CollectionAfterChangeHook = async ({ doc }) => {
   revalidatePath("/blog");
   if (doc?.slug) {
@@ -111,36 +97,6 @@ const revalidateLegal: CollectionAfterChangeHook = () => {
   revalidatePath("/terms-conditions");
   revalidatePath("/privacy-policy");
   revalidatePath("/swarnavarsha");
-};
-
-const revalidateCoreContent: CollectionAfterChangeHook = () => {
-  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
-  revalidatePath("/about");
-  revalidatePath("/contact");
-  revalidatePath("/blog");
-  revalidatePath("/swarnavarsha");
-  revalidatePath("/thanga-mazhai");
-};
-
-const revalidateCoreContentAfterDelete: CollectionAfterDeleteHook = () => {
-  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
-  revalidatePath("/about");
-  revalidatePath("/contact");
-  revalidatePath("/blog");
-  revalidatePath("/swarnavarsha");
-  revalidatePath("/thanga-mazhai");
 };
 
 const revalidateSiteSettings: GlobalAfterChangeHook = () => {
@@ -186,42 +142,6 @@ const metalSelect = {
     { label: "Platinum", value: "platinum" },
   ],
 } as const;
-
-const statusSelect = {
-  defaultValue: "published",
-  options: [
-    { label: "Draft", value: "draft" },
-    { label: "Published", value: "published" },
-    { label: "Archived", value: "archived" },
-  ],
-};
-
-const seoFields = [
-  {
-    name: "seo",
-    type: "group" as const,
-    fields: [
-      { name: "title", type: "text" as const },
-      { name: "description", type: "textarea" as const },
-      { name: "ogImage", type: "upload" as const, relationTo: "media" },
-    ],
-  },
-] satisfies Field[];
-
-const ctaFields = [
-  { name: "ctaText", type: "text" as const },
-  { name: "ctaHref", type: "text" as const },
-] satisfies Field[];
-
-const pageSectionFields = [
-  { name: "label", type: "text" as const, required: true },
-  { name: "heading", type: "text" as const },
-  { name: "description", type: "textarea" as const },
-  { name: "image", type: "upload" as const, relationTo: "media" },
-  ...ctaFields,
-  { name: "visible", type: "checkbox" as const, defaultValue: true },
-  { name: "sortOrder", type: "number" as const, defaultValue: 0 },
-] satisfies Field[];
 
 const resolvedDbUrl =
   process.env.DATABASE_URL || process.env.DATABASE_URI || "";
@@ -438,7 +358,6 @@ const Media: CollectionConfig = {
           'Alternative text for accessibility (e.g. "Gold Bangle Front View")',
       },
     },
-    { name: "caption", type: "text" },
     {
       name: "mediaType",
       type: "select",
@@ -672,112 +591,6 @@ const AdminUsers: CollectionConfig = {
   ],
 };
 
-const WebsitePage: CollectionConfig = {
-  slug: "website-pages",
-  labels: { singular: "Website Page", plural: "Pages" },
-  admin: {
-    useAsTitle: "title",
-    defaultColumns: ["title", "pageType", "status", "updatedAt"],
-  },
-  access: {
-    read: publicRead,
-    create: canManageContent,
-    update: canManageContent,
-    delete: canManageSettings,
-  },
-  hooks: {
-    beforeValidate: [makeAutoSlug("website-pages")],
-    afterChange: [revalidateCoreContent, auditLogAfterChange],
-    afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete],
-  },
-  fields: [
-    { name: "title", type: "text", required: true },
-    {
-      name: "slug",
-      type: "text",
-      required: true,
-      unique: true,
-      admin: { readOnly: true, description: "Auto-generated from page title." },
-    },
-    {
-      name: "pageType",
-      type: "select",
-      required: true,
-      options: [
-        { label: "Home", value: "home" },
-        { label: "Gold Products", value: "gold-products" },
-        { label: "Silver Products", value: "silver-products" },
-        { label: "Diamond Products", value: "diamond-products" },
-        { label: "Platinum Products", value: "platinum-products" },
-        { label: "Scheme Page", value: "scheme" },
-        { label: "About", value: "about" },
-        { label: "Contact", value: "contact" },
-        { label: "Enquiry", value: "enquiry" },
-        { label: "Heritage", value: "heritage" },
-        { label: "Blog", value: "blog" },
-        { label: "Campaign", value: "campaign" },
-      ],
-    },
-    { name: "status", type: "select", ...statusSelect },
-    {
-      name: "hero",
-      type: "group",
-      fields: [
-        { name: "eyebrow", type: "text" },
-        { name: "title", type: "text" },
-        { name: "description", type: "textarea" },
-        { name: "image", type: "upload", relationTo: "media" },
-        ...ctaFields,
-        { name: "visible", type: "checkbox", defaultValue: true },
-      ],
-    },
-    { name: "sections", type: "array", fields: pageSectionFields },
-    {
-      name: "relatedProducts",
-      type: "relationship",
-      relationTo: "products",
-      hasMany: true,
-      admin: { description: "Optional curated products for this page." },
-    },
-    {
-      name: "relatedCampaign",
-      type: "relationship",
-      relationTo: "campaigns" as never,
-      admin: { description: "Optional campaign associated with this page." },
-    },
-    ...seoFields,
-  ],
-};
-
-const JewelleryCollection: CollectionConfig = {
-  slug: "jewellery-collections",
-  labels: { singular: "Collection", plural: "Collections" },
-  admin: { useAsTitle: "name", defaultColumns: ["name", "metal", "status", "sortOrder"] },
-  access: {
-    read: publicRead,
-    create: canManageContent,
-    update: canManageContent,
-    delete: canManageSettings,
-  },
-  hooks: {
-    beforeValidate: [makeAutoSlug("jewellery-collections")],
-    afterChange: [revalidateProduct, auditLogAfterChange],
-    afterDelete: [revalidateProductAfterDelete, auditLogAfterDelete],
-  },
-  fields: [
-    { name: "name", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, admin: { readOnly: true } },
-    { name: "metal", type: "select", options: [...metalSelect.options] },
-    { name: "description", type: "textarea" },
-    { name: "image", type: "upload", relationTo: "media" },
-    { name: "banner", type: "upload", relationTo: "media" },
-    { name: "products", type: "relationship", relationTo: "products", hasMany: true },
-    { name: "status", type: "select", ...statusSelect },
-    { name: "sortOrder", type: "number", defaultValue: 0 },
-    ...seoFields,
-  ],
-};
-
 const Product: CollectionConfig = {
   slug: "products",
   admin: { useAsTitle: "title" },
@@ -821,14 +634,6 @@ const Product: CollectionConfig = {
       type: "relationship",
       relationTo: "categories",
     },
-    {
-      name: "collection",
-      type: "relationship",
-      relationTo: "jewellery-collections" as never,
-      admin: { description: "Optional jewellery collection this product belongs to." },
-    },
-    { name: "productType", type: "text" },
-    { name: "shortDescription", type: "textarea" },
     { name: "weight", type: "text" },
     { name: "purity", type: "text" },
     { name: "description", type: "textarea" },
@@ -838,39 +643,6 @@ const Product: CollectionConfig = {
       relationTo: "media",
       admin: { description: "Upload the primary product image" },
     },
-    {
-      name: "imageSrcset",
-      type: "text",
-      admin: {
-        description:
-          "Optional. Leave blank to auto-use the main image for all sizes.",
-      },
-    },
-    {
-      name: "gallery",
-      type: "array",
-      fields: [
-        { name: "image", type: "upload", relationTo: "media", required: true },
-        { name: "alt", type: "text" },
-      ],
-    },
-    { name: "availability", type: "checkbox", defaultValue: true },
-    { name: "status", type: "select", ...statusSelect },
-    {
-      name: "priceMode",
-      type: "select",
-      defaultValue: "on-request",
-      options: [
-        { label: "Fixed", value: "fixed" },
-        { label: "Starting From", value: "starting-from" },
-        { label: "On Request", value: "on-request" },
-      ],
-    },
-    { name: "price", type: "number" },
-    { name: "tags", type: "text", hasMany: true },
-    { name: "featured", type: "checkbox", defaultValue: false },
-    { name: "bestSeller", type: "checkbox", defaultValue: false },
-    { name: "sortOrder", type: "number", defaultValue: 0 },
     {
       name: "seo",
       type: "group",
@@ -957,32 +729,6 @@ const Category: CollectionConfig = {
       admin: {
         description: "Order in navbar mega menu & filter dropdown (0 = first).",
       },
-    },
-    { name: "description", type: "textarea" },
-    { name: "image", type: "upload", relationTo: "media" },
-    { name: "banner", type: "upload", relationTo: "media" },
-    { name: "active", type: "checkbox", defaultValue: true },
-    {
-      name: "seo",
-      type: "group",
-      fields: [
-        {
-          name: "title",
-          type: "text",
-          admin: {
-            description:
-              "Custom meta title for this category page (defaults to category name). Recommended: 50–60 characters.",
-          },
-        },
-        {
-          name: "description",
-          type: "textarea",
-          admin: {
-            description:
-              "Meta description for search engines (defaults to category name + metal). Recommended: 120–160 characters.",
-          },
-        },
-      ],
     },
   ],
 };
@@ -1167,107 +913,6 @@ const LegalPage: CollectionConfig = {
         },
       ],
     },
-  ],
-};
-
-const BestSeller: CollectionConfig = {
-  slug: "best-sellers",
-  labels: { singular: "Best Seller", plural: "Best Sellers" },
-  admin: {
-    useAsTitle: "label",
-    defaultColumns: ["label", "product", "enabled", "sortOrder"],
-  },
-  access: {
-    read: publicRead,
-    create: canManageContent,
-    update: canManageContent,
-    delete: canManageContent,
-  },
-  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
-  fields: [
-    { name: "label", type: "text", required: true, admin: { description: "Internal label for CMS list view." } },
-    { name: "product", type: "relationship", relationTo: "products", required: true },
-    { name: "enabled", type: "checkbox", defaultValue: true },
-    { name: "featured", type: "checkbox", defaultValue: true },
-    { name: "sortOrder", type: "number", defaultValue: 0 },
-  ],
-};
-
-const Review: CollectionConfig = {
-  slug: "reviews",
-  labels: { singular: "Review", plural: "Reviews" },
-  admin: {
-    useAsTitle: "customerName",
-    defaultColumns: ["customerName", "rating", "status", "featured", "sortOrder"],
-  },
-  access: {
-    read: publicRead,
-    create: canManageContent,
-    update: canManageContent,
-    delete: canManageContent,
-  },
-  hooks: { afterChange: [revalidateCoreContent, auditLogAfterChange], afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete] },
-  fields: [
-    { name: "customerName", type: "text", required: true },
-    { name: "location", type: "text" },
-    { name: "review", type: "textarea", required: true },
-    { name: "rating", type: "number", min: 1, max: 5, defaultValue: 5 },
-    { name: "image", type: "upload", relationTo: "media" },
-    { name: "date", type: "date", defaultValue: () => new Date().toISOString() },
-    { name: "status", type: "select", ...statusSelect },
-    { name: "featured", type: "checkbox", defaultValue: false },
-    { name: "sortOrder", type: "number", defaultValue: 0 },
-  ],
-};
-
-const Campaign: CollectionConfig = {
-  slug: "campaigns",
-  labels: { singular: "Campaign", plural: "Campaigns / Promotions" },
-  admin: {
-    useAsTitle: "name",
-    defaultColumns: ["name", "status", "startDate", "endDate", "pageAssociation"],
-  },
-  access: {
-    read: publicRead,
-    create: canManageContent,
-    update: canManageContent,
-    delete: canManageContent,
-  },
-  hooks: {
-    beforeValidate: [makeAutoSlug("campaigns")],
-    afterChange: [revalidateCoreContent, auditLogAfterChange],
-    afterDelete: [revalidateCoreContentAfterDelete, auditLogAfterDelete],
-  },
-  fields: [
-    { name: "name", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, admin: { readOnly: true } },
-    { name: "status", type: "select", ...statusSelect },
-    { name: "startDate", type: "date" },
-    { name: "endDate", type: "date" },
-    {
-      name: "pageAssociation",
-      type: "select",
-      options: [
-        { label: "Home", value: "home" },
-        { label: "Thanga Mazhai", value: "thanga-mazhai" },
-        { label: "Swarna Varsha", value: "swarna-varsha" },
-        { label: "Products", value: "products" },
-        { label: "Blog", value: "blog" },
-      ],
-    },
-    {
-      name: "hero",
-      type: "group",
-      fields: [
-        { name: "title", type: "text" },
-        { name: "description", type: "textarea" },
-        { name: "image", type: "upload", relationTo: "media" },
-        ...ctaFields,
-      ],
-    },
-    { name: "banner", type: "upload", relationTo: "media" },
-    { name: "sections", type: "array", fields: pageSectionFields },
-    ...seoFields,
   ],
 };
 
@@ -1629,42 +1274,10 @@ const SiteSettings: GlobalConfig = {
               ],
             },
             {
-              name: "navigation",
-              type: "group",
-              label: "Header / Navigation",
-              fields: [
-                { name: "announcementText", type: "text", label: "Announcement Text" },
-                { name: "showMetalRates", type: "checkbox", label: "Show Metal Rates", defaultValue: true },
-                {
-                  name: "menuItems",
-                  type: "array",
-                  label: "Menu Items",
-                  fields: [
-                    { name: "label", type: "text", required: true },
-                    { name: "href", type: "text", required: true },
-                    { name: "visible", type: "checkbox", defaultValue: true },
-                    { name: "sortOrder", type: "number", defaultValue: 0 },
-                  ],
-                },
-                {
-                  name: "quickLinks",
-                  type: "array",
-                  label: "Quick Links",
-                  fields: [
-                    { name: "label", type: "text", required: true },
-                    { name: "href", type: "text", required: true },
-                    { name: "visible", type: "checkbox", defaultValue: true },
-                    { name: "sortOrder", type: "number", defaultValue: 0 },
-                  ],
-                },
-              ],
-            },
-            {
               name: "aboutPage",
               type: "group",
               label: "About Page",
               fields: [
-                { name: "title", type: "text", defaultValue: "About Us" },
                 {
                   name: "goldenOccasions",
                   type: "group",
@@ -1780,23 +1393,6 @@ const SiteSettings: GlobalConfig = {
               type: "text",
               label: "YouTube URL",
             },
-            {
-              name: "footerLinks",
-              type: "array",
-              label: "Footer Links",
-              fields: [
-                { name: "label", type: "text", required: true },
-                { name: "href", type: "text", required: true },
-                { name: "column", type: "text", admin: { description: "Optional footer column/group name" } },
-                { name: "visible", type: "checkbox", defaultValue: true },
-                { name: "sortOrder", type: "number", defaultValue: 0 },
-              ],
-            },
-            {
-              name: "copyrightText",
-              type: "text",
-              label: "Copyright Text",
-            },
           ],
         },
         // ─── Metal Rates ──────────────────────────────────────────
@@ -1848,109 +1444,6 @@ const SiteSettings: GlobalConfig = {
             },
           ],
         },
-        // ─── SEO ──────────────────────────────────────────────────
-        {
-          label: "SEO",
-          fields: [
-            {
-              name: "defaultSeo",
-              type: "group",
-              fields: [
-                {
-                  name: "title",
-                  type: "text",
-                  admin: { description: "Site-wide default meta title. Recommended: 50–60 characters." },
-                },
-                {
-                  name: "description",
-                  type: "textarea",
-                  admin: { description: "Site-wide default meta description. Recommended: 150–160 characters." },
-                },
-                {
-                  name: "ogImage",
-                  type: "upload",
-                  relationTo: "media",
-                  admin: { description: "Default OG image. Recommended: 1200×630px." },
-                },
-              ],
-            },
-            {
-              name: "generalSettings",
-              type: "group",
-              label: "General Settings",
-              fields: [
-                { name: "siteName", type: "text", defaultValue: "Kerala Jewellers" },
-                { name: "adminPanelName", type: "text", defaultValue: "Kerala Jewellers CMS" },
-                { name: "canonicalUrl", type: "text" },
-                { name: "robotsIndex", type: "checkbox", defaultValue: true },
-                { name: "maintenanceMode", type: "checkbox", defaultValue: false },
-              ],
-            },
-          ],
-        },
-        // ─── Fonts / Typography ──────────────────────────────────────
-        {
-          label: "Fonts / Typography",
-          fields: [
-            {
-              name: "fontPairing",
-              type: "select",
-              defaultValue: "classic-luxury",
-              label: "Font Pairing",
-              options: [
-                { label: "Classic Luxury — Com 4 DL / Mulish / Montserrat", value: "classic-luxury" },
-                { label: "Modern Elegant — Playfair Display / Inter / Montserrat", value: "modern-elegant" },
-                { label: "Timeless — Georgia / Mulish / Open Sans", value: "timeless" },
-                { label: "Contemporary — Montserrat / Inter / Montserrat", value: "contemporary" },
-                { label: "Traditional — Cormorant Garamond / Mulish / Open Sans", value: "traditional" },
-                { label: "Bold Statement — Com 4 DL / Montserrat / Montserrat", value: "bold-statement" },
-              ],
-            },
-            {
-              name: "headingFont",
-              type: "text",
-              admin: { description: "Auto-set by pairing, or enter custom font name" },
-            },
-            {
-              name: "bodyFont",
-              type: "text",
-              admin: { description: "Auto-set by pairing, or enter custom font name" },
-            },
-            {
-              name: "uiFont",
-              type: "text",
-              admin: { description: "Auto-set by pairing, or enter custom font name" },
-            },
-            {
-              name: "baseFontSize",
-              type: "select",
-              defaultValue: "16px",
-              options: [
-                { label: "14px (Small)", value: "14px" },
-                { label: "16px (Default)", value: "16px" },
-                { label: "18px (Large)", value: "18px" },
-              ],
-            },
-            {
-              name: "headingScale",
-              type: "select",
-              defaultValue: "1.25",
-              options: [
-                { label: "1.2 (Compact)", value: "1.2" },
-                { label: "1.25 (Default)", value: "1.25" },
-                { label: "1.333 (Golden Ratio)", value: "1.333" },
-                { label: "1.5 (Spacious)", value: "1.5" },
-              ],
-            },
-            {
-              name: "customFonts",
-              type: "textarea",
-              admin: {
-                description: 'Custom @font-face CSS declarations. One per line.\nfont-family: "My Font";\nsrc: url("/assets/fonts/myfont.woff2") format("woff2");',
-              },
-            },
-          ],
-        },
         // ─── Pages ─────────────────────────────────────────────────
         {
           label: "Pages",
@@ -1995,7 +1488,6 @@ const SiteSettings: GlobalConfig = {
                 { name: "cardItems", type: "array", fields: [{ name: "text", type: "text" }] },
                 { name: "cardQuote", type: "text", defaultValue: "Send us a message and our team will get back to you shortly." },
                 { name: "branchesTitle", type: "text", defaultValue: "Our Branches" },
-                { name: "formTitle", type: "text", defaultValue: "Send Us a Message" },
               ],
             },
             {
@@ -2025,26 +1517,10 @@ const SiteSettings: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", defaultValue: "Timeless Brilliance in Diamonds" },
                     { name: "subtitle", type: "textarea", defaultValue: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
-                  ],
-                },
-                {
-                  name: "platinumHero",
-                  type: "group",
-                  fields: [
-                    { name: "title", type: "text", defaultValue: "Platinum Collection — Coming Soon" },
-                    { name: "subtitle", type: "textarea", defaultValue: "We're curating an exclusive range of platinum jewellery. Stay tuned for something extraordinary." },
-                  ],
-                },
               ],
             },
-            {
-              name: "comingSoonPage",
-              type: "group",
-              label: "Coming Soon Page",
-              fields: [
-                { name: "message", type: "text", defaultValue: "Coming Soon" },
-              ],
-            },
+          ],
+        },
           ],
         },
       ],
@@ -2116,13 +1592,8 @@ export default buildConfig({
   collections: [
     AdminUsers,
     Media,
-    WebsitePage,
-    JewelleryCollection,
     Product,
     Category,
-    BestSeller,
-    Review,
-    Campaign,
     BlogPost,
     LegalPage,
     Inquiry,

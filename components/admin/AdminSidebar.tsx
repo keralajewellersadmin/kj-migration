@@ -39,8 +39,6 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     ],
   });
 
-
-
   // Content — super-admin, admin
   if (canManageContent) {
     sections.push({
@@ -49,8 +47,6 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
         { href: `${ADMIN_PATH}/collections/products`, icon: "products", label: "Products" },
         { href: `${ADMIN_PATH}/collections/categories`, icon: "categories", label: "Categories" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "blog", label: "Blog Posts" },
-        { href: `${ADMIN_PATH}/collections/best-sellers`, icon: "star", label: "Bestsellers" },
-        { href: `${ADMIN_PATH}/collections/reviews`, icon: "reviews", label: "Reviews" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "media", label: "Media" },
       ],
     });
@@ -58,8 +54,9 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     sections.push({
       label: "Site Settings",
       items: [
+        { href: `${settingsPath}?tab=homepage`, icon: "dashboard", label: "Homepage" },
+        { href: `${settingsPath}?tab=metal+rates`, icon: "rates", label: "Metal Rates" },
         { href: `${settingsPath}?tab=footer+%26+contact+details`, icon: "contact", label: "Footer & Contact Details" },
-        { href: `${settingsPath}?tab=fonts+%2F+typography`, icon: "typography", label: "Fonts / Typography" },
         { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "legal", label: "Legal Pages" },
       ],
     });

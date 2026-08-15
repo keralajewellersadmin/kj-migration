@@ -112,13 +112,6 @@ function resolveMediaUrl(val: unknown): string {
 
 import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 
-function firstSrcsetUrl(srcset?: string): string {
-  if (!srcset) return "";
-  const firstCandidate = srcset.split(",")[0]?.trim() || "";
-  const match = firstCandidate.match(/^(.+?)\s+(?:\d+(?:\.\d+)?[wx])$/);
-  return (match?.[1] || firstCandidate).trim();
-}
-
 function normalizeMigratedMediaUrl(url?: string): string {
   if (!url) return "";
   if (url.includes("66ae1d64b0ff185260ad9b44_Rectangle")) {
@@ -143,13 +136,6 @@ function mapSqlProduct(row: any): Product {
     imageUrl = cloudinaryUrl(row.cloudinary_public_id);
   } else if (row.image_url && row.image_url.startsWith("http")) {
       imageUrl = normalizeCloudinaryDeliveryUrl(row.image_url);
-  } else if (row.image_srcset) {
-    const firstSrc = firstSrcsetUrl(row.image_srcset);
-    if (firstSrc && firstSrc.startsWith("http")) {
-      imageUrl = normalizeCloudinaryDeliveryUrl(firstSrc);
-    } else {
-      imageUrl = "/assets/images/placeholder.svg";
-    }
   } else {
     imageUrl = "/assets/images/placeholder.svg";
   }
@@ -178,14 +164,13 @@ function mapSqlProduct(row: any): Product {
     description: row.description || "",
     image: imageUrl,
     imageAlt: row.image_alt || "",
-    imageSrcset: row.image_srcset || "",
     seo,
   };
 }
 
 const PRODUCT_SQL_BASE = `
   SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-         p.description, p.image_srcset,
+         p.description,
          c.name AS category_name,
          m.url AS image_url, m.alt AS image_alt,
          m.cloudinary_public_id AS cloudinary_public_id
@@ -232,15 +217,9 @@ function mapProduct(doc: PayloadDoc): Product {
     imageObj && typeof imageObj === "object" && "cloudinaryPublicId" in imageObj && typeof (imageObj as { cloudinaryPublicId?: unknown }).cloudinaryPublicId === "string"
       ? (imageObj as { cloudinaryPublicId: string }).cloudinaryPublicId
       : null;
-  const imageFromSrcset =
-    typeof doc.imageSrcset === "string"
-      ? firstSrcsetUrl(doc.imageSrcset)
-      : "";
   let imageUrl: string;
   if (cloudinaryId) {
     imageUrl = cloudinaryUrl(cloudinaryId);
-  } else if (imageFromSrcset && imageFromSrcset.startsWith("http")) {
-    imageUrl = normalizeCloudinaryDeliveryUrl(imageFromSrcset);
   } else {
     imageUrl = resolveMediaUrl(doc.image) || "/assets/images/placeholder.svg";
   }
@@ -265,7 +244,6 @@ function mapProduct(doc: PayloadDoc): Product {
     description: doc.description || "",
     image: imageUrl,
     imageAlt,
-    imageSrcset: doc.imageSrcset || "",
     seo,
   };
 }
@@ -546,7 +524,7 @@ export async function getProductBySlug(
       } catch {
         const SIMPLE = `
           SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-                 p.description, p.image_srcset,
+                 p.description,
                  c.name AS category_name,
                  m.url AS image_url, m.alt AS image_alt,
                  m.cloudinary_public_id AS cloudinary_public_id

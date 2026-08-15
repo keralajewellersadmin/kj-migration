@@ -9,21 +9,44 @@
   font-family: var(--font-body), "Mulish", system-ui, sans-serif;
 }
 
+/* ── Page Header ── */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.pageTitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1512;
+  margin: 0 0 2px;
+  font-family: var(--font-heading), "Playfair Display", Georgia, serif;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #8a7d6b;
+  margin: 0;
+  font-family: var(--font-body), "Mulish", system-ui, sans-serif;
+}
+
 /* ── Stat Cards ── */
 .statGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .statCard {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px;
+  padding: 22px 20px;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #f0ebe3;
   text-decoration: none;
   color: inherit;
@@ -32,14 +55,14 @@
 }
 
 .statCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
 }
 
 .statIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,7 +76,7 @@
 }
 
 .statValue {
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 700;
   color: #1a1512;
   font-family: var(--font-ui);
@@ -61,7 +84,7 @@
 }
 
 .statLabel {
-  font-size: 12px;
+  font-size: 13px;
   color: #8a7d6b;
   font-family: var(--font-ui);
   text-transform: uppercase;
@@ -75,11 +98,11 @@
 .newBadge {
   display: inline-block;
   margin-top: 2px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: #9f1b1f;
   background: rgba(159, 27, 31, 0.08);
-  padding: 1px 6px;
+  padding: 1px 7px;
   border-radius: 4px;
 }
 
@@ -87,8 +110,8 @@
 .contentGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 28px;
 }
 
 .contentGrid > :last-child {
@@ -97,9 +120,9 @@
 
 .card {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #f0ebe3;
-  padding: 20px;
+  padding: 24px;
   min-width: 0;
   box-sizing: border-box;
 }
@@ -108,11 +131,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .cardTitle {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: #1a1512;
   margin: 0;
@@ -120,7 +143,7 @@
 }
 
 .cardLink {
-  font-size: 13px;
+  font-size: 14px;
   color: #9f1b1f;
   text-decoration: none;
   font-weight: 500;
@@ -142,19 +165,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: #faf8f5;
   border-radius: 8px;
 }
 
 .rateLabel {
-  font-size: 13px;
+  font-size: 14px;
   color: #6b5e4f;
   font-family: var(--font-body);
 }
 
 .rateValue {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   color: #1a1512;
   font-family: var(--font-ui);
@@ -162,7 +185,7 @@
 
 .ratesUpdated {
   margin-top: 10px;
-  font-size: 11px;
+  font-size: 12px;
   color: #a89880;
   font-family: var(--font-ui);
 }
@@ -178,13 +201,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: #faf8f5;
   border: 1px solid #f0ebe3;
   border-radius: 8px;
   color: #1a1512;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   font-family: var(--font-body);
   transition: background 0.15s, border-color 0.15s;
@@ -210,7 +233,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f5f0e8;
   text-decoration: none;
   color: inherit;
@@ -222,14 +245,14 @@
 }
 
 .inquiryAvatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   font-family: var(--font-ui);
   flex-shrink: 0;
@@ -243,7 +266,7 @@
 }
 
 .inquiryName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #1a1512;
   font-family: var(--font-body);
@@ -253,7 +276,7 @@
 }
 
 .inquiryProduct {
-  font-size: 12px;
+  font-size: 13px;
   color: #8a7d6b;
   font-family: var(--font-body);
   overflow: hidden;
@@ -269,7 +292,7 @@
 }
 
 .inquiryTime {
-  font-size: 11px;
+  font-size: 12px;
   color: #a89880;
   font-family: var(--font-ui);
 }
@@ -282,17 +305,17 @@
 }
 
 .empty {
-  padding: 24px;
+  padding: 28px;
   text-align: center;
   color: #a89880;
-  font-size: 13px;
+  font-size: 14px;
   font-family: var(--font-body);
 }
 
 .footer {
   text-align: center;
   padding: 16px;
-  font-size: 12px;
+  font-size: 13px;
   color: #a89880;
   font-family: var(--font-ui);
 }
@@ -312,9 +335,18 @@
   .dashboard {
     padding: 72px 16px 28px;
   }
+  .pageTitle {
+    font-size: 22px;
+  }
   .statGrid {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  .statCard {
+    padding: 16px;
+  }
+  .statValue {
+    font-size: 24px;
   }
   .contentGrid {
     grid-template-columns: 1fr;
@@ -327,10 +359,6 @@
   }
 
   .card {
-    padding: 16px;
-  }
-
-  .statCard {
-    padding: 16px;
+    padding: 18px;
   }
 }

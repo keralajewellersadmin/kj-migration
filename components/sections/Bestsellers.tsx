@@ -55,8 +55,6 @@ export default async function Bestsellers({
       title: product.name,
       category: product.metal.charAt(0).toUpperCase() + product.metal.slice(1),
       image: product.image,
-      srcSet: product.imageSrcset,
-      sizes: "(max-width: 767px) 100vw, (max-width: 991px) 727px, 939px",
       href: `/product/${product.slug}`,
     }));
   const products = cmsProductCards.length ? cmsProductCards : fallbackProducts;

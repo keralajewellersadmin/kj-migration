@@ -64,7 +64,9 @@ export default function Features({
   const features =
     cmsFeatures.length && hasImages ? cmsFeatures : defaultFeatures;
   const [active, setActive] = useState(0);
-  const [isCarousel, setIsCarousel] = useState(false);
+  const [isCarousel, setIsCarousel] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 991px)").matches,
+  );
   const dragRef = useRef(0);
   const startX = useRef(0);
   const dragging = useRef(false);
@@ -72,7 +74,6 @@ export default function Features({
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 991px)");
-    setIsCarousel(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsCarousel(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
