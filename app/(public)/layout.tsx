@@ -51,13 +51,6 @@ export default async function PublicLayout({
         />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link
-          rel="preload"
-          href="/assets/fonts/com4tdrify.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-        />
-        <link
           rel="shortcut icon"
           href="/assets/logo/favicon.png"
           type="image/png"

@@ -64,10 +64,7 @@ export default function Features({
   const features =
     cmsFeatures.length && hasImages ? cmsFeatures : defaultFeatures;
   const [active, setActive] = useState(0);
-  const [isCarousel, setIsCarousel] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(max-width: 991px)").matches;
-  });
+  const [isCarousel, setIsCarousel] = useState(false);
   const dragRef = useRef(0);
   const startX = useRef(0);
   const dragging = useRef(false);
@@ -75,6 +72,7 @@ export default function Features({
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 991px)");
+    setIsCarousel(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsCarousel(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -189,7 +187,7 @@ export default function Features({
                       className={styles.image}
                       fill
                       sizes="(max-width: 991px) 340px, 200px"
-                      loading="lazy"
+                      loading={i === 0 ? "eager" : "lazy"}
                     />
                   </div>
                 )}

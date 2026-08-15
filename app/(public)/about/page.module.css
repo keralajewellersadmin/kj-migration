@@ -559,48 +559,73 @@
 
 /* Tablet */
 @media (max-width: 991px) {
+  .heroContainer,
+  .tasteContainer {
+    padding: 0 22px;
+  }
   .heroBanner {
-    gap: 45px; /* one-off */
+    gap: 36px; /* one-off */
   }
   .heroHeadingWrap {
-    width: 70%;
+    width: min(84%, 720px);
   }
   .heroTitle {
-    font-size: 50px; /* one-off */
-    line-height: 70px; /* one-off */
+    font-size: clamp(46px, 7vw, 64px); /* one-off */
+    line-height: 1.08; /* one-off */
   }
   .goldenGrid {
-    grid-column-gap: 3rem;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
   }
   .goldenHeading {
-    font-size: 30px; /* one-off */
-    line-height: 30px; /* one-off */
+    font-size: clamp(34px, 5vw, 46px); /* one-off */
+    line-height: 1.12; /* one-off */
   }
   .goldenText {
-    font-size: 15px; /* one-off */
+    font-size: 16px; /* one-off */
+    letter-spacing: 0;
   }
   .tasteContent {
-    width: 70%;
+    width: min(76%, 680px);
+    padding: 76px 0;
   }
   .tasteHeading {
-    font-size: 56px; /* one-off */
+    font-size: clamp(48px, 7vw, 64px); /* one-off */
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .tasteText {
+    letter-spacing: 0;
+    text-align: left;
+  }
+  .timelineTitle {
+    font-size: clamp(40px, 6vw, 52px);
+  }
+  .timelineIntro {
+    font-size: 17px;
+    letter-spacing: 0;
   }
   .venturesGrid {
-    grid-column-gap: 3rem;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
   }
 }
 
 /* Mobile */
 @media (max-width: 767px) {
+  .heroContainer,
+  .tasteContainer {
+    padding: 0 16px;
+  }
   .heroBanner {
-    gap: 25px; /* one-off */
+    gap: 22px; /* one-off */
   }
   .heroHeadingWrap {
     width: 100%;
   }
   .heroTitle {
-    font-size: 50px; /* one-off */
-    line-height: 64px; /* one-off */
+    font-size: clamp(38px, 11vw, 52px); /* one-off */
+    line-height: 1.08; /* one-off */
   }
   .goldenGrid {
     grid-template-columns: 1fr;
@@ -609,6 +634,7 @@
   }
   .goldenHeading {
     text-align: justify;
+    font-size: clamp(32px, 9vw, 42px);
   }
   .goldenText {
     text-align: justify;
@@ -616,9 +642,10 @@
   }
   .tasteContent {
     width: auto;
+    padding: 68px 0;
   }
   .tasteHeading {
-    font-size: 45px; /* one-off */
+    font-size: clamp(38px, 10vw, 48px); /* one-off */
   }
   .tasteText {
     text-align: left;
@@ -637,7 +664,7 @@
     padding: 3em 4% 4em; /* one-off */
   }
   .timelineTitle {
-    font-size: 50px; /* one-off */
+    font-size: clamp(36px, 10vw, 48px); /* one-off */
   }
 
   .venturesGrid {
@@ -648,15 +675,15 @@
 /* Small mobile */
 @media (max-width: 479px) {
   .heroTitle {
-    font-size: 36px; /* one-off */
-    line-height: 48px; /* one-off */
+    font-size: 34px; /* one-off */
+    line-height: 1.12; /* one-off */
   }
   .goldenText {
     text-align: left;
     line-height: 1.6; /* one-off */
   }
   .tasteHeading {
-    font-size: 42px; /* one-off */
+    font-size: 36px; /* one-off */
   }
   .tasteText {
     text-align: left;
@@ -673,6 +700,7 @@
     flex-direction: column;
   }
   .venturesBtn {
+    box-sizing: border-box;
     width: 100%;
   }
 }

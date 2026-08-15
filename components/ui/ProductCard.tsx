@@ -31,11 +31,10 @@ export default function ProductCard({
               src={product.image}
               alt={product.imageAlt || product.name}
               className={styles.image}
-              width={300}
-              height={300}
+              fill
               loading={priority ? "eager" : "lazy"}
               priority={priority}
-              sizes="(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
+              sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
             />
           ) : (
             <div className={styles.image}>No image</div>

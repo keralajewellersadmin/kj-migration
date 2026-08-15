@@ -239,7 +239,6 @@ export default function Navbar({
                     src={IMG.logoKj}
                     width={244}
                     height={88}
-                    priority
                     unoptimized
                     style={{ width: "auto", height: "auto" }}
                   />
@@ -361,7 +360,6 @@ export default function Navbar({
               src={IMG.logoKj}
               width={244}
               height={88}
-              priority
               unoptimized
               style={{ width: "auto", height: "auto" }}
             />

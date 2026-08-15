@@ -254,7 +254,7 @@ export default async function AboutPage() {
                 width={940}
                 height={600}
                 className={styles.venturesImage}
-                priority
+                loading="lazy"
               />
             </div>
             <div className={styles.venturesTextContent}>

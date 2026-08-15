@@ -81,8 +81,7 @@ export default async function Bestsellers({
                       className={styles.cardImage}
                       width={600}
                       height={600}
-                      loading={i === 0 ? "eager" : "lazy"}
-                      priority={i === 0}
+                      loading="lazy"
                     />
                   ) : null}
                 </div>

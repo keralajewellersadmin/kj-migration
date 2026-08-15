@@ -281,18 +281,44 @@
 /* ===== Responsive ===== */
 @media (max-width: 991px) {
   /* one-off */
+  .footer {
+    padding-top: var(--space-8);
+  }
+
   .top {
     grid-template-columns: 1fr;
-    gap: 30px; /* one-off */
+    gap: 30px;
   }
 
   .branches {
     grid-template-columns: 1fr 1fr;
   }
+
+  .infoGrid,
+  .featuresList {
+    max-width: 760px;
+  }
 }
 
 @media (max-width: 767px) {
   /* one-off */
+  .footer {
+    padding-top: var(--space-8);
+  }
+
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  .top {
+    gap: var(--space-8);
+  }
+
+  .heading {
+    margin-bottom: var(--space-4);
+    font-size: 21px;
+  }
+
   .bottom .container {
     flex-direction: column;
     justify-content: center;
@@ -314,10 +340,14 @@
   }
 
   .branchMap {
-    height: 100px; /* one-off */
+    height: 150px;
   }
 
   .featuresList {
+    grid-template-columns: 1fr;
+  }
+
+  .branchActions {
     grid-template-columns: 1fr;
   }
 }

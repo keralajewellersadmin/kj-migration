@@ -72,6 +72,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
 }
 
 .image {
@@ -119,7 +120,8 @@
 
 @media (max-width: 767px) {
   .card {
-    padding: var(--space-3);
+    border-radius: 9px;
+    padding: 10px;
   }
 
   .title {
@@ -128,5 +130,35 @@
 
   .category {
     font-size: var(--text-xs);
+  }
+
+  .viewBtn {
+    width: 100%;
+    min-height: 34px;
+  }
+}
+
+@media (max-width: 479px) {
+  .card {
+    padding: 8px;
+  }
+
+  .media {
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 12.5px;
+    line-height: 1.22;
+  }
+
+  .category {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .viewBtn {
+    font-size: 11px;
+    padding: 7px 8px;
   }
 }

@@ -189,9 +189,20 @@
 }
 
 @media (max-width: 991px) {
+  .section {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-12);
+  }
+
+  .container {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
+    max-width: 760px;
   }
 
   .cardMedia {
@@ -212,6 +223,8 @@
 
   .grid {
     grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 390px;
   }
 
   .card {
@@ -219,7 +232,7 @@
   }
 
   .cardMedia {
-    min-height: 255px;
+    min-height: 235px;
   }
 }
 

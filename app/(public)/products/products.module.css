@@ -16,15 +16,35 @@
 
 @media (max-width: 991px) {
   /* one-off */
+  .section {
+    padding: 44px 20px 70px;
+  }
+
   .metalIntro {
-    font-size: clamp(24px, 3.5vw, 32px); /* one-off */
+    font-size: clamp(22px, 3.5vw, 28px);
+    line-height: 1.35;
+    max-width: 720px;
+  }
+
+  .filterWrapper {
+    align-items: stretch;
+    flex-wrap: wrap;
   }
 }
 
 @media (max-width: 767px) {
   /* one-off */
   .section {
-    padding: 40px 16px 60px; /* one-off */
+    padding: 34px 14px 56px;
+  }
+
+  .metalIntro {
+    margin-bottom: 26px;
+  }
+
+  .resetBtn {
+    width: 100%;
+    margin-left: 0;
   }
 }
 
@@ -38,7 +58,8 @@
   .filterWrapper {
     flex-wrap: wrap;
     gap: 12px; /* one-off */
-    padding: 12px; /* one-off */
+    padding: 12px;
+    border-radius: 12px;
   }
 }
 

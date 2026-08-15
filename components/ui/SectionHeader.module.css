@@ -46,8 +46,22 @@
 }
 
 @media (max-width: 767px) {
+  .header {
+    margin-bottom: var(--space-6);
+    padding: 0 var(--space-3);
+  }
+
   .title {
-    font-size: clamp(28px, 8vw, 38px);
+    font-size: clamp(30px, 9vw, 40px);
     line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .borderBox {
+    margin-top: var(--space-3);
   }
 }

@@ -45,7 +45,7 @@
   font-weight: 300;
   font-size: 65px;
   line-height: 65px;
-  letter-spacing: -2.6px;
+  letter-spacing: 0;
 }
 
 /* Description */
@@ -54,7 +54,7 @@
   font-family: var(--font-body);
   font-size: 22px;
   font-weight: 300;
-  letter-spacing: -0.88px;
+  letter-spacing: 0;
   line-height: 1.09;
   max-width: 60%;
 }
@@ -198,18 +198,41 @@
   }
 
   .grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+    max-width: 100%;
   }
 
   .card {
-    min-height: 318px;
+    min-height: 280px;
   }
 
   .cardContent {
-    max-width: 62%;
+    max-width: 78%;
     min-height: 100%;
+    padding: 34px 22px;
+  }
+
+  .heading {
+    font-size: clamp(42px, 7vw, 56px);
+    line-height: 1.05;
+  }
+
+  .description {
+    max-width: 86%;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 285px;
   }
 }
 

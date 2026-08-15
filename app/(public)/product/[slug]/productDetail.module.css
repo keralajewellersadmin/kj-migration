@@ -263,39 +263,71 @@
 
 @media (max-width: 991px) {
   /* one-off */
+  .section {
+    padding: 42px 0;
+  }
+  .container {
+    padding: 0 22px;
+  }
   .layout {
     grid-template-columns: 1fr;
-    gap: 40px; /* one-off */
+    gap: 28px; /* one-off */
   }
   .details {
     margin-top: 0;
+    padding: 22px;
   }
   .relatedGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .imageWrapper {
-    min-height: 300px; /* one-off */
+    min-height: clamp(310px, 56vw, 520px); /* one-off */
   }
   .mainImage {
-    max-height: 400px; /* one-off */
+    max-height: clamp(280px, 50vw, 460px); /* one-off */
   }
 }
 
 @media (max-width: 767px) {
   /* one-off */
   .section {
-    padding: 40px 16px; /* one-off */
+    padding: 34px 0; /* one-off */
+  }
+  .container {
+    padding: 0 16px;
   }
   .relatedGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px; /* one-off */
   }
   .imageWrapper {
-    min-height: 260px; /* one-off */
-    padding: 16px; /* one-off */
+    min-height: clamp(260px, 78vw, 380px); /* one-off */
+    padding: 14px; /* one-off */
   }
   .mainImage {
-    max-height: 320px; /* one-off */
+    max-height: clamp(230px, 70vw, 340px); /* one-off */
+  }
+  .details {
+    gap: 16px;
+    padding: 18px;
+  }
+  .name {
+    font-size: clamp(24px, 7vw, 32px);
+    line-height: 1.2;
+  }
+  .infoRow {
+    gap: 16px;
+  }
+  .infoLabel,
+  .infoValue {
+    font-size: 14px;
+  }
+  .relatedSection {
+    padding: 34px 16px;
+  }
+  .relatedTitle {
+    text-align: center;
+    margin-bottom: 22px;
   }
   .loupe {
     display: none;
@@ -305,8 +337,13 @@
 @media (max-width: 479px) {
   /* one-off */
   .relatedGrid {
-    grid-template-columns: 1fr; /* one-off */
-    gap: 16px; /* one-off */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* one-off */
+    gap: 12px; /* one-off */
+  }
+  .infoRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
   }
   .actions {
     flex-direction: column;

@@ -384,24 +384,34 @@
 
 @media (max-width: 991px) {
   /* one-off */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
   .branchesGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    padding: 32px;
   }
 }
 
 @media (max-width: 767px) {
   /* one-off */
   .hero {
-    padding: 40px 0 28px; /* one-off */
+    padding: 38px 0 26px;
+    margin-bottom: 26px;
   }
   .heroTitle {
-    font-size: clamp(28px, 8vw, 38px); /* one-off */
+    font-size: clamp(34px, 10vw, 44px);
   }
   .container {
     padding: 0 16px; /* one-off */
   }
   .card {
-    padding: 24px 20px; /* one-off */
+    padding: 24px 18px;
   }
   .grid {
     grid-template-columns: 1fr; /* one-off */
@@ -411,5 +421,13 @@
   }
   .branchesGrid {
     grid-template-columns: 1fr; /* one-off */
+  }
+
+  .branchCard {
+    padding: 18px;
+  }
+
+  .branchMap {
+    height: 170px;
   }
 }

@@ -38,7 +38,7 @@ export default function ProductsHero({
                 width={382}
                 height={13}
                 className={styles.decorativeImg}
-                style={{ width: "auto", height: "auto" }}
+                style={{ height: "auto" }}
               />
             </div>
             <p className={styles.description}>{subtitle}</p>
