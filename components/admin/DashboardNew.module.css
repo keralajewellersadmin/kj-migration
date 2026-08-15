@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px clamp(16px, 2vw, 24px) 32px;
   box-sizing: border-box;
   overflow-x: clip;
 }
@@ -299,6 +299,10 @@
 @media (max-width: 1200px) {
   .statGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
   }
 }
 

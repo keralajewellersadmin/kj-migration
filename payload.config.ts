@@ -2138,15 +2138,15 @@ export default buildConfig({
       ],
     },
     components: {
-      beforeDashboard: [
-        { path: "@/components/admin/DashboardNew", exportName: "default" },
-      ],
       Nav: "@/components/admin/AdminSidebarServer",
       graphics: {
         Icon: "@/components/admin/AdminLogo",
         Logo: "@/components/admin/AdminLogo",
       },
       views: {
+        dashboard: {
+          Component: "@/components/admin/DashboardNew",
+        },
         login: {
           Component: "@/components/admin/CustomLogin",
         },
