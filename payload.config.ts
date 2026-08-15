@@ -590,6 +590,15 @@ const AdminUsers: CollectionConfig = {
   fields: [
     { name: "name", type: "text", required: true },
     {
+      name: "email",
+      type: "email",
+      required: true,
+      unique: true,
+      admin: {
+        description: "Email address used for OTP delivery and password reset.",
+      },
+    },
+    {
       name: "username",
       type: "text",
       unique: true,
@@ -628,6 +637,37 @@ const AdminUsers: CollectionConfig = {
         { name: "createdAt", type: "date", defaultValue: () => new Date() },
         { name: "expiresAt", type: "date", required: true },
       ],
+    },
+    {
+      name: "salt",
+      type: "text",
+      admin: { hidden: true, disabled: true },
+      access: {
+        read: () => false,
+        create: () => false,
+        update: () => false,
+      },
+    },
+    {
+      name: "hash",
+      type: "text",
+      admin: { hidden: true, disabled: true },
+      access: {
+        read: () => false,
+        create: () => false,
+        update: () => false,
+      },
+    },
+    {
+      name: "loginAttempts",
+      type: "number",
+      defaultValue: 0,
+      admin: { hidden: true, disabled: true },
+      access: {
+        read: () => false,
+        create: () => false,
+        update: () => false,
+      },
     },
   ],
 };
