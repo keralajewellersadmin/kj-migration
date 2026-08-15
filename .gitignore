@@ -45,7 +45,6 @@ next-env.d.ts
 
 # generated
 /screenshots/
-/scripts/
 .playwright-mcp/
 
 # Payload CMS

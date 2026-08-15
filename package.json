@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "seed": "tsx scripts/seed-products.ts",
     "setup:prod-admin": "tsx scripts/setup-prod-admin.mts"
   },
   "dependencies": {
@@ -32,7 +31,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.1",
@@ -42,7 +40,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "knip": "^6.32.0",
-    "playwright": "^1.61.1",
     "tsx": "^4.19.0",
     "typescript": "^5"
   }

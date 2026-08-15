@@ -7,7 +7,6 @@ import {
 } from "@/lib/auth/email";
 import {
   createPayloadAdminSession,
-  DirectAdminUser,
   findDirectAdminUser,
   getLoginSql,
   SESSION_MAX_AGE,
@@ -160,95 +159,6 @@ async function handleLogin(request: Request) {
       { status: 400 },
     );
   }
-
-  // --- LOCAL FALLBACK ---
-  // If no Neon Postgres URL is provided, fallback to SQLite directly.
-  if (!process.env.DATABASE_URL) {
-    try {
-      const Database = (await import("better-sqlite3")).default;
-      const db = new Database("C:/Users/mdsar/AppData/Local/Temp/kerala-cms/dev-local-cms.db");
-      const normalized = identifier.trim().toLowerCase();
-      const user = db
-        .prepare(
-          "SELECT id, email, username, name, role, is_active, salt, hash FROM admin_users WHERE lower(email) = ? OR lower(username) = ? LIMIT 1"
-        )
-        .get(normalized, normalized) as DirectAdminUser | undefined;
-
-      if (user && user.is_active) {
-        const validPassword = await verifyPayloadPassword(password, user);
-        if (validPassword) {
-          const crypto = await import("crypto");
-          if (!isOtpEnabled()) {
-            const sid = crypto.randomUUID();
-            const now = new Date();
-            const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE * 1000);
-            
-            db.prepare("DELETE FROM admin_users_sessions WHERE _parent_id = ? AND expires_at <= ?").run(user.id, now.toISOString());
-            const orderRow = db.prepare("SELECT coalesce(max(_order), -1) + 1 as next_order FROM admin_users_sessions WHERE _parent_id = ?").get(user.id) as { next_order: number } | undefined;
-            const nextOrder = orderRow ? orderRow.next_order : 0;
-            
-            db.prepare("INSERT INTO admin_users_sessions (_parent_id, _order, id, created_at, expires_at) VALUES (?, ?, ?, ?, ?)")
-              .run(user.id, nextOrder, sid, now.toISOString(), expiresAt.toISOString());
-
-            const token = await signPayloadTokenWithSession(user, sid);
-            return withPayloadSession(
-              {
-                success: true,
-                requiresOtp: false,
-                redirectTo: ADMIN_PATH,
-                user: {
-                  id: user.id,
-                  email: user.email,
-                  name: user.name,
-                  role: user.role,
-                },
-              },
-              token
-            );
-          }
-
-          // OTP Logic
-          const otp = generateOtp();
-          const codeHash = hashValue(otp);
-          const now = new Date();
-          const expiresAt = new Date(now.getTime() + 10 * 60 * 1000).toISOString();
-          const pendingAuthToken = crypto.randomUUID();
-
-          db.prepare("DELETE FROM login_otps WHERE user_id = ?").run(user.id);
-          db.prepare("INSERT INTO login_otps (user_id, code_hash, expires_at, attempts, session_token, updated_at, created_at) VALUES (?, ?, ?, 0, ?, ?, ?)")
-            .run(user.id, codeHash, expiresAt, pendingAuthToken, now.toISOString(), now.toISOString());
-
-          try {
-            await sendOtpEmail(user.email, otp);
-          } catch (emailErr) {
-            console.error("[Local Login Fallback] Failed to send OTP email:", emailErr);
-            return NextResponse.json(
-              { error: "Failed to send verification email" },
-              { status: 500 }
-            );
-          }
-
-          const [localPart, domain] = user.email.split("@");
-          const maskedEmail = localPart.length > 0
-            ? `${localPart[0]}***@${domain}`
-            : `***@${domain}`;
-
-          return NextResponse.json({
-            success: true,
-            requiresOtp: true,
-            maskedEmail,
-            userId: user.id,
-          });
-        }
-      }
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    } catch (err) {
-      console.error("[Local Login Fallback] Authentication error:", err);
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
-  }
-  // --- END LOCAL FALLBACK ---
-
 
   // Rate limit: max 5 login attempts per 15 minutes per IP
   const ip = getClientIp(request);

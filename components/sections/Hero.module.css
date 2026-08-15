@@ -8,6 +8,7 @@
   margin-left: auto;
   margin-right: auto;
   padding: 20px 30px 0;
+  box-sizing: border-box;
 }
 
 /* Slider */
@@ -51,6 +52,7 @@
 .banner {
   width: 100%;
   height: 500px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   background-size: cover;
@@ -77,6 +79,7 @@
 .content {
   text-align: left;
   width: 50%;
+  min-width: 0;
   max-width: 1140px;
   margin-left: 100px;
   display: flex;
@@ -100,6 +103,7 @@
   line-height: 1.05;
   max-width: min(100%, 620px);
   white-space: pre-line;
+  overflow-wrap: break-word;
 }
 
 /* Decorative line */
@@ -135,6 +139,7 @@
   line-height: 35px;
   text-decoration: none;
   white-space: pre-line;
+  overflow-wrap: break-word;
 }
 
 /* CTA Button */
@@ -197,10 +202,16 @@
 
 /* Responsive: Mobile */
 @media (max-width: 767px) {
+  .container {
+    padding: 14px 14px 0;
+  }
+
   .banner {
-    height: 480px;
+    height: auto;
+    min-height: clamp(430px, 72vh, 480px);
     background-size: cover;
     background-position: 65% center;
+    align-items: stretch;
   }
 
   .banner::before {
@@ -216,53 +227,58 @@
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    padding: 24px;
+    min-height: inherit;
+    padding: clamp(18px, 5vw, 24px);
     justify-content: flex-end;
   }
 
   .heading {
-    font-size: 38px;
-    line-height: 1.15;
+    font-size: clamp(30px, 9vw, 38px);
+    line-height: 1.08;
     max-width: 100%;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
 
   .description {
     max-width: 100%;
-    font-size: 18px;
-    line-height: 1.4;
+    font-size: clamp(15px, 4.3vw, 18px);
+    line-height: 1.35;
     text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
 
   .cta {
     margin-left: 0;
-    width: 100%;
+    width: min(100%, 280px);
     text-align: center;
     margin-top: 10px;
+  }
+
+  .ctaText {
+    font-size: clamp(21px, 6vw, 27.556px);
   }
 }
 
 /* Responsive: Small Mobile */
 @media (max-width: 479px) {
   .banner {
-    height: 420px;
+    min-height: 440px;
   }
 
   .content {
-    padding: 20px;
+    padding: 18px;
   }
 
   .heading {
-    font-size: 32px;
-    line-height: 1.15;
+    font-size: clamp(27px, 8.4vw, 32px);
+    line-height: 1.08;
   }
 
   .description {
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.32;
   }
 
   .cta {
-    font-size: 18px;
-    padding: 12px 16px;
+    padding: 10px 16px;
   }
 }
