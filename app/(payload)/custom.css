@@ -23,7 +23,7 @@ body,
 .template-minimal {
   background: #f7f5f0;
   color: #1a1512;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -100,7 +100,7 @@ body,
 .global-edit__header h1,
 .collection-edit__header h1 {
   color: #1a1512;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-ui);
 }
 
 /* ── Cards / Panels ── */
@@ -147,7 +147,7 @@ body,
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-ui);
   border-bottom-color: #ebe5da;
 }
 
@@ -270,7 +270,7 @@ button.btn--style-secondary,
   border-color: #ddd5c9;
   border-radius: 6px;
   background: #fff;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-body);
 }
 
 .field-type input:focus,
@@ -284,7 +284,7 @@ button.btn--style-secondary,
 .field-label {
   color: #1a1512;
   font-weight: 600;
-  font-family: "Mulish", sans-serif;
+  font-family: var(--font-body);
 }
 
 .field-description,

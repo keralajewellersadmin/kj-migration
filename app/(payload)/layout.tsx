@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import type { ServerFunctionClient } from "payload";
 import config from "@payload-config";
 import { RootLayout, handleServerFunctions } from "@payloadcms/next/layouts";
+import "@/styles/tokens.css";
 import "@payloadcms/next/css";
 import "./custom.css";
 import React from "react";
