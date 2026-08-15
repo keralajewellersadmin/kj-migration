@@ -48,6 +48,8 @@ import {
 } from "./lib/cloudinaryUploadHook";
 import { ADMIN_PATH } from "./lib/admin-path";
 
+neonServerless.neonConfig.poolQueryViaFetch = true;
+
 const canReadProtectedField = ({
   req,
 }: {
@@ -233,6 +235,9 @@ function cleanDatabaseUrl(url: string | undefined): string | undefined {
   const sslMode = parsed.searchParams.get("sslmode");
   if (sslMode === "prefer" || sslMode === "require" || sslMode === "verify-ca") {
     parsed.searchParams.set("sslmode", "verify-full");
+  }
+  if (parsed.hostname.includes("-pooler")) {
+    parsed.hostname = parsed.hostname.replace("-pooler", "");
   }
   return parsed.toString();
 }
