@@ -304,9 +304,6 @@ const Media: CollectionConfig = {
   admin: {
     useAsTitle: "alt",
     defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
-    components: {
-      beforeList: ["@/components/admin/MediaFolderFilters"],
-    },
   },
   access: {
     read: canReadMedia,
@@ -923,7 +920,6 @@ const Inquiry: CollectionConfig = {
     defaultColumns: ["sourcePage", "name", "email", "product", "status", "submittedAt"],
     listSearchableFields: ["name", "email"],
     components: {
-      beforeList: ["@/components/admin/InquiryQuickFilters"],
       edit: {
         beforeDocumentControls: [
           "@/components/admin/InquiryDetail",

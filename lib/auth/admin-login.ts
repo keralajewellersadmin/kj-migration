@@ -15,12 +15,53 @@ export type DirectAdminUser = {
   hash: string | null;
 };
 
-let loginSql: ReturnType<typeof neon> | null = null;
+import Database from "better-sqlite3";
+import { resolve } from "path";
+
+let loginSql: any = null;
 
 export function getLoginSql() {
   if (loginSql) return loginSql;
   const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) throw new Error("DATABASE_URL is required");
+  if (!connectionString) {
+    const dbUri = process.env.DATABASE_URI || "file:./dev.db";
+    const dbPath = dbUri.replace(/^file:/, "").replace(/^\/\//, "");
+    const absolutePath = resolve(process.cwd(), dbPath);
+    const db = new Database(absolutePath);
+
+    loginSql = {
+      async query(text: string, params: any[] = []) {
+        // Map Postgres numbered parameters ($1, $2, etc.) to positional SQLite params
+        const matches = text.match(/\$\d+/g) || [];
+        const sqliteParams = matches.map((m) => {
+          const index = parseInt(m.slice(1)) - 1;
+          return params[index];
+        });
+
+        let sql = text
+          .replace(/\$\d+/g, "?")
+          .replace(/now\(\)/gi, "datetime('now')")
+          .replace(/::text/gi, "")
+          .replace(/coalesce\((max\(_order\)), -1\)/gi, "ifnull($1, -1)");
+
+        const stmt = db.prepare(sql);
+        if (sql.trim().toLowerCase().startsWith("select")) {
+          const rows = stmt.all(...sqliteParams);
+          return rows.map((row: any) => {
+            const mapped = { ...row };
+            if ("is_active" in mapped) {
+              mapped.is_active = mapped.is_active === 1 || mapped.is_active === true;
+            }
+            return mapped;
+          });
+        } else {
+          const info = stmt.run(...sqliteParams);
+          return { rowCount: info.changes };
+        }
+      },
+    };
+    return loginSql;
+  }
 
   // The neon() HTTP driver does not work with the PgBouncer -pooler endpoint.
   // Strip -pooler so queries go to the direct compute endpoint over HTTP.

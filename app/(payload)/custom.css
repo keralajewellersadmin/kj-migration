@@ -1,14 +1,38 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Mulish:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");
 
-/* Kerala Jewellers - Admin Panel Theme */
+/* ═══════════════════════════════════════════════════════════════
+   Kerala Jewellers — Admin Panel Custom CSS
+   Clean, Minimal Luxury SaaS Theme (GitHub / Stripe Style)
+   ═══════════════════════════════════════════════════════════════ */
 
 /* Hide API tab on document edit pages */
 .doc-tabs .doc-tab[href*="/api"] { display: none !important; }
 
-/* ── Base ── */
+/* ── 1. Global Reset & Palette ── */
 html,
-html[data-theme="light"] {
-  background: #f7f5f0;
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --theme-bg: #f8fafc;
+  --theme-elevation-0: #ffffff;
+  --theme-elevation-50: #ffffff;
+  --theme-elevation-100: #f8fafc;
+  --theme-elevation-150: #f1f5f9;
+  --theme-elevation-200: #e2e8f0;
+  --theme-elevation-250: #cbd5e1;
+  --theme-elevation-300: #94a3b8;
+  --theme-elevation-400: #64748b;
+  --theme-elevation-500: #475569;
+  --theme-elevation-600: #334155;
+  --theme-elevation-700: #1e293b;
+  --theme-elevation-800: #0f172a;
+  --theme-elevation-900: #020617;
+  --theme-input-bg: #ffffff;
+  --theme-text: #0f172a;
+  --theme-success-500: #16a34a;
+  --theme-error-500: #dc2626;
+  --theme-warning-500: #d97706;
+
+  background: #f8fafc !important;
   overflow-x: hidden;
 }
 
@@ -17,24 +41,18 @@ body {
   margin: 0;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 body,
 .payload-admin,
 .template-default,
 .template-minimal {
-  background: #f7f5f0;
-  color: #1a1512;
-  font-family: var(--font-body), "Mulish", system-ui, sans-serif;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
 }
 
-/* ── Payload's .nav container — reset all default styles, let AdminSidebar handle everything ── */
+/* ── 2. Sidebar & Layout Grid ── */
 .nav {
   padding: 0 !important;
   background: transparent !important;
@@ -45,133 +63,509 @@ body,
   overflow: visible !important;
 }
 
-/* ── Layout — new sidebar is position:fixed, content needs left margin ── */
 :root {
   --sidebar-width: 260px;
 }
 
 @media (min-width: 1024px) {
   .template-default {
-    grid-template-columns: 1fr;
+    grid-template-columns: var(--sidebar-width) 1fr !important;
     width: 100%;
     max-width: 100vw;
-    overflow-x: hidden;
-    background: #f7f5f0;
   }
   .template-default__wrap {
-    grid-column: 1;
-    min-width: 0;
-    width: calc(100vw - var(--sidebar-width));
-    max-width: calc(100vw - var(--sidebar-width));
-    margin-left: var(--sidebar-width);
+    grid-column: 2 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-height: 100vh;
-    transition: margin-left 0.2s ease;
-    overflow-x: clip;
-    background: #f7f5f0;
+    background: #f8fafc !important;
   }
-  .template-default__wrap > main,
-  .template-default__wrap .gutter--left,
-  .template-default__wrap .gutter--right {
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: clip;
+  .template-default__nav-toggler-container,
+  .app-header__mobile-nav-toggler,
+  .nav-toggler {
+    display: none !important;
   }
-  .template-default__nav-toggler-container { display: none; }
 }
 
 @media (max-width: 1023px) {
   .template-default {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     width: 100%;
     max-width: 100vw;
-    overflow-x: hidden;
-    background: #f7f5f0;
   }
   .template-default__wrap {
-    margin-left: 0;
-    width: 100%;
-    max-width: 100%;
+    grid-column: 1 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-height: 100vh;
-    overflow-x: clip;
-    background: #f7f5f0;
+    background: #f8fafc !important;
+  }
+  .template-default__nav-toggler-container,
+  .app-header__mobile-nav-toggler,
+  .nav-toggler {
+    display: none !important;
+  }
+  .app-header__content {
+    padding-left: 56px !important;
   }
 }
 
-/* ── Header ── */
-.app-header,
-.doc-header {
-  border-color: #ebe5da;
-  background: rgba(247, 245, 240, 0.95);
-  backdrop-filter: blur(12px);
+/* ── 3. Top Header Bar (app-header, app-header__content, app-header__wrapper) ── */
+.app-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #eef2f6 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  backdrop-filter: blur(8px) !important;
 }
 
-.app-header__content { min-height: 56px; }
+.app-header__content {
+  min-height: 56px !important;
+  height: 56px !important;
+  padding: 0 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
 
+.app-header__wrapper {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+/* Hide the tiny duplicate icon logo in the breadcrumb bar if present */
+.app-header .graphic,
+.app-header__wrapper > a:first-child:not(.breadcrumbs a) {
+  display: none !important;
+}
+
+/* Breadcrumbs Styling */
 .breadcrumbs,
+.step-nav {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #64748b !important;
+  font-family: "Inter", sans-serif !important;
+}
+
 .breadcrumbs a,
+.step-nav a {
+  color: #64748b !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+.breadcrumbs a:hover,
+.step-nav a:hover {
+  color: #9f1b1f !important;
+}
+
+.breadcrumbs span:last-child,
+.step-nav span:last-child {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+/* Top Right Controls Wrapper */
+.app-header__controls-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* User Account Icon / Avatar in Header */
+.app-header__controls-wrapper svg,
+.app-header__controls-wrapper a {
+  color: #64748b !important;
+  transition: color 0.15s ease !important;
+}
+
+.app-header__controls-wrapper a:hover svg {
+  color: #9f1b1f !important;
+}
+
+/* ── 4. Unified Document Header & Action Bar ── */
+.doc-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 20px 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 70px !important;
+}
+
+.collection-list__header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 20px 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
 .doc-header__title,
 .collection-list__header h1,
 .global-edit__header h1,
 .collection-edit__header h1 {
-  color: #1a1512;
-  font-family: var(--font-ui);
+  color: #0f172a !important;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  margin: 0 !important;
+  line-height: 1.2 !important;
 }
 
-/* ── Cards / Panels ── */
-.collection-list__wrap,
-.collection-edit__form,
-.global-edit__form,
-.list-controls,
-.table,
-.card,
-.render-fields,
-.tabs-field__tabs,
-.upload,
-.drawer__content,
-.modal,
-.popup {
-  border-color: #ebe5da;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(26, 21, 18, 0.04);
-}
-
+/* Remove separate clunky doc-controls bar in favor of clean inline header placement */
 .doc-controls {
-  border-color: #ebe5da;
-  border-radius: 0;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(26, 21, 18, 0.04);
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 12px 32px !important;
+  margin: 0 !important;
+  position: sticky !important;
+  top: 52px !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
 }
 
-.collection-list__wrap,
+.doc-controls__wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  justify-content: flex-end !important;
+}
+
+.doc-controls__divider { display: none !important; }
+
+/* ── 5. Clean Form Container ── */
+.collection-edit__main-wrapper,
+.global-edit__main-wrapper {
+  background: #f8fafc !important;
+  padding: 28px 32px 64px !important;
+}
+
+.collection-edit__main,
+.global-edit__main {
+  max-width: 1000px !important;
+  margin: 0 !important;
+}
+
 .collection-edit__form,
-.global-edit__form,
-.doc-controls { overflow: visible; }
-
-.list-controls { padding: 14px; overflow: visible; }
-
-/* ── Table ── */
-.table { overflow: hidden; }
-.table table { border-collapse: separate; border-spacing: 0; }
-
-.table thead th {
-  background: #faf8f5;
-  color: #6b5e4f;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-family: var(--font-ui);
-  border-bottom-color: #ebe5da;
+.global-edit__form {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.table tbody tr:hover { background: #fdfcfa; }
-.table tbody td { border-color: #f0ebe3; color: #1a1512; }
+/* ── 6. Sleek Minimal Underline Tab Navigation ── */
+.tabs-field {
+  margin-bottom: 24px !important;
+}
 
-/* ── Buttons ── */
-.btn, button, .popup-button { border-radius: 6px; }
+.tabs-field__tabs-wrap {
+  display: flex !important;
+  justify-content: flex-start !important;
+  border-bottom: 2px solid #e8eaed !important;
+  margin-bottom: 24px !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
 
-/* Primary: Maroon */
+.tabs-field__tabs {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  gap: 32px !important;
+  box-shadow: none !important;
+  width: auto !important;
+  overflow-x: auto !important;
+  margin-bottom: -2px !important;
+}
+
+.tabs-field__tab-button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 12px 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #64748b !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  transition: color 0.15s ease !important;
+  font-family: "Inter", sans-serif !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.tabs-field__tab-button:hover {
+  color: #0f172a !important;
+  background: transparent !important;
+}
+
+.tabs-field__tab-button--active,
+.tabs-field__tab-button.tabs-field__tab-button--active {
+  background: transparent !important;
+  color: #9f1b1f !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid #9f1b1f !important;
+}
+
+/* Tab Content */
+.tabs-field__content-wrap {
+  width: 100% !important;
+}
+
+.tabs-field__tab {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Single unified clean card for form fields */
+.tabs-field__tab > .render-fields {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 24px 28px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* ── 7. Clean Form Groups (Flat & Seamless) ── */
+.group-field {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  box-shadow: none !important;
+}
+
+.group-field__header,
+.array-field__header {
+  margin-bottom: 14px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.group-field__header h3,
+.array-field__header h3,
+.array-field__header label {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── 8. Collapsible & Array Cards (Clean Accordion) ── */
+.collapsible {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  margin-bottom: 10px !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.collapsible:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.collapsible__toggle-wrap {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #eef2f6 !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.collapsible__toggle {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  z-index: 1 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.collapsible__toggle span {
+  display: none !important;
+}
+
+.collapsible__header-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+.row-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+.collapsible__actions-wrap {
+  margin-left: auto !important;
+  z-index: 3 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.collapsible__content {
+  padding: 18px 20px !important;
+  background: #ffffff !important;
+}
+
+.collapsible__content .render-fields {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Array Add Row Button */
+.array-field__add-row,
+.array-field__add-button,
+.blocks-field__drawer-toggler {
+  background: #ffffff !important;
+  border: 1px dashed #cbd5e1 !important;
+  border-radius: 6px !important;
+  color: #9f1b1f !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.array-field__add-row:hover,
+.array-field__add-button:hover,
+.blocks-field__drawer-toggler:hover {
+  border-color: #9f1b1f !important;
+  background: rgba(159, 27, 31, 0.03) !important;
+  color: #7a1518 !important;
+}
+
+/* ── 9. Form Field Spacing & Typography ── */
+.field-type {
+  margin-bottom: 16px !important;
+}
+
+.field-type:last-child {
+  margin-bottom: 0 !important;
+}
+
+.field-type label,
+.field-label {
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+
+.field-type input[type="text"],
+.field-type input[type="email"],
+.field-type input[type="password"],
+.field-type input[type="number"],
+.field-type input[type="search"],
+.field-type textarea,
+.field-type select,
+.react-select__control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+select {
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  font-family: "Inter", sans-serif !important;
+  color: #0f172a !important;
+  padding: 8px 12px !important;
+  font-size: 13.5px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.field-type input:focus,
+.field-type textarea:focus,
+.react-select__control--is-focused,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #9f1b1f !important;
+  box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
+  outline: none !important;
+}
+
+/* Fix for Payload List Search Bar overlapping icon */
+.search-filter__input input,
+input.search-filter__input {
+  padding-left: 40px !important;
+}
+
+.field-description,
+.description {
+  color: #64748b !important;
+  font-size: 12px !important;
+  margin-top: 3px !important;
+}
+
+.field-error {
+  color: #dc2626 !important;
+  font-size: 12px !important;
+}
+
+/* ── 10. Buttons ── */
+.btn, .popup-button, button.btn {
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+/* Primary — Brand Maroon */
 .btn--style-primary,
 button.btn--style-primary,
 .popup-button--style-primary,
@@ -180,8 +574,9 @@ button.btn--icon-style-without-border.btn--style-primary {
   border-color: #9f1b1f !important;
   background: #9f1b1f !important;
   background-color: #9f1b1f !important;
-  color: #fff !important;
+  color: #ffffff !important;
   font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .btn--style-primary:hover,
@@ -191,152 +586,183 @@ button.btn--icon-style-without-border.btn--style-primary:hover {
   border-color: #7a1518 !important;
   background: #7a1518 !important;
   background-color: #7a1518 !important;
+  box-shadow: 0 2px 6px rgba(159, 27, 31, 0.2);
 }
 
 /* Secondary */
 .btn--style-secondary,
 button.btn--style-secondary,
 .popup-button--style-secondary {
-  border-color: #ebe5da;
-  background: #fff;
-  color: #1a1512;
+  border-color: #d1d5db !important;
+  background: #ffffff !important;
+  color: #374151 !important;
 }
 
 .btn--style-secondary:hover {
-  background: #faf8f5;
-  border-color: #d4af37;
+  background: #f8fafc !important;
+  border-color: #9ca3af !important;
 }
 
-/* Danger in modals */
-.modal .btn--style-primary,
-.modal button.btn--style-primary,
-.modal .popup-button--style-primary,
-.drawer__content .btn--style-primary,
-.drawer__content button.btn--style-primary,
-.popup .btn--style-primary,
-.popup button.btn--style-primary {
-  border-color: #dc2626 !important;
-  background: #dc2626 !important;
-  background-color: #dc2626 !important;
-  color: #fff !important;
+/* ── 11. List Views & Tables ── */
+.collection-list__wrap {
+  padding: 24px 32px 48px !important;
+  background: #f8fafc !important;
 }
 
-.modal .btn--style-primary:hover,
-.modal button.btn--style-primary:hover,
-.modal .popup-button--style-primary:hover,
-.drawer__content .btn--style-primary:hover,
-.drawer__content button.btn--style-primary:hover,
-.popup .btn--style-primary:hover,
-.popup button.btn--style-primary:hover {
-  border-color: #b91c1c !important;
-  background: #b91c1c !important;
-  background-color: #b91c1c !important;
-}
-
-/* ── List Controls ── */
-.list-controls .btn--style-primary,
-.list-controls .pill,
-.list-controls .status,
-.list-controls button {
-  border-color: #ebe5da !important;
+.list-controls {
   background: #ffffff !important;
-  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  padding: 14px 18px !important;
+  margin-bottom: 14px !important;
+}
+
+/* Pagination & Per Page Controls */
+.collection-list__page-controls,
+.page-controls {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 16px !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 13px !important;
+  color: #64748b !important;
+  margin-top: 16px !important;
+}
+
+.collection-list__page-info,
+.page-info {
+  font-weight: 500 !important;
+  color: #475569 !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 13px !important;
+}
+
+.per-page {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-family: var(--font-ui), "Mulish", system-ui, sans-serif !important;
+  overflow: hidden !important;
+}
+
+.per-page span {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #6b5e4f !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.per-page .react-select__control {
+  border: 1px solid #ebe5da !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  min-height: 32px !important;
+  max-width: 72px !important;
+  padding: 0 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
   color: #1a1512 !important;
-  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
 }
 
-.list-controls .btn--style-primary:hover,
-.list-controls .pill:hover,
-.list-controls .status:hover,
-.list-controls button:hover {
-  background: #f5f0e8 !important;
-  background-color: #f5f0e8 !important;
+.per-page .react-select__value-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
-.list-controls__columns.rah-static,
-.list-controls__where.rah-static { overflow: visible !important; }
-
-.list-controls__columns.rah-static > div[style*="height: 0"],
-.list-controls__where.rah-static > div[style*="height: 0"],
-.list-controls__columns .rah-static--collapsed > div,
-.list-controls__where .rah-static--collapsed > div {
-  visibility: hidden !important;
-  pointer-events: none !important;
+.per-page .react-select__single-value {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+  line-height: 1 !important;
+  margin: 0 !important;
 }
 
-/* ── Pills & Status ── */
-.doc-status,
-.collection-list .pill,
-.collection-list .status {
-  border-color: rgba(159, 27, 31, 0.2);
-  border-radius: 999px;
-  background: rgba(159, 27, 31, 0.06);
-  color: #9f1b1f;
-  font-size: 12px;
-  font-weight: 500;
+.per-page .react-select__indicator {
+  padding: 0 0 0 4px !important;
+  flex-shrink: 0 !important;
 }
 
-/* ── Form Fields ── */
-.field-type input,
-.field-type textarea,
-.field-type select,
-.react-select__control {
-  border-color: #ddd5c9;
-  border-radius: 6px;
-  background: #fff;
-  font-family: var(--font-body);
+.table {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  overflow: hidden !important;
 }
 
-.field-type input:focus,
-.field-type textarea:focus,
-.react-select__control--is-focused {
-  border-color: #d4af37 !important;
-  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15) !important;
-}
+.table table { border-collapse: separate; border-spacing: 0; }
 
-.field-type label,
-.field-label {
-  color: #1a1512;
+.table thead th {
+  background: #f8fafc !important;
+  color: #64748b !important;
+  font-size: 11px;
   font-weight: 600;
-  font-family: var(--font-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 10px 14px;
 }
 
-.field-description,
-.description,
-.field-error { color: #8a7d6b; }
+.table tbody tr { background: #ffffff !important; }
+.table tbody tr:nth-child(even) { background: #fafbfc !important; }
+.table tbody tr:hover { background: #f1f5f9 !important; }
 
-/* ── Tabs ── */
-.tabs-field__tabs {
-  padding: 4px;
-  background: #f5f0e8;
-  border-radius: 8px;
+.table tbody td {
+  border-color: #f1f5f9 !important;
+  color: #334155 !important;
+  padding: 10px 14px;
+  font-size: 13.5px;
 }
 
-.tabs-field__tab {
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.tabs-field__tab--active {
-  background: #fff;
-  color: #9f1b1f;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+.table tbody td a {
+  color: #9f1b1f !important;
+  text-decoration: none;
   font-weight: 600;
+  transition: color 0.15s ease;
 }
 
-/* ── Upload ── */
-.upload {
-  background: #fdfcfa;
-  border-color: #ebe5da;
+.table tbody td a:hover {
+  text-decoration: underline;
+  color: #7a1518 !important;
 }
 
-/* ── Modals & Drawers ── */
-.modal {
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+/* ── 12. Modal & Drawer Popups ── */
+.drawer__content,
+.modal,
+.popup {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
 }
 
-.drawer__content {
-  border-radius: 12px 0 0 12px;
+.react-select__menu {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
+
+.react-select__option--is-focused { background: #f8fafc !important; }
+.react-select__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
+
+/* ── 13. Clean Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

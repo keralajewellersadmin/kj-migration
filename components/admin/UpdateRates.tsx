@@ -19,6 +19,7 @@ export default function UpdateRates() {
     silver: "",
     platinum: "",
   });
+  const [lastUpdated, setLastUpdated] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "saved" | "error">("loading");
 
   useEffect(() => {
@@ -31,6 +32,9 @@ export default function UpdateRates() {
           silver: data.rateSilver || "",
           platinum: data.ratePlatinum || "",
         });
+        if (data.rateUpdated) {
+          setLastUpdated(data.rateUpdated);
+        }
         setStatus("idle");
       })
       .catch(() => setStatus("error"));
@@ -43,7 +47,8 @@ export default function UpdateRates() {
       try {
         await updateRates(rates);
         setStatus("saved");
-        setTimeout(() => setStatus("idle"), 2000);
+        setLastUpdated(new Date().toISOString().split("T")[0]);
+        setTimeout(() => setStatus("idle"), 2500);
       } catch {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 3000);
@@ -53,80 +58,113 @@ export default function UpdateRates() {
   );
 
   return (
-    <div style={{ maxWidth: 480, margin: "0 auto", padding: "32px 16px" }}>
-      <h1 style={{ fontSize: 22, fontWeight: 600, marginBottom: 4, fontFamily: "var(--font-body), Mulish, system-ui, sans-serif" }}>
-        Update Metal Rates
-      </h1>
-      <p style={{ fontSize: 13, color: "#666", marginBottom: 24 }}>
-        Prices in INR per gram. Updates appear on the website immediately.
-      </p>
+    <div style={{ maxWidth: 580, margin: "32px auto", padding: "0 20px" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", marginBottom: 6, fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+          Metal Rates
+        </h1>
+        <p style={{ fontSize: 13.5, color: "#64748b", margin: 0 }}>
+          Prices in INR (₹) per gram. Updates appear on the live storefront and navbar instantly.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {fields.map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <label
-                htmlFor={key}
-                style={{
-                  display: "block",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#444",
-                  marginBottom: 4,
-                  fontFamily: "var(--font-body), Mulish, system-ui, sans-serif",
-                }}
-              >
-                {label}
-              </label>
-              <input
-                id={key}
-                type="text"
-                inputMode="numeric"
-                placeholder={placeholder}
-                value={rates[key]}
-                onChange={(e) => setRates((prev) => ({ ...prev, [key]: e.target.value }))}
-                required
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  fontSize: 15,
-                  border: "1px solid #ddd",
-                  borderRadius: 6,
-                  background: "#fff",
-                  fontFamily: "var(--font-body), Mulish, system-ui, sans-serif",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Card Form */}
+      <div style={{
+        background: "#ffffff",
+        border: "1px solid #e2e8f0",
+        borderRadius: 10,
+        padding: "28px 32px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+      }}>
+        {lastUpdated && (
+          <div style={{
+            fontSize: 12.5,
+            color: "#64748b",
+            marginBottom: 20,
+            paddingBottom: 12,
+            borderBottom: "1px solid #f1f5f9",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}>
+            <span>Last Updated: <strong style={{ color: "#0f172a" }}>{lastUpdated}</strong></span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#16a34a", fontSize: 12, fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#16a34a" }} />
+              Live
+            </span>
+          </div>
+        )}
 
-        <div style={{ marginTop: 24, display: "flex", alignItems: "center", gap: 12 }}>
-          <button
-            type="submit"
-            disabled={status === "saving" || status === "loading"}
-            style={{
-              padding: "10px 24px",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#fff",
-              background: status === "saved" ? "#2d8a4e" : "#3b2826",
-              border: "none",
-              borderRadius: 6,
-              cursor: status === "saving" || status === "loading" ? "not-allowed" : "pointer",
-              opacity: status === "saving" || status === "loading" ? 0.6 : 1,
-              fontFamily: "var(--font-body), Mulish, system-ui, sans-serif",
-              transition: "background 0.2s",
-            }}
-          >
-            {status === "saving" ? "Saving..." : status === "saved" ? "Saved!" : "Save Rates"}
-          </button>
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {fields.map(({ key, label, placeholder }) => (
+              <div key={key}>
+                <label
+                  htmlFor={key}
+                  style={{
+                    display: "block",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#334155",
+                    marginBottom: 6,
+                  }}
+                >
+                  {label} (₹/g)
+                </label>
+                <input
+                  id={key}
+                  type="text"
+                  inputMode="numeric"
+                  placeholder={placeholder}
+                  value={rates[key]}
+                  onChange={(e) => setRates((prev) => ({ ...prev, [key]: e.target.value }))}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    fontSize: 14.5,
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 6,
+                    background: "#ffffff",
+                    color: "#0f172a",
+                    boxSizing: "border-box",
+                    outline: "none",
+                    transition: "border-color 0.15s ease",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
 
-          {status === "error" && (
-            <span style={{ fontSize: 13, color: "#c00" }}>Something went wrong. Try again.</span>
-          )}
-        </div>
-      </form>
+          <div style={{ marginTop: 28, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14 }}>
+            {status === "error" && (
+              <span style={{ fontSize: 13, color: "#dc2626", fontWeight: 500 }}>
+                Failed to update rates. Try again.
+              </span>
+            )}
+            <button
+              type="submit"
+              disabled={status === "saving" || status === "loading"}
+              style={{
+                padding: "10px 24px",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "#ffffff",
+                background: status === "saved" ? "#16a34a" : "#9f1b1f",
+                border: "none",
+                borderRadius: 6,
+                cursor: status === "saving" || status === "loading" ? "not-allowed" : "pointer",
+                opacity: status === "saving" || status === "loading" ? 0.7 : 1,
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                transition: "background 0.2s ease",
+              }}
+            >
+              {status === "saving" ? "Saving..." : status === "saved" ? "Rates Updated!" : "Save Rates"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

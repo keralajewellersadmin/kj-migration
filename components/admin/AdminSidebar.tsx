@@ -25,44 +25,63 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
   const canManageContent = role === "super-admin" || role === "admin";
   const settingsPath = `${ADMIN_PATH}/globals/site-settings`;
 
-  // Dashboard — all roles
+  // 1. Dashboard — all roles
   sections.push({
     label: "",
     items: [{ href: ADMIN_PATH, icon: "dashboard", label: "Dashboard", exact: true }],
   });
 
-  // Daily Tasks
+  // 2. Daily Tasks
   sections.push({
     label: "Daily Tasks",
     items: [
       { href: `${ADMIN_PATH}/collections/inquiries`, icon: "inquiries", label: "Inquiries", badge: inquiryCount },
+      { href: `${ADMIN_PATH}/update-rates`, icon: "rates", label: "Metal Rates" },
     ],
   });
 
-  // Content — super-admin, admin
   if (canManageContent) {
+    // 3. Pages Section (Deep-linked)
+    sections.push({
+      label: "Pages",
+      items: [
+        { href: `${settingsPath}?tab=homepage`, icon: "home", label: "Home" },
+        { href: `${settingsPath}?tab=products-gold`, icon: "gold", label: "Gold Products Page" },
+        { href: `${settingsPath}?tab=products-silver`, icon: "silver", label: "Silver Products Page" },
+        { href: `${settingsPath}?tab=products-diamond`, icon: "diamond", label: "Diamond Products Page" },
+        { href: `${settingsPath}?tab=products-platinum`, icon: "platinum", label: "Platinum Products Page" },
+        { href: `${ADMIN_PATH}/collections/legal-pages/swarnavarsha`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
+        { href: `${ADMIN_PATH}/collections/legal-pages/thanga-mazhai`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
+        { href: `${settingsPath}?tab=about`, icon: "about", label: "About Page" },
+        { href: `${settingsPath}?tab=contact`, icon: "contact", label: "Contact Page" },
+      ],
+    });
+
+    // 4. Content Section
     sections.push({
       label: "Content",
       items: [
         { href: `${ADMIN_PATH}/collections/products`, icon: "products", label: "Products" },
         { href: `${ADMIN_PATH}/collections/categories`, icon: "categories", label: "Categories" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "blog", label: "Blog Posts" },
+        { href: `${settingsPath}?tab=bestsellers`, icon: "star", label: "Bestsellers" },
+        { href: `${settingsPath}?tab=reviews`, icon: "reviews", label: "Reviews" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "media", label: "Media" },
       ],
     });
 
+    // 5. Site Settings Section
     sections.push({
       label: "Site Settings",
       items: [
-        { href: `${settingsPath}?tab=homepage`, icon: "dashboard", label: "Homepage" },
-        { href: `${settingsPath}?tab=metal+rates`, icon: "rates", label: "Metal Rates" },
-        { href: `${settingsPath}?tab=footer+%26+contact+details`, icon: "contact", label: "Footer & Contact Details" },
+        { href: `${settingsPath}?tab=footer`, icon: "settings", label: "Footer & Contact Details" },
+        { href: `${settingsPath}?tab=fonts`, icon: "typography", label: "Fonts / Typography" },
         { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "legal", label: "Legal Pages" },
       ],
     });
   }
 
-  // Admin — super-admin only
+  // 6. Admin — super-admin only
   if (role === "super-admin") {
     sections.push({
       label: "Admin",
@@ -245,6 +264,12 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <line x1="21" y1="12" x2="9" y2="12" />
       </svg>
     ),
+    settings: (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    ),
     menu: (
       <svg {...props}>
         <line x1="3" y1="6" x2="21" y2="6" />
@@ -325,13 +350,13 @@ function SidebarInner({
     const saved = localStorage.getItem("sidebar-collapsed");
     const initial = saved === "true";
     setCollapsed(initial);
-    document.documentElement.style.setProperty("--sidebar-width", initial ? "72px" : "304px");
+    document.documentElement.style.setProperty("--sidebar-width", initial ? "72px" : "260px");
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     localStorage.setItem("sidebar-collapsed", String(collapsed));
-    document.documentElement.style.setProperty("--sidebar-width", collapsed ? "72px" : "304px");
+    document.documentElement.style.setProperty("--sidebar-width", collapsed ? "72px" : "260px");
   }, [collapsed, mounted]);
 
   useEffect(() => {

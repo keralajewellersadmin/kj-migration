@@ -95,12 +95,12 @@
 
 .sectionLabel {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #6b5e4f;
-  padding: 12px 10px 4px;
-  font-family: var(--font-ui);
+  color: #78716c;
+  padding: 14px 10px 6px;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 .collapsed .sectionLabel {
@@ -110,33 +110,33 @@
 .items {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
+  gap: 12px;
+  padding: 9px 12px;
   border-radius: 8px;
-  color: #a89880;
+  color: #a8a29e;
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
-  font-family: var(--font-body);
-  transition: background 0.15s, color 0.15s;
+  font-family: "Inter", -apple-system, sans-serif;
+  transition: all 0.15s ease;
   white-space: nowrap;
   position: relative;
 }
 
 .link:hover {
   background: rgba(212, 175, 55, 0.08);
-  color: #d4af37;
+  color: #fef08a;
 }
 
 .active {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(196, 161, 48, 0.1)) !important;
-  color: #d4af37 !important;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.16), rgba(196, 161, 48, 0.08)) !important;
+  color: #eab308 !important;
   font-weight: 600;
 }
 
@@ -147,8 +147,8 @@
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 20px;
-  background: #d4af37;
+  height: 18px;
+  background: #eab308;
   border-radius: 0 3px 3px 0;
 }
 
@@ -162,14 +162,15 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .linkLabel {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .badge {
@@ -178,14 +179,15 @@
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
+  padding: 0 6px;
+  border-radius: 10px;
   background: #9f1b1f;
-  color: #fff;
-  font-size: 10px;
+  color: #ffffff;
+  font-size: 10.5px;
   font-weight: 700;
-  font-family: var(--font-ui);
+  font-family: "Inter", sans-serif;
   line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .collapsed .badge {
