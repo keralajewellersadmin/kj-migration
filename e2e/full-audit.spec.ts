@@ -6,8 +6,8 @@ test('Desktop Audit (1440x900)', async ({ page }) => {
 
   // 1. Login
   await page.goto('/kj-portal-0d7cfad1/login');
-  await page.fill('input#identifier', 'cekiboi46@gmail.com');
-  await page.fill('input#password', 'Password123!');
+  await page.fill('input#identifier', process.env.TEST_EMAIL || '');
+  await page.fill('input#password', process.env.TEST_PASSWORD || '');
   await page.click('button:has-text("Continue"), button[type="submit"]');
 
   await page.waitForSelector('input#otp');
@@ -66,8 +66,8 @@ test('Mobile Audit (500x800)', async ({ page }) => {
 
   // Login
   await page.goto('/kj-portal-0d7cfad1/login');
-  await page.fill('input#identifier', 'cekiboi46@gmail.com');
-  await page.fill('input#password', 'Password123!');
+  await page.fill('input#identifier', process.env.TEST_EMAIL || '');
+  await page.fill('input#password', process.env.TEST_PASSWORD || '');
   await page.click('button:has-text("Continue"), button[type="submit"]');
 
   await page.waitForSelector('input#otp');

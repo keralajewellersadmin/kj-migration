@@ -124,9 +124,6 @@ export const canReadAdminUsers: Access = ({ id, req }) => {
   return String(user.id) === String(id);
 };
 
-export const isAdmin: Access = ({ req }) =>
-  hasRole(getUser(req), ["super-admin", "admin"]);
-
 // ─── Collection-level access ────────────────────────────────────────────────
 
 // Products, Categories, BlogPosts, LegalPages, Media — admin + super-admin only

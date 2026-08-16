@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import type { DefaultCellComponentProps } from 'payload'
 
 const InquiryProductCell = ({ cellData, rowData }: DefaultCellComponentProps) => {

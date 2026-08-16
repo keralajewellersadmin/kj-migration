@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import type { ServerProps } from "payload";
 import { ADMIN_PATH } from "@/lib/admin-path";

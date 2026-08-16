@@ -13,7 +13,6 @@ import { resendAdapter } from "@payloadcms/email-resend";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import * as neonServerless from "@neondatabase/serverless";
-import { s3Storage } from "@payloadcms/storage-s3";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import {
@@ -1542,32 +1541,6 @@ const SiteSettings: GlobalConfig = {
 
 const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
 
-const storagePlugins =
-  process.env.S3_BUCKET &&
-  process.env.S3_ACCESS_KEY_ID &&
-  process.env.S3_SECRET_ACCESS_KEY &&
-  process.env.S3_REGION
-    ? [
-        s3Storage({
-          collections: {
-            media: {
-              prefix: process.env.S3_PREFIX || "media",
-            },
-          },
-          bucket: process.env.S3_BUCKET,
-          config: {
-            credentials: {
-              accessKeyId: process.env.S3_ACCESS_KEY_ID,
-              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-            },
-            endpoint: process.env.S3_ENDPOINT,
-            forcePathStyle: process.env.S3_FORCE_PATH_STYLE === "true",
-            region: process.env.S3_REGION,
-          },
-        }),
-      ]
-    : [];
-
 export default buildConfig({
   secret: requireProductionSecret(),
   routes: {
@@ -1652,7 +1625,6 @@ export default buildConfig({
       ),
     },
   },
-  plugins: storagePlugins,
   graphQL: { disable: true },
   email: resendAdapter({
     apiKey: process.env.RESEND_API_KEY || "",

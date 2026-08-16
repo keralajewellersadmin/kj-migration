@@ -1,4 +1,3 @@
-import React from "react";
 import type { ServerProps } from "payload";
 import AdminSidebar from "./AdminSidebar";
 

@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
 const SOURCES = [

@@ -5,8 +5,8 @@ test('capture all site settings tabs', async ({ page }) => {
   
   // Login
   await page.goto('/kj-portal-0d7cfad1/login');
-  await page.fill('input#identifier', 'cekiboi46@gmail.com');
-  await page.fill('input#password', 'Password123!');
+  await page.fill('input#identifier', process.env.TEST_EMAIL || '');
+  await page.fill('input#password', process.env.TEST_PASSWORD || '');
   await page.click('button:has-text("Continue"), button[type="submit"]');
   
   await page.waitForSelector('input#otp');
