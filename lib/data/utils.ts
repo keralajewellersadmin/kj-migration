@@ -66,4 +66,15 @@ export const metals = [
       "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion.",
     heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011524/kerala-jewellers/banners/products-hero-diamond.webp"),
   },
+  {
+    slug: "platinum",
+    name: "Platinum",
+    icon: IMG.coinGold,
+    description:
+      "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury and enduring elegance.",
+    heroTitle: "Exquisite Platinum Jewellery",
+    heroSubtitle:
+      "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury.",
+    heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011524/kerala-jewellers/banners/products-hero-diamond.webp"),
+  },
 ];

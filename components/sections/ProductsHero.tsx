@@ -6,7 +6,7 @@ interface ProductsHeroProps {
   title: string;
   subtitle: string;
   bgImage: string;
-  metal?: "gold" | "silver" | "diamond";
+  metal?: "gold" | "silver" | "diamond" | "platinum";
 }
 
 export default function ProductsHero({

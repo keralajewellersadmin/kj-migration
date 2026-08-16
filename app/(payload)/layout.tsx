@@ -9,6 +9,7 @@ import "@payloadcms/next/css";
 import "./custom.css";
 import React from "react";
 import { importMap } from "./admin/importMap";
+import TabSwitcher from "@/components/admin/TabSwitcher";
 
 type Args = {
   children: React.ReactNode;
@@ -38,6 +39,7 @@ const Layout = ({ children }: Args) => (
     importMap={importMap}
     serverFunction={serverFunction}
   >
+    <TabSwitcher />
     {children}
   </RootLayout>
 );

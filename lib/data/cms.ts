@@ -836,6 +836,7 @@ export interface SiteSettingsData {
     goldHero: { title: string; subtitle: string };
     silverHero: { title: string; subtitle: string };
     diamondHero: { title: string; subtitle: string };
+    platinumHero: { title: string; subtitle: string };
   };
   aboutPage: {
     goldenOccasions: {
@@ -938,6 +939,7 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
     goldHero: { title: "Elegant & Timeless Gold Jewellery", subtitle: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion." },
     silverHero: { title: "Classic Elegance in Silver", subtitle: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment." },
     diamondHero: { title: "Timeless Brilliance in Diamonds", subtitle: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
+    platinumHero: { title: "Exquisite Platinum Jewellery", subtitle: "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury." },
   },
   aboutPage: {
     goldenOccasions: {
@@ -1092,10 +1094,12 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
       const gold = pp?.goldHero as Record<string, unknown> | undefined;
       const silver = pp?.silverHero as Record<string, unknown> | undefined;
       const diamond = pp?.diamondHero as Record<string, unknown> | undefined;
+      const platinum = pp?.platinumHero as Record<string, unknown> | undefined;
       return {
         goldHero: { title: (gold?.title as string) || DEFAULT_SETTINGS.productsPage.goldHero.title, subtitle: (gold?.subtitle as string) || DEFAULT_SETTINGS.productsPage.goldHero.subtitle },
         silverHero: { title: (silver?.title as string) || DEFAULT_SETTINGS.productsPage.silverHero.title, subtitle: (silver?.subtitle as string) || DEFAULT_SETTINGS.productsPage.silverHero.subtitle },
         diamondHero: { title: (diamond?.title as string) || DEFAULT_SETTINGS.productsPage.diamondHero.title, subtitle: (diamond?.subtitle as string) || DEFAULT_SETTINGS.productsPage.diamondHero.subtitle },
+        platinumHero: { title: (platinum?.title as string) || DEFAULT_SETTINGS.productsPage.platinumHero.title, subtitle: (platinum?.subtitle as string) || DEFAULT_SETTINGS.productsPage.platinumHero.subtitle },
       };
     })(),
     defaultSeo: (() => {

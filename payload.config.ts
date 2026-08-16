@@ -304,6 +304,11 @@ const Media: CollectionConfig = {
   admin: {
     useAsTitle: "alt",
     defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
+    components: {
+      beforeListTable: [
+        "@/components/admin/MediaFolderFilters",
+      ],
+    },
   },
   access: {
     read: canReadMedia,
@@ -920,6 +925,9 @@ const Inquiry: CollectionConfig = {
     defaultColumns: ["sourcePage", "name", "email", "product", "status", "submittedAt"],
     listSearchableFields: ["name", "email"],
     components: {
+      beforeListTable: [
+        "@/components/admin/InquiryQuickFilters",
+      ],
       edit: {
         beforeDocumentControls: [
           "@/components/admin/InquiryDetail",
@@ -1513,10 +1521,18 @@ const SiteSettings: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", defaultValue: "Timeless Brilliance in Diamonds" },
                     { name: "subtitle", type: "textarea", defaultValue: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
+                  ],
+                },
+                {
+                  name: "platinumHero",
+                  type: "group",
+                  fields: [
+                    { name: "title", type: "text", defaultValue: "Exquisite Platinum Jewellery" },
+                    { name: "subtitle", type: "textarea", defaultValue: "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury." },
+                  ],
+                },
               ],
             },
-          ],
-        },
           ],
         },
       ],

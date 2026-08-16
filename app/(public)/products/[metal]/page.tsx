@@ -56,8 +56,8 @@ export default async function MetalProductsPage(props: {
   if (sort === "desc")
     sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
 
-  const metalKey = params.metal as "gold" | "silver" | "diamond";
-  const heroKey = `${metalKey}Hero` as "goldHero" | "silverHero" | "diamondHero";
+  const metalKey = params.metal as "gold" | "silver" | "diamond" | "platinum";
+  const heroKey = `${metalKey}Hero` as "goldHero" | "silverHero" | "diamondHero" | "platinumHero";
   const cmsHero = settings.productsPage[heroKey];
   const heroTitle = categorySlug
     ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`

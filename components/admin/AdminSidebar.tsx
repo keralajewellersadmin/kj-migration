@@ -45,15 +45,15 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     sections.push({
       label: "Pages",
       items: [
-        { href: `${settingsPath}?tab=homepage`, icon: "home", label: "Home" },
-        { href: `${settingsPath}?tab=products-gold`, icon: "gold", label: "Gold Products Page" },
-        { href: `${settingsPath}?tab=products-silver`, icon: "silver", label: "Silver Products Page" },
-        { href: `${settingsPath}?tab=products-diamond`, icon: "diamond", label: "Diamond Products Page" },
-        { href: `${settingsPath}?tab=products-platinum`, icon: "platinum", label: "Platinum Products Page" },
-        { href: `${ADMIN_PATH}/collections/legal-pages/swarnavarsha`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
-        { href: `${ADMIN_PATH}/collections/legal-pages/thanga-mazhai`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
-        { href: `${settingsPath}?tab=about`, icon: "about", label: "About Page" },
-        { href: `${settingsPath}?tab=contact`, icon: "contact", label: "Contact Page" },
+        { href: `${settingsPath}?tab=Homepage`, icon: "home", label: "Home" },
+        { href: `${settingsPath}?tab=Pages`, icon: "gold", label: "Gold Products Page" },
+        { href: `${settingsPath}?tab=Pages`, icon: "silver", label: "Silver Products Page" },
+        { href: `${settingsPath}?tab=Pages`, icon: "diamond", label: "Diamond Products Page" },
+        { href: `${settingsPath}?tab=Pages`, icon: "platinum", label: "Platinum Products Page" },
+        { href: `${settingsPath}?tab=Content`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
+        { href: `${settingsPath}?tab=Content`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
+        { href: `${settingsPath}?tab=Content`, icon: "about", label: "About Page" },
+        { href: `${settingsPath}?tab=Pages`, icon: "contact", label: "Contact Page" },
       ],
     });
 
@@ -64,8 +64,8 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
         { href: `${ADMIN_PATH}/collections/products`, icon: "products", label: "Products" },
         { href: `${ADMIN_PATH}/collections/categories`, icon: "categories", label: "Categories" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "blog", label: "Blog Posts" },
-        { href: `${settingsPath}?tab=bestsellers`, icon: "star", label: "Bestsellers" },
-        { href: `${settingsPath}?tab=reviews`, icon: "reviews", label: "Reviews" },
+        { href: `${settingsPath}?tab=Homepage`, icon: "star", label: "Bestsellers" },
+        { href: `${settingsPath}?tab=Content`, icon: "reviews", label: "Reviews" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "media", label: "Media" },
       ],
     });
@@ -74,8 +74,7 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
     sections.push({
       label: "Site Settings",
       items: [
-        { href: `${settingsPath}?tab=footer`, icon: "settings", label: "Footer & Contact Details" },
-        { href: `${settingsPath}?tab=fonts`, icon: "typography", label: "Fonts / Typography" },
+        { href: `${settingsPath}?tab=Footer%20%26%20Contact%20Details`, icon: "settings", label: "Footer & Contact Details" },
         { href: `${ADMIN_PATH}/collections/legal-pages`, icon: "legal", label: "Legal Pages" },
       ],
     });
