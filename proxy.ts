@@ -61,16 +61,19 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow the admin panel's internal Payload API (/kj-portal-0d7cfad1/api/*)
-  // Those are handled by Payload internally — not affected by this middleware
-
-  // ── Block exposed Payload collection REST routes ──────────────────────────
-  for (const blocked of BLOCKED_API_PATHS) {
-    if (pathname === blocked || pathname.startsWith(blocked + "/")) {
-      return new NextResponse(
-        JSON.stringify({ error: "Forbidden" }),
-        { status: 403, headers: { "Content-Type": "application/json" } },
-      );
+  // ── Block exposed Payload collection REST routes (unauthenticated only) ────
+  // Admin panel SPA calls the same /api/* routes with a payload-token cookie.
+  // Allow requests that carry a valid-looking payload-token through so the
+  // admin panel can function. Payload's own RBAC then controls access.
+  const hasToken = req.cookies.get("payload-token")?.value;
+  if (!hasToken) {
+    for (const blocked of BLOCKED_API_PATHS) {
+      if (pathname === blocked || pathname.startsWith(blocked + "/")) {
+        return new NextResponse(
+          JSON.stringify({ error: "Forbidden" }),
+          { status: 403, headers: { "Content-Type": "application/json" } },
+        );
+      }
     }
   }
 
