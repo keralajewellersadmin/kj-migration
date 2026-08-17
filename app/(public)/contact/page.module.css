@@ -1,97 +1,86 @@
 /* =========================================================================
-   Contact Page — Kerala Jewellers
-   Matches the live site's premium contact page styling
+   Contact Page
    ========================================================================= */
 
-.contactPage {
-  background-color: var(--color-ivory-soft);
-  font-family: var(--font-body);
-  font-style: normal;
-  padding-bottom: 60px;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
+.page {
+  background: var(--color-ivory-soft);
+  padding-bottom: 60px; /* one-off */
 }
 
 /* --- Hero --- */
 .hero {
   background: var(--color-white);
-  padding: 60px 0 40px;
+  padding: 60px 0 40px; /* one-off */
   text-align: center;
-  border-bottom: 1px solid rgba(200, 155, 60, 0.2);
-  margin-bottom: 40px;
+  border-bottom: 1px solid var(--color-line);
+  margin-bottom: 40px; /* one-off */
+}
+
+.heroContainer {
+  max-width: 1200px; /* one-off */
+  margin: 0 auto;
+  padding: 0 24px; /* one-off */
 }
 
 .heroTitle {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 36px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 16px;
-  color: var(--color-maroon);
+  font-family: var(--font-decorative);
+  font-weight: 300;
+  font-size: clamp(40px, 5vw, 56px); /* one-off */
+  line-height: 1.05;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-maroon-bright),
+    var(--color-maroon-end)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-maroon-bright);
+  margin: 0 0 16px; /* one-off */
 }
 
 .heroSubtitle {
-  font-family: var(--font-decorative);
-  font-size: 16px;
-  color: var(--color-maroon);
-  max-width: 600px;
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  color: var(--color-charcoal-soft);
+  max-width: 600px; /* one-off */
   margin: 0 auto;
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
 }
 
-/* --- Contact Grid --- */
-.contactGrid {
+/* --- Container --- */
+.container {
+  max-width: 1200px; /* one-off */
+  margin: 0 auto;
+  padding: 0 24px; /* one-off */
+}
+
+/* --- 2-Column Grid --- */
+.grid {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 40px;
-  margin-bottom: 60px;
+  gap: 40px; /* one-off */
+  margin-bottom: 60px; /* one-off */
   align-items: start;
 }
 
-@media (min-width: 992px) {
-  .infoWrapper {
-    order: 1;
-  }
-  .formWrapper {
-    order: 2;
-  }
-}
-
-/* --- Cards (shared) --- */
 .card {
   background: var(--color-white);
-  border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 15px 50px rgba(153, 31, 35, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 40px; /* one-off */
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--color-gold-outline-border);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
 }
 
-@media (min-width: 992px) {
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 60px rgba(153, 31, 35, 0.18);
-  }
-}
-
-/* --- Card Title --- */
 .cardTitle {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-family: var(--font-decorative);
+  font-weight: 300;
   color: var(--color-maroon);
-  font-size: 24px;
-  margin: 0 0 24px;
-  text-transform: uppercase;
+  font-size: clamp(26px, 3vw, 32px); /* one-off */
+  line-height: 1.1;
+  margin: 0 0 24px; /* one-off */
   position: relative;
-  padding-bottom: 12px;
+  padding-bottom: 12px; /* one-off */
 }
 
 .cardTitle::after {
@@ -99,98 +88,21 @@
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 60px;
-  height: 2px;
-  background: var(--color-gold-outline);
+  width: 60px; /* one-off */
+  height: 2px; /* one-off */
+  background-color: var(--color-gold-outline);
 }
-
-/* --- Info Side --- */
-.infoDesc {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--color-charcoal-soft);
-  line-height: var(--leading-relaxed);
-  margin: 0 0 24px;
-}
-
-.infoList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 32px;
-}
-
-.infoList li {
-  margin-bottom: 16px;
-  color: var(--color-charcoal);
-  font-size: var(--text-base);
-  line-height: 1.5;
-}
-
-.quote {
-  position: relative;
-  font-family: var(--font-decorative);
-  font-weight: normal;
-  font-style: normal;
-  color: var(--color-maroon);
-  font-size: clamp(20px, 2.2vw, 26px);
-  line-height: 1.4;
-  margin: 0;
-  padding: 20px 30px;
-  border-left: 4px solid var(--color-gold);
-}
-
-.quote::before {
-  content: "\201C";
-  position: absolute;
-  left: -4px;
-  top: -8px;
-  font-family: var(--font-decorative);
-  font-size: 44px;
-  line-height: 1;
-  color: var(--color-gold);
-  opacity: 0.4;
-}
-
-/* --- Social Links --- */
-.socialLinks {
-  display: flex;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-line);
-}
-
-.socialLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: var(--color-maroon);
-  border-radius: 50%;
-  color: var(--color-white);
-  transition: all 0.3s ease;
-}
-
-.socialLink:hover {
-  background: var(--color-gold-outline-border);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(200, 155, 60, 0.3);
-}
-
-/* =========================================================================
-   Form Styles (for ContactForm component inside .formWrapper)
-   ========================================================================= */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px; /* one-off */
 }
 
 .fieldRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 14px; /* one-off */
 }
 
 .field {
@@ -199,47 +111,37 @@
 
 .input {
   width: 100%;
-  padding: 12px 16px;
-  background-color: #f9f9f9;
-  border: 1px solid var(--color-smoke-light);
+  padding: 12px 16px; /* one-off */
+  border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-base);
+  background: var(--color-smoke-light);
   color: var(--color-charcoal);
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.input::placeholder {
-  color: var(--color-grey);
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--color-gold-outline-border);
+  border-color: var(--color-gold-outline);
 }
 
 .textarea {
   width: 100%;
-  padding: 12px 16px;
-  background-color: #f9f9f9;
-  border: 1px solid var(--color-smoke-light);
+  padding: 12px 16px; /* one-off */
+  border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-base);
+  background: var(--color-smoke-light);
   color: var(--color-charcoal);
   resize: vertical;
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.textarea::placeholder {
-  color: var(--color-grey);
 }
 
 .textarea:focus {
   outline: none;
-  border-color: var(--color-gold-outline-border);
+  border-color: var(--color-gold-outline);
 }
 
 .submitBtn {
@@ -248,10 +150,10 @@
   border-radius: var(--radius-xs);
   color: var(--color-white);
   cursor: pointer;
-  font-family: var(--font-ui);
-  font-size: 16px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
   font-weight: 700;
-  padding: 14px 24px;
+  padding: 14px 24px; /* one-off */
   width: 100%;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -260,88 +162,157 @@
     box-shadow 0.3s ease;
 }
 
-.submitBtn:hover:not(:disabled) {
+.submitBtn:hover {
   background: var(--color-maroon-deep);
-  box-shadow: 0 4px 12px rgba(153, 31, 35, 0.2);
+  box-shadow: var(--shadow-btn);
 }
 
-.submitBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.note {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  line-height: var(--leading-normal);
+  text-align: center;
+  margin: 16px 0 0; /* one-off */
 }
 
-/* Success/error messages */
-.formFeedback {
+.infoText {
   font-family: var(--font-body);
   font-size: var(--text-base);
+  color: var(--color-charcoal-soft);
+  line-height: var(--leading-relaxed);
+}
+
+.infoText p {
+  margin: 0 0 16px; /* one-off */
+}
+
+.infoList {
+  margin: 0 0 18px; /* one-off */
+  padding: 0;
+  list-style: none;
+}
+
+.infoList li {
+  position: relative;
+  padding-left: 32px; /* one-off */
+  margin-bottom: 12px; /* one-off */
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.infoList li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  top: 1px; /* one-off */
+  width: 20px; /* one-off */
+  height: 20px; /* one-off */
+  border-radius: 50%;
+  background: var(--gradient-gold-refined);
+  color: var(--color-white);
+  font-size: 11px; /* one-off */
+  font-weight: 700;
+  line-height: 20px; /* one-off */
   text-align: center;
-  margin-top: 12px;
-  padding: 10px 16px;
-  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-gold-glow);
 }
 
-.formSuccess {
-  color: var(--color-white);
-  background-color: #12b878;
-}
-
-.formError {
-  color: var(--color-white);
-  background-color: var(--color-bright-red);
-}
-
-/* Note text */
-.formNote {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--color-grey);
+.quote {
+  position: relative;
+  font-family: var(--font-decorative);
+  font-weight: 300;
+  font-style: normal;
+  color: var(--color-maroon);
+  font-size: clamp(22px, 2.4vw, 28px); /* one-off */
   line-height: 1.4;
-  text-align: center;
-  margin-top: 16px;
+  padding-left: 26px; /* one-off */
+  margin: 4px 0 0; /* one-off */
 }
 
-/* =========================================================================
-   Branches Section
-   ========================================================================= */
+.quote::before {
+  content: "\201C";
+  position: absolute;
+  left: -6px; /* one-off */
+  top: -12px; /* one-off */
+  font-family: var(--font-decorative);
+  font-size: 52px; /* one-off */
+  line-height: 1;
+  color: var(--color-gold);
+  opacity: 0.45;
+}
 
+.socialLinks {
+  display: flex;
+  gap: 16px; /* one-off */
+  margin-top: 24px; /* one-off */
+  padding-top: 24px; /* one-off */
+  border-top: 1px solid var(--color-line);
+}
+
+.socialLinks a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* one-off */
+  height: 40px; /* one-off */
+  background: var(--color-maroon);
+  border-radius: 50%;
+  color: var(--color-white);
+  transition: all 0.3s ease;
+}
+
+.socialLinks a:hover {
+  background: var(--color-gold-outline-border);
+  transform: translateY(-3px); /* one-off */
+  box-shadow: var(--shadow-gold-btn-hover);
+}
+
+/* --- Branch Cards --- */
 .branchesSection {
-  padding-top: 20px;
+  padding-top: 20px; /* one-off */
 }
 
 .branchesTitle {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 28px;
+  font-family: var(--font-decorative);
+  font-weight: 300;
+  font-size: clamp(36px, 4vw, 50px); /* one-off */
+  line-height: 1.1;
   text-align: center;
-  margin: 0 0 32px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-maroon);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-maroon-bright),
+    var(--color-maroon-end)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-maroon-bright);
+  margin: 0 0 32px; /* one-off */
 }
 
 .branchesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 24px; /* one-off */
 }
 
 .branchCard {
   background: var(--color-white);
-  border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(200, 155, 60, 0.1);
+  border-radius: var(--radius-md);
+  padding: 24px; /* one-off */
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--color-line);
   display: flex;
   flex-direction: column;
 }
 
 .branchMap {
   width: 100%;
-  height: 160px;
-  border-radius: 6px;
+  height: 200px; /* one-off */
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 1px solid rgba(200, 155, 60, 0.15);
-  margin: 16px 0;
+  margin-bottom: 16px; /* one-off */
 }
 
 .branchMap iframe {
@@ -349,32 +320,30 @@
   height: 100%;
   border: 0;
   display: block;
-  filter: grayscale(10%) contrast(110%);
 }
 
 .branchName {
   font-family: var(--font-decorative);
-  font-size: 18px;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin: 0 0 12px;
+  font-weight: 300;
+  font-size: 22px; /* one-off */
   color: var(--color-maroon);
+  margin: 0 0 12px; /* one-off */
 }
 
 .branchAddress {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--color-charcoal-soft);
-  line-height: 1.5;
-  margin: 0 0 12px;
+  line-height: var(--leading-normal);
+  margin: 0 0 12px; /* one-off */
   flex-grow: 1;
 }
 
 .branchPhone {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--color-charcoal);
-  margin: 0 0 20px;
+  margin: 0 0 20px; /* one-off */
 }
 
 .branchPhone a {
@@ -383,49 +352,30 @@
   font-weight: 600;
 }
 
-.branchPhone a:hover {
-  text-decoration: underline;
-}
-
 .branchActions {
-  display: flex;
-  gap: 12px;
+  margin-top: auto;
 }
 
 .branchBtn {
-  flex: 1;
-  text-align: center;
-  padding: 10px 0;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btnSolidMaroon {
+  display: inline-block;
   background: var(--color-maroon);
   color: var(--color-white);
-  border: 1px solid var(--color-maroon);
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+  padding: 12px 20px; /* one-off */
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.btnSolidMaroon:hover {
+.branchBtn:hover {
   background: var(--color-maroon-deep);
-  border-color: var(--color-maroon-deep);
-}
-
-.btnOutlineGold {
-  border: 1px solid var(--color-gold-outline-border);
-  color: var(--color-gold-outline);
-  background: transparent;
-}
-
-.btnOutlineGold:hover {
-  background: var(--color-gold-outline-border);
-  color: var(--color-white);
+  box-shadow: var(--shadow-btn);
 }
 
 /* =========================================================================
@@ -433,83 +383,33 @@
    ========================================================================= */
 
 @media (max-width: 991px) {
-  .hero {
-    padding: 46px 0 32px;
-    margin-bottom: 32px;
-  }
-
-  .heroTitle {
-    font-size: clamp(28px, 5vw, 34px);
-  }
-
-  .heroSubtitle {
-    font-size: 16px;
-  }
-
-  .contactGrid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .card {
-    padding: 30px 32px;
-  }
-
+  /* one-off */
   .branchesGrid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 767px) {
+  /* one-off */
   .hero {
-    padding: 32px 0 22px;
-    margin-bottom: 24px;
+    padding: 40px 0 28px; /* one-off */
   }
-
   .heroTitle {
-    font-size: clamp(28px, 8.4vw, 36px);
-    margin-bottom: 12px;
+    font-size: clamp(28px, 8vw, 38px); /* one-off */
   }
-
   .container {
-    padding: 0 16px;
+    padding: 0 16px; /* one-off */
   }
-
   .card {
-    padding: 22px 18px;
+    padding: 24px 20px; /* one-off */
   }
-
-  .cardTitle {
-    font-size: 24px;
-    margin-bottom: 20px;
+  .grid {
+    grid-template-columns: 1fr; /* one-off */
   }
-
   .fieldRow {
     grid-template-columns: 1fr;
   }
-
-  .branchesTitle {
-    font-size: 32px;
-    margin-bottom: 24px;
-  }
-
-  .branchCard {
-    padding: 18px;
-    border-radius: 12px;
-  }
-
-  .branchMap {
-    height: 145px;
-    margin: 12px 0;
-  }
-
-  .branchActions {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .branchBtn {
-    width: 100%;
+  .branchesGrid {
+    grid-template-columns: 1fr; /* one-off */
   }
 }

@@ -28,8 +28,8 @@ export default function ContactForm() {
   };
 
   return (
-    <>
-      <h2 className={styles.formTitle}>Send Us a Message</h2>
+    <div className={styles.card}>
+      <h2 className={styles.cardTitle}>Send Us a Message</h2>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.fieldRow}>
           <div className={styles.field}>
@@ -38,7 +38,7 @@ export default function ContactForm() {
               type="text"
               name="name"
               placeholder="Name"
-              aria-label="Your Name"
+              aria-label="Name"
               required
             />
           </div>
@@ -47,7 +47,7 @@ export default function ContactForm() {
               className={styles.input}
               type="email"
               name="email"
-              placeholder="Email Address"
+              placeholder="Email Address*"
               aria-label="Email Address"
               required
             />
@@ -66,22 +66,18 @@ export default function ContactForm() {
           className={styles.submitBtn}
           disabled={submitting}
         >
-          {submitting ? "Sending…" : "Submit"}
+          {submitting ? "Submitting..." : "Submit"}
         </button>
       </form>
       {submitted && (
-        <p className={`${styles.formFeedback} ${styles.formSuccess}`}>
-          Thank you! Your submission has been received.
+        <p style={{ color: "var(--color-emerald)", marginTop: "12px" }}>
+          Thank you! Your message has been received.
         </p>
       )}
-      {error && (
-        <p className={`${styles.formFeedback} ${styles.formError}`}>
-          {error}
-        </p>
-      )}
-      <p className={styles.formNote}>
+      {error && <p style={{ color: "var(--color-bright-red)", marginTop: "12px" }}>{error}</p>}
+      <p className={styles.note}>
         Our team typically replies within one business day.
       </p>
-    </>
+    </div>
   );
 }
