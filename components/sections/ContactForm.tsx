@@ -37,7 +37,7 @@ export default function ContactForm() {
               className={styles.input}
               type="text"
               name="name"
-              placeholder="Your Name"
+              placeholder="Name"
               aria-label="Your Name"
               required
             />
@@ -56,7 +56,7 @@ export default function ContactForm() {
         <textarea
           className={styles.textarea}
           name="message"
-          placeholder="How can we help you?"
+          placeholder="Your Message"
           aria-label="Your Message"
           rows={5}
           required
@@ -66,18 +66,21 @@ export default function ContactForm() {
           className={styles.submitBtn}
           disabled={submitting}
         >
-          {submitting ? "Sending..." : "Send Message"}
+          {submitting ? "Sending…" : "Submit"}
         </button>
       </form>
       {submitted && (
-        <p className={styles.formSuccess}>
-          Thank you! Your message has been received. We&apos;ll get back to
-          you shortly.
+        <p className={`${styles.formFeedback} ${styles.formSuccess}`}>
+          Thank you! Your submission has been received.
         </p>
       )}
-      {error && <p className={styles.formError}>{error}</p>}
+      {error && (
+        <p className={`${styles.formFeedback} ${styles.formError}`}>
+          {error}
+        </p>
+      )}
       <p className={styles.formNote}>
-        Our team typically responds within one business day.
+        Our team typically replies within one business day.
       </p>
     </>
   );

@@ -927,10 +927,17 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   },
   contactPage: {
     heroTitle: "Contact Kerala Jewellers",
-    heroSubtitle: "We're here to help you with store visits, jewellery enquiries, custom designs, and service support.",
+    heroSubtitle:
+      "We're here to help you with store visits, jewellery enquiries, custom designs, and service support.",
     cardTitle: "Get In Touch",
-    cardDescription: "Looking for a specific jewellery design, bridal collection, custom order, or gold/silver rate update? Our team will guide you with product availability, store visit support, and purchase assistance.",
-    cardItems: [],
+    cardDescription:
+      "Looking for a specific jewellery design, bridal collection, custom order, or gold/silver rate update? Our team will guide you with product availability, store visit support, and purchase assistance.",
+    cardItems: [
+      { text: "Bridal & occasion jewellery assistance" },
+      { text: "Product availability and pricing support" },
+      { text: "Store visit and direction guidance" },
+      { text: "Custom jewellery enquiry support" },
+    ],
     cardQuote: "Send us a message and our team will get back to you shortly.",
     branchesTitle: "Our Branches",
     formTitle: "Send Us a Message",

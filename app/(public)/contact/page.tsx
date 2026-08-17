@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/data/cms";
 import { DEFAULT_BRANCHES } from "@/lib/data/branches";
 import ContactForm from "@/components/sections/ContactForm";
-import SectionHeader from "@/components/ui/SectionHeader";
 import styles from "./page.module.css";
 
 export const revalidate = 300;
@@ -29,30 +28,33 @@ export default async function ContactPage() {
     : DEFAULT_BRANCHES;
 
   return (
-    <main className={styles.page}>
+    <main className={styles.contactPage}>
+      {/* --- Hero --- */}
       <section className={styles.hero}>
-        <div className={styles.heroInner}>
-          <SectionHeader title={cp.heroTitle} subtitle={cp.heroSubtitle} />
+        <div className={styles.container}>
+          <h1 className={styles.heroTitle}>{cp.heroTitle}</h1>
+          <p className={styles.heroSubtitle}>{cp.heroSubtitle}</p>
         </div>
       </section>
 
-      <section className={styles.contactSection}>
-        <div className={styles.contactInner}>
-          <div className={styles.infoSide}>
-            <h2 className={styles.infoTitle}>{cp.cardTitle}</h2>
-            <p className={styles.infoDesc}>{cp.cardDescription}</p>
-            <ul className={styles.infoList}>
-              {cp.cardItems.map((item, i) => (
-                <li key={i} className={styles.infoItem}>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-            <blockquote className={styles.quote}>
-              <span className={styles.quoteMark}>&ldquo;</span>
-              {cp.cardQuote}
-            </blockquote>
-            <div className={styles.socialRow}>
+      {/* --- Contact Grid (Info + Form) --- */}
+      <div className={styles.container}>
+        <div className={styles.contactGrid}>
+          {/* Info Side — visually left on desktop */}
+          <div className={`${styles.card} ${styles.infoWrapper}`}>
+            <h3 className={styles.cardTitle}>{cp.cardTitle}</h3>
+            <div className={styles.infoText}>
+              <p className={styles.infoDesc}>{cp.cardDescription}</p>
+              <ul className={styles.infoList}>
+                {cp.cardItems.map((item, i) => (
+                  <li key={i}>{item.text}</li>
+                ))}
+              </ul>
+              <blockquote className={styles.quote}>
+                {cp.cardQuote}
+              </blockquote>
+            </div>
+            <div className={styles.socialLinks}>
               <a
                 href={
                   settings.instagramUrl ||
@@ -63,8 +65,11 @@ export default async function ContactPage() {
                 aria-label="Instagram"
                 className={styles.socialLink}
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
+                  />
                 </svg>
               </a>
               <a
@@ -77,8 +82,11 @@ export default async function ContactPage() {
                 aria-label="Facebook"
                 className={styles.socialLink}
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                  />
                 </svg>
               </a>
               <a
@@ -91,110 +99,64 @@ export default async function ContactPage() {
                 aria-label="YouTube"
                 className={styles.socialLink}
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="currentColor"
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                  />
                 </svg>
               </a>
             </div>
           </div>
 
-          <div className={styles.formSide}>
+          {/* Form Side — visually right on desktop */}
+          <div className={`${styles.card} ${styles.formWrapper}`}>
             <ContactForm />
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className={styles.branchesSection}>
-        <div className={styles.branchesInner}>
-          <SectionHeader
-            title={cp.branchesTitle}
-            subtitle="Visit us at any of our three Chennai locations"
-          />
+      {/* --- Branches --- */}
+      <div className={styles.branchesSection}>
+        <div className={styles.container}>
+          <h2 className={styles.branchesTitle}>{cp.branchesTitle}</h2>
           <div className={styles.branchesGrid}>
             {branches.map((branch) => (
               <div key={branch.name} className={styles.branchCard}>
                 <div className={styles.branchMap}>
                   <iframe
-                    src={
-                      branch.mapEmbedUrl ||
-                      `https://www.google.com/maps?q=${branch.mapQ}&output=embed`
-                    }
+                    src={branch.mapEmbedUrl || `https://www.google.com/maps?q=${branch.mapQ}&output=embed`}
                     title={`${branch.name} branch location`}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                 </div>
-                <div className={styles.branchBody}>
-                  <h3 className={styles.branchName}>{branch.name}</h3>
-                  <p className={styles.branchAddress}>{branch.address}</p>
-                  <div className={styles.branchDetails}>
-                    <a
-                      href={`tel:${branch.phoneFull}`}
-                      className={styles.branchPhone}
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="14"
-                        height="14"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-                      </svg>
-                      {branch.phone}
-                    </a>
-                    {branch.email && (
-                      <a
-                        href={`mailto:${branch.email}`}
-                        className={styles.branchPhone}
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="14"
-                          height="14"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                          <polyline points="22,6 12,13 2,6" />
-                        </svg>
-                        {branch.email}
-                      </a>
-                    )}
-                  </div>
+                <h4 className={styles.branchName}>{branch.name}</h4>
+                <p className={styles.branchAddress}>{branch.address}</p>
+                <p className={styles.branchPhone}>
+                  <a href={`tel:${branch.phoneFull}`}>{branch.phone}</a>
+                </p>
+                <div className={styles.branchActions}>
                   <a
-                    href={`https://www.google.com/maps?q=${branch.mapQ}`}
+                    href={`https://www.google.com/maps?q=${encodeURIComponent(branch.mapQ)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.directionBtn}
+                    className={`${styles.branchBtn} ${styles.btnSolidMaroon}`}
                   >
                     Get Directions
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="14"
-                      height="14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
+                  </a>
+                  <a
+                    href={`tel:${branch.phoneFull}`}
+                    className={`${styles.branchBtn} ${styles.btnOutlineGold}`}
+                  >
+                    Call Now
                   </a>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

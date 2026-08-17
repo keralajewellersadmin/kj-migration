@@ -1,69 +1,110 @@
 /* =========================================================================
    Contact Page — Kerala Jewellers
-   Heritage-rich design with gold accents and ornamental details
+   Matches the live site's premium contact page styling
    ========================================================================= */
 
-.page {
-  background: var(--color-ivory-soft);
-  min-height: 100vh;
+.contactPage {
+  background-color: var(--color-ivory-soft);
+  font-family: var(--font-body);
+  font-style: normal;
+  padding-bottom: 60px;
 }
 
-/* --- Hero (uses SectionHeader) --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* --- Hero --- */
 .hero {
   background: var(--color-white);
-  padding: 48px 0 40px;
-  border-bottom: 1px solid var(--color-line);
+  padding: 60px 0 40px;
+  text-align: center;
+  border-bottom: 1px solid rgba(200, 155, 60, 0.2);
+  margin-bottom: 40px;
 }
 
-.heroInner {
-  max-width: var(--layout-container);
+.heroTitle {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 36px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 16px;
+  color: var(--color-maroon);
+}
+
+.heroSubtitle {
+  font-family: var(--font-decorative);
+  font-size: 16px;
+  color: var(--color-maroon);
+  max-width: 600px;
   margin: 0 auto;
-  padding: 0 var(--header-padding-x);
+  line-height: 1.5;
 }
 
-/* --- Contact Section --- */
-.contactSection {
-  background: var(--color-white);
-  padding: 56px 0 64px;
-  border-bottom: 1px solid var(--color-line);
-}
-
-.contactInner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 var(--header-padding-x);
+/* --- Contact Grid --- */
+.contactGrid {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  margin-bottom: 60px;
   align-items: start;
 }
 
-/* --- Info Side --- */
-.infoSide {
-  padding-right: 16px;
+@media (min-width: 992px) {
+  .infoWrapper {
+    order: 1;
+  }
+  .formWrapper {
+    order: 2;
+  }
 }
 
-.infoTitle {
-  font-family: var(--font-decorative);
-  font-weight: 300;
-  font-size: clamp(28px, 3vw, 36px);
-  line-height: 1.15;
+/* --- Cards (shared) --- */
+.card {
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 15px 50px rgba(153, 31, 35, 0.12);
+  border: 1px solid var(--color-gold-outline-border);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+@media (min-width: 992px) {
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(153, 31, 35, 0.18);
+  }
+}
+
+/* --- Card Title --- */
+.cardTitle {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: 0.3px;
   color: var(--color-maroon);
-  margin: 0 0 20px;
+  font-size: 24px;
+  margin: 0 0 24px;
+  text-transform: uppercase;
   position: relative;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
 }
 
-.infoTitle::after {
+.cardTitle::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 50px;
+  width: 60px;
   height: 2px;
-  background: var(--gradient-gold-refined);
+  background: var(--color-gold-outline);
 }
 
+/* --- Info Side --- */
 .infoDesc {
   font-family: var(--font-body);
   font-size: var(--text-base);
@@ -74,59 +115,46 @@
 
 .infoList {
   list-style: none;
-  margin: 0 0 28px;
   padding: 0;
+  margin: 0 0 32px;
 }
 
-.infoItem {
-  position: relative;
-  padding-left: 28px;
-  margin-bottom: 14px;
-  font-family: var(--font-body);
-  font-size: var(--text-base);
+.infoList li {
+  margin-bottom: 16px;
   color: var(--color-charcoal);
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 
-.infoItem::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 7px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-gold);
-}
-
-/* --- Quote --- */
 .quote {
   position: relative;
   font-family: var(--font-decorative);
-  font-weight: 300;
+  font-weight: normal;
   font-style: normal;
   color: var(--color-maroon);
   font-size: clamp(20px, 2.2vw, 26px);
-  line-height: 1.45;
-  margin: 0 0 28px;
-  padding-left: 24px;
-  border-left: 2px solid var(--color-gold-outline-border);
+  line-height: 1.4;
+  margin: 0;
+  padding: 20px 30px;
+  border-left: 4px solid var(--color-gold);
 }
 
-.quoteMark {
-  font-size: 40px;
+.quote::before {
+  content: "\201C";
+  position: absolute;
+  left: -4px;
+  top: -8px;
+  font-family: var(--font-decorative);
+  font-size: 44px;
   line-height: 1;
   color: var(--color-gold);
-  opacity: 0.5;
-  position: absolute;
-  left: -8px;
-  top: -6px;
+  opacity: 0.4;
 }
 
 /* --- Social Links --- */
-.socialRow {
+.socialLinks {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   padding-top: 24px;
   border-top: 1px solid var(--color-line);
 }
@@ -135,63 +163,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
+  background: var(--color-maroon);
   border-radius: 50%;
-  background: var(--color-ivory);
-  color: var(--color-maroon);
-  border: 1px solid var(--color-line);
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  color: var(--color-white);
+  transition: all 0.3s ease;
 }
 
 .socialLink:hover {
-  background: var(--color-maroon);
-  border-color: var(--color-maroon);
-  color: var(--color-white);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(153, 31, 35, 0.2);
-}
-
-/* --- Form Side --- */
-.formSide {
-  background: var(--color-ivory);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  padding: 36px 32px;
+  background: var(--color-gold-outline-border);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(200, 155, 60, 0.3);
 }
 
 /* =========================================================================
-   Form Styles (applied inside .formSide via ContactForm component)
+   Form Styles (for ContactForm component inside .formWrapper)
    ========================================================================= */
-
-.formCard {
-  /* Not used directly — ContactForm uses its own card, we override below */
-}
-
-.formTitle {
-  font-family: var(--font-decorative);
-  font-weight: 300;
-  font-size: clamp(24px, 2.5vw, 30px);
-  line-height: 1.15;
-  color: var(--color-maroon);
-  margin: 0 0 24px;
-  position: relative;
-  padding-bottom: 12px;
-}
-
-.formTitle::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 40px;
-  height: 2px;
-  background: var(--gradient-gold-refined);
-}
 
 .form {
   display: flex;
@@ -212,14 +200,14 @@
 .input {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid var(--color-border-light);
+  background-color: #f9f9f9;
+  border: 1px solid var(--color-smoke-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: 15px;
   color: var(--color-charcoal);
-  background: var(--color-white);
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.3s ease;
 }
 
 .input::placeholder {
@@ -229,21 +217,20 @@
 .input:focus {
   outline: none;
   border-color: var(--color-gold-outline-border);
-  box-shadow: 0 0 0 2px rgba(200, 155, 60, 0.1);
 }
 
 .textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid var(--color-border-light);
+  background-color: #f9f9f9;
+  border: 1px solid var(--color-smoke-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: 15px;
   color: var(--color-charcoal);
-  background: var(--color-white);
   resize: vertical;
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.3s ease;
 }
 
 .textarea::placeholder {
@@ -253,7 +240,6 @@
 .textarea:focus {
   outline: none;
   border-color: var(--color-gold-outline-border);
-  box-shadow: 0 0 0 2px rgba(200, 155, 60, 0.1);
 }
 
 .submitBtn {
@@ -263,50 +249,55 @@
   color: var(--color-white);
   cursor: pointer;
   font-family: var(--font-ui);
-  font-size: var(--text-sm);
+  font-size: 16px;
   font-weight: 700;
-  padding: 13px 24px;
+  padding: 14px 24px;
   width: 100%;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   transition:
-    background-color 0.25s ease,
-    box-shadow 0.25s ease;
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
   background: var(--color-maroon-deep);
-  box-shadow: var(--shadow-btn);
+  box-shadow: 0 4px 12px rgba(153, 31, 35, 0.2);
 }
 
 .submitBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
-.formNote {
+/* Success/error messages */
+.formFeedback {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--color-grey);
-  line-height: var(--leading-normal);
+  font-size: var(--text-base);
   text-align: center;
-  margin: 14px 0 0;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius-xs);
 }
 
 .formSuccess {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--color-emerald);
-  margin: 12px 0 0;
-  text-align: center;
+  color: var(--color-white);
+  background-color: #12b878;
 }
 
 .formError {
+  color: var(--color-white);
+  background-color: var(--color-bright-red);
+}
+
+/* Note text */
+.formNote {
   font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--color-bright-red);
-  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--color-grey);
+  line-height: 1.4;
   text-align: center;
+  margin-top: 16px;
 }
 
 /* =========================================================================
@@ -314,14 +305,18 @@
    ========================================================================= */
 
 .branchesSection {
-  background: var(--color-ivory-soft);
-  padding: 56px 0 64px;
+  padding-top: 20px;
 }
 
-.branchesInner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 var(--header-padding-x);
+.branchesTitle {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  margin: 0 0 32px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-maroon);
 }
 
 .branchesGrid {
@@ -332,26 +327,21 @@
 
 .branchCard {
   background: var(--color-white);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-soft);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(200, 155, 60, 0.1);
   display: flex;
   flex-direction: column;
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-}
-
-.branchCard:hover {
-  box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
 }
 
 .branchMap {
   width: 100%;
-  height: 180px;
-  border-bottom: 1px solid var(--color-line);
+  height: 160px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 155, 60, 0.15);
+  margin: 16px 0;
 }
 
 .branchMap iframe {
@@ -359,85 +349,83 @@
   height: 100%;
   border: 0;
   display: block;
-}
-
-.branchBody {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  filter: grayscale(10%) contrast(110%);
 }
 
 .branchName {
   font-family: var(--font-decorative);
-  font-weight: 300;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 12px;
   color: var(--color-maroon);
-  margin: 0 0 10px;
-  line-height: 1.2;
 }
 
 .branchAddress {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: 14px;
   color: var(--color-charcoal-soft);
-  line-height: 1.55;
-  margin: 0 0 14px;
+  line-height: 1.5;
+  margin: 0 0 12px;
   flex-grow: 1;
 }
 
-.branchDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
 .branchPhone {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: 14px;
   color: var(--color-charcoal);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  margin: 0 0 20px;
 }
 
-.branchPhone svg {
-  color: var(--color-gold-accent);
-  flex-shrink: 0;
-}
-
-.branchPhone:hover {
+.branchPhone a {
   color: var(--color-maroon);
+  text-decoration: none;
+  font-weight: 600;
 }
 
-.directionBtn {
+.branchPhone a:hover {
+  text-decoration: underline;
+}
+
+.branchActions {
+  display: flex;
+  gap: 12px;
+}
+
+.branchBtn {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 16px;
-  background: var(--color-maroon);
-  color: var(--color-white);
-  text-decoration: none;
-  border-radius: var(--radius-xs);
-  font-family: var(--font-ui);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: auto;
-  transition:
-    background-color 0.25s ease,
-    box-shadow 0.25s ease;
 }
 
-.directionBtn:hover {
+.btnSolidMaroon {
+  background: var(--color-maroon);
+  color: var(--color-white);
+  border: 1px solid var(--color-maroon);
+}
+
+.btnSolidMaroon:hover {
   background: var(--color-maroon-deep);
-  box-shadow: var(--shadow-btn);
+  border-color: var(--color-maroon-deep);
+}
+
+.btnOutlineGold {
+  border: 1px solid var(--color-gold-outline-border);
+  color: var(--color-gold-outline);
+  background: transparent;
+}
+
+.btnOutlineGold:hover {
+  background: var(--color-gold-outline-border);
+  color: var(--color-white);
 }
 
 /* =========================================================================
@@ -446,73 +434,82 @@
 
 @media (max-width: 991px) {
   .hero {
-    padding: 36px 0 32px;
+    padding: 46px 0 32px;
+    margin-bottom: 32px;
   }
 
-  .contactSection {
-    padding: 40px 0 48px;
+  .heroTitle {
+    font-size: clamp(28px, 5vw, 34px);
   }
 
-  .contactInner {
+  .heroSubtitle {
+    font-size: 16px;
+  }
+
+  .contactGrid {
     grid-template-columns: 1fr;
     gap: 32px;
   }
 
-  .infoSide {
-    padding-right: 0;
-    order: -1;
+  .card {
+    padding: 30px 32px;
   }
 
   .branchesGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 20px;
-  }
-
-  .branchesSection {
-    padding: 40px 0 48px;
   }
 }
 
 @media (max-width: 767px) {
   .hero {
-    padding: 28px 0 24px;
+    padding: 32px 0 22px;
+    margin-bottom: 24px;
   }
 
-  .contactSection {
-    padding: 32px 0 40px;
+  .heroTitle {
+    font-size: clamp(28px, 8.4vw, 36px);
+    margin-bottom: 12px;
   }
 
-  .contactInner {
+  .container {
     padding: 0 16px;
-    gap: 28px;
   }
 
-  .formSide {
-    padding: 24px 20px;
+  .card {
+    padding: 22px 18px;
+  }
+
+  .cardTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
   }
 
   .fieldRow {
     grid-template-columns: 1fr;
   }
 
-  .branchesGrid {
-    grid-template-columns: 1fr;
-    gap: 18px;
+  .branchesTitle {
+    font-size: 32px;
+    margin-bottom: 24px;
   }
 
-  .branchesInner {
-    padding: 0 16px;
-  }
-
-  .branchesSection {
-    padding: 32px 0 40px;
+  .branchCard {
+    padding: 18px;
+    border-radius: 12px;
   }
 
   .branchMap {
-    height: 160px;
+    height: 145px;
+    margin: 12px 0;
   }
 
-  .branchBody {
-    padding: 16px;
+  .branchActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .branchBtn {
+    width: 100%;
   }
 }
