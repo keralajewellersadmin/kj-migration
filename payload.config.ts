@@ -532,7 +532,7 @@ const AdminUsers: CollectionConfig = {
       type: "select",
       required: true,
       defaultValue: "enquiry-manager",
-      options: adminRoles.map((role) => ({ label: role, value: role })),
+      options: adminRoles.map((role: string) => ({ label: role, value: role })),
       access: { create: adminRoleFieldAccess, update: adminRoleFieldAccess },
     },
     {

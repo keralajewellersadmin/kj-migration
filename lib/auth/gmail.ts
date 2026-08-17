@@ -18,7 +18,7 @@ function getTransporter(): nodemailer.Transporter {
   return _transporter;
 }
 
-export interface SendEmailOptions {
+interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;

@@ -18,7 +18,7 @@ export interface Product {
   seo?: SeoFields;
 }
 
-export type BlogBlock =
+type BlogBlock =
   | { type: "h2"; text: string }
   | { type: "p"; text: string }
   | { type: "ul"; items: string[] };

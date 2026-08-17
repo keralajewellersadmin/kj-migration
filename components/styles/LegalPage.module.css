@@ -12,16 +12,16 @@
   text-align: center;
   color: var(--color-charcoal);
   font-family: var(--font-decorative);
-  font-size: clamp(36px, 5vw, 48px); /* one-off */
+  font-size: clamp(36px, 5vw, 48px);
   font-weight: 400;
-  margin: 0 0 20px; /* one-off */
+  margin: 0 0 20px;
 }
 
 .titleDivider {
-  width: 60px; /* one-off */
-  height: 3px; /* one-off */
+  width: 60px;
+  height: 3px;
   background-color: var(--color-gold);
-  margin: 0 auto 50px; /* one-off */
+  margin: 0 auto 50px;
 }
 
 @media (max-width: 767px) {
@@ -29,9 +29,9 @@
     padding: 40px 16px;
   }
   .pageTitle {
-    font-size: clamp(28px, 8vw, 36px); /* one-off */
+    font-size: clamp(28px, 8vw, 36px);
   }
   .titleDivider {
-    margin-bottom: 32px; /* one-off */
+    margin-bottom: 32px;
   }
 }

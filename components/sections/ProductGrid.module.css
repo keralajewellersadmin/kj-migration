@@ -76,7 +76,7 @@
 }
 
 .count {
-  color: var(--color-charcoal-light);
+  color: var(--color-charcoal-soft);
   font-family: var(--font-body);
   font-size: 13px;
 }

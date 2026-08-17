@@ -4,28 +4,28 @@
 
 .page {
   background: var(--color-ivory-soft);
-  padding-bottom: 60px; /* one-off */
+  padding-bottom: 60px;
 }
 
 /* --- Hero --- */
 .hero {
   background: var(--color-white);
-  padding: 60px 0 40px; /* one-off */
+  padding: 60px 0 40px;
   text-align: center;
   border-bottom: 1px solid var(--color-line);
-  margin-bottom: 40px; /* one-off */
+  margin-bottom: 40px;
 }
 
 .heroContainer {
-  max-width: 1200px; /* one-off */
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px; /* one-off */
+  padding: 0 24px;
 }
 
 .heroTitle {
   font-family: var(--font-decorative);
   font-weight: 300;
-  font-size: clamp(40px, 5vw, 56px); /* one-off */
+  font-size: clamp(40px, 5vw, 56px);
   line-height: 1.05;
   background-image: linear-gradient(
     90deg,
@@ -36,38 +36,38 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: var(--color-maroon-bright);
-  margin: 0 0 16px; /* one-off */
+  margin: 0 0 16px;
 }
 
 .heroSubtitle {
   font-family: var(--font-body);
   font-size: var(--text-lg);
   color: var(--color-charcoal-soft);
-  max-width: 600px; /* one-off */
+  max-width: 600px;
   margin: 0 auto;
   line-height: var(--leading-relaxed);
 }
 
 /* --- Container --- */
 .container {
-  max-width: 1200px; /* one-off */
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px; /* one-off */
+  padding: 0 24px;
 }
 
 /* --- 2-Column Grid --- */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 40px; /* one-off */
-  margin-bottom: 60px; /* one-off */
+  gap: 40px;
+  margin-bottom: 60px;
   align-items: start;
 }
 
 .card {
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  padding: 40px; /* one-off */
+  padding: 40px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--color-gold-outline-border);
 }
@@ -76,11 +76,11 @@
   font-family: var(--font-decorative);
   font-weight: 300;
   color: var(--color-maroon);
-  font-size: clamp(26px, 3vw, 32px); /* one-off */
+  font-size: clamp(26px, 3vw, 32px);
   line-height: 1.1;
-  margin: 0 0 24px; /* one-off */
+  margin: 0 0 24px;
   position: relative;
-  padding-bottom: 12px; /* one-off */
+  padding-bottom: 12px;
 }
 
 .cardTitle::after {
@@ -88,21 +88,21 @@
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 60px; /* one-off */
-  height: 2px; /* one-off */
+  width: 60px;
+  height: 2px;
   background-color: var(--color-gold-outline);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* one-off */
+  gap: 16px;
 }
 
 .fieldRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px; /* one-off */
+  gap: 14px;
 }
 
 .field {
@@ -111,7 +111,7 @@
 
 .input {
   width: 100%;
-  padding: 13px 16px; /* one-off */
+  padding: 13px 16px;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
@@ -129,7 +129,7 @@
 
 .textarea {
   width: 100%;
-  padding: 13px 16px; /* one-off */
+  padding: 13px 16px;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
@@ -155,7 +155,7 @@
   font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: 700;
-  padding: 14px 24px; /* one-off */
+  padding: 14px 24px;
   width: 100%;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -175,7 +175,7 @@
   color: var(--color-grey);
   line-height: var(--leading-normal);
   text-align: center;
-  margin: 16px 0 0; /* one-off */
+  margin: 16px 0 0;
 }
 
 .infoText {
@@ -186,19 +186,19 @@
 }
 
 .infoText p {
-  margin: 0 0 16px; /* one-off */
+  margin: 0 0 16px;
 }
 
 .infoList {
-  margin: 0 0 18px; /* one-off */
+  margin: 0 0 18px;
   padding: 0;
   list-style: none;
 }
 
 .infoList li {
   position: relative;
-  padding-left: 32px; /* one-off */
-  margin-bottom: 12px; /* one-off */
+  padding-left: 32px;
+  margin-bottom: 12px;
   font-size: var(--text-base);
   line-height: 1.5;
 }
@@ -207,15 +207,15 @@
   content: "\2713";
   position: absolute;
   left: 0;
-  top: 1px; /* one-off */
-  width: 20px; /* one-off */
-  height: 20px; /* one-off */
+  top: 1px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--gradient-gold-refined);
   color: var(--color-white);
-  font-size: 11px; /* one-off */
+  font-size: 11px;
   font-weight: 700;
-  line-height: 20px; /* one-off */
+  line-height: 20px;
   text-align: center;
   box-shadow: var(--shadow-gold-glow);
 }
@@ -226,19 +226,19 @@
   font-weight: 300;
   font-style: normal;
   color: var(--color-maroon);
-  font-size: clamp(22px, 2.4vw, 28px); /* one-off */
+  font-size: clamp(22px, 2.4vw, 28px);
   line-height: 1.4;
-  padding-left: 26px; /* one-off */
-  margin: 4px 0 0; /* one-off */
+  padding-left: 26px;
+  margin: 4px 0 0;
 }
 
 .quote::before {
   content: "\201C";
   position: absolute;
-  left: -6px; /* one-off */
-  top: -12px; /* one-off */
+  left: -6px;
+  top: -12px;
   font-family: var(--font-decorative);
-  font-size: 52px; /* one-off */
+  font-size: 52px;
   line-height: 1;
   color: var(--color-gold);
   opacity: 0.45;
@@ -246,9 +246,9 @@
 
 .socialLinks {
   display: flex;
-  gap: 16px; /* one-off */
-  margin-top: 24px; /* one-off */
-  padding-top: 24px; /* one-off */
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
   border-top: 1px solid var(--color-line);
 }
 
@@ -256,8 +256,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* one-off */
-  height: 40px; /* one-off */
+  width: 40px;
+  height: 40px;
   background: var(--color-maroon);
   border-radius: 50%;
   color: var(--color-white);
@@ -266,19 +266,19 @@
 
 .socialLinks a:hover {
   background: var(--color-gold-outline-border);
-  transform: translateY(-3px); /* one-off */
+  transform: translateY(-3px);
   box-shadow: var(--shadow-gold-btn-hover);
 }
 
 /* --- Branch Cards --- */
 .branchesSection {
-  padding-top: 20px; /* one-off */
+  padding-top: 20px;
 }
 
 .branchesTitle {
   font-family: var(--font-decorative);
   font-weight: 300;
-  font-size: clamp(36px, 4vw, 50px); /* one-off */
+  font-size: clamp(36px, 4vw, 50px);
   line-height: 1.1;
   text-align: center;
   background-image: linear-gradient(
@@ -290,19 +290,19 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: var(--color-maroon-bright);
-  margin: 0 0 32px; /* one-off */
+  margin: 0 0 32px;
 }
 
 .branchesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px; /* one-off */
+  gap: 24px;
 }
 
 .branchCard {
   background: var(--color-white);
   border-radius: var(--radius-md);
-  padding: 24px; /* one-off */
+  padding: 24px;
   box-shadow: var(--shadow-soft);
   border: 1px solid var(--color-line);
   display: flex;
@@ -311,10 +311,10 @@
 
 .branchMap {
   width: 100%;
-  height: 200px; /* one-off */
+  height: 200px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  margin-bottom: 16px; /* one-off */
+  margin-bottom: 16px;
 }
 
 .branchMap iframe {
@@ -327,9 +327,9 @@
 .branchName {
   font-family: var(--font-decorative);
   font-weight: 300;
-  font-size: 22px; /* one-off */
+  font-size: 22px;
   color: var(--color-maroon);
-  margin: 0 0 12px; /* one-off */
+  margin: 0 0 12px;
 }
 
 .branchAddress {
@@ -337,7 +337,7 @@
   font-size: var(--text-sm);
   color: var(--color-charcoal-soft);
   line-height: var(--leading-normal);
-  margin: 0 0 12px; /* one-off */
+  margin: 0 0 12px;
   flex-grow: 1;
 }
 
@@ -345,7 +345,7 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--color-charcoal);
-  margin: 0 0 20px; /* one-off */
+  margin: 0 0 20px;
 }
 
 .branchPhone a {
@@ -364,7 +364,7 @@
   color: var(--color-white);
   text-decoration: none;
   border-radius: var(--radius-xs);
-  padding: 12px 20px; /* one-off */
+  padding: 12px 20px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 700;
@@ -385,7 +385,6 @@
    ========================================================================= */
 
 @media (max-width: 991px) {
-  /* one-off */
   .hero {
     padding: 46px 0 32px;
     margin-bottom: 32px;
@@ -430,7 +429,6 @@
 }
 
 @media (max-width: 767px) {
-  /* one-off */
   .hero {
     padding: 32px 0 22px;
     margin-bottom: 24px;
@@ -444,7 +442,7 @@
     line-height: 1.55;
   }
   .container {
-    padding: 0 16px; /* one-off */
+    padding: 0 16px;
   }
   .card {
     padding: 22px 18px;
@@ -454,7 +452,7 @@
     margin-bottom: 20px;
   }
   .grid {
-    grid-template-columns: 1fr; /* one-off */
+    grid-template-columns: 1fr;
     gap: 22px;
     margin-bottom: 42px;
   }
@@ -462,7 +460,7 @@
     grid-template-columns: 1fr;
   }
   .branchesGrid {
-    grid-template-columns: 1fr; /* one-off */
+    grid-template-columns: 1fr;
     row-gap: 26px;
   }
 

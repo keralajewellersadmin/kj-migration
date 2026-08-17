@@ -10,7 +10,7 @@
 
 .blogHeader {
   text-align: center;
-  margin-bottom: 48px; /* one-off */
+  margin-bottom: 48px;
 }
 
 .blogTitle {
@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 0; /* one-off */
+  padding: 40px 0;
 }
 
 .heroContent {
@@ -78,7 +78,7 @@
 
 .heroTitle {
   font-family: var(--font-decorative);
-  font-size: clamp(40px, 6vw, 60px); /* one-off */
+  font-size: clamp(40px, 6vw, 60px);
   font-weight: 400;
   color: var(--color-white);
   margin: 0 0 10px;
@@ -94,11 +94,11 @@
 .heroPara {
   font-family: var(--font-body);
   font-size: 20.667px; /* one-off — matches paragraph-bigger-2-blog */
-  line-height: 25px; /* one-off */
+  line-height: 25px;
   color: var(--color-gold-warm);
   text-align: center;
   width: 50%; /* one-off — matches paragraph-bigger-2-blog */
-  margin: 18px 0; /* one-off */
+  margin: 18px 0;
 }
 
 .heroBtn {
@@ -106,14 +106,14 @@
   align-items: center;
   justify-content: center;
   padding: 12px 25px; /* one-off — matches button-blog */
-  border-radius: 5px; /* one-off */
+  border-radius: 5px;
   background-color: var(--color-gold-warm);
   color: var(--color-white);
   font-family: var(--font-decorative);
   font-size: 27.556px; /* one-off — matches button-blog */
   font-weight: 300;
-  letter-spacing: 2px; /* one-off */
-  line-height: 20px; /* one-off */
+  letter-spacing: 2px;
+  line-height: 20px;
   text-transform: capitalize;
   text-decoration: none;
   transition:
@@ -140,13 +140,13 @@
     padding: 52px 22px;
   }
   .hero {
-    height: clamp(360px, 46vh, 460px); /* one-off */
+    height: clamp(360px, 46vh, 460px);
   }
   .heroContent {
     width: min(86%, 620px);
   }
   .heroTitle {
-    font-size: clamp(34px, 6vw, 46px); /* one-off */
+    font-size: clamp(34px, 6vw, 46px);
   }
   .heroImage {
     width: min(48%, 260px);
@@ -163,21 +163,21 @@
     padding: 40px 16px;
   }
   .heroOuter {
-    padding: 28px 16px 34px; /* one-off */
+    padding: 28px 16px 34px;
   }
   .hero {
-    height: auto; /* one-off */
-    min-height: 0; /* one-off */
+    height: auto;
+    min-height: 0;
     padding: 28px 0;
   }
   .heroContent {
     width: 88%;
   }
   .heroImage {
-    width: min(62%, 220px); /* one-off */
+    width: min(62%, 220px);
   }
   .heroTitle {
-    font-size: clamp(28px, 9vw, 38px); /* one-off */
+    font-size: clamp(28px, 9vw, 38px);
   }
   .heroPara {
     width: 100%;

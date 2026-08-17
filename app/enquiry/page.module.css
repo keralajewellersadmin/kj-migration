@@ -14,9 +14,9 @@
 }
 
 .shellInner {
-  max-width: 1080px; /* one-off */
+  max-width: 1080px;
   margin: 0 auto;
-  padding: clamp(30px, 5vw, 56px) 18px; /* one-off */
+  padding: clamp(30px, 5vw, 56px) 18px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -25,7 +25,7 @@
 /* --- Logo --- */
 .logo {
   display: inline-block;
-  margin-bottom: 24px; /* one-off */
+  margin-bottom: 24px;
 }
 
 .logo img {
@@ -34,33 +34,33 @@
 
 /* --- Hero --- */
 .hero {
-  max-width: 720px; /* one-off */
-  margin-bottom: clamp(24px, 4vw, 40px); /* one-off */
+  max-width: 720px;
+  margin-bottom: clamp(24px, 4vw, 40px);
 }
 
 .eyebrow {
   color: var(--color-maroon);
   font-family: var(--font-ui);
-  font-size: 13px; /* one-off */
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0 0 8px; /* one-off */
+  margin: 0 0 8px;
 }
 
 .heroTitle {
   color: var(--color-maroon);
   font-family: var(--font-decorative);
-  font-size: clamp(32px, 5vw, 64px); /* one-off */
+  font-size: clamp(32px, 5vw, 64px);
   font-weight: 300;
   line-height: 1.1;
-  margin: 0 0 16px; /* one-off */
+  margin: 0 0 16px;
 }
 
 .heroSubtitle {
   color: var(--color-gold-ink);
   font-family: var(--font-ui);
-  font-size: clamp(15px, 2vw, 18px); /* one-off */
+  font-size: clamp(15px, 2vw, 18px);
   line-height: 1.6;
   margin: 0;
 }
@@ -68,30 +68,30 @@
 /* --- Form Card --- */
 .card {
   width: 100%;
-  max-width: 1080px; /* one-off */
+  max-width: 1080px;
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(153, 31, 35, 0.14); /* one-off */
-  border-radius: 12px; /* one-off */
-  box-shadow: 0 24px 60px rgba(65, 35, 28, 0.08); /* one-off */
-  padding: clamp(20px, 4vw, 42px); /* one-off */
+  border: 1px solid rgba(153, 31, 35, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(65, 35, 28, 0.08);
+  padding: clamp(20px, 4vw, 42px);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* one-off */
+  gap: 20px;
 }
 
 .formGrid {
   display: grid;
-  gap: 18px; /* one-off */
+  gap: 18px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* one-off */
+  gap: 8px;
 }
 
 .fieldWide {
@@ -101,7 +101,7 @@
 .label {
   color: var(--color-charcoal-soft);
   font-family: var(--font-ui);
-  font-size: 13px; /* one-off */
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -109,12 +109,12 @@
 
 .input {
   background: var(--color-ivory-soft);
-  border: 1px solid rgba(153, 31, 35, 0.18); /* one-off */
-  border-radius: 6px; /* one-off */
+  border: 1px solid rgba(153, 31, 35, 0.18);
+  border-radius: 6px;
   color: var(--color-charcoal-dark);
   font: 500 16px/1.4 var(--font-ui);
-  min-height: 48px; /* one-off */
-  padding: 12px 14px; /* one-off */
+  min-height: 48px;
+  padding: 12px 14px;
   box-sizing: border-box;
   transition:
     border-color 0.2s ease,
@@ -124,7 +124,7 @@
 .input:focus {
   outline: none;
   border-color: var(--color-maroon);
-  box-shadow: 0 0 0 3px rgba(153, 31, 35, 0.1); /* one-off */
+  box-shadow: 0 0 0 3px rgba(153, 31, 35, 0.1);
 }
 
 .input[readonly] {
@@ -137,19 +137,19 @@ select.input {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23991f23' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 14px center; /* one-off */
-  padding-right: 36px; /* one-off */
+  background-position: right 14px center;
+  padding-right: 36px;
   cursor: pointer;
 }
 
 .textarea {
   background: var(--color-ivory-soft);
-  border: 1px solid rgba(153, 31, 35, 0.18); /* one-off */
-  border-radius: 6px; /* one-off */
+  border: 1px solid rgba(153, 31, 35, 0.18);
+  border-radius: 6px;
   color: var(--color-charcoal-dark);
   font: 500 16px/1.4 var(--font-ui);
-  min-height: 100px; /* one-off */
-  padding: 12px 14px; /* one-off */
+  min-height: 100px;
+  padding: 12px 14px;
   resize: vertical;
   box-sizing: border-box;
   transition:
@@ -160,26 +160,26 @@ select.input {
 .textarea:focus {
   outline: none;
   border-color: var(--color-maroon);
-  box-shadow: 0 0 0 3px rgba(153, 31, 35, 0.1); /* one-off */
+  box-shadow: 0 0 0 3px rgba(153, 31, 35, 0.1);
 }
 
 /* --- Actions --- */
 .actions {
   display: flex;
-  gap: 14px; /* one-off */
-  padding-top: 4px; /* one-off */
+  gap: 14px;
+  padding-top: 4px;
 }
 
 .submitBtn {
   background: var(--color-maroon);
   color: var(--color-ivory);
   border: none;
-  border-radius: 6px; /* one-off */
+  border-radius: 6px;
   cursor: pointer;
   font: 700 14px/1 var(--font-ui);
   letter-spacing: 0.08em;
-  min-height: 48px; /* one-off */
-  padding: 0 28px; /* one-off */
+  min-height: 48px;
+  padding: 0 28px;
   text-transform: uppercase;
   transition:
     background-color 0.25s ease,
@@ -189,20 +189,20 @@ select.input {
 
 .submitBtn:hover {
   background: var(--color-maroon-deep);
-  transform: translateY(-1px); /* one-off */
-  box-shadow: 0 8px 20px rgba(153, 31, 35, 0.2); /* one-off */
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(153, 31, 35, 0.2);
 }
 
 .whatsappBtn {
   background: var(--color-ivory);
   color: var(--color-maroon);
   border: 1px solid var(--color-maroon);
-  border-radius: 6px; /* one-off */
+  border-radius: 6px;
   cursor: pointer;
   font: 700 14px/1 var(--font-ui);
   letter-spacing: 0.08em;
-  min-height: 48px; /* one-off */
-  padding: 0 28px; /* one-off */
+  min-height: 48px;
+  padding: 0 28px;
   text-transform: uppercase;
   transition:
     transform 0.18s ease,
@@ -211,24 +211,24 @@ select.input {
 }
 
 .whatsappBtn:hover {
-  box-shadow: 0 12px 24px rgba(65, 35, 28, 0.12); /* one-off */
-  transform: translateY(-1px); /* one-off */
+  box-shadow: 0 12px 24px rgba(65, 35, 28, 0.12);
+  transform: translateY(-1px);
 }
 
 /* --- Success --- */
 .successBox {
   text-align: center;
-  padding: 40px 20px; /* one-off */
+  padding: 40px 20px;
 }
 
 .successText {
   font-family: var(--font-ui);
-  font-size: 17px; /* one-off */
+  font-size: 17px;
   line-height: 1.6;
   color: var(--color-gold-ink);
   background: rgba(212, 175, 55, 0.14);
-  border-radius: 6px; /* one-off */
-  padding: 16px 20px; /* one-off */
+  border-radius: 6px;
+  padding: 16px 20px;
   margin: 0;
 }
 
@@ -236,9 +236,9 @@ select.input {
 .footnote {
   color: var(--color-charcoal-soft);
   font-family: var(--font-ui);
-  font-size: clamp(15px, 2vw, 18px); /* one-off */
+  font-size: clamp(15px, 2vw, 18px);
   line-height: 1.65;
-  margin: 28px 0 0; /* one-off */
+  margin: 28px 0 0;
 }
 
 .footnoteLink {
@@ -256,14 +256,13 @@ select.input {
    ========================================================================= */
 
 @media (max-width: 767px) {
-  /* one-off */
   .shellInner {
-    padding: 24px 16px; /* one-off */
+    padding: 24px 16px;
     align-items: center;
   }
   .logo {
     text-align: center;
-    margin-bottom: 16px; /* one-off */
+    margin-bottom: 16px;
   }
   .hero {
     text-align: center;
@@ -277,7 +276,7 @@ select.input {
     grid-template-columns: 1fr;
   }
   .form {
-    gap: 14px; /* one-off */
+    gap: 14px;
   }
   .actions {
     flex-direction: column;

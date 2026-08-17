@@ -1,25 +1,25 @@
 .customSelect {
   position: relative;
   flex: 0 1 auto;
-  min-width: 200px; /* one-off */
+  min-width: 200px;
 }
 
 .trigger {
   align-items: center;
   appearance: none;
   background-color: var(--color-white);
-  border: 1px solid rgba(107, 74, 76, 0.16); /* one-off */
-  border-radius: 7px; /* one-off */
+  border: 1px solid rgba(107, 74, 76, 0.16);
+  border-radius: 7px;
   color: var(--color-charcoal);
   cursor: pointer;
   display: flex;
   font-family: var(--font-body);
-  font-size: 14px; /* one-off */
+  font-size: 14px;
   font-weight: 600;
-  height: 44px; /* one-off */
+  height: 44px;
   justify-content: space-between;
   letter-spacing: 0.01em;
-  padding: 0 38px 0 14px; /* one-off */
+  padding: 0 38px 0 14px;
   transition: all 200ms ease;
   width: 100%;
 }
@@ -33,7 +33,7 @@
   border-color: rgba(153, 31, 35, 0.25);
   box-shadow:
     0 4px 12px rgba(153, 31, 35, 0.08),
-    inset 0 0 0 1px rgba(212, 175, 55, 0.12); /* one-off */
+    inset 0 0 0 1px rgba(212, 175, 55, 0.12);
   outline: none;
   color: var(--color-charcoal-dark);
 }
@@ -45,26 +45,26 @@
 }
 
 .chevron {
-  border-left: 5px solid transparent; /* one-off */
-  border-right: 5px solid transparent; /* one-off */
-  border-top: 5px solid var(--color-charcoal-soft); /* one-off */
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-charcoal-soft);
   flex-shrink: 0;
   height: 0;
-  margin-left: 8px; /* one-off */
+  margin-left: 8px;
   width: 0;
 }
 
 .dropdown {
   background: var(--color-white);
-  border: 1px solid rgba(107, 74, 76, 0.16); /* one-off */
-  border-radius: 7px; /* one-off */
-  box-shadow: 0 8px 24px rgba(57, 26, 21, 0.12); /* one-off */
+  border: 1px solid rgba(107, 74, 76, 0.16);
+  border-radius: 7px;
+  box-shadow: 0 8px 24px rgba(57, 26, 21, 0.12);
   left: 0;
   list-style: none;
-  margin: 4px 0 0; /* one-off */
+  margin: 4px 0 0;
   max-height: none;
   overflow: visible;
-  padding: 4px 0; /* one-off */
+  padding: 4px 0;
   position: absolute;
   right: 0;
   top: 100%;
@@ -78,9 +78,9 @@
   cursor: pointer;
   display: block;
   font-family: var(--font-body);
-  font-size: 14px; /* one-off */
+  font-size: 14px;
   font-weight: 500;
-  padding: 10px 14px; /* one-off */
+  padding: 10px 14px;
   text-align: left;
   transition: background-color 120ms ease;
   width: 100%;

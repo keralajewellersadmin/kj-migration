@@ -10,7 +10,7 @@ import {
   type PayloadRequest,
 } from "payload";
 
-export type AdminRole = "super-admin" | "admin" | "enquiry-manager";
+type AdminRole = "super-admin" | "admin" | "enquiry-manager";
 
 export const adminRoles: AdminRole[] = [
   "super-admin",

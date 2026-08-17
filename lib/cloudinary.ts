@@ -18,7 +18,7 @@ export function getCloudinaryFolder(mediaType?: string): string {
   return `kerala-jewellers/${folder}`;
 }
 
-export interface CloudinaryTransformOptions {
+interface CloudinaryTransformOptions {
   width?: number;
   height?: number;
   quality?: "auto" | number | string;

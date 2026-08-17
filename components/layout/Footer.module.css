@@ -6,7 +6,7 @@
 }
 
 .container {
-  max-width: 1200px; /* one-off */
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-5);
 }
@@ -19,7 +19,7 @@
 .logo {
   width: auto;
   height: auto;
-  max-width: 170px; /* one-off */
+  max-width: 170px;
   display: block;
 }
 
@@ -27,12 +27,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-10);
-  margin-bottom: 30px; /* one-off */
+  margin-bottom: 30px;
 }
 
 .heading {
   color: var(--color-maroon);
-  font-size: 22px; /* one-off */
+  font-size: 22px;
   font-weight: 700;
   margin-top: 0;
   margin-bottom: var(--space-6);
@@ -73,8 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* one-off */
-  height: 40px; /* one-off */
+  width: 40px;
+  height: 40px;
   background-color: var(--color-maroon);
   color: var(--color-white);
   border-radius: var(--radius-full);
@@ -98,7 +98,7 @@
   margin: 0 0 var(--space-6) 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px 15px; /* one-off */
+  gap: 10px 15px;
 }
 
 .featuresList li {
@@ -114,10 +114,10 @@
 
 .checkIcon {
   flex-shrink: 0;
-  width: 18px; /* one-off */
-  height: 18px; /* one-off */
+  width: 18px;
+  height: 18px;
   margin-right: var(--space-2);
-  margin-top: 1px; /* one-off */
+  margin-top: 1px;
   color: var(--color-gold-accent);
 }
 
@@ -137,7 +137,7 @@
 }
 
 .infoIcon {
-  margin-right: 6px; /* one-off */
+  margin-right: 6px;
   vertical-align: text-bottom;
   color: var(--color-gold-accent);
 }
@@ -175,11 +175,11 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  min-height: 140px; /* one-off */
-  border-radius: 10px; /* one-off */
+  min-height: 140px;
+  border-radius: 10px;
   overflow: hidden;
   margin-bottom: var(--space-4);
-  border: 1px solid rgba(200, 155, 60, 0.2); /* one-off */
+  border: 1px solid rgba(200, 155, 60, 0.2);
   display: block;
 }
 
@@ -203,7 +203,7 @@
   margin-bottom: var(--space-3);
   line-height: 1.5;
   font-style: normal;
-  min-height: 42px; /* one-off */
+  min-height: 42px;
 }
 
 .branchPhone {
@@ -226,12 +226,12 @@
 .branchActions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px; /* one-off */
+  gap: 10px;
   margin-top: auto;
 }
 
 .branchBtn {
-  padding: 10px; /* one-off */
+  padding: 10px;
   text-align: center;
   font-size: var(--text-sm);
   font-weight: 600;
@@ -270,7 +270,7 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px; /* one-off */
+  gap: 10px;
 }
 
 .bottom p {
@@ -282,7 +282,6 @@
 
 /* ===== Responsive ===== */
 @media (max-width: 991px) {
-  /* one-off */
   .footer {
     padding-top: var(--space-8);
   }
@@ -308,7 +307,6 @@
 }
 
 @media (max-width: 767px) {
-  /* one-off */
   .footer {
     padding-top: var(--space-8);
   }
@@ -334,11 +332,11 @@
 
   .branches {
     grid-template-columns: 1fr;
-    gap: 30px; /* one-off */
+    gap: 30px;
   }
 
   .branchCard {
-    padding: 18px; /* one-off */
+    padding: 18px;
   }
 
   .linksGrid,

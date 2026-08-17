@@ -58,9 +58,6 @@
     --color-cream: #fff5d8;
     --color-cornsilk: #fff8dc;
     --color-cream-deep: #fdf2c6;
-    --color-royal-blue: #1e2d5e;
-    --color-emerald-hover: #3d6366;
-    --color-bright-red-hover: #8b0000;
     --color-smoke: #f1f1f1;
     --color-smoke-deep: #e1e1e1;
     --color-smoke-light: #e6e6e6;
@@ -74,8 +71,6 @@
     --color-maroon-end: #e41c24;
     --color-btn-primary: #ad1c20;
     --color-btn-hover-gold: #f5d95f;
-    --color-border-card: #a7a7a7;
-    --color-card-title: #7d5f58;
     --color-product-card-text: #4f403d;
     --color-product-card-category: #7d5f58;
     --color-product-card-header-bg: #fff7eb;
@@ -144,15 +139,11 @@
     /* ===== Shadows ===== */
     --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
     --shadow-soft: 0 12px 30px rgba(65, 35, 28, 0.06);
-    --shadow-lift: 0 18px 38px rgba(65, 35, 28, 0.1);
     --shadow-header: 0 4px 4px rgba(142, 142, 142, 0.58);
-    --shadow-mega: 0 18px 38px rgba(55, 21, 23, 0.14);
     --shadow-card: 0 8px 20px rgba(153, 31, 35, 0.08);
-    --shadow-card-hover: 0 16px 34px rgba(57, 26, 21, 0.1);
     --shadow-product-card: 0 12px 30px rgba(65, 35, 28, 0.06);
     --shadow-product-card-hover: 0 18px 38px rgba(65, 35, 28, 0.1);
     --shadow-btn: 0 6px 16px rgba(153, 31, 35, 0.18);
-    --shadow-btn-hover: 0 12px 24px rgba(153, 31, 35, 0.22);
     --shadow-gold-btn: 0 4px 12px rgba(212, 175, 55, 0.2);
     --shadow-gold-btn-hover: 0 6px 20px rgba(212, 175, 55, 0.3);
     --shadow-gold-glow: 0 8px 24px rgba(212, 175, 55, 0.12);
@@ -162,7 +153,6 @@
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
-    --radius-xl: 14px;
     --radius-full: 9999px;
 
     /* ===== Product Listing Card (live reference) ===== */
@@ -190,10 +180,6 @@
 
     /* ===== Z-Index ===== */
     --z-dropdown: 1000;
-    --z-sticky: 1020;
-    --z-overlay: 2000;
-    --z-modal: 3000;
-    --z-toast: 5000;
     --z-header: 10000;
 
     /* ===== Icons ===== */
@@ -207,7 +193,6 @@
     /* ===== Layout ===== */
     --layout-max: 1440px;
     --layout-container: 940px;
-    --layout-container-tablet: 728px;
     --layout-wide: 1240px;
 
     --header-height: 90px;
@@ -219,7 +204,6 @@
     --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
     --duration-fast: 180ms;
     --duration-normal: 220ms;
-    --duration-slow: 280ms;
 
     /* ===== Breakpoints (reference only; used in @media queries) ===== */
     /* bp-tablet: 991px */

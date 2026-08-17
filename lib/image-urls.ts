@@ -69,7 +69,6 @@ export const IMG = normalizeImageMap({
 
   // UI (Local assets — logos, coins, icons)
   logoKj: "/assets/images/logo 1.png",
-  favicon: "/assets/images/logo 1.png",
   coinGold: "/assets/coin/gold coin.png",
   coinSilver: "/assets/coin/silver coin.png",
   coinPlatinum: "/assets/coin/Platinum Coin.png",
