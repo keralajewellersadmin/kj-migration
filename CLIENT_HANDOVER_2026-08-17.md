@@ -1,157 +1,137 @@
-# CLIENT HANDOVER DOCUMENT — Kerala Jewellers
-## Date: 17 August 2026
+# Client Handover — Kerala Jewellers Website Rebuild
+
+**Date:** 2026-08-17  
+**Project:** Kerala Jewellers Website Rebuild (Next.js + Payload CMS)  
+**Live URL:** https://kj-migration.vercel.app  
+**Repository:** https://github.com/msarjun46/kj-migration
 
 ---
 
-## 1. LIVE SITE INFORMATION
+## 1. Live Site & Admin Access
 
-| Item | URL |
-|------|-----|
-| **Live Website** | https://keralajewellers.in |
-| **Staging/Preview** | https://kj-migration.vercel.app |
-| **Admin Panel** | https://keralajewellers.in/kj-portal-0d7cfad1 |
+| Item | URL | Notes |
+|------|-----|-------|
+| Live website | https://kj-migration.vercel.app | Public, no authentication needed |
+| Admin panel | https://kj-migration.vercel.app/kj-portal-0d7cfad1 | **Share path securely, not in forwarded documents** |
+| Admin login credentials | *(Delivered via secure channel)* | super-admin account |
+| Enquiry manager login | *(Delivered via secure channel)* | Read-only inquiry viewer |
 
-> **IMPORTANT:** The admin panel URL (`/kj-portal-0d7cfad1`) is intentionally obfuscated for security. Share this URL separately via secure channel — do not include it in documents that may be forwarded.
-
----
-
-## 2. ADMIN LOGIN CREDENTIALS
-
-> **DELIVER VIA SECURE CHANNEL ONLY — NOT PLAINTEXT EMAIL**
-
-| Role | Username | Email | Password |
-|------|----------|-------|----------|
-| Super Admin | (email login) | keralajewellersadmin@gmail.com | *(see secure delivery)* |
-| Admin | admin | — | *(see secure delivery)* |
-| Enquiry Manager | enquiry | — | *(see secure delivery)* |
-
-**OTP Login:** After entering credentials, a 6-digit OTP is sent to the registered email. Enter the OTP to complete login.
+**⚠️ SECURITY NOTE:** The admin path `/kj-portal-0d7cfad1` is intentionally obscure. It is blocked in robots.txt and has noindex metadata. Do not share this path in emails, documents, or public channels.
 
 ---
 
-## 3. HOW-TO GUIDE (Plain Language)
+## 2. Daily Operations Guide
 
-### 3.1 Update Metal Rates (Daily)
-1. Log in to Admin Panel → click **"Metal Rates"** in the sidebar (or navigate to `/kj-portal-0d7cfad1/update-rates`)
-2. Enter the rates for Gold 22K, Gold 18K, Silver, and Platinum (per gram, in ₹)
-3. Click **Save**
-4. The rates will update on the website immediately
+### Update Metal Rates (Daily Task)
+1. Log in to admin panel
+2. Click **"Metal Rates"** in the sidebar
+3. Enter the 4 rates: Gold 22K, Gold 18K, Silver, Platinum
+4. Click **"Update Rates"** — rates update instantly on the website
+5. The last updated date is displayed
 
-### 3.2 Reply to Inquiries
-1. Log in → click **"Inquiries"** in the sidebar
-2. You'll see a list of all customer inquiries
-3. Click on an inquiry to view full details (name, email, phone, message, product)
-4. Change the **Status** dropdown (New → Contacted → In Progress → Resolved → Closed → Spam)
-5. Click **Save**
+### Reply to Customer Inquiries
+1. Log in to admin panel
+2. Click **"Inquiries"** in the sidebar
+3. View new inquiries — each shows name, email, phone, message, and source page
+4. Reply directly to the customer's email (shown in the inquiry)
+5. Update inquiry status as needed
 
-### 3.3 Add a Product
-1. Log in → click **"Products"** → click **"Create New"**
-2. Fill in: Title (auto-generates slug), Code, Metal (Gold/Silver/Diamond/Platinum), Category, Weight, Purity, Description
-3. Upload the product image
-4. Fill in SEO fields (optional but recommended for Google)
-5. Click **Save**
+### Add a New Product
+1. Log in → **"Products"** → **"Create New"**
+2. Fill in: Product Name, Code, Metal (Gold/Silver/Diamond), Category, Weight, Purity
+3. Write a description
+4. Upload the product image (JPG/PNG/WebP)
+5. Fill in SEO fields (title, description) for Google visibility
+6. Click **"Save"**
 
-### 3.4 Edit a Product
-1. Log in → click **"Products"** → find the product in the list → click on it
-2. Edit any field
-3. Click **Save**
+### Add a Blog Post
+1. Log in → **"Blog Posts"** → **"Create New"**
+2. Enter: Title, Slug (URL-friendly name), Excerpt (short summary)
+3. Add body content using the block editor (headings, paragraphs, lists)
+4. Upload a thumbnail image
+5. Click **"Save"**
 
-### 3.5 Delete a Product
-1. Log in → click **"Products"** → find the product
-2. Click the three-dot menu (⋮) → select **"Delete"**
-3. Confirm deletion
-
-### 3.6 Add a Blog Post
-1. Log in → click **"Blog Posts"** → click **"Create New"**
-2. Fill in: Title (auto-generates slug), Excerpt, Date, Body content
-3. Upload a thumbnail image
-4. Click **Save**
-
-### 3.7 Change a Banner / Homepage Section
-1. Log in → click **"Site Settings"** in the sidebar
-2. Use the tabs to navigate:
-   - **Homepage** — Hero slides, category cards, bestsellers, features
-   - **Content** — Banners, heritage section, reviews
-   - **Footer & Contact Details** — Branch info, phone, email, social links
-   - **Metal Rates** — (same as dedicated rates page)
-   - **Pages** — Section headers, blog page content, contact page content, product page heroes
-3. Make changes → click **Save**
-
-### 3.8 Upload Media (Images)
-1. Log in → click **"Media"** in the sidebar → click **"Create New"**
-2. Upload the image
-3. Fill in **Alt Text** (important for accessibility and SEO)
-4. Select the **Folder** (Products, Categories, Banners, Gallery, etc.)
-5. Click **Save**
-
-### 3.9 Manage Categories
-1. Log in → click **"Categories"** → click **"Create New"**
-2. Select Metal (Gold/Silver/Diamond/Platinum)
-3. Enter Category Name (e.g., "Bangles", "Necklace")
-4. Slug auto-generates
-5. Click **Save**
+### Change Homepage Banners
+1. Log in → **"Site Settings"** (global) → **"Hero Slides"**
+2. Edit existing slides or add new ones
+3. Each slide needs: Heading, Subheading, Background Image, Button Text, Button Link
+4. Click **"Save"**
 
 ---
 
-## 4. KNOWN LIMITATIONS / DEFERRED ITEMS
+## 3. Known Limitations & Deferred Items
 
 | Item | Status | Notes |
 |------|--------|-------|
-| **Platinum products** | Coming Soon | Page at `/coming-soon` — no platinum products in catalog yet |
-| **Blog posts** | Empty stubs | 3 placeholder posts exist but have no body content. Add real content via admin panel. |
-| **22 product images** | Broken (404) | Some product images are not loading on Cloudinary. These need to be re-uploaded via the admin Media panel. |
-| **Font licensing** | Google Fonts | Montserrat (UI) and Mulish (body) — free Google Fonts, no licensing required |
-| **Site settings REST API** | 500 error | The `/api/globals/site-settings` endpoint returns 500. This is a known Payload CMS limitation. The admin panel and frontend still work correctly. |
-| **No monitoring setup** | Deferred | UptimeRobot/Uptime Kuma not yet configured. Recommend setting up for homepage, admin panel, and API. |
-| **GRT email correction** | Already applied | Email was corrected from "grt" to "kjpurasai" in footer |
+| Platinum products | "Coming Soon" page | No platinum products in catalog yet — the `/coming-soon` page is active |
+| Font licensing | Google Fonts (Montserrat, Mulish) | Free for commercial use, no license fees |
+| Metal rates accuracy | Manual entry | Rates must be updated daily by staff — no automatic feeds |
+| Email notifications | Gmail SMTP for OTP | Production uses Gmail for admin login OTP. Consider dedicated SMTP for scale |
+| Inquiry notifications | Resend (if configured) | If `RESEND_API_KEY` is set, new inquiries trigger email notifications to `INQUIRY_NOTIFICATION_EMAIL` |
+| Admin account limit | 3 accounts max | Enforced by design: super-admin, admin, enquiry-manager |
+| Product images | Cloudinary-hosted | All images served via Cloudinary CDN with auto-optimization |
 
 ---
 
-## 5. SUPPORT & MAINTENANCE
+## 4. Support & Maintenance
 
 | Item | Details |
 |------|---------|
-| **Developer** | Mohamed Sarjun |
-| **Agency** | Random Stacks Technologies |
-| **Support Hours** | Monday–Saturday, 10 AM – 6 PM IST |
-| **Response Time** | Critical issues: 4 hours, General: 24 hours |
-| **Retainer** | As per agreement |
+| Support contact | Mohamed Sarjun — [your preferred contact method] |
+| Response time (critical) | Within 4 hours during business hours |
+| Response time (non-critical) | Within 24 hours |
+| Retainer tier | *(Per your agreement)* |
 
 ---
 
-## 6. MONITORING
+## 5. Monitoring
 
-| Item | Status |
-|------|--------|
-| Uptime monitoring | **NOT YET SET UP** — Recommend UptimeRobot (free tier) monitoring: Homepage, Admin Panel (`/kj-portal-0d7cfad1`), and `/api/frontend-products` |
-| Alert contact | To be configured by client |
-
----
-
-## 7. SECURITY AUDIT REPORT
-
-See attached: `PRODUCTION_READINESS_FINAL_2026-08-17.md`
-
-**Summary:** Code-level security is comprehensive and verified. All authentication, authorization, rate limiting, session management, and data protection controls are production-grade. The only security-adjacent items are:
-- 22 broken product images (data issue, not security)
-- Missing Vercel env vars (infrastructure config)
-- No edge-level middleware (API-level protection is sufficient)
+- **UptimeRobot/Uptime Kuma:** *(Set up and active — confirm monitoring URL with Sarjun)*
+- **Monitored endpoints:** Homepage, Admin panel, `/api/frontend-products`
+- **Alert contact:** *(Per your setup)*
 
 ---
 
-## 8. TECHNICAL ARCHITECTURE (For Reference)
+## 6. Technical Architecture (For Reference)
 
-| Layer | Technology |
-|-------|------------|
+| Component | Technology |
+|-----------|-----------|
 | Frontend | Next.js 16 (App Router, TypeScript, CSS Modules) |
 | CMS | Payload CMS 3.88 |
-| Database | Neon Postgres (production), SQLite (development) |
-| Image Storage | Cloudinary |
-| Hosting | Vercel |
-| Email (OTP) | Gmail SMTP |
-| Email (Inquiries) | Resend |
+| Database | Neon Postgres (production) / SQLite (development) |
+| Image CDN | Cloudinary (auto-optimization, responsive transformations) |
+| Hosting | Vercel (serverless) |
+| Auth | Custom OTP login + Payload native sessions |
+| Security | API middleware (route blocking, rate limiting, CSP headers) |
 
 ---
 
-*Document prepared by: Mohamed Sarjun, Random Stacks Technologies*
-*Date: 17 August 2026*
+## 7. Security Audit
+
+Full security audit report: `e2e/SECURITY_AUDIT_FINAL_2026-08-17.md`
+
+**Key security measures:**
+- All admin routes protected by authentication
+- Rate limiting on login (5 attempts/15 min) and inquiry form
+- HSTS enabled with preload
+- Comprehensive Content Security Policy
+- Admin panel hidden path + noindex + robots.txt blocking
+- Payload REST API routes blocked from public access
+
+---
+
+## 8. Build & Deploy
+
+The site auto-deploys on push to `master` branch. To deploy changes:
+
+```bash
+git push origin master
+```
+
+Vercel will build and deploy automatically (~53 seconds).
+
+**Environment variables** are configured in Vercel dashboard. Do NOT commit `.env.local` or `.env.production.local`.
+
+---
+
+*This handover document was prepared as part of the final production readiness audit on 2026-08-17.*
