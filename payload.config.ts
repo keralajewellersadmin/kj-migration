@@ -1532,6 +1532,33 @@ const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
 
 export default buildConfig({
   secret: requireProductionSecret(),
+  onInit: async (payload) => {
+    // Ensure the site-settings global exists in the database.
+    // In production (push=false), the globals table row may be missing.
+    if (process.env.NODE_ENV === "production") {
+      try {
+        const existing = await payload.findGlobal({ slug: "site-settings" });
+        if (!existing || !existing.id) {
+          await payload.updateGlobal({
+            slug: "site-settings",
+            data: {
+              heroSlides: [],
+              categories: [],
+              bestsellerProducts: "",
+              features: [],
+              banners: [],
+              heritage: [],
+              reviews: [],
+              branches: [],
+            } as Record<string, unknown>,
+          });
+          payload.logger.info("Seeded site-settings global with defaults");
+        }
+      } catch (err) {
+        payload.logger.warn("Could not verify/seed site-settings global");
+      }
+    }
+  },
   routes: {
     admin: ADMIN_PATH,
   },

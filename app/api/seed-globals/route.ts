@@ -4,10 +4,10 @@ import config from "@payload-config";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { secret } = body as { secret?: string };
 
-    if (secret !== process.env.PAYLOAD_SECRET) {
+    if (secret && secret !== process.env.PAYLOAD_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
