@@ -77,7 +77,7 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
       sid?: string;
     }
     let claims: Claims;
-    if (process.env.NODE_ENV !== "production" && !process.env.DATABASE_URL) {
+    if (process.env.NODE_ENV !== "production" && process.env.AUTH_DEV_SKIP_VERIFY === "true") {
       const { decodeJwt } = await import("jose");
       claims = decodeJwt(token) as Claims;
     } else {

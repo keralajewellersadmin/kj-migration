@@ -578,17 +578,6 @@ const AdminUsers: CollectionConfig = {
         update: () => false,
       },
     },
-    {
-      name: "loginAttempts",
-      type: "number",
-      defaultValue: 0,
-      admin: { hidden: true, disabled: true },
-      access: {
-        read: () => false,
-        create: () => false,
-        update: () => false,
-      },
-    },
   ],
 };
 
@@ -1561,7 +1550,7 @@ export default buildConfig({
           idleTimeoutMillis: 10000,
           connectionTimeoutMillis: 15000,
           ...(process.env.NODE_ENV === "production"
-            ? { ssl: { rejectUnauthorized: false } }
+            ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false" } }
             : {}),
         },
         push:

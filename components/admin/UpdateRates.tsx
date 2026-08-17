@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { updateRates } from "@/lib/actions/updateRates";
+
+const ADMIN_PATH = "/kj-portal-0d7cfad1";
 
 const fields = [
   { key: "gold22", label: "Gold 22K", placeholder: "e.g. 7,450" },
@@ -13,6 +16,7 @@ const fields = [
 type RateKey = (typeof fields)[number]["key"];
 
 export default function UpdateRates() {
+  const router = useRouter();
   const [rates, setRates] = useState<Record<RateKey, string>>({
     gold22: "",
     gold18: "",
@@ -48,7 +52,7 @@ export default function UpdateRates() {
         await updateRates(rates);
         setStatus("saved");
         setLastUpdated(new Date().toISOString().split("T")[0]);
-        setTimeout(() => setStatus("idle"), 2500);
+        setTimeout(() => router.push(ADMIN_PATH), 1500);
       } catch {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 3000);
@@ -61,6 +65,14 @@ export default function UpdateRates() {
     <div style={{ maxWidth: 580, margin: "32px auto", padding: "0 20px" }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
+        <a
+          href={`${ADMIN_PATH}`}
+          onClick={(e) => { e.preventDefault(); router.push(ADMIN_PATH); }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#64748b", textDecoration: "none", marginBottom: 12, fontWeight: 500, transition: "color 0.15s" }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Back to Dashboard
+        </a>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", marginBottom: 6, fontFamily: "Plus Jakarta Sans, sans-serif" }}>
           Metal Rates
         </h1>

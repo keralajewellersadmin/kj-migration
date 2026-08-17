@@ -29,7 +29,7 @@ export async function sendEmail({
   subject,
   html,
 }: SendEmailOptions): Promise<void> {
-  const from = process.env.GMAIL_OTP_SENDER_EMAIL || "keralajewellersadmin@gmail.com";
+  const from = process.env.GMAIL_OTP_SENDER_EMAIL;
 
   await getTransporter().sendMail({
     from,

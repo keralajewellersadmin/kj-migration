@@ -15,7 +15,7 @@ export function hashValue(value: string): string {
 
 export async function sendOtpEmail(toEmail: string, code: string) {
   // In development, log OTP to console as well
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && process.env.AUTH_DEBUG === "true") {
     console.log("\n╔══════════════════════════════════════╗");
     console.log("║       DEV MODE — OTP CODE           ║");
     console.log(`║  To: ${toEmail}`);
@@ -53,7 +53,7 @@ export async function sendPasswordResetEmail(
   resetUrl: string,
 ) {
   // In development, log reset URL to console — skip email entirely
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && process.env.AUTH_DEBUG === "true") {
     console.log("\n╔══════════════════════════════════════╗");
     console.log("║    DEV MODE — PASSWORD RESET URL    ║");
     console.log(`║  To: ${toEmail}`);

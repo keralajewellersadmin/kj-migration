@@ -164,9 +164,17 @@ function buildRateTypes(rates?: NavbarRates): RateItem[] {
   ];
 }
 
+function formatRateDate(raw: string): string {
+  if (!raw) return "";
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return raw;
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 function buildRatesText(rateTypes: RateItem[], updated: string): string {
   const p = rateTypes.map((r) => `₹${r.price.replace(/^₹/, "")}`);
-  return `Today's Rate (Updated on: ${updated}) ; GOLD 22 KT - ${p[0]} ; GOLD 18 KT - ${p[1]} ; PLATINUM 1g - ${p[2]} ; SILVER 1g - ${p[3]}`;
+  const dateStr = formatRateDate(updated);
+  return `Today's Rate${dateStr ? ` — ${dateStr}` : ""}  •  GOLD 22 KT ${p[0]}/g  •  GOLD 18 KT ${p[1]}/g  •  PLATINUM ${p[2]}/g  •  SILVER ${p[3]}/g`;
 }
 
 export default function Navbar({
@@ -364,7 +372,7 @@ export default function Navbar({
               style={{ width: "auto", height: "auto" }}
             />
           </Link>
-          <div className={styles.headerRight}>
+          <div className={`${styles.headerRight} ${mobileMenuOpen ? styles.headerRightHidden : ""}`}>
             <button
               className={`${styles.mobileMenuToggle} ${mobileMenuOpen ? styles.isOpen : ""}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -386,45 +394,67 @@ export default function Navbar({
 
         {/* Mobile Nav Menu */}
         <nav className={`${styles.mobileNav} ${mobileMenuOpen ? styles.isOpen : ""}`} role="navigation" id="mobileMenu">
-          <MobileAccordion
-            menu={MEGA_MENUS.gold}
-            categories={navCategories.gold || []}
-            onNavigate={() => setMobileMenuOpen(false)}
-            isOpen={!!openAccordions["gold"]}
-            toggle={() => setOpenAccordions(prev => ({ ...prev, gold: !prev.gold }))}
-          />
-          <MobileAccordion
-            menu={MEGA_MENUS.silver}
-            categories={navCategories.silver || []}
-            onNavigate={() => setMobileMenuOpen(false)}
-            isOpen={!!openAccordions["silver"]}
-            toggle={() => setOpenAccordions(prev => ({ ...prev, silver: !prev.silver }))}
-          />
-          <MobileAccordion
-            menu={MEGA_MENUS.diamond}
-            categories={navCategories.diamond || []}
-            onNavigate={() => setMobileMenuOpen(false)}
-            isOpen={!!openAccordions["diamond"]}
-            toggle={() => setOpenAccordions(prev => ({ ...prev, diamond: !prev.diamond }))}
-          />
-          <Link className={styles.mobileMenuLink} href="/coming-soon" onClick={() => setMobileMenuOpen(false)}>
-            Platinum
-          </Link>
-          <Link className={styles.mobileMenuLink} href="/about" onClick={() => setMobileMenuOpen(false)}>
-            About Us
-          </Link>
-          <MobileAccordion
-            menu={MEGA_MENUS.scheme}
-            categories={[]}
-            textOnly
-            hideViewAll
-            onNavigate={() => setMobileMenuOpen(false)}
-            isOpen={!!openAccordions["scheme"]}
-            toggle={() => setOpenAccordions(prev => ({ ...prev, scheme: !prev.scheme }))}
-          />
-          <Link className={styles.mobileMenuLink} href="/contact" onClick={() => setMobileMenuOpen(false)}>
-            Contact
-          </Link>
+          <div className={styles.mobileNavHeader}>
+            <Link
+              className={styles.brand}
+              href="/"
+              aria-label="Kerala Jewellers Home"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Image
+                alt="Kerala Jewellers"
+                src={IMG.logoKj}
+                width={160}
+                height={56}
+                unoptimized
+                style={{ width: "auto", height: "auto" }}
+              />
+            </Link>
+            <button
+              className={styles.mobileNavClose}
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <svg viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <Link className={styles.mobileMenuLink} href="/products" onClick={() => setMobileMenuOpen(false)}>
+              Gold
+            </Link>
+            <Link className={styles.mobileMenuLink} href="/products/silver" onClick={() => setMobileMenuOpen(false)}>
+              Silver
+            </Link>
+            <Link className={styles.mobileMenuLink} href="/products/diamond" onClick={() => setMobileMenuOpen(false)}>
+              Diamond
+            </Link>
+            <Link className={styles.mobileMenuLink} href="/coming-soon" onClick={() => setMobileMenuOpen(false)}>
+              Platinum
+            </Link>
+            <Link className={styles.mobileMenuLink} href="/about" onClick={() => setMobileMenuOpen(false)}>
+              About Us
+            </Link>
+            <Link className={styles.mobileMenuLink} href="/contact" onClick={() => setMobileMenuOpen(false)}>
+              Contact Us
+            </Link>
+            <MobileAccordion
+              menu={MEGA_MENUS.scheme}
+              categories={[]}
+              textOnly
+              hideViewAll
+              onNavigate={() => setMobileMenuOpen(false)}
+              isOpen={!!openAccordions["scheme"]}
+              toggle={() => setOpenAccordions(prev => ({ ...prev, scheme: !prev.scheme }))}
+            />
+          </div>
+
+          <div className={styles.mobileNavCopyright}>
+            &copy; 2026 Kerala Jewellers. All rights reserved.
+          </div>
         </nav>
       </div>
     </header>

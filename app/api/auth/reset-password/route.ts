@@ -1,7 +1,22 @@
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { getCachedPayload } from "@/lib/payload-singleton";
 import { hashValue } from "@/lib/auth/email";
 import { validateAdminPassword } from "@/lib/payload/security";
+import { getLoginSql } from "@/lib/auth/admin-login";
+
+const IP_RATE_LIMIT = 10; // max 10 reset attempts per hour per IP
+const IP_WINDOW_MS = 60 * 60 * 1000;
+
+function getClientIp(request: Request) {
+  return (
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
+  )
+    .split(",")[0]
+    .trim();
+}
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -11,6 +26,54 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Token and new password are required" },
       { status: 400 },
+    );
+  }
+
+  // IP-based rate limiting
+  const ip = getClientIp(request);
+  const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
+  const rateLimitKey = `reset:ip:${ipHash}`;
+
+  try {
+    const sql = getLoginSql();
+    const now = new Date().toISOString();
+    const resetAt = new Date(Date.now() + IP_WINDOW_MS).toISOString();
+
+    const docs = (await sql.query(
+      `select id, count, reset_at from rate_limits where key = $1 limit 1`,
+      [rateLimitKey],
+    )) as Array<{ id: number; count?: number; reset_at?: string }>;
+
+    const current = docs[0];
+    if (!current || String(current.reset_at) < now) {
+      if (current) {
+        await sql.query(
+          `update rate_limits set count = 1, reset_at = $2, updated_at = now() where id = $1`,
+          [current.id, resetAt],
+        );
+      } else {
+        await sql.query(
+          `insert into rate_limits (key, count, reset_at, updated_at, created_at)
+           values ($1, 1, $2, now(), now())`,
+          [rateLimitKey, resetAt],
+        );
+      }
+    } else if ((Number(current.count) || 0) >= IP_RATE_LIMIT) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 },
+      );
+    } else {
+      await sql.query(
+        `update rate_limits set count = count + 1, updated_at = now() where id = $1`,
+        [current.id],
+      );
+    }
+  } catch {
+    // Fail closed
+    return NextResponse.json(
+      { error: "Service is temporarily unavailable." },
+      { status: 503 },
     );
   }
 
@@ -74,6 +137,17 @@ export async function POST(request: Request) {
     data: { password },
     overrideAccess: true,
   });
+
+  // Invalidate all existing sessions for this user
+  try {
+    const sql = getLoginSql();
+    await sql.query(
+      `delete from admin_users_sessions where _parent_id = $1`,
+      [userId],
+    );
+  } catch {
+    // Non-critical
+  }
 
   // Mark token as used
   await payload.update({

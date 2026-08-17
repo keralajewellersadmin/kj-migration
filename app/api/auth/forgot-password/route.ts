@@ -7,13 +7,73 @@ import {
   sendPasswordResetEmail,
 } from "@/lib/auth/email";
 import { ADMIN_PATH } from "@/lib/admin-path";
+import { getLoginSql } from "@/lib/auth/admin-login";
 
-const SHARED_EMAIL = "keralajewellersadmin@gmail.com";
+const MAX_RESETS_PER_IP = 5;
+const IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
+function getClientIp(request: Request) {
+  return (
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
+  )
+    .split(",")[0]
+    .trim();
+}
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { identifier } = body as { identifier?: string };
   const requestOrigin = new URL(request.url).origin;
+
+  // IP-based rate limit: max 5 resets per hour per IP
+  const ip = getClientIp(request);
+  const ipHash = hashValue(ip);
+  const rateLimitKey = `reset:ip:${ipHash}`;
+
+  try {
+    const sql = getLoginSql();
+    const now = new Date().toISOString();
+    const resetAt = new Date(Date.now() + IP_WINDOW_MS).toISOString();
+
+    const docs = (await sql.query(
+      `select id, count, reset_at from rate_limits where key = $1 limit 1`,
+      [rateLimitKey],
+    )) as Array<{ id: number; count?: number; reset_at?: string }>;
+
+    const current = docs[0];
+    if (!current || String(current.reset_at) < now) {
+      if (current) {
+        await sql.query(
+          `update rate_limits set count = 1, reset_at = $2, updated_at = now() where id = $1`,
+          [current.id, resetAt],
+        );
+      } else {
+        await sql.query(
+          `insert into rate_limits (key, count, reset_at, updated_at, created_at)
+           values ($1, 1, $2, now(), now())`,
+          [rateLimitKey, resetAt],
+        );
+      }
+    } else if ((Number(current.count) || 0) >= MAX_RESETS_PER_IP) {
+      return NextResponse.json({
+        success: true,
+        message: "If an account exists, a reset link has been sent.",
+      });
+    } else {
+      await sql.query(
+        `update rate_limits set count = count + 1, updated_at = now() where id = $1`,
+        [current.id],
+      );
+    }
+  } catch {
+    // If rate limit DB is unavailable, deny the request (fail closed)
+    return NextResponse.json({
+      success: true,
+      message: "If an account exists, a reset link has been sent.",
+    });
+  }
 
   // Always return generic message (no account enumeration)
   if (!identifier) {
@@ -36,7 +96,7 @@ export async function POST(request: Request) {
 
   const userId = user.id as string | number;
 
-  // Rate limit: max 3 per hour
+  // Per-user rate limit: max 3 per hour
   const recentResets = await payload.find({
     collection: "password-resets",
     where: {
@@ -79,7 +139,7 @@ export async function POST(request: Request) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
   const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
   try {
-    await sendPasswordResetEmail((user.email as string) || SHARED_EMAIL, resetUrl);
+    await sendPasswordResetEmail(user.email as string, resetUrl);
   } catch {
     // Silently fail — user gets generic response anyway
   }
@@ -87,6 +147,5 @@ export async function POST(request: Request) {
   return NextResponse.json({
     success: true,
     message: "If an account exists, a reset link has been sent.",
-    ...(process.env.NODE_ENV !== "production" ? { resetUrl } : {}),
   });
 }

@@ -176,7 +176,11 @@ async function handleLogin(request: Request) {
       RATE_LIMIT_TIMEOUT_MS,
     );
   } catch (err) {
-    console.warn("[Login] Rate limit unavailable; continuing login:", err);
+    console.warn("[Login] Rate limit unavailable; denying login:", err);
+    return NextResponse.json(
+      { error: "Login service is temporarily unavailable. Please try again." },
+      { status: 503 },
+    );
   }
   if (!allowed) {
     return NextResponse.json(
@@ -292,7 +296,6 @@ async function handleLogin(request: Request) {
       success: true,
       requiresOtp: true,
       maskedEmail,
-      userId: user.id,
     });
   } catch (err) {
     console.error("[Login] Authentication error:", err);

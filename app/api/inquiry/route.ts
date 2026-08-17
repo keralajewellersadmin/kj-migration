@@ -157,7 +157,7 @@ export async function POST(request: Request) {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL,
           to: process.env.INQUIRY_NOTIFICATION_EMAIL,
-          subject: `Kerala Jewellers inquiry from ${parsed.name}`,
+          subject: `Kerala Jewellers inquiry from ${parsed.name.replace(/[\r\n]/g, "")}`,
           replyTo: parsed.email,
           html: [
             `<p><strong>Name:</strong> ${escapeHtml(parsed.name)}</p>`,

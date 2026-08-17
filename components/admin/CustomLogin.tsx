@@ -65,7 +65,6 @@ export default function CustomLogin() {
 
       if (data.requiresOtp) {
         setMaskedEmail(data.maskedEmail);
-        setUserId(data.userId);
         setStep("otp");
         setResendCooldown(60);
         return;

@@ -50,7 +50,7 @@ export default async function Bestsellers({
     .filter((product): product is NonNullable<typeof product> =>
       Boolean(product),
     )
-    .filter((product) => product.image && !product.image.startsWith("/"))
+    .filter((product) => product.image)
     .map((product) => ({
       title: product.name,
       category: product.metal.charAt(0).toUpperCase() + product.metal.slice(1),

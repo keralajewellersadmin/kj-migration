@@ -27,6 +27,14 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
   if (!process.env.CLOUDINARY_CLOUD_NAME) return doc;
   if (!doc.filename) return doc;
 
+  // File size limit: 10 MB
+  const MAX_SIZE = 10 * 1024 * 1024;
+  if (req.file && req.file.size > MAX_SIZE) {
+    throw new Error(
+      `File too large. Maximum size is 10 MB. Received: ${Math.round(req.file.size / 1024 / 1024)} MB`,
+    );
+  }
+
   // Skip if URL was already set to Cloudinary by the update
   const incomingUrl = (req.data as Record<string, unknown>)?.url;
   if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return doc;
