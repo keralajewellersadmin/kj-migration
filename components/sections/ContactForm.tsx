@@ -28,8 +28,8 @@ export default function ContactForm() {
   };
 
   return (
-    <div className={styles.card}>
-      <h2 className={styles.cardTitle}>Send Us a Message</h2>
+    <>
+      <h2 className={styles.formTitle}>Send Us a Message</h2>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.fieldRow}>
           <div className={styles.field}>
@@ -37,8 +37,8 @@ export default function ContactForm() {
               className={styles.input}
               type="text"
               name="name"
-              placeholder="Name"
-              aria-label="Name"
+              placeholder="Your Name"
+              aria-label="Your Name"
               required
             />
           </div>
@@ -47,7 +47,7 @@ export default function ContactForm() {
               className={styles.input}
               type="email"
               name="email"
-              placeholder="Email Address*"
+              placeholder="Email Address"
               aria-label="Email Address"
               required
             />
@@ -56,7 +56,7 @@ export default function ContactForm() {
         <textarea
           className={styles.textarea}
           name="message"
-          placeholder="Your Message"
+          placeholder="How can we help you?"
           aria-label="Your Message"
           rows={5}
           required
@@ -66,18 +66,19 @@ export default function ContactForm() {
           className={styles.submitBtn}
           disabled={submitting}
         >
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? "Sending..." : "Send Message"}
         </button>
       </form>
       {submitted && (
-        <p style={{ color: "var(--color-emerald)", marginTop: "12px" }}>
-          Thank you! Your message has been received.
+        <p className={styles.formSuccess}>
+          Thank you! Your message has been received. We&apos;ll get back to
+          you shortly.
         </p>
       )}
-      {error && <p style={{ color: "var(--color-bright-red)", marginTop: "12px" }}>{error}</p>}
-      <p className={styles.note}>
-        Our team typically replies within one business day.
+      {error && <p className={styles.formError}>{error}</p>}
+      <p className={styles.formNote}>
+        Our team typically responds within one business day.
       </p>
-    </div>
+    </>
   );
 }
