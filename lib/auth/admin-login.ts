@@ -18,7 +18,9 @@ export type DirectAdminUser = {
 import Database from "better-sqlite3";
 import { resolve } from "path";
 
-let loginSql: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SqlExecutor = { query: (text: string, params?: unknown[]) => Promise<any> };
+let loginSql: SqlExecutor | null = null;
 
 export function getLoginSql() {
   if (loginSql) return loginSql;
@@ -30,7 +32,7 @@ export function getLoginSql() {
     const db = new Database(absolutePath);
 
     loginSql = {
-      async query(text: string, params: any[] = []) {
+      async query(text: string, params: unknown[] = []) {
         // Map Postgres numbered parameters ($1, $2, etc.) to positional SQLite params
         const matches = text.match(/\$\d+/g) || [];
         const sqliteParams = matches.map((m) => {
@@ -38,7 +40,7 @@ export function getLoginSql() {
           return params[index];
         });
 
-        let sql = text
+        const sql = text
           .replace(/\$\d+/g, "?")
           .replace(/now\(\)/gi, "datetime('now')")
           .replace(/::text/gi, "")
@@ -47,8 +49,8 @@ export function getLoginSql() {
         const stmt = db.prepare(sql);
         if (sql.trim().toLowerCase().startsWith("select")) {
           const rows = stmt.all(...sqliteParams);
-          return rows.map((row: any) => {
-            const mapped = { ...row };
+          return rows.map((row) => {
+            const mapped = { ...(row as Record<string, unknown>) };
             if ("is_active" in mapped) {
               mapped.is_active = mapped.is_active === 1 || mapped.is_active === true;
             }

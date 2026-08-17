@@ -2,7 +2,7 @@
 
 import type { DefaultCellComponentProps } from 'payload'
 
-const InquiryProductCell = ({ cellData, rowData }: DefaultCellComponentProps) => {
+const InquiryProductCell = ({ cellData }: DefaultCellComponentProps) => {
   if (!cellData) return <span style={{ color: '#9ca3af' }}>—</span>
 
   // cellData could be an ID or a populated object

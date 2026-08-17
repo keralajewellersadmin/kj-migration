@@ -10,9 +10,15 @@ const RESEND_COOLDOWN_MS = 60 * 1000;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { userId } = body as { userId?: string | number };
+    const { userId, identifier } = body as { userId?: string | number; identifier?: string };
 
-    if (!userId) {
+    let resolvedUserId = Number(userId || 0);
+    if (!resolvedUserId && identifier?.trim()) {
+      const resolvedUser = await findDirectAdminUser(identifier.trim());
+      resolvedUserId = Number(resolvedUser?.id || 0);
+    }
+
+    if (!resolvedUserId) {
       return NextResponse.json(
         { error: "Verification session is missing" },
         { status: 400 },
@@ -22,7 +28,7 @@ export async function POST(request: Request) {
     const sql = getLoginSql();
     const users = (await sql.query(
       `select email from admin_users where id = $1 and is_active = true limit 1`,
-      [Number(userId)],
+      [resolvedUserId],
     )) as Array<{ email: string }>;
     const user = users[0] ? await findDirectAdminUser(users[0].email) : null;
 

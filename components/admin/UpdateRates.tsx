@@ -58,7 +58,7 @@ export default function UpdateRates() {
         setTimeout(() => setStatus("idle"), 3000);
       }
     },
-    [rates],
+    [rates, router],
   );
 
   return (

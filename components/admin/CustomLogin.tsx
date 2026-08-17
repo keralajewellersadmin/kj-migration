@@ -26,7 +26,6 @@ export default function CustomLogin() {
   const [password, setPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [maskedEmail, setMaskedEmail] = useState("");
-  const [userId, setUserId] = useState<string | number>("");
   const [error, setError] = useState("");
   const [devResetUrl, setDevResetUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,7 +88,7 @@ export default function CustomLogin() {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, identifier, code: otpCode }),
+        body: JSON.stringify({ identifier, code: otpCode }),
       });
 
       const data = await res.json();
@@ -117,7 +116,7 @@ export default function CustomLogin() {
       const res = await fetch("/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ identifier }),
       });
 
       const data = await res.json();

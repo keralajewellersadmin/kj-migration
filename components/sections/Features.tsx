@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import styles from "./Features.module.css";
 import { IMG } from "@/lib/image-urls";
@@ -64,19 +64,19 @@ export default function Features({
   const features =
     cmsFeatures.length && hasImages ? cmsFeatures : defaultFeatures;
   const [active, setActive] = useState(0);
-  const [isCarousel, setIsCarousel] = useState(false);
+  const isCarousel = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(max-width: 991px)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(max-width: 991px)").matches,
+    () => false,
+  );
   const dragRef = useRef(0);
   const startX = useRef(0);
   const dragging = useRef(false);
   const trackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 991px)");
-    setIsCarousel(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsCarousel(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   const go = useCallback(
     (dir: number) => {
