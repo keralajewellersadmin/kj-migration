@@ -17,6 +17,7 @@ export default function ContactForm() {
     const { ok, error: err } = await apiPost("/api/inquiry", {
       name: fd.get("name"),
       email: fd.get("email"),
+      phone: fd.get("phone"),
       message: fd.get("message"),
     });
     if (!ok) {
@@ -69,6 +70,17 @@ export default function ContactForm() {
               required
             />
             <label htmlFor="email" className={styles.floatingLabel}>Email Address *</label>
+          </div>
+          <div className={styles.floatingField}>
+            <input
+              className={styles.floatingInput}
+              type="tel"
+              name="phone"
+              id="phone"
+              placeholder=" "
+              maxLength={30}
+            />
+            <label htmlFor="phone" className={styles.floatingLabel}>Phone Number (optional)</label>
           </div>
         </div>
         <div className={styles.floatingField}>

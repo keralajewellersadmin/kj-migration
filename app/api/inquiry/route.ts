@@ -27,8 +27,6 @@ const inquirySchema = z.object({
     .transform((email) => email.toLowerCase()),
   phone: z.string().trim().max(30).optional().default(""),
   message: z.string().trim().max(2000).optional().default(""),
-  productId: z.string().trim().max(80).optional(),
-  sourcePage: z.string().trim().max(300).optional().default("/contact"),
   honeypot: z.string().optional().default(""),
   startedAt: z.number().optional(),
 });
@@ -128,20 +126,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const productId = parsed.productId ? Number(parsed.productId) : null;
     const inquiryRows = (await sql.query(
       `insert into inquiries
-         (name, email, phone, message, product_id, source_page, submitted_ip,
+         (name, email, phone, message, submitted_ip,
           submitted_at, status, email_notification_status, updated_at, created_at)
-       values ($1, $2, $3, $4, $5, $6, $7, now(), 'new', 'not-sent', now(), now())
+       values ($1, $2, $3, $4, $5, now(), 'new', 'not-sent', now(), now())
        returning id`,
       [
         parsed.name,
         parsed.email,
         parsed.phone,
         parsed.message,
-        Number.isFinite(productId) ? productId : null,
-        parsed.sourcePage,
         ipHash,
       ],
     )) as Array<{ id: number }>;
@@ -163,7 +158,6 @@ export async function POST(request: Request) {
             `<p><strong>Name:</strong> ${escapeHtml(parsed.name)}</p>`,
             `<p><strong>Email:</strong> ${escapeHtml(parsed.email)}</p>`,
             `<p><strong>Phone:</strong> ${escapeHtml(parsed.phone || "-")}</p>`,
-            `<p><strong>Source:</strong> ${escapeHtml(parsed.sourcePage || "")}</p>`,
             `<p><strong>Message:</strong></p><p>${escapeHtml(parsed.message || "-")}</p>`,
           ].join(""),
         });
