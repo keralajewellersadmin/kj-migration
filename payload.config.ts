@@ -910,7 +910,7 @@ const Inquiry: CollectionConfig = {
   slug: "inquiries",
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["sourcePage", "name", "email", "product", "status", "submittedAt"],
+    defaultColumns: ["name", "email", "status", "submittedAt"],
     listSearchableFields: ["name", "email"],
     components: {
       beforeListTable: [
@@ -934,43 +934,13 @@ const Inquiry: CollectionConfig = {
     delete: () => false,
   },
   fields: [
-    {
-      name: "type",
-      type: "select",
-      defaultValue: "contact",
-      options: [
-        { label: "Product Enquiry", value: "enquiry" },
-        { label: "Contact Enquiry", value: "contact" },
-        { label: "General Enquiry", value: "general" },
-      ],
-      admin: { readOnly: true },
-    },
+    // Only the fields captured by the public contact/enquiry forms:
+    // /contact (name, email, message) and /enquiry (name, phone, email, message)
     { name: "name", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "phone", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: canUpdateProtectedField } },
-    { name: "productId", type: "text", label: "Product ID", admin: { readOnly: true } },
-    {
-      name: "product",
-      type: "relationship",
-      relationTo: "products",
-      admin: {
-        components: {
-          Cell: "@/components/admin/InquiryProductCell",
-        },
-      },
-    },
-    {
-      name: "sourcePage",
-      type: "text",
-      label: "Source",
-      admin: {
-        readOnly: true,
-        components: {
-          Cell: "@/components/admin/InquirySourceCell",
-        },
-      },
-    },
+    // System fields (not form inputs — kept for admin triage only)
     {
       name: "status",
       type: "select",
@@ -983,19 +953,6 @@ const Inquiry: CollectionConfig = {
         { label: "Closed", value: "closed" },
         { label: "Spam", value: "spam" },
       ],
-    },
-    {
-      name: "emailNotificationStatus",
-      type: "select",
-      defaultValue: "not-sent",
-      options: ["not-sent", "sent", "failed"],
-      admin: { readOnly: true, disableListFilter: true },
-    },
-    {
-      name: "submittedIp",
-      type: "text",
-      admin: { readOnly: true, disableListFilter: true },
-      access: { read: canReadProtectedField },
     },
     {
       name: "submittedAt",

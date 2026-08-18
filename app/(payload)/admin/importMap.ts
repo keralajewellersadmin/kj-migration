@@ -1,6 +1,4 @@
 import { default as default_0ddb7490f78e94af7f1feaadd335efbe } from '@/components/admin/MediaFolderFilters'
-import { default as default_73b93e11e9de32ef56c15967d642b6fa } from '@/components/admin/InquiryProductCell'
-import { default as default_ff67f7ab884485c34e51acbda65aeafd } from '@/components/admin/InquirySourceCell'
 import { default as default_f12dd159a86d5c7efb7d79a674b10059 } from '@/components/admin/InquiryQuickFilters'
 import { default as default_a799986c40a5f82c34aa72950c847a36 } from '@/components/admin/InquiryDetail'
 import { default as default_b765752319bc09215ff9333bf4375bef } from '@/components/admin/AdminSidebarServer'
@@ -13,8 +11,6 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 /** @type import('payload').ImportMap */
 export const importMap = {
   "@/components/admin/MediaFolderFilters#default": default_0ddb7490f78e94af7f1feaadd335efbe,
-  "@/components/admin/InquiryProductCell#default": default_73b93e11e9de32ef56c15967d642b6fa,
-  "@/components/admin/InquirySourceCell#default": default_ff67f7ab884485c34e51acbda65aeafd,
   "@/components/admin/InquiryQuickFilters#default": default_f12dd159a86d5c7efb7d79a674b10059,
   "@/components/admin/InquiryDetail#default": default_a799986c40a5f82c34aa72950c847a36,
   "@/components/admin/AdminSidebarServer#default": default_b765752319bc09215ff9333bf4375bef,

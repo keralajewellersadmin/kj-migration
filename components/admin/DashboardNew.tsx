@@ -9,8 +9,7 @@ interface DashboardInquiry {
   id: string | number;
   name?: string | null;
   status: string;
-  product?: string | { title?: string } | null;
-  sourcePage?: string | null;
+  message?: string | null;
   submittedAt?: string | null;
 }
 
@@ -201,9 +200,11 @@ export default async function DashboardNew({ payload }: ServerProps) {
           ) : (
             <div className={styles.inquiryList}>
               {(stats.recentInquiries as DashboardInquiry[]).map((inquiry) => {
-                const product = typeof inquiry.product === "object" && inquiry.product !== null ? (inquiry.product as { title?: string }) : null;
                 const name = inquiry.name || "Unknown";
                 const initials = name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+                const preview = (inquiry.message || "General enquiry")
+                  .split("\n")[0]
+                  .slice(0, 60);
                 return (
                   <Link key={inquiry.id} href={`${ADMIN_PATH}/collections/inquiries/${inquiry.id}`} className={styles.inquiryRow}>
                     <div className={styles.inquiryAvatar} style={{ background: statusColors[inquiry.status] || "#666" }}>
@@ -211,7 +212,7 @@ export default async function DashboardNew({ payload }: ServerProps) {
                     </div>
                     <div className={styles.inquiryInfo}>
                       <span className={styles.inquiryName}>{name}</span>
-                      <span className={styles.inquiryProduct}>{product?.title || inquiry.sourcePage || "General"}</span>
+                      <span className={styles.inquiryProduct}>{preview || "General enquiry"}</span>
                     </div>
                     <div className={styles.inquiryMeta}>
                       <span className={styles.inquiryTime}>{inquiry.submittedAt ? timeAgo(inquiry.submittedAt as string) : ""}</span>
