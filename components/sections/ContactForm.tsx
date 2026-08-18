@@ -20,64 +20,79 @@ export default function ContactForm() {
       message: fd.get("message"),
     });
     if (!ok) {
-      setError(err || "Submission failed.");
+      setError(err || "Submission failed. Please try again.");
     } else {
       setSubmitted(true);
     }
     setSubmitting(false);
   };
 
+  if (submitted) {
+    return (
+      <div className={styles.formContainer}>
+        <div className={styles.successMessage}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className={styles.successTitle}>Message Received</h3>
+          <p className={styles.successDesc}>Thank you for reaching out. A client advisor will contact you within one business day.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.card}>
-      <h2 className={styles.cardTitle}>Send Us a Message</h2>
+    <div className={styles.formContainer}>
+      <h2 className={styles.formTitle}>Send Us a Message</h2>
+      <p className={styles.formSubtitle}>For inquiries, appointments, or bespoke requests, please fill out the form below.</p>
+      
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.fieldRow}>
-          <div className={styles.field}>
+          <div className={styles.floatingField}>
             <input
-              className={styles.input}
+              className={styles.floatingInput}
               type="text"
               name="name"
-              placeholder="Name"
-              aria-label="Name"
+              id="name"
+              placeholder=" "
               required
             />
+            <label htmlFor="name" className={styles.floatingLabel}>Full Name *</label>
           </div>
-          <div className={styles.field}>
+          <div className={styles.floatingField}>
             <input
-              className={styles.input}
+              className={styles.floatingInput}
               type="email"
               name="email"
-              placeholder="Email Address*"
-              aria-label="Email Address"
+              id="email"
+              placeholder=" "
               required
             />
+            <label htmlFor="email" className={styles.floatingLabel}>Email Address *</label>
           </div>
         </div>
-        <textarea
-          className={styles.textarea}
-          name="message"
-          placeholder="Your Message"
-          aria-label="Your Message"
-          rows={5}
-          required
-        />
+        <div className={styles.floatingField}>
+          <textarea
+            className={styles.floatingTextarea}
+            name="message"
+            id="message"
+            placeholder=" "
+            rows={4}
+            required
+          />
+          <label htmlFor="message" className={styles.floatingLabel}>Your Message *</label>
+        </div>
+        
+        {error && <p className={styles.errorText}>{error}</p>}
+        
         <button
           type="submit"
           className={styles.submitBtn}
           disabled={submitting}
         >
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? "Sending..." : "Send Message"}
         </button>
       </form>
-      {submitted && (
-        <p style={{ color: "var(--color-emerald)", marginTop: "12px" }}>
-          Thank you! Your message has been received.
-        </p>
-      )}
-      {error && <p style={{ color: "var(--color-bright-red)", marginTop: "12px" }}>{error}</p>}
-      <p className={styles.note}>
-        Our team typically replies within one business day.
-      </p>
     </div>
   );
 }

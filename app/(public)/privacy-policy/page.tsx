@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalSections from "@/components/sections/LegalSections";
 import { getLegalPageBySlug } from "@/lib/data/cms";
 import { privacySections } from "@/lib/data/legal";
-import styles from "@/components/styles/LegalPage.module.css";
+import styles from "@/styles/LegalPage.module.css";
 
 export const revalidate = 300;
 
