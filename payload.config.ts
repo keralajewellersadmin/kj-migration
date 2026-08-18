@@ -928,9 +928,10 @@ const Inquiry: CollectionConfig = {
     // Public submissions go ONLY through the hardened /api/inquiry route
     // (validation, honeypot, rate limiting, HTML escaping). Direct REST writes
     // are blocked; the route uses overrideAccess to create the record.
+    // Enquiry records are read-only in the CMS — admins can view but never edit.
     create: () => false,
-    update: canManageInquiries,
-    delete: canManageSettings,
+    update: () => false,
+    delete: () => false,
   },
   fields: [
     {
