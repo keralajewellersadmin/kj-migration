@@ -740,6 +740,170 @@ button.btn--style-secondary,
   color: #7a1518 !important;
 }
 
+/* ── 11b. Inquiry list: single toolbar row (search + status) ── */
+.collection-list--inquiries {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+  padding: 24px 32px 48px !important;
+  background: #f8fafc !important;
+}
+
+.collection-list--inquiries .collection-list__wrap {
+  display: contents !important;
+}
+
+.collection-list--inquiries .collection-list__header {
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.collection-list--inquiries .list-controls {
+  flex: 1 1 360px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+.collection-list--inquiries .list-controls__toggle-columns,
+.collection-list--inquiries .list-controls__toggle-where {
+  display: none !important;
+}
+
+.collection-list--inquiries .inquiry-quick-filters {
+  flex: 0 0 auto !important;
+  align-self: center !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+.collection-list--inquiries .collection-list__tables,
+.collection-list--inquiries .collection-list__page-controls,
+.collection-list--inquiries .page-controls,
+.collection-list--inquiries .no-results {
+  width: 100% !important;
+}
+
+.inquiry-quick-filters__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inquiry-quick-filters__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.inquiry-quick-filters__select {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  outline: none;
+  font-family: "Inter", sans-serif;
+}
+
+.inquiry-quick-filters__select:focus {
+  border-color: #9f1b1f;
+  box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08);
+}
+
+/* ── 11c. Inquiry list header: clean toolbar with bulk actions ── */
+.collection-list--inquiries .list-header {
+  width: 100% !important;
+}
+
+.collection-list--inquiries .list-header__content {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+.collection-list--inquiries .list-header__title-and-actions {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.collection-list--inquiries .list-header__title {
+  font-size: 22px !important;
+  margin: 0 !important;
+}
+
+.collection-list--inquiries .list-header__title-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.collection-list--inquiries .list-header__actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.collection-list--inquiries .list-header__actions .btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 5px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.collection-list--inquiries .list-header__actions .btn:hover {
+  background: #f8fafc !important;
+  border-color: #9f1b1f !important;
+  color: #9f1b1f !important;
+}
+
+.collection-list--inquiries .list-header__title-actions .count {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+}
+
+/* Fix the fixed-bottom selection bar inside the flex parent */
+.collection-list--inquiries .collection-list__list-selection {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 100 !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 12px 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
 /* ── 12. Modal & Drawer Popups ── */
 .drawer__content,
 .modal,

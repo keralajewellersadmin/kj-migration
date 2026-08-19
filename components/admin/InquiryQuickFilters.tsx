@@ -31,46 +31,13 @@ const InquiryQuickFilters = () => {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      gap: '16px',
-      flexWrap: 'wrap',
-      padding: '16px 24px',
-      margin: '0 0 20px',
-      background: '#ffffff',
-      border: '1px solid #e2e8f0',
-      borderRadius: '10px',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02)',
-    }}>
-      {/* Status Dropdown */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{
-          fontSize: '12px',
-          fontWeight: 700,
-          color: '#64748b',
-          textTransform: 'uppercase',
-          letterSpacing: '0.06em',
-          fontFamily: 'Plus Jakarta Sans, sans-serif',
-        }}>
-          Status:
-        </span>
+    <div className="inquiry-quick-filters">
+      <div className="inquiry-quick-filters__field">
+        <span className="inquiry-quick-filters__label">Status:</span>
         <select
+          className="inquiry-quick-filters__select"
           value={currentStatus}
           onChange={(e) => handleFilter('where[status][equals]', e.target.value)}
-          style={{
-            padding: '7px 14px',
-            borderRadius: '8px',
-            fontSize: '13px',
-            fontWeight: 500,
-            border: '1px solid #cbd5e1',
-            background: '#ffffff',
-            color: '#0f172a',
-            cursor: 'pointer',
-            outline: 'none',
-            fontFamily: 'Inter, sans-serif',
-          }}
         >
           {STATUSES.map((st) => (
             <option key={st.value} value={st.value}>
@@ -83,4 +50,4 @@ const InquiryQuickFilters = () => {
   )
 }
 
-export default InquiryQuickFilters;
+export default InquiryQuickFilters

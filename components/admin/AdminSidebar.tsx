@@ -41,21 +41,20 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
   });
 
   if (canManageContent) {
-    // 3. Pages Section (Deep-linked)
-    sections.push({
-      label: "Pages",
-      items: [
-        { href: `${settingsPath}?tab=Homepage`, icon: "home", label: "Home" },
-        { href: `${settingsPath}?tab=Pages`, icon: "gold", label: "Gold Products Page" },
-        { href: `${settingsPath}?tab=Pages`, icon: "silver", label: "Silver Products Page" },
-        { href: `${settingsPath}?tab=Pages`, icon: "diamond", label: "Diamond Products Page" },
-        { href: `${settingsPath}?tab=Pages`, icon: "platinum", label: "Platinum Products Page" },
-        { href: `${settingsPath}?tab=Content`, icon: "scheme", label: "Swarnavarsha (Scheme)" },
-        { href: `${settingsPath}?tab=Content`, icon: "scheme", label: "Thanga Mazhai (Scheme)" },
-        { href: `${settingsPath}?tab=Content`, icon: "about", label: "About Page" },
-        { href: `${settingsPath}?tab=Pages`, icon: "contact", label: "Contact Page" },
-      ],
-    });
+  // 3. Pages Section
+  sections.push({
+    label: "Pages",
+    items: [
+      { href: `${ADMIN_PATH}/pages?page=home`, icon: "home", label: "Home" },
+      { href: `${ADMIN_PATH}/pages?page=gold`, icon: "gold", label: "Gold Products Page" },
+      { href: `${ADMIN_PATH}/pages?page=silver`, icon: "silver", label: "Silver Products Page" },
+      { href: `${ADMIN_PATH}/pages?page=diamond`, icon: "diamond", label: "Diamond Products Page" },
+      { href: `${ADMIN_PATH}/pages?page=platinum`, icon: "platinum", label: "Platinum Products Page" },
+      { href: `${ADMIN_PATH}/pages?page=about`, icon: "about", label: "About Page" },
+      { href: `${ADMIN_PATH}/pages?page=contact`, icon: "contact", label: "Contact Page" },
+      { href: `${ADMIN_PATH}/pages?page=blog`, icon: "blog", label: "Blog Page" },
+    ],
+  });
 
     // 4. Content Section
     sections.push({
@@ -340,8 +339,16 @@ function SidebarInner({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const sections = getNavSections(role, inquiryCount);
+  const [readDelta, setReadDelta] = useState(0);
+  const unreadCount = Math.max(0, inquiryCount - readDelta);
+  const sections = getNavSections(role, unreadCount);
   const searchParamsString = searchParams.toString();
+
+  useEffect(() => {
+    const onRead = () => setReadDelta((d) => d + 1);
+    window.addEventListener("kj:inquiry-read", onRead);
+    return () => window.removeEventListener("kj:inquiry-read", onRead);
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

@@ -933,7 +933,9 @@ const Inquiry: CollectionConfig = {
     // (see per-field `access.update`).
     create: () => false,
     update: canManageInquiries,
-    delete: () => false,
+    // Delete is allowed for inquiry managers (triage/spam removal). Each deletion
+    // is still recorded by the auditLogAfterDelete hook.
+    delete: canManageInquiries,
   },
   fields: [
     // Only the fields captured by the public contact/enquiry forms:
@@ -1388,55 +1390,6 @@ const SiteSettings: GlobalConfig = {
             },
           ],
         },
-        // ─── Metal Rates ──────────────────────────────────────────
-        {
-          label: "Metal Rates",
-          fields: [
-            {
-              name: "rateUpdated",
-              type: "date",
-              label: "Rates Updated Date",
-              admin: {
-                date: { pickerAppearance: "dayOnly", displayFormat: "dd-MM-yyyy" },
-                description: "Auto-set when you save. Manually editable.",
-              },
-              hooks: {
-                beforeValidate: [
-                  ({ value, operation }) => {
-                    if (operation === "update" || !value) {
-                      return new Date().toISOString();
-                    }
-                    return value;
-                  },
-                ],
-              },
-            },
-            {
-              name: "rateGold22",
-              type: "text",
-              label: "Gold 22K Rate (₹/gram)",
-              admin: { description: "e.g. 7,450" },
-            },
-            {
-              name: "rateGold18",
-              type: "text",
-              label: "Gold 18K Rate (₹/gram)",
-              admin: { description: "e.g. 6,080" },
-            },
-            {
-              name: "rateSilver",
-              type: "text",
-              label: "Silver Rate (₹/gram)",
-              admin: { description: "e.g. 92" },
-            },
-            {
-              name: "ratePlatinum",
-              type: "text",
-              label: "Platinum Rate (₹/gram)",
-              admin: { description: "e.g. 3,890" },
-            },
-          ],
-        },
         // ─── Pages ─────────────────────────────────────────────────
         {
           label: "Pages",
@@ -1526,6 +1479,30 @@ const SiteSettings: GlobalConfig = {
         },
       ],
     },
+    // Metal Rates — managed via the dedicated /update-rates view; hidden here to declutter the global editor.
+    {
+      name: "rateUpdated",
+      type: "date",
+      label: "Rates Updated Date",
+      admin: {
+        date: { pickerAppearance: "dayOnly", displayFormat: "dd-MM-yyyy" },
+        hidden: true,
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, operation }) => {
+            if (operation === "update" || !value) {
+              return new Date().toISOString();
+            }
+            return value;
+          },
+        ],
+      },
+    },
+    { name: "rateGold22", type: "text", admin: { hidden: true } },
+    { name: "rateGold18", type: "text", admin: { hidden: true } },
+    { name: "rateSilver", type: "text", admin: { hidden: true } },
+    { name: "ratePlatinum", type: "text", admin: { hidden: true } },
   ],
 };
 
@@ -1603,6 +1580,11 @@ export default buildConfig({
         "update-rates": {
           Component: "@/components/admin/UpdateRates",
           path: "/update-rates",
+        },
+        pages: {
+          Component: "@/components/admin/pages/PagesView",
+          path: "/pages",
+          exact: true,
         },
       },
     },
