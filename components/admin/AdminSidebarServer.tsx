@@ -8,7 +8,7 @@ export default async function AdminSidebarServer({ payload, user }: ServerProps)
   try {
     const result = await payload.count({
       collection: "inquiries",
-      where: { status: { equals: "new" } },
+      where: { read: { equals: false } },
     });
     inquiryCount = result.totalDocs;
   } catch {

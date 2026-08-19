@@ -21,7 +21,7 @@ async function getStats(payload: ServerProps["payload"]) {
     payload.count({ collection: "categories" }).catch(() => ({ totalDocs: 0 })),
     payload.count({ collection: "media" }).catch(() => ({ totalDocs: 0 })),
     payload.count({ collection: "inquiries" }).catch(() => ({ totalDocs: 0 })),
-    payload.count({ collection: "inquiries", where: { status: { equals: "new" } } }).catch(() => ({ totalDocs: 0 })),
+    payload.count({ collection: "inquiries", where: { read: { equals: false } } }).catch(() => ({ totalDocs: 0 })),
     payload.count({ collection: "blog-posts" }).catch(() => ({ totalDocs: 0 })),
   ]);
 
@@ -100,7 +100,7 @@ export default async function DashboardNew({ payload }: ServerProps) {
           <div className={styles.statInfo}>
             <span className={styles.statValue}>{stats.inquiries}</span>
             <span className={styles.statLabel}>Inquiries</span>
-            {stats.newInquiries > 0 && <span className={styles.newBadge}>{stats.newInquiries} new</span>}
+            {stats.newInquiries > 0 && <span className={styles.newBadge}>{stats.newInquiries} unread</span>}
           </div>
         </Link>
 

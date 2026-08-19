@@ -134,9 +134,9 @@ export async function POST(request: Request) {
     const inquiryRows = (await sql.query(
       `insert into inquiries
          (name, email, phone, message, source, city, preferred_time,
-          product_name, product_id, submitted_at, status,
+          product_name, product_id, submitted_at, status, read,
           email_notification_status, updated_at, created_at)
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, now(), 'new', 'not-sent', now(), now())
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'new', false, 'not-sent', now(), now())
        returning id`,
       [
         parsed.name,
@@ -148,6 +148,7 @@ export async function POST(request: Request) {
         parsed.preferredTime,
         parsed.productName,
         parsed.productId,
+        new Date().toISOString(),
       ],
     )) as Array<{ id: number }>;
     const inquiryId = inquiryRows[0]?.id;

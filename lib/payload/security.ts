@@ -138,6 +138,10 @@ export const canManageSettings: Access = ({ req }) =>
 export const canManageInquiries: Access = ({ req }) =>
   hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]);
 
+// Field-level variant of the above (FieldAccess has a different `id` type)
+export const canManageInquiriesField: FieldAccess = ({ req }) =>
+  hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]);
+
 // Media — admin + super-admin for CRUD, public read for frontend image population
 export const canReadMedia: Access = ({ req }) => {
   if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))

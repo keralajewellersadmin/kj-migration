@@ -25,6 +25,7 @@ import {
   adminRoles,
   canManageContent,
   canManageInquiries,
+  canManageInquiriesField,
   canManageSettings,
 canReadAdminUsers,
   canReadAuditLogs,
@@ -916,6 +917,11 @@ const Inquiry: CollectionConfig = {
       beforeListTable: [
         "@/components/admin/InquiryQuickFilters",
       ],
+      edit: {
+        beforeDocumentControls: [
+          "@/components/admin/InquiryReadMarker",
+        ],
+      },
     },
   },
   access: {
@@ -923,23 +929,24 @@ const Inquiry: CollectionConfig = {
     // Public submissions go ONLY through the hardened /api/inquiry route
     // (validation, honeypot, rate limiting, HTML escaping). Direct REST writes
     // are blocked; the route uses overrideAccess to create the record.
-    // Enquiry records are read-only in the CMS — admins can view but never edit.
+    // Only the `status` field is editable; all other fields stay read-only
+    // (see per-field `access.update`).
     create: () => false,
-    update: () => false,
+    update: canManageInquiries,
     delete: () => false,
   },
   fields: [
     // Only the fields captured by the public contact/enquiry forms:
     // /contact (name, email, message) and /enquiry (name, phone, email, message)
-    { name: "name", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "phone", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: canUpdateProtectedField } },
+    { name: "name", type: "text", required: true, admin: { readOnly: true }, access: { update: () => false } },
+    { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: () => false } },
+    { name: "phone", type: "text", admin: { readOnly: true }, access: { update: () => false } },
+    { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: () => false } },
     // Enquiry-form specific captures (only populated by the /enquiry form)
-    { name: "city", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "preferredTime", type: "text", label: "Preferred Time", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "productName", type: "text", label: "Product", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
-    { name: "productId", type: "text", label: "Product ID", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "city", type: "text", admin: { readOnly: true }, access: { update: () => false } },
+    { name: "preferredTime", type: "text", label: "Preferred Time", admin: { readOnly: true }, access: { update: () => false } },
+    { name: "productName", type: "text", label: "Product", admin: { readOnly: true }, access: { update: () => false } },
+    { name: "productId", type: "text", label: "Product ID", admin: { readOnly: true }, access: { update: () => false } },
     // Source pill: which public form submitted this enquiry
     {
       name: "source",
@@ -956,11 +963,22 @@ const Inquiry: CollectionConfig = {
         },
       },
     },
+    // Read/unread flag (toggled automatically when the admin opens the record)
+    {
+      name: "read",
+      type: "checkbox",
+      defaultValue: false,
+      admin: { readOnly: true, disableListFilter: true },
+      access: { update: canManageInquiriesField },
+    },
     // System fields (not form inputs — kept for admin triage only)
     {
       name: "status",
       type: "select",
       defaultValue: "new",
+      // The ONLY admin-editable field — used to triage enquiries
+      // (New / Contacted / In Progress / Resolved / Closed / Spam)
+      access: { update: canManageInquiriesField },
       options: [
         { label: "New", value: "new" },
         { label: "Contacted", value: "contacted" },
@@ -976,12 +994,14 @@ const Inquiry: CollectionConfig = {
       defaultValue: "not-sent",
       options: ["not-sent", "sent", "failed"],
       admin: { readOnly: true, disableListFilter: true },
+      access: { update: () => false },
     },
     {
       name: "submittedAt",
       type: "date",
       defaultValue: () => new Date().toISOString(),
       admin: { readOnly: true },
+      access: { update: () => false },
     },
   ],
 };
