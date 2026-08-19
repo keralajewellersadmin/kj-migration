@@ -18,6 +18,7 @@ export async function updateRates(data: {
       rateSilver: data.silver,
       ratePlatinum: data.platinum,
     },
+    overrideAccess: true,
   });
   return { success: true };
 }

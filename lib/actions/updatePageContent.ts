@@ -8,6 +8,7 @@ export async function updateSiteSettings(patch: Record<string, unknown>) {
   await payload.updateGlobal({
     slug: "site-settings",
     data: patch,
+    overrideAccess: true,
   });
   return { success: true };
 }
@@ -18,6 +19,7 @@ export async function updateLegalPage(id: string, patch: Record<string, unknown>
     collection: "legal-pages",
     id,
     data: patch,
+    overrideAccess: true,
   });
   return { success: true };
 }
