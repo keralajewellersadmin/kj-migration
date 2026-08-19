@@ -22,7 +22,7 @@ export const AdminLayoutWrapper = ({
       permissions={permissions}
       req={req}
       searchParams={searchParams}
-      user={req.user}
+      user={req.user || undefined}
       visibleEntities={visibleEntities}
     >
       {children}
