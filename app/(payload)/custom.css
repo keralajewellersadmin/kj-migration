@@ -508,7 +508,6 @@ body,
 .field-type input[type="search"],
 .field-type textarea,
 .field-type select,
-.react-select__control,
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -530,13 +529,17 @@ select {
 
 .field-type input:focus,
 .field-type textarea:focus,
-.react-select__control--is-focused,
 input:focus,
 textarea:focus,
 select:focus {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
   outline: none !important;
+}
+
+.react-select__control--is-focused {
+  border-color: #9f1b1f !important;
+  box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
 }
 
 /* Fix for Payload List Search Bar overlapping icon */
@@ -925,7 +928,42 @@ button.btn--style-secondary,
 .react-select__option--is-focused { background: #f8fafc !important; }
 .react-select__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
 
-/* ── 13. Clean Scrollbar ── */
+/* ── 13. Fix react-select overrides (undo global input styles) ── */
+.react-select__control {
+  width: auto !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+}
+
+.react-select__value-container {
+  padding: 2px 8px !important;
+  overflow: visible !important;
+}
+
+.react-select__single-value,
+.react-select__multi-value {
+  color: #0f172a !important;
+  font-size: 13.5px !important;
+  font-family: "Inter", sans-serif !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+.react-select__input-container {
+  font-size: 13.5px !important;
+}
+
+.react-select__placeholder {
+  color: #94a3b8 !important;
+  font-size: 13.5px !important;
+}
+
+/* ── 14. Clean Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
