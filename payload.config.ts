@@ -907,6 +907,7 @@ const Inquiry: CollectionConfig = {
       ],
       edit: {
         beforeDocumentControls: [
+          "@/components/admin/GoBackButton",
           "@/components/admin/InquiryReadMarker",
         ],
       },
@@ -1566,11 +1567,11 @@ export default buildConfig({
           Component: "@/components/admin/CustomLogin",
         },
         "update-rates": {
-          Component: "@/components/admin/UpdateRates",
+          Component: "@/components/admin/UpdateRatesServer",
           path: "/update-rates",
         },
         pages: {
-          Component: "@/components/admin/pages/PagesView",
+          Component: "@/components/admin/pages/PagesViewServer",
           path: "/pages",
           exact: true,
         },
