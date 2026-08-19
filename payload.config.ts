@@ -23,7 +23,6 @@ import {
   auditLogGlobalAfterChange,
 } from "./lib/auditLogHooks.ts";
 import {
-  adminRoles,
   canManageContent,
   canManageInquiries,
   canManageInquiriesField,
@@ -561,7 +560,11 @@ const AdminUsers: CollectionConfig = {
       type: "select",
       required: true,
       defaultValue: "enquiry-manager",
-      options: adminRoles.map((role: string) => ({ label: role, value: role })),
+      options: [
+        { label: "super-admin", value: "super-admin" },
+        { label: "admin", value: "admin" },
+        { label: "enquiry-manager", value: "enquiry-manager" },
+      ],
       access: { create: adminRoleFieldAccess, update: adminRoleFieldAccess },
     },
     {

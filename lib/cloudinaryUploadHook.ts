@@ -56,19 +56,49 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
     );
   const filePath = path.join(mediaDir, doc.filename);
 
-  if (!fs.existsSync(filePath)) {
+  const hasLocalFile = fs.existsSync(filePath);
+
+  // If no local file and no request buffer, skip
+  if (!hasLocalFile && !req.file) {
     return doc;
   }
 
   try {
     const cloudinary = await getCloudinaryClient();
     const folder = getCloudinaryFolder(doc.mediaType);
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder,
-      public_id: String(doc.id),
-      resource_type: "image",
-      colorspace: "srgb",
-    });
+
+    let result: any;
+    if (hasLocalFile) {
+      // Upload from local file (dev or Vercel with MEDIA_DIR)
+      result = await cloudinary.uploader.upload(filePath, {
+        folder,
+        public_id: String(doc.id),
+        resource_type: "image",
+        colorspace: "srgb",
+      });
+    } else if (req.file) {
+      // Upload from request buffer (Vercel without storage adapter)
+      const buffer = Buffer.isBuffer(req.file.data)
+        ? req.file.data
+        : Buffer.from(req.file.data);
+      result = await new Promise<any>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder,
+            public_id: String(doc.id),
+            resource_type: "image",
+            colorspace: "srgb",
+          },
+          (error: any, uploadResult: any) => {
+            if (error) reject(error);
+            else resolve(uploadResult);
+          },
+        );
+        uploadStream.end(buffer);
+      });
+    } else {
+      return doc;
+    }
 
     const updateData: Record<string, unknown> = {
       url: result.secure_url,
@@ -81,10 +111,12 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
       data: updateData,
     });
 
-    try {
-      fs.unlinkSync(filePath);
-    } catch {
-      // Non-critical
+    if (hasLocalFile) {
+      try {
+        fs.unlinkSync(filePath);
+      } catch {
+        // Non-critical
+      }
     }
 
     if (process.env.NODE_ENV !== "production") {
