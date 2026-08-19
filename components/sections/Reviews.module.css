@@ -34,6 +34,20 @@
   overflow: visible;
 }
 
+@media (max-width: 767px) {
+  .swiper {
+    overflow: hidden;
+    margin-left: -8px;
+    margin-right: -8px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .track {
+    overflow: hidden;
+  }
+}
+
 .swiper:not(.swiper-initialized) {
   min-height: 280px;
 }
@@ -100,24 +114,28 @@
     padding-bottom: var(--space-10);
     height: auto;
     min-height: 380px;
+    overflow: hidden;
   }
 
   .card {
     height: auto;
-    min-height: 280px;
+    min-height: 240px;
     border-radius: 8px;
-    width: min(350px, calc(100vw - 30px));
-    min-width: 290px;
-    max-width: calc(100vw - 30px);
+    width: 100%;
   }
 
   .cardInner {
     padding: 24px 20px;
-    min-height: 180px;
+    min-height: auto;
   }
 
   .text {
     font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .author {
+    font-size: 13px;
   }
 }
 

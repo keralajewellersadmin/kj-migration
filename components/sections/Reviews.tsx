@@ -101,8 +101,8 @@ export default function Reviews({
               onSwiper={handleInit}
               onSlideChange={handleSlideChange}
               modules={[Autoplay]}
-              slidesPerView={1.3}
-              spaceBetween={24}
+              slidesPerView={1}
+              spaceBetween={16}
               centeredSlides
               loop
               autoplay={{
@@ -111,9 +111,9 @@ export default function Reviews({
                 pauseOnMouseEnter: true,
               }}
               breakpoints={{
-                992: { slidesPerView: 2.0 },
-                768: { slidesPerView: 2.0 },
-                480: { slidesPerView: 1.6 },
+                480: { slidesPerView: 1.5, spaceBetween: 20, centeredSlides: false },
+                768: { slidesPerView: 2.0, spaceBetween: 24 },
+                992: { slidesPerView: 2.0, spaceBetween: 24 },
               }}
               className={styles.swiper}
             >
