@@ -38,7 +38,6 @@ export async function POST(request: Request) {
         features: [],
         banners: [],
         heritage: [],
-        reviews: [],
         homepageSections: {
           bestsellersTitle: "Our Bestsellers",
           bestsellersSubtitle:

@@ -1016,6 +1016,14 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     author: r.author || "",
     location: r.location || "",
   });
+
+  const reviewsResult = await payload.find({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- collection type will exist after types regen
+    collection: "reviews" as any,
+    limit: 100,
+    sort: "createdAt",
+  });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapCategory = (c: any) => ({
     title: c.title || "",
@@ -1030,7 +1038,7 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     features: (settings.features || []).map(mapCircleBanner),
     banners: (settings.banners || []).map(mapImageBanner),
     heritage: (settings.heritage || []).map(mapHeritage),
-    reviews: (settings.reviews || []).map(mapReview),
+    reviews: reviewsResult.docs.map(mapReview),
     categories: (settings.categories || []).map(mapCategory),
     // Carry over all scalar fields from DEFAULT_SETTINGS
     rateGold22: (settings.rateGold22 as string) || DEFAULT_SETTINGS.rateGold22,
@@ -1202,8 +1210,8 @@ async function loadArrayDataViaSQL(
        FROM site_settings_heritage h LEFT JOIN media m ON h.image_id = m.id
        WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
     const reviewsRes = await pool.query(
-      `SELECT text, author, location FROM site_settings_reviews
-       WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+      `SELECT text, author, location FROM reviews
+       ORDER BY created_at ASC`);
     const catsRes = await pool.query(
       `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
        WHERE _parent_id = $1 ORDER BY _order`, [ssId]);

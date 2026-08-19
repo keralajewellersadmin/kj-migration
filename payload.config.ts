@@ -87,6 +87,11 @@ const revalidateLegal: CollectionAfterChangeHook = () => {
   revalidatePath("/swarnavarsha");
 };
 
+const revalidateReviews: CollectionAfterChangeHook = () => {
+  revalidatePath("/");
+  void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
+};
+
 const revalidateSiteSettings: GlobalAfterChangeHook = () => {
   void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
   revalidatePath("/");
@@ -1150,6 +1155,44 @@ const PasswordReset: CollectionConfig = {
   ],
 };
 
+const Review: CollectionConfig = {
+  slug: "reviews",
+  admin: {
+    useAsTitle: "author",
+    defaultColumns: ["author", "text", "location", "createdAt"],
+    listSearchableFields: ["author", "text", "location"],
+  },
+  access: {
+    read: publicRead,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canManageSettings,
+  },
+  hooks: {
+    afterChange: [revalidateReviews, auditLogAfterChange],
+    afterDelete: [auditLogAfterDelete],
+  },
+  fields: [
+    {
+      name: "text",
+      type: "textarea",
+      required: true,
+      admin: { description: "The customer's review text." },
+    },
+    {
+      name: "author",
+      type: "text",
+      required: true,
+      admin: { description: "Customer name (e.g. \"Shruthi\")." },
+    },
+    {
+      name: "location",
+      type: "text",
+      admin: { description: "Customer location (e.g. \"Kodambakkam\")." },
+    },
+  ],
+};
+
 const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   access: {
@@ -1245,16 +1288,6 @@ const SiteSettings: GlobalConfig = {
                 { name: "heading", type: "text" },
                 { name: "description", type: "textarea" },
                 { name: "image", type: "upload", relationTo: "media" },
-              ],
-            },
-            {
-              name: "reviews",
-              type: "array",
-              label: "Reviews",
-              fields: [
-                { name: "text", type: "textarea", required: true },
-                { name: "author", type: "text", required: true },
-                { name: "location", type: "text" },
               ],
             },
             {
@@ -1540,6 +1573,7 @@ export default buildConfig({
     AuditLog,
     LoginOtp,
     PasswordReset,
+    Review,
   ],
   globals: [SiteSettings],
   admin: {

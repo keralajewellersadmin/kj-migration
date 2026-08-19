@@ -64,7 +64,7 @@ function getNavSections(role: string, inquiryCount: number): NavSection[] {
         { href: `${ADMIN_PATH}/collections/categories`, icon: "categories", label: "Categories" },
         { href: `${ADMIN_PATH}/collections/blog-posts`, icon: "blog", label: "Blog Posts" },
         { href: `${settingsPath}?tab=Homepage`, icon: "star", label: "Bestsellers" },
-        { href: `${settingsPath}?tab=Content`, icon: "reviews", label: "Reviews" },
+        { href: `${ADMIN_PATH}/collections/reviews`, icon: "reviews", label: "Reviews" },
         { href: `${ADMIN_PATH}/collections/media`, icon: "media", label: "Media" },
       ],
     });
