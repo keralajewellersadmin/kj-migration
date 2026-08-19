@@ -19,6 +19,9 @@ scripts/
 screenshots/
 tests/
 playwright/
+e2e/
+docs/
+.qodo/
 .env*.local
 
 # Public assets (large — served via CDN in production)
