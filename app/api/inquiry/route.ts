@@ -28,6 +28,10 @@ const inquirySchema = z.object({
   phone: z.string().trim().max(30).optional().default(""),
   message: z.string().trim().max(2000).optional().default(""),
   source: z.enum(["contact", "enquiry"]).optional().default("contact"),
+  city: z.string().trim().max(120).optional().default(""),
+  preferredTime: z.string().trim().max(120).optional().default(""),
+  productName: z.string().trim().max(200).optional().default(""),
+  productId: z.string().trim().max(80).optional().default(""),
   honeypot: z.string().optional().default(""),
   startedAt: z.number().optional(),
 });
@@ -129,9 +133,10 @@ export async function POST(request: Request) {
 
     const inquiryRows = (await sql.query(
       `insert into inquiries
-         (name, email, phone, message, source,
-          submitted_at, status, email_notification_status, updated_at, created_at)
-       values ($1, $2, $3, $4, $5, now(), 'new', 'not-sent', now(), now())
+         (name, email, phone, message, source, city, preferred_time,
+          product_name, product_id, submitted_at, status,
+          email_notification_status, updated_at, created_at)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, now(), 'new', 'not-sent', now(), now())
        returning id`,
       [
         parsed.name,
@@ -139,6 +144,10 @@ export async function POST(request: Request) {
         parsed.phone,
         parsed.message,
         parsed.source,
+        parsed.city,
+        parsed.preferredTime,
+        parsed.productName,
+        parsed.productId,
       ],
     )) as Array<{ id: number }>;
     const inquiryId = inquiryRows[0]?.id;

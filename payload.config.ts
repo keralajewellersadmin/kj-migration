@@ -916,11 +916,6 @@ const Inquiry: CollectionConfig = {
       beforeListTable: [
         "@/components/admin/InquiryQuickFilters",
       ],
-      edit: {
-        beforeDocumentControls: [
-          "@/components/admin/InquiryDetail",
-        ],
-      },
     },
   },
   access: {
@@ -940,6 +935,11 @@ const Inquiry: CollectionConfig = {
     { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "phone", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: canUpdateProtectedField } },
+    // Enquiry-form specific captures (only populated by the /enquiry form)
+    { name: "city", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "preferredTime", type: "text", label: "Preferred Time", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "productName", type: "text", label: "Product", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
+    { name: "productId", type: "text", label: "Product ID", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     // Source pill: which public form submitted this enquiry
     {
       name: "source",

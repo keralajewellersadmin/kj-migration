@@ -27,17 +27,11 @@ function EnquiryForm() {
       phone: fd.get("mobile"),
       email: fd.get("email") || "",
       source: "enquiry",
-      message: [
-        fd.get("city") ? `City: ${fd.get("city")}` : "",
-        fd.get("preferredTime")
-          ? `Preferred Time: ${fd.get("preferredTime")}`
-          : "",
-        fd.get("productName") ? `Product: ${fd.get("productName")}` : "",
-        fd.get("productId") ? `Product ID: ${fd.get("productId")}` : "",
-        fd.get("message") || "",
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      city: fd.get("city") || "",
+      preferredTime: fd.get("preferredTime") || "",
+      productName: fd.get("productName") || "",
+      productId: fd.get("productId") || "",
+      message: fd.get("message") || "",
     });
     if (!ok) {
       setError(err || "Submission failed. Please try again.");
