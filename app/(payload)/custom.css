@@ -2,13 +2,13 @@
 
 /* ═══════════════════════════════════════════════════════════════
    Kerala Jewellers — Admin Panel Custom CSS
-   Clean, Minimal Luxury SaaS Theme (GitHub / Stripe Style)
+   Clean, Minimal Luxury SaaS Theme
    ═══════════════════════════════════════════════════════════════ */
 
 /* Hide API tab on document edit pages */
 .doc-tabs .doc-tab[href*="/api"] { display: none !important; }
 
-/* ── 1. Global Reset & Palette ── */
+/* ── 1. Global Palette ── */
 html,
 html[data-theme="light"],
 html[data-theme="dark"] {
@@ -31,15 +31,11 @@ html[data-theme="dark"] {
   --theme-success-500: #16a34a;
   --theme-error-500: #dc2626;
   --theme-warning-500: #d97706;
-
   background: #f8fafc !important;
   overflow-x: hidden;
 }
 
-body {
-  overflow-x: hidden;
-  margin: 0;
-}
+body { overflow-x: hidden; margin: 0; }
 
 body,
 .payload-admin,
@@ -52,7 +48,7 @@ body,
   text-rendering: optimizeLegibility;
 }
 
-/* ── 2. Sidebar & Layout Grid ── */
+/* ── 2. Sidebar & Layout ── */
 .nav {
   padding: 0 !important;
   background: transparent !important;
@@ -63,9 +59,7 @@ body,
   overflow: visible !important;
 }
 
-:root {
-  --sidebar-width: 260px;
-}
+:root { --sidebar-width: 260px; }
 
 @media (min-width: 1024px) {
   .template-default {
@@ -83,9 +77,7 @@ body,
   }
   .template-default__nav-toggler-container,
   .app-header__mobile-nav-toggler,
-  .nav-toggler {
-    display: none !important;
-  }
+  .nav-toggler { display: none !important; }
 }
 
 @media (max-width: 1023px) {
@@ -104,15 +96,11 @@ body,
   }
   .template-default__nav-toggler-container,
   .app-header__mobile-nav-toggler,
-  .nav-toggler {
-    display: none !important;
-  }
-  .app-header__content {
-    padding-left: 56px !important;
-  }
+  .nav-toggler { display: none !important; }
+  .app-header__content { padding-left: 56px !important; }
 }
 
-/* ── 3. Top Header Bar (app-header, app-header__content, app-header__wrapper) ── */
+/* ── 3. Top Header ── */
 .app-header {
   background: #ffffff !important;
   border-bottom: 1px solid #eef2f6 !important;
@@ -140,13 +128,10 @@ body,
   gap: 16px !important;
 }
 
-/* Hide the tiny duplicate icon logo in the breadcrumb bar if present */
 .app-header .graphic,
-.app-header__wrapper > a:first-child:not(.breadcrumbs a) {
-  display: none !important;
-}
+.app-header__wrapper > a:first-child:not(.breadcrumbs a) { display: none !important; }
 
-/* Breadcrumbs Styling */
+/* Breadcrumbs */
 .breadcrumbs,
 .step-nav {
   display: flex !important;
@@ -166,9 +151,7 @@ body,
 }
 
 .breadcrumbs a:hover,
-.step-nav a:hover {
-  color: #9f1b1f !important;
-}
+.step-nav a:hover { color: #9f1b1f !important; }
 
 .breadcrumbs span:last-child,
 .step-nav span:last-child {
@@ -176,25 +159,21 @@ body,
   font-weight: 600 !important;
 }
 
-/* Top Right Controls Wrapper */
 .app-header__controls-wrapper {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
 }
 
-/* User Account Icon / Avatar in Header */
 .app-header__controls-wrapper svg,
 .app-header__controls-wrapper a {
   color: #64748b !important;
   transition: color 0.15s ease !important;
 }
 
-.app-header__controls-wrapper a:hover svg {
-  color: #9f1b1f !important;
-}
+.app-header__controls-wrapper a:hover svg { color: #9f1b1f !important; }
 
-/* ── 4. Unified Document Header & Action Bar ── */
+/* ── 4. Document Header & Action Bar ── */
 .doc-header {
   background: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
@@ -227,7 +206,6 @@ body,
   line-height: 1.2 !important;
 }
 
-/* Remove separate clunky doc-controls bar in favor of clean inline header placement */
 .doc-controls {
   background: #ffffff !important;
   border: none !important;
@@ -252,7 +230,7 @@ body,
 
 .doc-controls__divider { display: none !important; }
 
-/* ── 5. Clean Form Container ── */
+/* ── 5. Form Container ── */
 .collection-edit__main-wrapper,
 .global-edit__main-wrapper {
   background: #f8fafc !important;
@@ -272,10 +250,8 @@ body,
   box-shadow: none !important;
 }
 
-/* ── 6. Sleek Minimal Underline Tab Navigation ── */
-.tabs-field {
-  margin-bottom: 24px !important;
-}
+/* ── 6. Tab Navigation ── */
+.tabs-field { margin-bottom: 24px !important; }
 
 .tabs-field__tabs-wrap {
   display: flex !important;
@@ -316,10 +292,7 @@ body,
   border-bottom: 2px solid transparent !important;
 }
 
-.tabs-field__tab-button:hover {
-  color: #0f172a !important;
-  background: transparent !important;
-}
+.tabs-field__tab-button:hover { color: #0f172a !important; background: transparent !important; }
 
 .tabs-field__tab-button--active,
 .tabs-field__tab-button.tabs-field__tab-button--active {
@@ -330,10 +303,7 @@ body,
   border-bottom: 2px solid #9f1b1f !important;
 }
 
-/* Tab Content */
-.tabs-field__content-wrap {
-  width: 100% !important;
-}
+.tabs-field__content-wrap { width: 100% !important; }
 
 .tabs-field__tab {
   background: transparent !important;
@@ -343,7 +313,6 @@ body,
   box-shadow: none !important;
 }
 
-/* Single unified clean card for form fields */
 .tabs-field__tab > .render-fields {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
@@ -352,7 +321,7 @@ body,
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
 }
 
-/* ── 7. Clean Form Groups (Flat & Seamless) ── */
+/* ── 7. Form Groups ── */
 .group-field {
   background: transparent !important;
   border: none !important;
@@ -380,7 +349,7 @@ body,
   letter-spacing: 0.04em !important;
 }
 
-/* ── 8. Collapsible & Array Cards (Clean Accordion) ── */
+/* ── 8. Collapsible & Array Cards ── */
 .collapsible {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
@@ -391,9 +360,7 @@ body,
   transition: border-color 0.15s ease !important;
 }
 
-.collapsible:hover {
-  border-color: #cbd5e1 !important;
-}
+.collapsible:hover { border-color: #cbd5e1 !important; }
 
 .collapsible__toggle-wrap {
   background: #f8fafc !important;
@@ -417,9 +384,7 @@ body,
   background: transparent !important;
 }
 
-.collapsible__toggle span {
-  display: none !important;
-}
+.collapsible__toggle span { display: none !important; }
 
 .collapsible__header-wrap {
   display: flex !important;
@@ -483,13 +448,8 @@ body,
 }
 
 /* ── 9. Form Field Spacing & Typography ── */
-.field-type {
-  margin-bottom: 16px !important;
-}
-
-.field-type:last-child {
-  margin-bottom: 0 !important;
-}
+.field-type { margin-bottom: 16px !important; }
+.field-type:last-child { margin-bottom: 0 !important; }
 
 .field-type label,
 .field-label {
@@ -501,20 +461,19 @@ body,
   font-family: "Plus Jakarta Sans", sans-serif !important;
 }
 
+/* Standard inputs/textareas/selects */
 .field-type input[type="text"],
 .field-type input[type="email"],
 .field-type input[type="password"],
 .field-type input[type="number"],
 .field-type input[type="search"],
 .field-type textarea,
-.field-type select,
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
 input[type="search"],
-textarea,
-select {
+textarea {
   border: 1px solid #d1d5db !important;
   border-radius: 6px !important;
   background: #ffffff !important;
@@ -527,40 +486,17 @@ select {
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-/* Undo global input styles inside react-select */
-.react-select input,
-.react-select textarea {
-  border: none !important;
-  padding: 0 !important;
-  width: 1px !important;
-  min-width: 1px !important;
-  font-size: 13.5px !important;
-  color: #0f172a !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
 .field-type input:focus,
 .field-type textarea:focus,
 input:focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
   outline: none !important;
 }
 
-.react-select .rs__control--is-focused {
-  border-color: #9f1b1f !important;
-  box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
-}
-
-/* Fix for Payload List Search Bar overlapping icon */
 .search-filter__input input,
-input.search-filter__input {
-  padding-left: 40px !important;
-}
+input.search-filter__input { padding-left: 40px !important; }
 
 .field-description,
 .description {
@@ -575,14 +511,15 @@ input.search-filter__input {
 }
 
 /* ── 10. Buttons ── */
-.btn, .popup-button, button.btn {
+.btn,
+.popup-button,
+button.btn {
   border-radius: 6px;
   font-family: "Inter", sans-serif;
   font-weight: 500;
   transition: all 0.15s ease;
 }
 
-/* Primary — Brand Maroon */
 .btn--style-primary,
 button.btn--style-primary,
 .popup-button--style-primary,
@@ -606,7 +543,6 @@ button.btn--icon-style-without-border.btn--style-primary:hover {
   box-shadow: 0 2px 6px rgba(159, 27, 31, 0.2);
 }
 
-/* Secondary */
 .btn--style-secondary,
 button.btn--style-secondary,
 .popup-button--style-secondary {
@@ -620,7 +556,7 @@ button.btn--style-secondary,
   border-color: #9ca3af !important;
 }
 
-/* ── 11. List Views & Tables ── */
+/* ── 11. Lists & Tables ── */
 .collection-list__wrap {
   padding: 24px 32px 48px !important;
   background: #f8fafc !important;
@@ -635,7 +571,6 @@ button.btn--style-secondary,
   margin-bottom: 14px !important;
 }
 
-/* Pagination & Per Page Controls */
 .collection-list__page-controls,
 .page-controls {
   display: flex !important;
@@ -694,8 +629,6 @@ button.btn--style-secondary,
   padding: 0 !important;
   margin: 0 !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
 }
 
 .per-page .react-select .rs__single-value {
@@ -757,7 +690,7 @@ button.btn--style-secondary,
   color: #7a1518 !important;
 }
 
-/* ── 11b. Inquiry list: single toolbar row (search + status) ── */
+/* ── 11b. Inquiry List Toolbar ── */
 .collection-list--inquiries {
   display: flex !important;
   flex-direction: row !important;
@@ -768,9 +701,7 @@ button.btn--style-secondary,
   background: #f8fafc !important;
 }
 
-.collection-list--inquiries .collection-list__wrap {
-  display: contents !important;
-}
+.collection-list--inquiries .collection-list__wrap { display: contents !important; }
 
 .collection-list--inquiries .collection-list__header {
   width: 100% !important;
@@ -787,9 +718,7 @@ button.btn--style-secondary,
 }
 
 .collection-list--inquiries .list-controls__toggle-columns,
-.collection-list--inquiries .list-controls__toggle-where {
-  display: none !important;
-}
+.collection-list--inquiries .list-controls__toggle-where { display: none !important; }
 
 .collection-list--inquiries .inquiry-quick-filters {
   flex: 0 0 auto !important;
@@ -801,9 +730,7 @@ button.btn--style-secondary,
 .collection-list--inquiries .collection-list__tables,
 .collection-list--inquiries .collection-list__page-controls,
 .collection-list--inquiries .page-controls,
-.collection-list--inquiries .no-results {
-  width: 100% !important;
-}
+.collection-list--inquiries .no-results { width: 100% !important; }
 
 .inquiry-quick-filters__field {
   display: flex;
@@ -838,10 +765,8 @@ button.btn--style-secondary,
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08);
 }
 
-/* ── 11c. Inquiry list header: clean toolbar with bulk actions ── */
-.collection-list--inquiries .list-header {
-  width: 100% !important;
-}
+/* ── 11c. Inquiry List Header ── */
+.collection-list--inquiries .list-header { width: 100% !important; }
 
 .collection-list--inquiries .list-header__content {
   width: 100% !important;
@@ -864,13 +789,7 @@ button.btn--style-secondary,
   margin: 0 !important;
 }
 
-.collection-list--inquiries .list-header__title-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin-bottom: 0 !important;
-}
-
+.collection-list--inquiries .list-header__title-actions,
 .collection-list--inquiries .list-header__actions {
   display: flex !important;
   align-items: center !important;
@@ -905,7 +824,6 @@ button.btn--style-secondary,
   border-radius: 10px !important;
 }
 
-/* Fix the fixed-bottom selection bar inside the flex parent */
 .collection-list--inquiries .collection-list__list-selection {
   position: fixed !important;
   bottom: 0 !important;
@@ -921,7 +839,7 @@ button.btn--style-secondary,
   gap: 12px !important;
 }
 
-/* ── 12. Modal & Drawer Popups ── */
+/* ── 12. Modal & Drawer ── */
 .drawer__content,
 .modal,
 .popup {
@@ -932,14 +850,7 @@ button.btn--style-secondary,
   color: #0f172a !important;
 }
 
-.react-select .rs__menu {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* ── 13. Fix Payload react-select (prefix is rs__, not react-select__) ── */
+/* ── 13. Payload react-select (prefix: rs__) ── */
 .react-select .rs__control {
   width: auto !important;
   min-height: 38px !important;
@@ -947,6 +858,11 @@ button.btn--style-secondary,
   border: 1px solid #d1d5db !important;
   border-radius: 6px !important;
   background: #ffffff !important;
+}
+
+.react-select .rs__control--is-focused {
+  border-color: #9f1b1f !important;
+  box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
 }
 
 .react-select .rs__value-container {
@@ -971,9 +887,7 @@ button.btn--style-secondary,
   margin: 0 !important;
 }
 
-.react-select .rs__indicator-separator {
-  display: none !important;
-}
+.react-select .rs__indicator-separator { display: none !important; }
 
 .react-select .rs__indicators {
   border: none !important;
@@ -997,6 +911,13 @@ button.btn--style-secondary,
   cursor: pointer !important;
 }
 
+.react-select .rs__menu {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
 .react-select .rs__menu-list {
   border: none !important;
   padding: 4px !important;
@@ -1005,7 +926,21 @@ button.btn--style-secondary,
 .react-select .rs__option--is-focused { background: #f8fafc !important; }
 .react-select .rs__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
 
-/* ── 14. Clean Scrollbar ── */
+/* Undo global input styles inside react-select */
+.react-select input,
+.react-select textarea {
+  border: none !important;
+  padding: 0 !important;
+  width: 1px !important;
+  min-width: 1px !important;
+  font-size: 13.5px !important;
+  color: #0f172a !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ── 14. Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }

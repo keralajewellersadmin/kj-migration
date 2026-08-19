@@ -14,13 +14,13 @@ import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import * as neonServerless from "@neondatabase/serverless";
 import path from "path";
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache.js";
 import {
   auditLogAfterChange,
   auditLogAfterDelete,
   auditLogAfterLogin,
   auditLogGlobalAfterChange,
-} from "./lib/auditLogHooks";
+} from "./lib/auditLogHooks.ts";
 import {
   adminRoles,
   canManageContent,
@@ -39,12 +39,12 @@ canReadAdminUsers,
   enforceAccountLimit,
   validateAdminPassword,
   adminUsersJwtStrategy,
-} from "./lib/payload/security";
+} from "./lib/payload/security.ts";
 import {
   cloudinaryUploadHook,
   cloudinaryDeleteHook,
-} from "./lib/cloudinaryUploadHook";
-import { ADMIN_PATH } from "./lib/admin-path";
+} from "./lib/cloudinaryUploadHook.ts";
+import { ADMIN_PATH } from "./lib/admin-path.ts";
 
 neonServerless.neonConfig.poolQueryViaFetch = true;
 

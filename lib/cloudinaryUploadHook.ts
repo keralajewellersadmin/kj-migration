@@ -2,15 +2,20 @@ import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
 } from "payload";
-import { getCloudinaryFolder, extractPublicIdFromUrl } from "./cloudinary";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { getCloudinaryFolder, extractPublicIdFromUrl } from "./cloudinary.ts";
 
+let cloudinaryClient: any = null;
 async function getCloudinaryClient() {
+  if (cloudinaryClient) return cloudinaryClient;
   const { v2: cloudinary } = await import("cloudinary");
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
+  cloudinaryClient = cloudinary;
   return cloudinary;
 }
 
