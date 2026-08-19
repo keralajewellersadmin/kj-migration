@@ -527,6 +527,20 @@ select {
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
+/* Undo global input styles inside react-select */
+.react-select input,
+.react-select textarea {
+  border: none !important;
+  padding: 0 !important;
+  width: 1px !important;
+  min-width: 1px !important;
+  font-size: 13.5px !important;
+  color: #0f172a !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .field-type input:focus,
 .field-type textarea:focus,
 input:focus,
@@ -537,7 +551,7 @@ select:focus {
   outline: none !important;
 }
 
-.react-select__control--is-focused {
+.react-select .rs__control--is-focused {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
 }
@@ -659,7 +673,7 @@ button.btn--style-secondary,
   text-overflow: ellipsis !important;
 }
 
-.per-page .react-select__control {
+.per-page .react-select .rs__control {
   border: 1px solid #ebe5da !important;
   border-radius: 16px !important;
   background: #ffffff !important;
@@ -676,7 +690,7 @@ button.btn--style-secondary,
   overflow: hidden !important;
 }
 
-.per-page .react-select__value-container {
+.per-page .react-select .rs__value-container {
   padding: 0 !important;
   margin: 0 !important;
   overflow: hidden !important;
@@ -684,7 +698,7 @@ button.btn--style-secondary,
   white-space: nowrap !important;
 }
 
-.per-page .react-select__single-value {
+.per-page .react-select .rs__single-value {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -693,7 +707,7 @@ button.btn--style-secondary,
   margin: 0 !important;
 }
 
-.per-page .react-select__indicator {
+.per-page .react-select .rs__indicator {
   padding: 0 0 0 4px !important;
   flex-shrink: 0 !important;
 }
@@ -918,50 +932,78 @@ button.btn--style-secondary,
   color: #0f172a !important;
 }
 
-.react-select__menu {
+.react-select .rs__menu {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
-.react-select__option--is-focused { background: #f8fafc !important; }
-.react-select__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
-
-/* ── 13. Fix react-select overrides (undo global input styles) ── */
-.react-select__control {
+/* ── 13. Fix Payload react-select (prefix is rs__, not react-select__) ── */
+.react-select .rs__control {
   width: auto !important;
   min-height: 38px !important;
-  padding: 0 !important;
+  padding: 0 4px !important;
   border: 1px solid #d1d5db !important;
   border-radius: 6px !important;
   background: #ffffff !important;
 }
 
-.react-select__value-container {
+.react-select .rs__value-container {
   padding: 2px 8px !important;
   overflow: visible !important;
+  text-align: left !important;
 }
 
-.react-select__single-value,
-.react-select__multi-value {
+.react-select .rs__single-value,
+.react-select .rs__multi-value {
   color: #0f172a !important;
   font-size: 13.5px !important;
   font-family: "Inter", sans-serif !important;
-  max-width: 100% !important;
+  max-width: none !important;
   overflow: visible !important;
   text-overflow: clip !important;
   white-space: nowrap !important;
 }
 
-.react-select__input-container {
+.react-select .rs__input-container {
   font-size: 13.5px !important;
+  margin: 0 !important;
 }
 
-.react-select__placeholder {
-  color: #94a3b8 !important;
-  font-size: 13.5px !important;
+.react-select .rs__indicator-separator {
+  display: none !important;
 }
+
+.react-select .rs__indicators {
+  border: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.react-select .rs__indicator {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 4px !important;
+  color: #6b7280 !important;
+}
+
+.react-select .dropdown-indicator,
+.react-select .clear-indicator {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 4px !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+}
+
+.react-select .rs__menu-list {
+  border: none !important;
+  padding: 4px !important;
+}
+
+.react-select .rs__option--is-focused { background: #f8fafc !important; }
+.react-select .rs__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
 
 /* ── 14. Clean Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
