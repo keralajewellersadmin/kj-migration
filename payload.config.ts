@@ -1494,7 +1494,7 @@ const SiteSettings: GlobalConfig = {
   ],
 };
 
-const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
+const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 3);
 
 export default buildConfig({
   secret: requireProductionSecret(),
@@ -1512,9 +1512,9 @@ export default buildConfig({
           connectionString: cleanDatabaseUrl(resolvedDbUrl),
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
             ? postgresPoolMax
-            : 1,
+            : 3,
           idleTimeoutMillis: 10000,
-          connectionTimeoutMillis: 15000,
+          connectionTimeoutMillis: 30000,
           ...(process.env.NODE_ENV === "production"
             ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false" } }
             : {}),
