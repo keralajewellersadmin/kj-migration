@@ -28,7 +28,7 @@ export function getLoginSql() {
   if (!connectionString) {
     const dbUri = process.env.DATABASE_URI || "file:./dev.db";
     const dbPath = dbUri.replace(/^file:/, "").replace(/^\/\//, "");
-    const absolutePath = resolve(process.cwd(), dbPath);
+    const absolutePath = resolve(/* turbopackIgnore: true */ process.cwd(), dbPath);
     const db = new Database(absolutePath);
 
     loginSql = {

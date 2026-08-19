@@ -48,18 +48,6 @@ import { ADMIN_PATH } from "./lib/admin-path";
 
 neonServerless.neonConfig.poolQueryViaFetch = true;
 
-const canReadProtectedField = ({
-  req,
-}: {
-  req: Parameters<typeof canManageSettings>[0]["req"];
-}) => Boolean(canManageSettings({ req }));
-
-const canUpdateProtectedField = ({
-  req,
-}: {
-  req: Parameters<typeof canManageSettings>[0]["req"];
-}) => Boolean(canManageSettings({ req }));
-
 const canReadAdminUserField = ({
   id,
   req,
