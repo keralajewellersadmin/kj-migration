@@ -78,4 +78,6 @@ SECURITY_AUDIT_*.md
 test-security*
 
 # Regenerated on Vercel (Linux)
-package-lock.json
+
+
+!.env.example
