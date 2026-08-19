@@ -36,33 +36,17 @@ export async function POST(request: Request) {
 
     const payload = await getPayload({ config });
 
-    // Check if reviews collection already has data
-    const existing = await payload.find({ collection: "reviews" as never, limit: 1 });
-
-    // Delete existing reviews if any (to replace with real ones)
-    if (existing.totalDocs > 0) {
-      for (const doc of existing.docs) {
-        await payload.delete({ collection: "reviews" as never, id: (doc as unknown as { id: string | number }).id });
-      }
-    }
-
-    // Insert real reviews
-    let created = 0;
-    for (const review of REAL_REVIEWS) {
-      await payload.create({
-        collection: "reviews" as never,
-        data: {
-          text: review.text,
-          author: review.author,
-          location: review.location,
-        } as never,
-      });
-      created++;
-    }
+    // Update the site-settings global with the real reviews
+    const result = await payload.updateGlobal({
+      slug: "site-settings",
+      data: {
+        reviews: REAL_REVIEWS,
+      } as any,
+    });
 
     return NextResponse.json({
-      message: `Seeded ${created} real reviews from keralajewellers.in`,
-      count: created,
+      message: `Seeded ${REAL_REVIEWS.length} real reviews to site-settings`,
+      count: REAL_REVIEWS.length,
     });
   } catch (err) {
     console.error("[Seed Reviews] Error:", err);
