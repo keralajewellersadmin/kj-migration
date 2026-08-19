@@ -36,31 +36,33 @@ export async function POST(request: Request) {
 
     const payload = await getPayload({ config });
 
-    // Fetch existing site settings
-    const siteSettings = await payload.findGlobal({ slug: "site-settings" });
-    const homepageSections = siteSettings.homepageSections || {};
+    // Check if reviews collection already has data
+    const existing = await payload.find({ collection: "reviews" as never, limit: 1 });
 
-    // Transform REAL_REVIEWS into the structure expected by the site-settings global
-    const newReviews = REAL_REVIEWS.map(r => ({
-      text: r.text,
-      author: r.author,
-      location: r.location,
-    }));
+    // Delete existing reviews if any (to replace with real ones)
+    if (existing.totalDocs > 0) {
+      for (const doc of existing.docs) {
+        await payload.delete({ collection: "reviews" as never, id: (doc as unknown as { id: string | number }).id });
+      }
+    }
 
-    // Update the site-settings global with the new reviews
-    await payload.updateGlobal({
-      slug: "site-settings",
-      data: {
-        homepageSections: {
-          ...homepageSections,
-          reviewsList: newReviews,
-        },
-      } as any,
-    });
+    // Insert real reviews
+    let created = 0;
+    for (const review of REAL_REVIEWS) {
+      await payload.create({
+        collection: "reviews" as never,
+        data: {
+          text: review.text,
+          author: review.author,
+          location: review.location,
+        } as never,
+      });
+      created++;
+    }
 
     return NextResponse.json({
-      message: `Seeded ${newReviews.length} real reviews from keralajewellers.in into site-settings`,
-      count: newReviews.length,
+      message: `Seeded ${created} real reviews from keralajewellers.in`,
+      count: created,
     });
   } catch (err) {
     console.error("[Seed Reviews] Error:", err);
