@@ -26,6 +26,7 @@ function EnquiryForm() {
       name: fd.get("customerName"),
       phone: fd.get("mobile"),
       email: fd.get("email") || "",
+      source: "enquiry",
       message: [
         fd.get("city") ? `City: ${fd.get("city")}` : "",
         fd.get("preferredTime")
@@ -117,6 +118,7 @@ function EnquiryForm() {
           ) : (
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.formGrid}>
+                <input type="hidden" name="source" value="enquiry" />
                 <label className={styles.field}>
                   <span className={styles.label}>Customer Name</span>
                   <input

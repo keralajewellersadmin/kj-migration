@@ -910,7 +910,7 @@ const Inquiry: CollectionConfig = {
   slug: "inquiries",
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "email", "status", "submittedAt"],
+    defaultColumns: ["name", "email", "source", "status", "submittedAt"],
     listSearchableFields: ["name", "email"],
     components: {
       beforeListTable: [
@@ -940,6 +940,22 @@ const Inquiry: CollectionConfig = {
     { name: "email", type: "text", required: true, admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "phone", type: "text", admin: { readOnly: true }, access: { update: canUpdateProtectedField } },
     { name: "message", type: "textarea", admin: { readOnly: true, disableListFilter: true }, access: { update: canUpdateProtectedField } },
+    // Source pill: which public form submitted this enquiry
+    {
+      name: "source",
+      type: "select",
+      defaultValue: "contact",
+      options: [
+        { label: "Contact Form", value: "contact" },
+        { label: "Enquiry Form", value: "enquiry" },
+      ],
+      admin: {
+        readOnly: true,
+        components: {
+          Cell: "@/components/admin/InquirySourcePill",
+        },
+      },
+    },
     // System fields (not form inputs — kept for admin triage only)
     {
       name: "status",
@@ -953,6 +969,13 @@ const Inquiry: CollectionConfig = {
         { label: "Closed", value: "closed" },
         { label: "Spam", value: "spam" },
       ],
+    },
+    {
+      name: "emailNotificationStatus",
+      type: "select",
+      defaultValue: "not-sent",
+      options: ["not-sent", "sent", "failed"],
+      admin: { readOnly: true, disableListFilter: true },
     },
     {
       name: "submittedAt",

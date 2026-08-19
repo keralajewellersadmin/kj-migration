@@ -19,6 +19,7 @@ export default function ContactForm() {
       email: fd.get("email"),
       phone: fd.get("phone"),
       message: fd.get("message"),
+      source: "contact",
     });
     if (!ok) {
       setError(err || "Submission failed. Please try again.");
@@ -60,6 +61,7 @@ export default function ContactForm() {
             />
             <label htmlFor="name" className={styles.floatingLabel}>Full Name *</label>
           </div>
+          <input type="hidden" name="source" value="contact" />
           <div className={styles.floatingField}>
             <input
               className={styles.floatingInput}

@@ -27,6 +27,7 @@ const inquirySchema = z.object({
     .transform((email) => email.toLowerCase()),
   phone: z.string().trim().max(30).optional().default(""),
   message: z.string().trim().max(2000).optional().default(""),
+  source: z.enum(["contact", "enquiry"]).optional().default("contact"),
   honeypot: z.string().optional().default(""),
   startedAt: z.number().optional(),
 });
@@ -128,7 +129,7 @@ export async function POST(request: Request) {
 
     const inquiryRows = (await sql.query(
       `insert into inquiries
-         (name, email, phone, message, submitted_ip,
+         (name, email, phone, message, source,
           submitted_at, status, email_notification_status, updated_at, created_at)
        values ($1, $2, $3, $4, $5, now(), 'new', 'not-sent', now(), now())
        returning id`,
@@ -137,7 +138,7 @@ export async function POST(request: Request) {
         parsed.email,
         parsed.phone,
         parsed.message,
-        ipHash,
+        parsed.source,
       ],
     )) as Array<{ id: number }>;
     const inquiryId = inquiryRows[0]?.id;

@@ -9,6 +9,7 @@ interface DashboardInquiry {
   id: string | number;
   name?: string | null;
   status: string;
+  source?: string | null;
   message?: string | null;
   submittedAt?: string | null;
 }
@@ -205,6 +206,7 @@ export default async function DashboardNew({ payload }: ServerProps) {
                 const preview = (inquiry.message || "General enquiry")
                   .split("\n")[0]
                   .slice(0, 60);
+                const isEnquiry = inquiry.source === "enquiry";
                 return (
                   <Link key={inquiry.id} href={`${ADMIN_PATH}/collections/inquiries/${inquiry.id}`} className={styles.inquiryRow}>
                     <div className={styles.inquiryAvatar} style={{ background: statusColors[inquiry.status] || "#666" }}>
@@ -215,6 +217,21 @@ export default async function DashboardNew({ payload }: ServerProps) {
                       <span className={styles.inquiryProduct}>{preview || "General enquiry"}</span>
                     </div>
                     <div className={styles.inquiryMeta}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "2px 8px",
+                          borderRadius: "10px",
+                          fontSize: "10.5px",
+                          fontWeight: 600,
+                          backgroundColor: isEnquiry ? "#fef3c7" : "#fdf2f2",
+                          color: isEnquiry ? "#92400e" : "#9f1b1f",
+                          border: `1px solid ${isEnquiry ? "#fde68a" : "#fecaca"}`,
+                        }}
+                      >
+                        {isEnquiry ? "Enquiry" : "Contact"}
+                      </span>
                       <span className={styles.inquiryTime}>{inquiry.submittedAt ? timeAgo(inquiry.submittedAt as string) : ""}</span>
                       <span className={styles.statusDot} style={{ background: statusColors[inquiry.status] || "#666" }} />
                     </div>
