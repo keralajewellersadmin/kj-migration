@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import {
   buildConfig,
   ValidationError,
@@ -401,7 +402,7 @@ const AdminUsers: CollectionConfig = {
       enforceAccountLimit,
       ({ data }) => {
         const password = data?.password;
-        if (typeof password === "string") {
+        if (typeof password === "string" && password.length > 0) {
           const result = validateAdminPassword(password, data);
           if (result !== true) {
             throw new ValidationError({
@@ -409,6 +410,27 @@ const AdminUsers: CollectionConfig = {
               errors: [{ message: `Password: ${result}`, path: "name" }],
             });
           }
+        }
+        return data;
+      },
+      // Hash password into salt + hash before saving
+      async ({ data, operation }) => {
+        if (!data) return data;
+        const password = data.password;
+        if (typeof password === "string" && password.length > 0) {
+          const salt = crypto.randomBytes(32).toString("hex");
+          const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
+            crypto.pbkdf2(password, salt, 25000, 512, "sha256", (err, key) =>
+              err ? reject(err) : resolve(key),
+            );
+          });
+          data.salt = salt;
+          data.hash = hashBuffer.toString("hex");
+        }
+        // On update, if no password provided, keep existing salt/hash
+        if (operation === "update" && (!password || password.length === 0)) {
+          delete data.salt;
+          delete data.hash;
         }
         return data;
       },
@@ -519,6 +541,19 @@ const AdminUsers: CollectionConfig = {
       admin: {
         description:
           "Username for login (admin & enquiry-manager roles must use this to sign in).",
+      },
+    },
+    {
+      name: "password",
+      type: "text",
+      admin: {
+        description:
+          "Set or change the user's login password. Leave blank to keep the current password.",
+        position: "sidebar",
+      },
+      access: {
+        read: () => false,
+        update: () => true,
       },
     },
     {
