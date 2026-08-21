@@ -7,7 +7,7 @@
   z-index: 9999;
   display: grid;
   grid-template-columns: 42% 58%;
-  background: var(--color-ivory, #fffaf0);
+  background: #fcfcfc;
   color: #1a1a1a;
   font-family:
     var(--font-ui),

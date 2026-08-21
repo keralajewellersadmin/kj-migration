@@ -7,11 +7,12 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  background: #1a1512;
-  color: #c9b99a;
+  background: #0f172a;
+  color: #94a3b8;
   transition: width 0.2s ease;
   overflow: hidden;
-  box-shadow: 12px 0 32px rgba(26, 21, 18, 0.16);
+  border-right: 1px solid #1e293b;
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.1);
 }
 
 .sidebar.collapsed {
@@ -130,13 +131,13 @@
 }
 
 .link:hover {
-  background: rgba(212, 175, 55, 0.08);
-  color: #fef08a;
+  background: #1e293b;
+  color: #f8fafc;
 }
 
 .active {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.16), rgba(196, 161, 48, 0.08)) !important;
-  color: #eab308 !important;
+  background: rgba(159, 27, 31, 0.08) !important;
+  color: #f8fafc !important;
   font-weight: 600;
 }
 
@@ -147,8 +148,8 @@
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 18px;
-  background: #eab308;
+  height: 20px;
+  background: #9f1b1f;
   border-radius: 0 3px 3px 0;
 }
 
