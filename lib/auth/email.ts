@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { sendEmail } from "./gmail";
+import { sendEmail } from "./gmail.ts";
 
 export function generateOtp(): string {
   return crypto.randomInt(100000, 999999).toString();
