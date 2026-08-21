@@ -1688,7 +1688,7 @@ export default buildConfig({
             ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false" } }
             : {}),
         },
-        push: true, // Auto-push schema on Vercel to fix missing relations
+        push: process.env.PAYLOAD_DB_PUSH === "true",
       })
     : sqliteAdapter({
         client: {
