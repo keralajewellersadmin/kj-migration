@@ -59,14 +59,6 @@ export const PAGE_DEFS: PageDef[] = [
         ],
       },
       {
-        path: "bestsellerProducts",
-        label: "Featured Products",
-        type: "text",
-        section: "Featured Products",
-        description: "Comma-separated list of product slugs to display as bestsellers on the homepage.",
-        placeholder: "e.g. gold-mango-mala, diamond-ring-set, platinum-chain",
-      },
-      {
         path: "features",
         label: "Feature Highlights",
         type: "array",

@@ -1,10 +1,25 @@
 import Image from "next/image";
 import styles from "./Bestsellers.module.css";
-import { getProductsBySlugs } from "@/lib/data/cms";
 import { IMG } from "@/lib/image-urls";
 import SectionHeader from "@/components/ui/SectionHeader";
 
-const fallbackProducts = [
+type BestsellerProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  metal: string;
+  category: string;
+};
+
+const fallbackProducts: Array<{
+  title: string;
+  category: string;
+  image: string;
+  srcSet: string;
+  sizes: string;
+  href: string;
+}> = [
   {
     title: "Bombay Choker",
     category: "Gold",
@@ -32,30 +47,21 @@ const fallbackProducts = [
 ];
 
 export default async function Bestsellers({
-  bestsellerProducts = "",
+  bestsellerProducts = [],
   title = "Our Bestsellers",
   subtitle = "Choose from among trendy designs and timeless pieces. There&apos;s something for everyone and every occasion.",
 }: {
-  bestsellerProducts?: string;
+  bestsellerProducts?: BestsellerProduct[];
   title?: string;
   subtitle?: string;
 }) {
-  const slugs = bestsellerProducts
-    .split(",")
-    .map((slug) => slug.trim())
-    .filter(Boolean);
-  const cmsProducts = slugs.length ? await getProductsBySlugs(slugs) : [];
-  const cmsProductCards = slugs
-    .map((slug) => cmsProducts.find((product) => product.slug === slug))
-    .filter((product): product is NonNullable<typeof product> =>
-      Boolean(product),
-    )
-    .filter((product) => product.image)
-    .map((product) => ({
-      title: product.name,
-      category: product.metal.charAt(0).toUpperCase() + product.metal.slice(1),
-      image: product.image,
-      href: `/product/${product.slug}`,
+  const cmsProductCards = bestsellerProducts
+    .filter((p) => p.image)
+    .map((p) => ({
+      title: p.name,
+      category: p.category || p.metal.charAt(0).toUpperCase() + p.metal.slice(1),
+      image: p.image,
+      href: `/product/${p.slug}`,
     }));
   const products = cmsProductCards.length ? cmsProductCards : fallbackProducts;
 

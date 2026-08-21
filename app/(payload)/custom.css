@@ -8,6 +8,20 @@
 /* Hide API tab on document edit pages */
 .doc-tabs .doc-tab[href*="/api"] { display: none !important; }
 
+/* Hide Columns toggle button, drawer, and password column on list views */
+.list-controls__toggle-columns,
+#toggle-list-columns,
+.list-controls__columns,
+.list-controls__columns-container {
+  display: none !important;
+}
+
+/* Hide password column in list table (th + td) */
+[id*="cell-password"],
+[id*="heading-password"] {
+  display: none !important;
+}
+
 /* ── 1. Global Palette ── */
 html,
 html[data-theme="light"],

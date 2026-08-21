@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       data: {
         heroSlides: [],
         categories: [],
-        bestsellerProducts: "",
+        bestsellerProducts: [],
         features: [],
         banners: [],
         heritage: [],

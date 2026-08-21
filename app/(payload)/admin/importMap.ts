@@ -1,4 +1,5 @@
 import { default as default_0ddb7490f78e94af7f1feaadd335efbe } from '@/components/admin/MediaFolderFilters'
+import { PasswordField as PasswordField_9a8c2d4e6f1b3a7c8d5e0f2a4b6c8d0e } from '@/components/admin/PasswordField'
 import { default as default_862e804ecd39396c242800b97b91eb68 } from '@/components/admin/InquirySourcePill'
 import { default as default_f12dd159a86d5c7efb7d79a674b10059 } from '@/components/admin/InquiryQuickFilters'
 import { default as default_a33b13054eaa906f895817b780e3dfbb } from '@/components/admin/InquiryReadMarker'
@@ -22,5 +23,6 @@ export const importMap = {
   "@/components/admin/CustomLogin#default": default_5942ad61d31a35e0b477445ac2da020b,
   "@/components/admin/UpdateRates#default": default_8266754076f264c5cccff6841e85608a,
   "@/components/admin/pages/PagesView#default": default_df9ba71d416b2fc51169fa3f8f893a1e,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@/components/admin/PasswordField#PasswordField": PasswordField_9a8c2d4e6f1b3a7c8d5e0f2a4b6c8d0e
 }

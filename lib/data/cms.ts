@@ -796,7 +796,7 @@ export interface SiteSettingsData {
   whatsapp: string;
   email: string;
   storeTiming: string;
-  bestsellerProducts: string;
+  bestsellerProducts: Array<{ id: string; name: string; slug: string; image: string; metal: string; category: string }>;
   headingFont: string;
   bodyFont: string;
   uiFont: string;
@@ -899,7 +899,7 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   whatsapp: "",
   email: "",
   storeTiming: "",
-  bestsellerProducts: "",
+  bestsellerProducts: [],
   headingFont: "Com 4 DL",
   bodyFont: "Mulish",
   uiFont: "Montserrat",
@@ -1054,14 +1054,21 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     whatsapp: (settings.whatsapp as string) || DEFAULT_SETTINGS.whatsapp,
     email: (settings.email as string) || DEFAULT_SETTINGS.email,
     storeTiming: (settings.storeTiming as string) || DEFAULT_SETTINGS.storeTiming,
-    bestsellerProducts: (settings.bestsellerProducts as string) || DEFAULT_SETTINGS.bestsellerProducts,
-    headingFont: (settings.headingFont as string) || DEFAULT_SETTINGS.headingFont,
-    bodyFont: (settings.bodyFont as string) || DEFAULT_SETTINGS.bodyFont,
-    uiFont: (settings.uiFont as string) || DEFAULT_SETTINGS.uiFont,
+    bestsellerProducts: (Array.isArray(settings.bestsellerProducts) ? settings.bestsellerProducts : []).map((p: any) => ({
+      id: p.id || "",
+      name: p.title || p.name || "",
+      slug: p.slug || "",
+      image: resolveMediaUrl(p.image) || "",
+      metal: p.metal || "",
+      category: p.category?.name || "",
+    })),
+    headingFont: ((settings as unknown as Record<string, unknown>)["headingFont"] as string) || DEFAULT_SETTINGS.headingFont,
+    bodyFont: ((settings as unknown as Record<string, unknown>)["bodyFont"] as string) || DEFAULT_SETTINGS.bodyFont,
+    uiFont: ((settings as unknown as Record<string, unknown>)["uiFont"] as string) || DEFAULT_SETTINGS.uiFont,
     fontPairing: ((settings as unknown as Record<string, unknown>)["fontPairing"] as string) || DEFAULT_SETTINGS.fontPairing,
-    baseFontSize: (settings.baseFontSize as string) || DEFAULT_SETTINGS.baseFontSize,
-    headingScale: (settings.headingScale as string) || DEFAULT_SETTINGS.headingScale,
-    customFonts: (settings.customFonts as string) || DEFAULT_SETTINGS.customFonts,
+    baseFontSize: ((settings as unknown as Record<string, unknown>)["baseFontSize"] as string) || DEFAULT_SETTINGS.baseFontSize,
+    headingScale: ((settings as unknown as Record<string, unknown>)["headingScale"] as string) || DEFAULT_SETTINGS.headingScale,
+    customFonts: ((settings as unknown as Record<string, unknown>)["customFonts"] as string) || DEFAULT_SETTINGS.customFonts,
     homepageSections: (() => {
       const hs = (settings as unknown as Record<string, unknown>)?.homepageSections as Record<string, unknown> | undefined;
       return {
@@ -1218,6 +1225,14 @@ async function loadArrayDataViaSQL(
     const branchesRes = await pool.query(
       `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
        FROM site_settings_branches WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+    const bestsellersRes = await pool.query(
+      `SELECT p.id, p.title, p.slug, p.metal, c.name AS category_name,
+              m.url AS image_url, m.cloudinary_public_id AS cloudinary_public_id
+       FROM site_settings_bestseller_products bp
+       JOIN products p ON bp.product_id = p.id
+       LEFT JOIN categories c ON p.category_id = c.id
+       LEFT JOIN media m ON p.image_id = m.id
+       WHERE bp._parent_id = $1 ORDER BY bp._order`, [ssId]);
 
     return {
       ...data,
@@ -1277,6 +1292,16 @@ async function loadArrayDataViaSQL(
         mapQ: r.map_q || "",
         mapEmbedUrl: r.map_embed_url || "",
       })) : data.branches,
+      bestsellerProducts: bestsellersRes.rows.map((r: any) => ({
+        id: String(r.id || ""),
+        name: r.title || "",
+        slug: r.slug || "",
+        image: r.cloudinary_public_id
+          ? cloudinaryUrl(r.cloudinary_public_id)
+          : normalizeMigratedMediaUrl(r.image_url) || "",
+        metal: r.metal || "",
+        category: r.category_name || "",
+      })),
     };
   } catch {
     return data;
