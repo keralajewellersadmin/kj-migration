@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { Pool } from "@neondatabase/serverless";
+import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 import {
   type Product,
   type BlogPost,
@@ -109,8 +110,6 @@ function resolveMediaUrl(val: unknown): string {
   if (typeof val === "string") return normalizeCloudinaryDeliveryUrl(val);
   return "";
 }
-
-import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 
 function normalizeMigratedMediaUrl(url?: string): string {
   if (!url) return "";

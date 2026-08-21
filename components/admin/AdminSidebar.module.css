@@ -11,8 +11,8 @@
   color: #94a3b8;
   transition: width 0.2s ease;
   overflow: hidden;
-  border-right: 1px solid #1e293b;
-  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.1);
+  border-right: 1px solid #5d1a09;
+  box-shadow: 4px 0 24px rgba(115, 41, 12, 0.1);
 }
 
 .sidebar.collapsed {
