@@ -7,12 +7,12 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  background: #0f172a;
-  color: #94a3b8;
+  background: #ffffff;
+  color: #4a5568;
   transition: width 0.2s ease;
   overflow: hidden;
-  border-right: 1px solid #5d1a09;
-  box-shadow: 4px 0 24px rgba(115, 41, 12, 0.1);
+  border-right: 1px solid #eef2f6;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
 }
 
 .sidebar.collapsed {
@@ -120,7 +120,7 @@
   gap: 12px;
   padding: 9px 12px;
   border-radius: 8px;
-  color: #a8a29e;
+  color: #64748b;
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -131,13 +131,13 @@
 }
 
 .link:hover {
-  background: #1e293b;
-  color: #f8fafc;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 .active {
-  background: rgba(159, 27, 31, 0.08) !important;
-  color: #f8fafc !important;
+  background: rgba(159, 27, 31, 0.04) !important;
+  color: #9f1b1f !important;
   font-weight: 600;
 }
 
@@ -203,10 +203,10 @@
 
 /* ── Footer ── */
 .footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid #eef2f6;
   padding: 10px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, rgba(26, 21, 18, 0), rgba(0, 0, 0, 0.18));
+  background: #ffffff;
 }
 
 .userCard {
@@ -217,7 +217,7 @@
   padding: 8px;
   border-radius: 8px;
   margin-bottom: 4px;
-  background: rgba(255, 255, 255, 0.025);
+  background: #f8fafc;
 }
 
 .collapsed .userCard {
@@ -250,7 +250,7 @@
 .userName {
   font-size: 13px;
   font-weight: 600;
-  color: #e8dcc8;
+  color: #111827;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -259,7 +259,7 @@
 
 .userRole {
   font-size: 11px;
-  color: #6b5e4f;
+  color: #64748b;
   text-transform: capitalize;
   font-family: var(--font-ui);
 }
@@ -270,7 +270,7 @@
   gap: 10px;
   padding: 9px 10px;
   border-radius: 8px;
-  color: #8a7d6b;
+  color: #64748b;
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -280,8 +280,8 @@
 }
 
 .logoutBtn:hover {
-  background: rgba(159, 27, 31, 0.12);
-  color: #dc4a4a;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .collapsed .logoutBtn {
