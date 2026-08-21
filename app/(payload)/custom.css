@@ -897,9 +897,9 @@ button.btn:disabled,
 }
 
 /* ── 13. Payload react-select (prefix: rs__) ── */
-/* Use .field-type.select wrapper for extra specificity to beat @layer payload-default */
+/* Use .field-type wrapper for extra specificity to beat @layer payload-default */
 
-.field-type.select .react-select .rs__control,
+.field-type .react-select .rs__control,
 .rs__control {
   width: auto !important;
   min-height: 38px !important;
@@ -909,21 +909,21 @@ button.btn:disabled,
   background: #ffffff !important;
 }
 
-.field-type.select .react-select .rs__control--is-focused,
+.field-type .react-select .rs__control--is-focused,
 .rs__control--is-focused {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
 }
 
-.field-type.select .react-select .rs__value-container,
+.field-type .react-select .rs__value-container,
 .rs__value-container {
   padding: 2px 8px !important;
   overflow: visible !important;
   text-align: left !important;
 }
 
-.field-type.select .react-select .rs__single-value,
-.field-type.select .react-select .rs__multi-value,
+.field-type .react-select .rs__single-value,
+.field-type .react-select .rs__multi-value,
 .rs__single-value,
 .rs__multi-value {
   color: #0f172a !important;
@@ -935,23 +935,23 @@ button.btn:disabled,
   white-space: nowrap !important;
 }
 
-.field-type.select .react-select .rs__input-container,
+.field-type .react-select .rs__input-container,
 .rs__input-container {
   font-size: 13.5px !important;
   margin: 0 !important;
 }
 
-.field-type.select .react-select .rs__indicator-separator,
+.field-type .react-select .rs__indicator-separator,
 .rs__indicator-separator { display: none !important; }
 
-.field-type.select .react-select .rs__indicators,
+.field-type .react-select .rs__indicators,
 .rs__indicators {
   border: none !important;
   padding: 0 !important;
   background: transparent !important;
 }
 
-.field-type.select .react-select .rs__indicator,
+.field-type .react-select .rs__indicator,
 .rs__indicator {
   border: none !important;
   background: transparent !important;
@@ -959,8 +959,8 @@ button.btn:disabled,
   color: #6b7280 !important;
 }
 
-.field-type.select .react-select .dropdown-indicator,
-.field-type.select .react-select .clear-indicator,
+.field-type .react-select .dropdown-indicator,
+.field-type .react-select .clear-indicator,
 .dropdown-indicator,
 .clear-indicator {
   border: none !important;
@@ -970,7 +970,7 @@ button.btn:disabled,
   cursor: pointer !important;
 }
 
-.field-type.select .react-select .rs__menu,
+.field-type .react-select .rs__menu,
 .rs__menu {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
@@ -981,7 +981,7 @@ button.btn:disabled,
   z-index: 50 !important;
 }
 
-.field-type.select .react-select .rs__menu-list,
+.field-type .react-select .rs__menu-list,
 .rs__menu-list {
   border: none !important;
   padding: 6px !important;
@@ -990,7 +990,7 @@ button.btn:disabled,
   gap: 2px !important;
 }
 
-.field-type.select .react-select .rs__option,
+.field-type .react-select .rs__option,
 .rs__option {
   border-radius: 6px !important;
   padding: 8px 12px !important;
@@ -1005,7 +1005,7 @@ button.btn:disabled,
 }
 
 /* Currently Selected Value */
-.field-type.select .react-select .rs__option--is-selected,
+.field-type .react-select .rs__option--is-selected,
 .rs__option--is-selected {
   background: #f8fafc !important;
   color: #0f172a !important;
@@ -1013,7 +1013,7 @@ button.btn:disabled,
 }
 
 /* Keyboard Focus or Mouse Hover (Moves with arrow keys) */
-.field-type.select .react-select .rs__option--is-focused,
+.field-type .react-select .rs__option--is-focused,
 .rs__option--is-focused {
   background: #9f1b1f !important;
   color: #ffffff !important;
@@ -1022,13 +1022,13 @@ button.btn:disabled,
 
 
 /* Also target the Payload value-container label and single-value wrapper */
-.field-type.select .value-container,
+.field-type .value-container,
 .value-container {
   padding: 0 8px !important;
   overflow: visible !important;
 }
 
-.field-type.select .react-select--single-value,
+.field-type .react-select--single-value,
 .react-select--single-value {
   position: relative !important;
   max-width: none !important;
