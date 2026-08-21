@@ -553,6 +553,8 @@ const AdminUsers: CollectionConfig = {
         description:
           "Set or change the user's login password. Leave blank to keep the current password.",
         position: "sidebar",
+        disableListColumn: true,
+        disableListFilter: true,
         components: {
           Field: "@/components/admin/PasswordField#PasswordField",
         },
