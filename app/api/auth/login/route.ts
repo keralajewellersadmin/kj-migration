@@ -14,7 +14,7 @@ import {
   verifyPayloadPassword,
 } from "@/lib/auth/admin-login";
 
-const MAX_LOGIN_ATTEMPTS = 500; // temporarily increased to bypass block
+const MAX_LOGIN_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const ROUTE_TIMEOUT_MS = 30000;
 const STEP_TIMEOUT_MS = 8000;
