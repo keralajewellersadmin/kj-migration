@@ -1690,8 +1690,9 @@ export default buildConfig({
           max: Number.isFinite(postgresPoolMax) && postgresPoolMax > 0
             ? postgresPoolMax
             : 3,
-          idleTimeoutMillis: 10000,
+          idleTimeoutMillis: 5000,
           connectionTimeoutMillis: 30000,
+          allowExitOnIdle: true,
           ...(process.env.NODE_ENV === "production"
             ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false" } }
             : {}),
