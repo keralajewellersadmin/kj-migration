@@ -52,7 +52,9 @@ export default function UpdateRates() {
         await updateRates(rates);
         setStatus("saved");
         setLastUpdated(new Date().toISOString().split("T")[0]);
-        setTimeout(() => router.push(ADMIN_PATH), 1500);
+        setTimeout(() => {
+          window.location.href = ADMIN_PATH;
+        }, 1500);
       } catch {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 3000);
@@ -66,8 +68,8 @@ export default function UpdateRates() {
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <a
-          href={`${ADMIN_PATH}`}
-          onClick={(e) => { e.preventDefault(); router.push(ADMIN_PATH); }}
+          href={ADMIN_PATH}
+          onClick={(e) => { e.preventDefault(); window.location.href = ADMIN_PATH; }}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#64748b", textDecoration: "none", marginBottom: 12, fontWeight: 500, transition: "color 0.15s" }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
