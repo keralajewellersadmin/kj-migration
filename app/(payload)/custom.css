@@ -486,7 +486,13 @@ textarea {
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-/* Reset react-select internal inputs — MUST beat .field-type input[type="text"] (0,2,1) */
+/* Reset react-select internal inputs — MUST beat all global input styles */
+.react-select input[type="text"],
+.react-select input:not([type]),
+.rs__input-container input[type="text"],
+.rs__input-container input:not([type]),
+[class*="rs__"] input[type="text"],
+[class*="rs__"] input:not([type]),
 .field-type .react-select input[type="text"],
 .field-type .react-select input:not([type]),
 .field-type .rs__input-container input[type="text"],
@@ -518,7 +524,10 @@ textarea:focus {
 }
 
 /* Exclude react-select inputs from focus styles */
-.react-select input:focus {
+.react-select input:focus,
+[class*="rs__"] input:focus,
+.field-type .react-select input:focus,
+.field-type [class*="rs__"] input:focus {
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
@@ -562,10 +571,10 @@ button.btn--icon-style-without-border.btn--style-primary {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-.btn--style-primary:hover,
-button.btn--style-primary:hover,
-.btn.btn--style-primary:hover,
-button.btn--icon-style-without-border.btn--style-primary:hover {
+.btn--style-primary:hover:not(:disabled),
+button.btn--style-primary:hover:not(:disabled),
+.btn.btn--style-primary:hover:not(:disabled),
+button.btn--icon-style-without-border.btn--style-primary:hover:not(:disabled) {
   border-color: #7a1518 !important;
   background: #7a1518 !important;
   background-color: #7a1518 !important;
@@ -580,9 +589,17 @@ button.btn--style-secondary,
   color: #374151 !important;
 }
 
-.btn--style-secondary:hover {
+.btn--style-secondary:hover:not(:disabled) {
   background: #f8fafc !important;
   border-color: #9ca3af !important;
+}
+
+.btn:disabled,
+button.btn:disabled,
+.popup-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
 }
 
 /* ── 11. Lists & Tables ── */
