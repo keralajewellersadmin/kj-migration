@@ -87,6 +87,46 @@ export async function sendPasswordResetEmail(
   }
 }
 
+export async function sendWelcomeEmail(
+  toEmail: string,
+  name: string,
+  resetUrl: string,
+) {
+  if (process.env.NODE_ENV !== "production" && process.env.AUTH_DEBUG === "true") {
+    console.log("\n╔══════════════════════════════════════╗");
+    console.log("║    DEV MODE — WELCOME SET PASSWORD   ║");
+    console.log(`║  To: ${toEmail}`);
+    console.log(`║  URL: ${resetUrl}`);
+    console.log("╚══════════════════════════════════════╝\n");
+    return;
+  }
+
+  try {
+    await sendEmail({
+      to: toEmail,
+      subject: "Welcome to Kerala Jewellers CMS - Set your password",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+          <h2 style="color: #991f23;">Welcome, ${name}!</h2>
+          <p>An administrator has created an account for you on the Kerala Jewellers CMS.</p>
+          <p>Click the button below to set your secure password. This link expires in 7 days.</p>
+          <a href="${resetUrl}" style="display:inline-block;background:#991f23;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;margin:16px 0;">
+            Set My Password
+          </a>
+          <p style="color: #6b7280; font-size: 13px;">
+            If you believe you received this in error, you can safely ignore this email.
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+  }
+}
+
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function findUserByIdentifier(payload: any, identifier: string) {
   const findOpts = { limit: 1, overrideAccess: true } as { limit: number; overrideAccess: boolean };

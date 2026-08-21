@@ -45,6 +45,7 @@ import {
   cloudinaryDeleteHook,
 } from "./lib/cloudinaryUploadHook.ts";
 import { ADMIN_PATH } from "./lib/admin-path.ts";
+import { generateResetToken, hashValue, sendWelcomeEmail } from "./lib/auth/email.ts";
 
 neonServerless.neonConfig.poolQueryViaFetch = true;
 
@@ -438,7 +439,45 @@ const AdminUsers: CollectionConfig = {
         return data;
       },
     ],
-    afterChange: [auditLogAfterChange],
+    afterChange: [
+      auditLogAfterChange,
+      async ({ doc, operation, req }) => {
+        // Only trigger on creation
+        if (operation !== "create") return doc;
+
+        // Skip if email is missing or disabled in development
+        if (!doc.email) return doc;
+
+        try {
+          // Generate a token
+          const rawToken = generateResetToken();
+          const tokenHash = hashValue(rawToken);
+          const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
+
+          // Create the reset record
+          await req.payload.create({
+            collection: "password-resets",
+            overrideAccess: true,
+            data: {
+              userId: doc.id,
+              tokenHash,
+              expiresAt,
+              used: false,
+            },
+          });
+
+          // Send the welcome email
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (req.headers && req.headers.get ? req.headers.get("origin") : "") || "http://localhost:3000";
+          const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
+          
+          await sendWelcomeEmail(doc.email, doc.name || doc.username, resetUrl);
+        } catch (err) {
+          console.error("Failed to send welcome email:", err);
+        }
+
+        return doc;
+      },
+    ],
     afterDelete: [auditLogAfterDelete],
     afterLogin: [auditLogAfterLogin],
   },
