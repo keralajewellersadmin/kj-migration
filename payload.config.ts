@@ -406,7 +406,7 @@ const AdminUsers: CollectionConfig = {
           if (result !== true) {
             throw new ValidationError({
               collection: "admin-users",
-              errors: [{ message: `Password: ${result}`, path: "name" }],
+              errors: [{ message: `Password: ${result}`, path: "password" }],
             });
           }
         }
@@ -431,6 +431,10 @@ const AdminUsers: CollectionConfig = {
           delete data.salt;
           delete data.hash;
         }
+        
+        // Prevent plaintext password from being saved to the database
+        data.password = null;
+
         return data;
       },
     ],
@@ -549,10 +553,12 @@ const AdminUsers: CollectionConfig = {
         description:
           "Set or change the user's login password. Leave blank to keep the current password.",
         position: "sidebar",
+        components: {
+          Field: "@/components/admin/PasswordField#PasswordField",
+        },
       },
-      access: {
-        read: () => false,
-        update: () => true,
+      hooks: {
+        afterRead: [() => ""],
       },
     },
     {
@@ -1273,9 +1279,11 @@ const SiteSettings: GlobalConfig = {
             },
             {
               name: "bestsellerProducts",
-              type: "text",
+              type: "relationship",
+              relationTo: "products",
+              hasMany: true,
               label: "Bestsellers",
-              admin: { description: "Comma-separated product slugs (e.g. bombay-choker,kerala-bangles,diamond-choker-kjd005)" },
+              admin: { description: "Select products to feature as bestsellers on the homepage." },
             },
             {
               name: "features",
