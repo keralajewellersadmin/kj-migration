@@ -461,7 +461,7 @@ body,
   font-family: "Plus Jakarta Sans", sans-serif !important;
 }
 
-/* Standard inputs/textareas/selects */
+/* Standard inputs/textareas/selects — exclude react-select internals */
 .field-type input[type="text"],
 .field-type input[type="email"],
 .field-type input[type="password"],
@@ -486,12 +486,41 @@ textarea {
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
+/* Reset react-select internal inputs — MUST beat .field-type input[type="text"] (0,2,1) */
+.field-type .react-select input[type="text"],
+.field-type .react-select input:not([type]),
+.field-type .rs__input-container input[type="text"],
+.field-type .rs__input-container input:not([type]),
+.field-type [class*="rs__"] input[type="text"],
+.field-type [class*="rs__"] input:not([type]) {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 1px !important;
+  min-width: 1px !important;
+  height: 0 !important;
+  font-size: 13.5px !important;
+  color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  position: absolute !important;
+  opacity: 0 !important;
+}
+
 .field-type input:focus,
 .field-type textarea:focus,
 input:focus,
 textarea:focus {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
+  outline: none !important;
+}
+
+/* Exclude react-select inputs from focus styles */
+.react-select input:focus {
+  border: none !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 
@@ -851,7 +880,10 @@ button.btn--style-secondary,
 }
 
 /* ── 13. Payload react-select (prefix: rs__) ── */
-.react-select .rs__control {
+/* Use .field-type.select wrapper for extra specificity to beat @layer payload-default */
+
+.field-type.select .react-select .rs__control,
+.rs__control {
   width: auto !important;
   min-height: 38px !important;
   padding: 0 4px !important;
@@ -860,19 +892,23 @@ button.btn--style-secondary,
   background: #ffffff !important;
 }
 
-.react-select .rs__control--is-focused {
+.field-type.select .react-select .rs__control--is-focused,
+.rs__control--is-focused {
   border-color: #9f1b1f !important;
   box-shadow: 0 0 0 3px rgba(159, 27, 31, 0.08) !important;
 }
 
-.react-select .rs__value-container {
+.field-type.select .react-select .rs__value-container,
+.rs__value-container {
   padding: 2px 8px !important;
   overflow: visible !important;
   text-align: left !important;
 }
 
-.react-select .rs__single-value,
-.react-select .rs__multi-value {
+.field-type.select .react-select .rs__single-value,
+.field-type.select .react-select .rs__multi-value,
+.rs__single-value,
+.rs__multi-value {
   color: #0f172a !important;
   font-size: 13.5px !important;
   font-family: "Inter", sans-serif !important;
@@ -882,28 +918,34 @@ button.btn--style-secondary,
   white-space: nowrap !important;
 }
 
-.react-select .rs__input-container {
+.field-type.select .react-select .rs__input-container,
+.rs__input-container {
   font-size: 13.5px !important;
   margin: 0 !important;
 }
 
-.react-select .rs__indicator-separator { display: none !important; }
+.field-type.select .react-select .rs__indicator-separator,
+.rs__indicator-separator { display: none !important; }
 
-.react-select .rs__indicators {
+.field-type.select .react-select .rs__indicators,
+.rs__indicators {
   border: none !important;
   padding: 0 !important;
   background: transparent !important;
 }
 
-.react-select .rs__indicator {
+.field-type.select .react-select .rs__indicator,
+.rs__indicator {
   border: none !important;
   background: transparent !important;
   padding: 0 4px !important;
   color: #6b7280 !important;
 }
 
-.react-select .dropdown-indicator,
-.react-select .clear-indicator {
+.field-type.select .react-select .dropdown-indicator,
+.field-type.select .react-select .clear-indicator,
+.dropdown-indicator,
+.clear-indicator {
   border: none !important;
   background: transparent !important;
   padding: 0 4px !important;
@@ -911,33 +953,44 @@ button.btn--style-secondary,
   cursor: pointer !important;
 }
 
-.react-select .rs__menu {
+.field-type.select .react-select .rs__menu,
+.rs__menu {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
-.react-select .rs__menu-list {
+.field-type.select .react-select .rs__menu-list,
+.rs__menu-list {
   border: none !important;
   padding: 4px !important;
 }
 
-.react-select .rs__option--is-focused { background: #f8fafc !important; }
-.react-select .rs__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
+.field-type.select .react-select .rs__option--is-focused,
+.rs__option--is-focused { background: #f8fafc !important; }
 
-/* Undo global input styles inside react-select */
-.react-select input,
-.react-select textarea {
-  border: none !important;
-  padding: 0 !important;
-  width: 1px !important;
-  min-width: 1px !important;
-  font-size: 13.5px !important;
-  color: #0f172a !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
+.field-type.select .react-select .rs__option--is-selected,
+.rs__option--is-selected { background: #9f1b1f !important; color: #ffffff !important; }
+
+
+
+/* Also target the Payload value-container label and single-value wrapper */
+.field-type.select .value-container,
+.value-container {
+  padding: 0 8px !important;
+  overflow: visible !important;
+}
+
+.field-type.select .react-select--single-value,
+.react-select--single-value {
+  position: relative !important;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  top: auto !important;
+  transform: none !important;
 }
 
 /* ── 14. Scrollbar ── */
