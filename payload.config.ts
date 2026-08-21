@@ -401,41 +401,70 @@ const AdminUsers: CollectionConfig = {
     beforeValidate: [
       enforceAdminRoleRestrictions,
       enforceAccountLimit,
-      ({ data }) => {
-        const password = data?.password;
-        if (typeof password === "string" && password.length > 0) {
-          const result = validateAdminPassword(password, data);
-          if (result !== true) {
-            throw new ValidationError({
-              collection: "admin-users",
-              errors: [{ message: `Password: ${result}`, path: "password" }],
+      async ({ data, req, operation, originalDoc }) => {
+        if (!data) return data;
+        
+        const passwordChange = data.passwordChange;
+        if (passwordChange) {
+          const { currentPassword, newPassword, confirmPassword } = passwordChange;
+
+          if (newPassword) {
+            // 1. Verify confirm password matches
+            if (newPassword !== confirmPassword) {
+              throw new ValidationError({
+                collection: "admin-users",
+                errors: [{ message: "Passwords do not match.", path: "passwordChange.confirmPassword" }],
+              });
+            }
+
+            // 2. Validate password strength
+            const result = validateAdminPassword(newPassword, data);
+            if (result !== true) {
+              throw new ValidationError({
+                collection: "admin-users",
+                errors: [{ message: result, path: "passwordChange.newPassword" }],
+              });
+            }
+
+            // 3. Verify current password if updating own account (super-admins can bypass for others)
+            const user = req.user as any;
+            if (operation === "update" && (!user || user.role !== "super-admin" || user.id === originalDoc?.id)) {
+              if (!currentPassword) {
+                throw new ValidationError({
+                  collection: "admin-users",
+                  errors: [{ message: "Current password is required to change your password.", path: "passwordChange.currentPassword" }],
+                });
+              }
+              const expectedHash = originalDoc?.hash;
+              const salt = originalDoc?.salt;
+              if (expectedHash && salt) {
+                const derivedKey = crypto.pbkdf2Sync(currentPassword, salt, 25000, 512, "sha256").toString("hex");
+                if (derivedKey !== expectedHash) {
+                  throw new ValidationError({
+                    collection: "admin-users",
+                    errors: [{ message: "Incorrect current password.", path: "passwordChange.currentPassword" }],
+                  });
+                }
+              }
+            }
+
+            // 4. Generate new salt and hash
+            const salt = crypto.randomBytes(32).toString("hex");
+            const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
+              crypto.pbkdf2(newPassword, salt, 25000, 512, "sha256", (err, key) =>
+                err ? reject(err) : resolve(key),
+              );
             });
+            data.salt = salt;
+            data.hash = hashBuffer.toString("hex");
           }
         }
-        return data;
-      },
-      // Hash password into salt + hash before saving
-      async ({ data, operation }) => {
-        if (!data) return data;
-        const password = data.password;
-        if (typeof password === "string" && password.length > 0) {
-          const salt = crypto.randomBytes(32).toString("hex");
-          const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
-            crypto.pbkdf2(password, salt, 25000, 512, "sha256", (err, key) =>
-              err ? reject(err) : resolve(key),
-            );
-          });
-          data.salt = salt;
-          data.hash = hashBuffer.toString("hex");
-        }
-        // On update, if no password provided, keep existing salt/hash
-        if (operation === "update" && (!password || password.length === 0)) {
-          delete data.salt;
-          delete data.hash;
-        }
+
+        // On update, if no new password provided, keep existing salt/hash (done automatically since we don't overwrite)
         
-        // Prevent plaintext password from being saved to the database
-        data.password = null;
+        // Prevent plaintext temporary fields from being saved
+        delete data.passwordChange;
+        delete data.password;
 
         return data;
       },
@@ -587,21 +616,39 @@ const AdminUsers: CollectionConfig = {
       },
     },
     {
-      name: "password",
-      type: "text",
+      name: "passwordChange",
+      type: "group",
+      virtual: true,
       admin: {
-        description:
-          "Set or change the user's login password. Leave blank to keep the current password.",
         position: "sidebar",
-        disableListColumn: true,
-        disableListFilter: true,
-        components: {
-          Field: "@/components/admin/PasswordField#PasswordField",
+        description: "Change Password (leave blank to keep current)",
+      },
+      fields: [
+        {
+          name: "currentPassword",
+          type: "text",
+          admin: {
+            description: "Required to change your own password.",
+            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+          },
         },
-      },
-      hooks: {
-        afterRead: [() => ""],
-      },
+        {
+          name: "newPassword",
+          type: "text",
+          admin: {
+            description: "Must be at least 8 characters.",
+            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+          },
+        },
+        {
+          name: "confirmPassword",
+          type: "text",
+          admin: {
+            description: "Must match the new password.",
+            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+          },
+        }
+      ]
     },
     {
       name: "role",

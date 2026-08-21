@@ -218,7 +218,7 @@ export function validateAdminPassword(
     typeof siblingData?.name === "string" ? siblingData.name.toLowerCase() : "";
   const lowerPassword = password.toLowerCase();
 
-  if (password.length < 12) return "Password must be at least 12 characters.";
+  if (password.length < 8) return "Password must be at least 8 characters.";
   if (!/[A-Z]/.test(password))
     return "Password must include an uppercase letter.";
   if (!/[a-z]/.test(password))

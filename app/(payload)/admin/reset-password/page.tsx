@@ -56,8 +56,8 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (password.length < 12) {
-      setError("Password must be at least 12 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -201,7 +201,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 12 characters"
+              placeholder="Min 8 characters"
               required
               autoFocus
               style={{
