@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
@@ -10,6 +11,15 @@ export async function updateSiteSettings(patch: Record<string, unknown>) {
     data: patch,
     overrideAccess: true,
   });
+  void import("@/lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/products/gold");
+  revalidatePath("/products/silver");
+  revalidatePath("/products/diamond");
+  revalidatePath("/products/platinum");
+  revalidatePath("/contact");
+  revalidatePath("/about");
   return { success: true };
 }
 
