@@ -67,14 +67,7 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
       originalBuffer = Buffer.from(req.file.data as ArrayBuffer);
     }
 
-    // Process image with Sharp
-    const sharp = (await import("sharp")).default;
-    const webpBuffer = await sharp(originalBuffer)
-      .resize({ width: 1920, withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toBuffer();
-
-    // Use a unique ID for public_id, since doc.id is not yet available on create
+    // Use Cloudinary's native transformations instead of sharp to prevent Vercel memory/binary issues
     const publicId = data.filename ? data.filename.split('.')[0] + '-' + Date.now() : Date.now().toString();
 
     let result: any;
@@ -86,13 +79,16 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
           resource_type: "image",
           colorspace: "srgb",
           format: "webp",
+          transformation: [
+            { width: 1920, crop: "limit" }
+          ]
         },
         (error: any, uploadResult: any) => {
           if (error) reject(error);
           else resolve(uploadResult);
         },
       );
-      uploadStream.end(webpBuffer);
+      uploadStream.end(originalBuffer);
     });
 
     if (process.env.NODE_ENV !== "production") {

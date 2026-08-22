@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 4000",
-    "build": "next build",
+    "build": "npm run payload:migrate && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "setup:prod-admin": "tsx scripts/setup-prod-admin.mts"
+    "setup:prod-admin": "tsx scripts/setup-prod-admin.mts",
+    "payload:generate:migration": "payload migrate:create",
+    "payload:migrate": "payload migrate"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
