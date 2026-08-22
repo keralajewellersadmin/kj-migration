@@ -23,7 +23,7 @@ payload-generated-schema.ts
 drizzle.config.ts
 
 # Drizzle migrations
-migrations/
+# (Removed to allow Vercel to run migrations)
 
 # Debug
 npm-debug.log*
