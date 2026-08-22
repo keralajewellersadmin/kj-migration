@@ -180,7 +180,7 @@ const PRODUCT_SQL_BASE = `
 
 function isPostgres(): boolean {
   const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
-  return !!dbUri && dbUri.startsWith("postgresql");
+  return !!dbUri && (dbUri.startsWith("postgresql") || dbUri.startsWith("postgres://"));
 }
 
 async function sqlFindProducts(
