@@ -51,11 +51,12 @@ export default async function MetalProductsPage(props: {
   const metalKey = params.metal as "gold" | "silver" | "diamond" | "platinum";
   const heroKey = `${metalKey}Hero` as "goldHero" | "silverHero" | "diamondHero" | "platinumHero";
   const cmsHero = settings.productsPage[heroKey];
-  const heroTitle = categorySlug
-    ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`
+  const cleanCategory = categorySlug?.replace(/-(gold|silver|diamond|platinum)$/, "") || "";
+  const heroTitle = cleanCategory
+    ? `${cleanCategory.charAt(0).toUpperCase() + cleanCategory.slice(1).replace(/-/g, " ")} Collection`
     : cmsHero.title;
-  const heroSubtitle = categorySlug
-    ? `Explore our curated selection of ${categorySlug.replace(/-/g, " ")} jewellery.`
+  const heroSubtitle = cleanCategory
+    ? `Explore our curated selection of ${cleanCategory.replace(/-/g, " ")} jewellery.`
     : cmsHero.subtitle;
 
   return (

@@ -38,11 +38,12 @@ export default async function ProductsPage(props: {
   const sorted = result.products;
 
   const goldHero = settings.productsPage.goldHero;
-  const heroTitle = categorySlug
-    ? `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, " ")} Collection`
+  const cleanCategory = categorySlug?.replace(/-(gold|silver|diamond|platinum)$/, "") || "";
+  const heroTitle = cleanCategory
+    ? `${cleanCategory.charAt(0).toUpperCase() + cleanCategory.slice(1).replace(/-/g, " ")} Collection`
     : goldHero.title;
-  const heroSubtitle = categorySlug
-    ? `Explore our curated selection of ${categorySlug.replace(/-/g, " ")} jewellery.`
+  const heroSubtitle = cleanCategory
+    ? `Explore our curated selection of ${cleanCategory.replace(/-/g, " ")} jewellery.`
     : goldHero.subtitle;
 
   return (

@@ -1,0 +1,12 @@
+import { Pool } from 'pg';
+const pool = new Pool({ connectionString: process.env.DATABASE_URI || process.env.POSTGRES_URL });
+const cats = await pool.query('SELECT id, name, slug, metal FROM categories ORDER BY id');
+console.log('=== CATEGORIES ===');
+cats.rows.forEach(r => console.log(`  id=${r.id} slug=${r.slug} name=${r.name} metal=${r.metal}`));
+const prods = await pool.query('SELECT category_id, COUNT(*)::int as cnt FROM products GROUP BY category_id');
+console.log('=== PRODUCT category_id distribution ===');
+prods.rows.forEach(r => console.log(`  category_id=${r.category_id} count=${r.cnt}`));
+const joined = await pool.query(`SELECT c.name as cat_name, c.slug as cat_slug, COUNT(*)::int as cnt FROM products p LEFT JOIN categories c ON p.category_id = c.id GROUP BY c.name, c.slug`);
+console.log('=== PRODUCTS BY CATEGORY NAME ===');
+joined.rows.forEach(r => console.log(`  name=${r.cat_name} slug=${r.cat_slug} count=${r.cnt}`));
+await pool.end();

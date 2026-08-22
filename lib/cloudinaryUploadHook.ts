@@ -1,6 +1,7 @@
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
+  CollectionBeforeChangeHook,
 } from "payload";
 import fs from "node:fs/promises";
 import path from "node:path";

@@ -675,22 +675,22 @@ export async function getLegalPageBySlug(
 
 const DEFAULT_CATEGORIES: Record<string, Array<{ name: string; slug: string }>> = {
   gold: [
-    { name: "Bangles", slug: "bangles" },
-    { name: "Bracelets", slug: "bracelet" },
-    { name: "Pendant", slug: "pendant" },
-    { name: "Necklace", slug: "necklace" },
-    { name: "Rings", slug: "rings" },
-    { name: "Earrings", slug: "earrings" },
+    { name: "Bangles", slug: "bangles-gold" },
+    { name: "Bracelet", slug: "bracelet-gold" },
+    { name: "Pendant", slug: "pendant-gold" },
+    { name: "Necklace", slug: "necklace-gold" },
+    { name: "Rings", slug: "rings-gold" },
+    { name: "Earrings", slug: "earrings-gold" },
   ],
   silver: [
-    { name: "Bracelets", slug: "bracelet" },
-    { name: "Necklace", slug: "necklace" },
-    { name: "Idols", slug: "idols" },
-    { name: "Anklets", slug: "anklets" },
+    { name: "Bracelet", slug: "bracelet-silver" },
+    { name: "Necklace", slug: "necklace-silver" },
+    { name: "Idols", slug: "idols-silver" },
+    { name: "Anklets", slug: "anklets-silver" },
   ],
   diamond: [
-    { name: "Necklace", slug: "necklace" },
-    { name: "Rings", slug: "rings" },
+    { name: "Necklace", slug: "necklace-diamond" },
+    { name: "Ring", slug: "ring-diamond" },
   ],
 };
 
