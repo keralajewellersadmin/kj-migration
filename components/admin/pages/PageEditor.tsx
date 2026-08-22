@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { getPageDef, type PageDef, type FieldDef } from "./pageDefs";
 import { updateSiteSettings, updateLegalPage } from "@/lib/actions/updatePageContent";
 import ArrayFieldEditor from "./ArrayFieldEditor";
+import ImagePicker from "./ImagePicker";
 
 const ADMIN_PATH = "/kj-portal-0d7cfad1";
 
@@ -229,6 +230,11 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
                       arrayFields={f.arrayFields}
                       value={values[f.path] ?? "[]"}
                       onChange={handleChange}
+                    />
+                  ) : f.type === "image" ? (
+                    <ImagePicker
+                      value={values[f.path] ?? ""}
+                      onChange={(val) => handleChange(f.path, val)}
                     />
                   ) : f.type === "textarea" ? (
                     <textarea

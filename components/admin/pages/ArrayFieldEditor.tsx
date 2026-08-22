@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import ImagePicker from "./ImagePicker";
 
-export type ArrayField = { name: string; label: string; type: "text" | "textarea"; placeholder?: string };
+export type ArrayField = { name: string; label: string; type: "text" | "textarea" | "image"; placeholder?: string };
 
 interface Props {
   path: string;
@@ -74,7 +75,12 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
             {arrayFields.map((f) => (
               <div key={f.name}>
                 <label style={fieldLabelStyle}>{f.label}</label>
-                {f.type === "textarea" ? (
+                {f.type === "image" ? (
+                  <ImagePicker
+                    value={item[f.name] ?? ""}
+                    onChange={(val) => updateField(idx, f.name, val)}
+                  />
+                ) : f.type === "textarea" ? (
                   <textarea
                     value={item[f.name] ?? ""}
                     onChange={(e) => updateField(idx, f.name, e.target.value)}

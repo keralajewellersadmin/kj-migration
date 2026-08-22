@@ -1,6 +1,6 @@
 import type { ArrayField } from "./ArrayFieldEditor";
 
-export type FieldType = "text" | "textarea" | "json" | "array";
+export type FieldType = "text" | "textarea" | "json" | "array" | "image";
 
 export type FieldDef = {
   path: string;
@@ -42,6 +42,7 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "description", label: "Description", type: "textarea", placeholder: "Short tagline shown below the heading" },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. Explore Now" },
           { name: "ctaHref", label: "Button Link", type: "text", placeholder: "e.g. /collections/gold" },
+          { name: "image", label: "Background Image", type: "image" },
         ],
       },
       {
@@ -67,6 +68,7 @@ export const PAGE_DEFS: PageDef[] = [
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Certified Purity" },
           { name: "description", label: "Description", type: "textarea", placeholder: "Brief description of this highlight" },
+          { name: "image", label: "Image", type: "image" },
           { name: "alt", label: "Image Description", type: "text", placeholder: "Describe the image for accessibility" },
         ],
       },
@@ -78,6 +80,7 @@ export const PAGE_DEFS: PageDef[] = [
         description: "Full-width image banners shown near the bottom of the homepage.",
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Wedding Season Sale" },
+          { name: "image", label: "Banner Image", type: "image" },
           { name: "alt", label: "Image Description", type: "text", placeholder: "Describe the image for accessibility" },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. Shop Now" },
           { name: "href", label: "Button Link", type: "text", placeholder: "e.g. /collections/wedding" },
