@@ -58,6 +58,7 @@ export async function POST() {
           collection: "products",
           id: product.id as number,
           data: { category: silverCatId },
+          context: { skipSlugLock: true },
         });
         changes.push(`${product.title} (${product.id}): ${catId} -> ${silverCatId} (${catName})`);
         fixed++;
