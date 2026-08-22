@@ -10,7 +10,7 @@ import ProductImage from "./ProductImage";
 import ProductCard from "@/components/ui/ProductCard";
 import styles from "./productDetail.module.css";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   try {
