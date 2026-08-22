@@ -78,6 +78,7 @@ export default async function MetalProductsPage(props: {
 
           <CategoryFilter categories={allCategories} />
           <ProductGrid
+            key={`${categorySlug || "all"}-${sort || "default"}`}
             initialProducts={sorted}
             metal={params.metal}
             category={categorySlug}

@@ -61,6 +61,7 @@ export default async function ProductsPage(props: {
         <div className={styles.container}>
           <CategoryFilter categories={allCategories} />
           <ProductGrid
+            key={`${categorySlug || "all"}-${sort || "default"}`}
             initialProducts={sorted}
             metal="gold"
             category={categorySlug}
