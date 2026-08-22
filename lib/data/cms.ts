@@ -189,6 +189,7 @@ async function sqlFindProducts(
   params: any[],
   limit: number,
   offset: number,
+  sort?: string,
 ): Promise<{ products: Product[]; totalDocs: number }> {
   const pool = getPool();
   const countQ = await pool.query(
@@ -196,8 +197,11 @@ async function sqlFindProducts(
     params,
   );
   const totalDocs: number = countQ.rows[0]?.cnt ?? 0;
+  let orderBy = "ORDER BY p.id DESC";
+  if (sort === "asc") orderBy = "ORDER BY p.title ASC";
+  if (sort === "desc") orderBy = "ORDER BY p.title DESC";
   const result = await pool.query(
-    `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+    `${PRODUCT_SQL_BASE} ${whereClause} ${orderBy} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
     [...params, limit, offset],
   );
   return { products: result.rows.map(mapSqlProduct), totalDocs };
@@ -449,6 +453,7 @@ export async function getProductsByMetalPaginated(
   page: number = 1,
   limit: number = 24,
   categorySlug?: string,
+  sort?: string,
 ): Promise<PaginatedProducts> {
   if (isPostgres()) {
     try {
@@ -460,7 +465,7 @@ export async function getProductsByMetalPaginated(
         params.push(categorySlug);
       }
       const offset = (page - 1) * limit;
-      const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset);
+      const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset, sort);
       const totalPages = Math.ceil(totalDocs / limit);
       return {
         products,
@@ -494,12 +499,17 @@ export async function getProductsByMetalPaginated(
     }
   }
 
+  let sortParam: string | undefined;
+  if (sort === "asc") sortParam = "title";
+  if (sort === "desc") sortParam = "-title";
+
   const { docs, totalDocs, totalPages } = await payload.find({
     collection: "products",
     where,
     page,
     limit,
     depth: 1,
+    ...(sortParam ? { sort: sortParam } : {}),
   });
 
   return {

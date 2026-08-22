@@ -10,12 +10,14 @@ export async function GET(request: NextRequest) {
     Math.max(1, parseInt(searchParams.get("limit") || "24", 10)),
   );
   const category = searchParams.get("category") || undefined;
+  const sort = searchParams.get("sort") || undefined;
 
   const result = await getProductsByMetalPaginated(
     metal,
     page,
     limit,
     category,
+    sort,
   );
   return NextResponse.json(result);
 }

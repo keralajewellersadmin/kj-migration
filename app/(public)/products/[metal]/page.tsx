@@ -43,14 +43,10 @@ export default async function MetalProductsPage(props: {
   const [settings, allCategories, result] = await Promise.all([
     getSiteSettings(),
     getCategories(params.metal),
-    getProductsByMetalPaginated(params.metal, 1, 24, categorySlug || undefined),
+    getProductsByMetalPaginated(params.metal, 1, 24, categorySlug || undefined, sort),
   ]);
 
-  let sorted = result.products;
-  if (sort === "asc")
-    sorted = [...sorted].sort((a, b) => a.name.localeCompare(b.name));
-  if (sort === "desc")
-    sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
+  const sorted = result.products;
 
   const metalKey = params.metal as "gold" | "silver" | "diamond" | "platinum";
   const heroKey = `${metalKey}Hero` as "goldHero" | "silverHero" | "diamondHero" | "platinumHero";
@@ -82,6 +78,7 @@ export default async function MetalProductsPage(props: {
             initialProducts={sorted}
             metal={params.metal}
             category={categorySlug}
+            sort={sort}
             totalDocs={result.totalDocs}
           />
         </div>

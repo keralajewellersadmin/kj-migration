@@ -10,6 +10,7 @@ interface Props {
   initialProducts: Product[];
   metal: string;
   category?: string;
+  sort?: string;
   totalDocs: number;
 }
 
@@ -22,6 +23,7 @@ export default function ProductGrid({
   initialProducts,
   metal,
   category,
+  sort,
   totalDocs,
 }: Props) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -33,6 +35,7 @@ export default function ProductGrid({
     setLoading(true);
     const params = new URLSearchParams({ metal, page: String(page), limit: "24" });
     if (category) params.set("category", category);
+    if (sort) params.set("sort", sort);
     const { data, ok } = await apiGet<ProductPage>(`/api/frontend-products?${params}`);
     if (ok && data) {
       setProducts((prev) => [...prev, ...data.products]);
@@ -40,7 +43,7 @@ export default function ProductGrid({
       setPage((p) => p + 1);
     }
     setLoading(false);
-  }, [metal, page, category]);
+  }, [metal, page, category, sort]);
 
   return (
     <>

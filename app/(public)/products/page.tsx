@@ -32,14 +32,10 @@ export default async function ProductsPage(props: {
   const [settings, allCategories, result] = await Promise.all([
     getSiteSettings(),
     getCategories("gold"),
-    getProductsByMetalPaginated("gold", 1, 24, categorySlug || undefined),
+    getProductsByMetalPaginated("gold", 1, 24, categorySlug || undefined, sort),
   ]);
 
-  let sorted = result.products;
-  if (sort === "asc")
-    sorted = [...sorted].sort((a, b) => a.name.localeCompare(b.name));
-  if (sort === "desc")
-    sorted = [...sorted].sort((a, b) => b.name.localeCompare(a.name));
+  const sorted = result.products;
 
   const goldHero = settings.productsPage.goldHero;
   const heroTitle = categorySlug
@@ -65,6 +61,7 @@ export default async function ProductsPage(props: {
             initialProducts={sorted}
             metal="gold"
             category={categorySlug}
+            sort={sort}
             totalDocs={result.totalDocs}
           />
         </div>
