@@ -1,6 +1,6 @@
 import styles from "./Categories.module.css";
 
-const defaultCategories = [
+const defaultCategories: CategoryTile[] = [
   {
     title: "Golden Allure",
     description:
@@ -8,6 +8,7 @@ const defaultCategories = [
     ctaText: "View Collection",
     ctaHref: "/products",
     variant: "gold",
+    image: "",
   },
   {
     title: "Signature Silver",
@@ -16,6 +17,7 @@ const defaultCategories = [
     ctaText: "View Collection",
     ctaHref: "/products/silver",
     variant: "silver",
+    image: "",
   },
   {
     title: "Artistic Diamonds",
@@ -24,6 +26,7 @@ const defaultCategories = [
     ctaText: "View Collection",
     ctaHref: "/products/diamond",
     variant: "diamond",
+    image: "",
   },
   {
     title: "Platinum Perfection",
@@ -32,6 +35,7 @@ const defaultCategories = [
     ctaText: "Coming Soon",
     ctaHref: "#",
     variant: "platinum",
+    image: "",
   },
 ];
 
@@ -41,6 +45,7 @@ type CategoryTile = {
   ctaText: string;
   ctaHref: string;
   variant: string;
+  image?: string;
 };
 
 export default function Categories({
@@ -54,7 +59,13 @@ export default function Categories({
       <div className={styles.container}>
         <div className={styles.grid}>
           {categories.map((cat, i) => (
-            <div key={i} className={`${styles.card} ${styles[cat.variant]}`}>
+            <div
+              key={i}
+              className={`${styles.card} ${styles[cat.variant]}`}
+              style={cat.image ? {
+                backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.35) 0%, transparent 60%), url(${cat.image})`,
+              } : undefined}
+            >
               <div className={styles.cardContent}>
                 <h2 className={styles.heading}>{cat.title}</h2>
                 <p className={styles.description}>{cat.description}</p>

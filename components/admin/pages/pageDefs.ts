@@ -54,6 +54,7 @@ export const PAGE_DEFS: PageDef[] = [
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Gold Jewellery" },
           { name: "description", label: "Short Description", type: "textarea", placeholder: "One-line description for the card" },
+          { name: "image", label: "Background Image", type: "image" },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. View Collection" },
           { name: "ctaHref", label: "Button Link", type: "text", placeholder: "e.g. /collections/gold" },
           { name: "variant", label: "Style", type: "text", placeholder: "gold, silver, diamond, or platinum" },

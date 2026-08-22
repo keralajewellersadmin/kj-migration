@@ -1369,6 +1369,7 @@ const SiteSettings: GlobalConfig = {
               fields: [
                 { name: "title", type: "text", required: true },
                 { name: "description", type: "textarea" },
+                { name: "image", type: "upload", relationTo: "media" },
                 { name: "ctaText", type: "text" },
                 { name: "ctaHref", type: "text" },
                 { name: "variant", type: "text", admin: { description: "gold, silver, diamond, or platinum" } },

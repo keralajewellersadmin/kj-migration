@@ -197,7 +197,7 @@ async function sqlFindProducts(
   );
   const totalDocs: number = countQ.rows[0]?.cnt ?? 0;
   const result = await pool.query(
-    `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+    `${PRODUCT_SQL_BASE} ${whereClause} ORDER BY p.id DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
     [...params, limit, offset],
   );
   return { products: result.rows.map(mapSqlProduct), totalDocs };
@@ -776,6 +776,7 @@ export interface SiteSettingsData {
     ctaText: string;
     ctaHref: string;
     variant: string;
+    image: string;
   }>;
   branches: Array<{
     name: string;
@@ -1030,8 +1031,8 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     ctaText: c.ctaText || "",
     ctaHref: c.ctaHref || "",
     variant: c.variant || "",
+    image: resolveMediaUrl(c.image),
   });
-
   return {
     heroSlides: (settings.heroSlides || []).map(mapSlide),
     features: (settings.features || []).map(mapCircleBanner),
@@ -1219,8 +1220,9 @@ async function loadArrayDataViaSQL(
       `SELECT text, author, location FROM reviews
        ORDER BY created_at ASC`);
     const catsRes = await pool.query(
-      `SELECT title, description, cta_text, cta_href, variant FROM site_settings_categories
-       WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
+      `SELECT c.title, c.description, c.cta_text, c.cta_href, c.variant, m.url as image_url
+       FROM site_settings_categories c LEFT JOIN media m ON c.image_id = m.id
+       WHERE c._parent_id = $1 ORDER BY _order`, [ssId]);
     const branchesRes = await pool.query(
       `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
        FROM site_settings_branches WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
@@ -1279,6 +1281,7 @@ async function loadArrayDataViaSQL(
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
         variant: r.variant || "",
+        image: normalizeMigratedMediaUrl(r.image_url),
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       branches: branchesRes.rows.length > 0 ? branchesRes.rows.map((r: any) => ({
