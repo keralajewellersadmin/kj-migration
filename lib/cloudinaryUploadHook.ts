@@ -44,15 +44,18 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
   const incomingUrl = data?.url;
   if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return data;
 
-  // In beforeChange, the file buffer is strictly in req.file
-  console.log("[Cloudinary Debug] req.file keys:", req.file ? Object.keys(req.file) : "null");
+  // In beforeChange, the file buffer is either in req.file.data or written to tempFilePath
   if (req.file) {
-    console.log("[Cloudinary Debug] req.file.data type:", typeof req.file.data);
+    console.log("[Cloudinary Debug] req.file keys:", Object.keys(req.file));
+    if (req.file.data) {
+      console.log("[Cloudinary Debug] req.file.data type:", typeof req.file.data);
+    }
     console.log("[Cloudinary Debug] req.file.size:", req.file.size);
+    console.log("[Cloudinary Debug] req.file.tempFilePath:", req.file.tempFilePath);
   }
 
-  if (!req.file || !req.file.data) {
-    console.log("[Cloudinary Debug] Bailing out because req.file or req.file.data is missing");
+  if (!req.file || (!req.file.data && !req.file.tempFilePath)) {
+    console.log("[Cloudinary Debug] Bailing out because req.file data/tempFilePath is missing");
     return data;
   }
 
@@ -61,7 +64,9 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
     const folder = getCloudinaryFolder(data.mediaType as string);
 
     let originalBuffer: Buffer;
-    if (Buffer.isBuffer(req.file.data)) {
+    if (req.file.tempFilePath) {
+      originalBuffer = await fs.readFile(req.file.tempFilePath);
+    } else if (Buffer.isBuffer(req.file.data)) {
       originalBuffer = req.file.data;
     } else {
       originalBuffer = Buffer.from(req.file.data as ArrayBuffer);
