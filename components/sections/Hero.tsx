@@ -104,14 +104,16 @@ export default function Hero({
                   key={i}
                   className={`${styles.slide} ${i === 0 ? styles.active : ""}`}
                 >
-                  <div
-                    className={styles.banner}
-                    style={
-                      slide.image
-                        ? { backgroundImage: `url(${slide.image})` }
-                        : undefined
-                    }
-                  >
+                  <div className={styles.banner}>
+                    {slide.image && (
+                      <Image
+                        src={slide.image}
+                        alt={slide.heading}
+                        fill
+                        className={styles.bgImage}
+                        priority={i === 0}
+                      />
+                    )}
                     <div className={styles.content}>
                       <h1 className={styles.heading}>{slide.heading}</h1>
                       <div className={styles.textContent}>

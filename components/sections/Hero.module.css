@@ -50,17 +50,21 @@
 
 /* Banner backgrounds */
 .banner {
+  position: relative;
   width: 100%;
   aspect-ratio: 21 / 9;
   min-height: 400px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  background-size: cover;
-  background-position: center;
   border-radius: 15px;
   overflow: hidden;
-  position: relative;
+}
+
+.bgImage {
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
 }
 
 .banner::before {
@@ -189,7 +193,10 @@
   .banner {
     height: auto;
     aspect-ratio: 16 / 9;
-    background-position: 62% center;
+  }
+
+  .bgImage {
+    object-position: 62% center;
   }
 
   .content {
@@ -230,7 +237,10 @@
   .banner {
     height: auto;
     aspect-ratio: 4 / 3;
-    background-position: 68% center;
+  }
+
+  .bgImage {
+    object-position: 68% center;
   }
 
   .content {
@@ -257,9 +267,11 @@
   .banner {
     height: auto;
     aspect-ratio: 4 / 5;
-    background-size: cover;
-    background-position: 65% center;
     align-items: stretch;
+  }
+
+  .bgImage {
+    object-position: 65% center;
   }
 
   .banner::before {

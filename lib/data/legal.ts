@@ -337,7 +337,7 @@ export const swarnavarshaSections: LegalSection[] = [
   },
 ];
 
-export const thangaMazhaiSections: LegalSection[] = [
+const thangaMazhaiSections: LegalSection[] = [
   {
     title: "",
     blocks: [

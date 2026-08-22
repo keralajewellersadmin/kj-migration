@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
 import Features from "@/components/sections/Features";
+import dynamic from "next/dynamic";
 import Categories from "@/components/sections/Categories";
-import Bestsellers from "@/components/sections/Bestsellers";
-import Latest from "@/components/sections/Latest";
-import Heritage from "@/components/sections/Heritage";
+
+const Bestsellers = dynamic(() => import("@/components/sections/Bestsellers"));
+const Latest = dynamic(() => import("@/components/sections/Latest"));
+const Heritage = dynamic(() => import("@/components/sections/Heritage"));
 import LazyReviews from "@/components/ui/LazyReviews";
 import { getSiteSettings } from "@/lib/data/cms";
 
