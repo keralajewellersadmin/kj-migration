@@ -18,51 +18,57 @@ export async function POST() {
       silverCatMap[cat.name as string] = cat.id as number;
     }
 
-    // Get all silver products
+    // Get all gold category IDs
+    const { docs: goldCats } = await payload.find({
+      collection: "categories",
+      where: { metal: { equals: "gold" } },
+      limit: 100,
+    });
+
+    const goldCatNameToId: Record<string, number> = {};
+    for (const cat of goldCats) {
+      goldCatNameToId[cat.name as string] = cat.id as number;
+    }
+
+    // Get all silver products with their categories populated
     const { docs: silverProducts } = await payload.find({
       collection: "products",
       where: { metal: { equals: "silver" } },
       limit: 100,
-      depth: 0,
     });
 
     let fixed = 0;
     const changes: string[] = [];
+    const goldCatIds = goldCats.map(c => c.id as number);
 
     for (const product of silverProducts) {
-      const catRel = product.category;
-      let currentCatId: number | null = null;
-      let currentCatName = "";
+      const catId = typeof product.category === "number" ? product.category : null;
+      if (!catId) continue;
 
-      if (typeof catRel === "object" && catRel !== null) {
-        currentCatId = (catRel as any).id as number;
-        currentCatName = (catRel as any).name as string;
-      } else if (typeof catRel === "number") {
-        currentCatId = catRel;
-      }
+      // Check if this category belongs to gold
+      if (!goldCatIds.includes(catId)) continue;
 
-      if (!currentCatId) continue;
+      // Find category name from goldCats
+      const goldCat = goldCats.find(c => c.id === catId);
+      const catName = goldCat?.name as string;
+      if (!catName) continue;
 
-      // Check if current category is a silver one
-      const isSilver = silverCats.some(c => c.id === currentCatId);
-      if (isSilver) continue; // already correct
-
-      // Need to fix: map by name
-      const correctCatId = silverCatMap[currentCatName];
-      if (correctCatId) {
+      // Find matching silver category by name
+      const silverCatId = silverCatMap[catName];
+      if (silverCatId) {
         await payload.update({
           collection: "products",
           id: product.id as number,
-          data: { category: correctCatId },
+          data: { category: silverCatId },
         });
-        changes.push(`${product.title} (${product.id}): ${currentCatId} -> ${correctCatId} (${currentCatName})`);
+        changes.push(`${product.title} (${product.id}): gold ${catId} -> silver ${silverCatId} (${catName})`);
         fixed++;
       } else {
-        changes.push(`${product.title} (${product.id}): NO MATCH for "${currentCatName}"`);
+        changes.push(`${product.title} (${product.id}): no silver match for "${catName}" (gold ${catId})`);
       }
     }
 
-    return NextResponse.json({ fixed, changes, silverCatMap });
+    return NextResponse.json({ fixed, changes, silverCatMap, goldCatNameToId });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
