@@ -344,14 +344,6 @@ const Media: CollectionConfig = {
         position: "centre",
       },
     ],
-    formatOptions: {
-      format: "webp",
-      options: { quality: 80 },
-    },
-    resizeOptions: {
-      width: 1920,
-      withoutEnlargement: true,
-    },
   },
   fields: [
     {
