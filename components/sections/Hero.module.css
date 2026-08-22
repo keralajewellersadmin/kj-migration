@@ -51,7 +51,8 @@
 /* Banner backgrounds */
 .banner {
   width: 100%;
-  height: 500px;
+  aspect-ratio: 21 / 9;
+  min-height: 400px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -186,7 +187,8 @@
   }
 
   .banner {
-    height: clamp(430px, 44vw, 480px);
+    height: auto;
+    aspect-ratio: 16 / 9;
     background-position: 62% center;
   }
 
@@ -226,7 +228,8 @@
 /* Responsive: Tablet */
 @media (max-width: 991px) {
   .banner {
-    height: 370px;
+    height: auto;
+    aspect-ratio: 4 / 3;
     background-position: 68% center;
   }
 
@@ -253,7 +256,7 @@
 
   .banner {
     height: auto;
-    min-height: clamp(310px, 52vh, 370px);
+    aspect-ratio: 4 / 5;
     background-size: cover;
     background-position: 65% center;
     align-items: stretch;
