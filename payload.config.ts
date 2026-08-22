@@ -311,7 +311,8 @@ const Media: CollectionConfig = {
     delete: canManageSettings,
   },
   hooks: {
-    afterChange: [cloudinaryUploadHook, auditLogAfterChange],
+    beforeChange: [cloudinaryUploadHook],
+    afterChange: [auditLogAfterChange],
     afterDelete: [cloudinaryDeleteHook, auditLogAfterDelete],
   },
   upload: {

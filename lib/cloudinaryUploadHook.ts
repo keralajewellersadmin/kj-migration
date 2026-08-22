@@ -23,14 +23,13 @@ function getConfiguredMediaDir(): string | undefined {
   return process.env.MEDIA_DIR;
 }
 
-export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
-  doc,
+export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
+  data,
   req,
   operation,
 }) => {
-  if (operation !== "create" && operation !== "update") return doc;
-  if (!process.env.CLOUDINARY_CLOUD_NAME) return doc;
-  if (!doc.filename) return doc;
+  if (operation !== "create" && operation !== "update") return data;
+  if (!process.env.CLOUDINARY_CLOUD_NAME) return data;
 
   // File size limit: 10 MB
   const MAX_SIZE = 10 * 1024 * 1024;
@@ -40,44 +39,24 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
     );
   }
 
-  // Skip if URL was already set to Cloudinary by the update
-  const incomingUrl = (req.data as Record<string, unknown>)?.url;
-  if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return doc;
-  if (doc.url && doc.url.includes("res.cloudinary.com")) return doc;
+  // Skip if URL was already set to Cloudinary
+  const incomingUrl = data?.url;
+  if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return data;
 
-  const fs = await import("node:fs");
-  const path = await import("node:path");
-  const mediaDir =
-    getConfiguredMediaDir() ||
-    path.join(
-      /* turbopackIgnore: true */ process.cwd(),
-      "public",
-      "media",
-    );
-  const filePath = path.join(mediaDir, doc.filename);
-
-  const hasLocalFile = fs.existsSync(filePath);
-
-  // If no local file and no request buffer, skip
-  if (!hasLocalFile && !req.file) {
-    return doc;
+  // In beforeChange, the file buffer is strictly in req.file
+  if (!req.file || !req.file.data) {
+    return data;
   }
 
   try {
     const cloudinary = await getCloudinaryClient();
-    const folder = getCloudinaryFolder(doc.mediaType);
+    const folder = getCloudinaryFolder(data.mediaType as string);
 
-    let originalBuffer: Buffer | null = null;
-    if (hasLocalFile) {
-      originalBuffer = fs.readFileSync(filePath);
-    } else if (req.file) {
-      originalBuffer = Buffer.isBuffer(req.file.data)
-        ? req.file.data
-        : Buffer.from(req.file.data);
-    }
-
-    if (!originalBuffer) {
-      return doc;
+    let originalBuffer: Buffer;
+    if (Buffer.isBuffer(req.file.data)) {
+      originalBuffer = req.file.data;
+    } else {
+      originalBuffer = Buffer.from(req.file.data as ArrayBuffer);
     }
 
     // Process image with Sharp
@@ -87,12 +66,15 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
       .webp({ quality: 80 })
       .toBuffer();
 
+    // Use a unique ID for public_id, since doc.id is not yet available on create
+    const publicId = data.filename ? data.filename.split('.')[0] + '-' + Date.now() : Date.now().toString();
+
     let result: any;
     result = await new Promise<any>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
-          public_id: String(doc.id),
+          public_id: publicId,
           resource_type: "image",
           colorspace: "srgb",
           format: "webp",
@@ -105,32 +87,19 @@ export const cloudinaryUploadHook: CollectionAfterChangeHook = async ({
       uploadStream.end(webpBuffer);
     });
 
-    const updateData: Record<string, unknown> = {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[Cloudinary] Uploaded → ${result.secure_url}`);
+    }
+
+    // Mutate the data being saved
+    return {
+      ...data,
       url: result.secure_url,
       cloudinaryPublicId: result.public_id,
     };
-
-    await req.payload.db.updateOne({
-      collection: "media",
-      id: doc.id,
-      data: updateData,
-    });
-
-    if (hasLocalFile) {
-      try {
-        fs.unlinkSync(filePath);
-      } catch {
-        // Non-critical
-      }
-    }
-
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[Cloudinary] ${doc.filename} → ${result.secure_url}`);
-    }
-    return { ...doc, ...updateData };
   } catch (err) {
-    console.error(`[Cloudinary] Upload failed for ${doc.filename}:`, err);
-    return doc;
+    console.error(`[Cloudinary] Upload failed:`, err);
+    return data;
   }
 };
 
