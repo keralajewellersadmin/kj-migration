@@ -29,6 +29,7 @@ export async function updateRates(data: {
       rateGold18: data.gold18,
       rateSilver: data.silver,
       ratePlatinum: data.platinum,
+      rateUpdated: new Date().toISOString(),
     },
     overrideAccess: true,
   });
