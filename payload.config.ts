@@ -750,6 +750,14 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
+      filterOptions: ({ data }) => {
+        if (data?.metal) {
+          return {
+            metal: { equals: data.metal },
+          };
+        }
+        return true;
+      },
     },
     { name: "weight", type: "text" },
     { name: "purity", type: "text" },
