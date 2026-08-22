@@ -45,7 +45,14 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
   if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return data;
 
   // In beforeChange, the file buffer is strictly in req.file
+  console.log("[Cloudinary Debug] req.file keys:", req.file ? Object.keys(req.file) : "null");
+  if (req.file) {
+    console.log("[Cloudinary Debug] req.file.data type:", typeof req.file.data);
+    console.log("[Cloudinary Debug] req.file.size:", req.file.size);
+  }
+
   if (!req.file || !req.file.data) {
+    console.log("[Cloudinary Debug] Bailing out because req.file or req.file.data is missing");
     return data;
   }
 
@@ -89,7 +96,7 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
     });
 
     if (process.env.NODE_ENV !== "production") {
-      console.log(`[Cloudinary] Uploaded → ${result.secure_url}`);
+      console.log(`[Cloudinary] Uploaded -> ${result.secure_url}`);
     }
 
     // Mutate the data being saved

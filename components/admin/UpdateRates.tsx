@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { updateRates } from "@/lib/actions/updateRates";
+import { updateRates, getRates } from "@/lib/actions/updateRates";
 
 const ADMIN_PATH = "/kj-portal-0d7cfad1";
 
@@ -27,17 +27,16 @@ export default function UpdateRates() {
   const [status, setStatus] = useState<"idle" | "loading" | "saving" | "saved" | "error">("loading");
 
   useEffect(() => {
-    fetch("/api/globals/site-settings")
-      .then((r) => r.json())
+    getRates()
       .then((data) => {
         setRates({
-          gold22: data.rateGold22 || "",
-          gold18: data.rateGold18 || "",
-          silver: data.rateSilver || "",
-          platinum: data.ratePlatinum || "",
+          gold22: data.gold22 || "",
+          gold18: data.gold18 || "",
+          silver: data.silver || "",
+          platinum: data.platinum || "",
         });
-        if (data.rateUpdated) {
-          setLastUpdated(data.rateUpdated);
+        if (data.lastUpdated) {
+          setLastUpdated(data.lastUpdated);
         }
         setStatus("idle");
       })
