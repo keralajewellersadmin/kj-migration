@@ -7,11 +7,7 @@ import ProductsHero from "@/components/sections/ProductsHero";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import styles from "../products.module.css";
 
-export const revalidate = 300;
-
-export function generateStaticParams() {
-  return metals.map((m) => ({ metal: m.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(props: {
   params: Promise<{ metal: string }>;
