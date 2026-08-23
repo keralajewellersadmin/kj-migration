@@ -624,20 +624,25 @@ const AdminUsers: CollectionConfig = {
           },
         },
         {
-          name: "newPassword",
-          type: "text",
-          admin: {
-            description: "Must be at least 8 characters.",
-            components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
-          },
-        },
-        {
-          name: "confirmPassword",
-          type: "text",
-          admin: {
-            description: "Must match the new password.",
-            components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
-          },
+          type: "row",
+          fields: [
+            {
+              name: "newPassword",
+              type: "text",
+              admin: {
+                description: "Must be at least 8 characters.",
+                components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
+              },
+            },
+            {
+              name: "confirmPassword",
+              type: "text",
+              admin: {
+                description: "Must match the new password.",
+                components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
+              },
+            },
+          ]
         }
       ]
     },
