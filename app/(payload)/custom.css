@@ -191,11 +191,11 @@ body,
 .doc-header {
   background: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
-  padding: 20px 32px !important;
+  padding: 16px 24px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  min-height: 70px !important;
+  min-height: 56px !important;
 }
 
 .collection-list__header {
@@ -224,7 +224,7 @@ body,
   background: #ffffff !important;
   border: none !important;
   border-bottom: 1px solid #e2e8f0 !important;
-  padding: 12px 32px !important;
+  padding: 10px 24px !important;
   margin: 0 !important;
   position: sticky !important;
   top: 52px !important;
@@ -232,6 +232,11 @@ body,
   display: flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
+}
+
+/* When doc-controls is inside a drawer, don't sticky it */
+.drawer .doc-controls {
+  position: static !important;
 }
 
 .doc-controls__wrapper {
@@ -1206,14 +1211,14 @@ main,
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 48px 24px !important;
+  padding: 40px 24px !important;
   background: #f8fafc !important;
   border: 2px dashed #cbd5e1 !important;
   border-radius: 12px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  min-height: 200px !important;
-  gap: 16px !important;
+  min-height: 180px !important;
+  gap: 12px !important;
   text-align: center !important;
 }
 
@@ -1226,14 +1231,42 @@ main,
 .file-field__dropZone > div,
 .file-field__upload > div {
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
   align-items: center !important;
-  gap: 12px !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
 }
 
 /* The buttons inside the dropzone */
 .file-field__dropZone button,
 .file-field__upload button {
+  margin: 0 !important;
+}
+
+/* Drawer content form layout — full width fields */
+.drawer__content-children .field-type {
+  width: 100% !important;
+}
+
+.drawer__content-children .render-fields {
+  width: 100% !important;
+  padding: 0 24px !important;
+}
+
+/* Drawer header: title + controls row */
+.drawer__header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 20px 24px 16px !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.drawer__header h2,
+.drawer__header h1 {
   margin: 0 !important;
 }
 
@@ -1317,6 +1350,8 @@ aside:empty {
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
+  background: #ffffff !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
 }
 
 .drawer__blur-bg {
@@ -1329,12 +1364,46 @@ aside:empty {
 .drawer__content-children {
   flex: 1 !important;
   overflow-y: auto !important;
-  padding-bottom: 24px !important; /* extra padding for scroll */
+  padding: 24px !important;
 }
 
 /* Ensure the header inside the drawer looks good */
 .drawer__header {
-  padding: 24px 0 16px !important;
-  margin-bottom: 16px !important;
-  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 20px 24px 16px !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.drawer__header h2,
+.drawer__header h1 {
+  margin: 0 !important;
+  font-size: 20px !important;
+}
+
+/* Inside drawers, force single-column document layout */
+.drawer .document-layout {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.drawer .document-layout,
+.drawer .document-layout:has(> aside:empty) {
+  grid-template-columns: 1fr !important;
+}
+
+/* Drawer form: full-width fields */
+.drawer .collection-edit__main,
+.drawer .global-edit__main,
+.drawer .render-fields {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.drawer .doc-controls {
+  position: static !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 12px 24px !important;
 }
