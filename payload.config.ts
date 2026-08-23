@@ -322,6 +322,14 @@ const Media: CollectionConfig = {
   upload: {
     disableLocalStorage: true,
     staticDir: process.env.MEDIA_DIR || "public/media",
+    // @ts-expect-error - Dummy adapter to satisfy Vercel checks, actual upload is handled by cloudinaryUploadHook
+    adapter: () => ({
+      name: 'dummy-cloudinary',
+      handleUpload: async () => {},
+      handleDelete: async () => {},
+      generateURL: ({ doc }: any) => doc?.url || '',
+      staticHandler: () => new Response('Not found', { status: 404 }),
+    }),
     mimeTypes: [
       "image/jpeg",
       "image/jpg",
