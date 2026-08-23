@@ -41,7 +41,7 @@ export default function UpdateRates() {
         setStatus("idle");
       })
       .catch(() => setStatus("error"));
-  }, []);
+  }, [router]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {

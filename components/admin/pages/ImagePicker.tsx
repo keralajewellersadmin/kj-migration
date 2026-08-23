@@ -36,6 +36,7 @@ export default function ImagePicker({ value, onChange }: Props) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPreview(value);
   }, [value, fetchPreview]);
 
