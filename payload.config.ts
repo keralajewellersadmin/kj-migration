@@ -325,26 +325,6 @@ const Media: CollectionConfig = {
       "image/webp",
       "image/avif",
     ],
-    imageSizes: [
-      {
-        name: "thumbnail",
-        width: 400,
-        height: 400,
-        position: "centre",
-      },
-      {
-        name: "card",
-        width: 800,
-        height: 600,
-        position: "centre",
-      },
-      {
-        name: "hero",
-        width: 1920,
-        height: 1080,
-        position: "centre",
-      },
-    ],
   },
   fields: [
     {
