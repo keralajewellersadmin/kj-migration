@@ -139,12 +139,22 @@ export async function POST(request: Request) {
     );
   }
 
+  // Hash the password manually because the admin-users custom auth beforeValidate
+  // hook requires a current password for passwordChange unless you are a super-admin.
+  const salt = crypto.randomBytes(32).toString("hex");
+  const hashBuffer = await new Promise<Buffer>((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 25000, 512, "sha256", (err, key) =>
+      err ? reject(err) : resolve(key),
+    );
+  });
+  const hash = hashBuffer.toString("hex");
+
   // Update password
   try {
     await payload.update({
       collection: "admin-users",
       id: userId as string | number,
-      data: { password },
+      data: { salt, hash },
       overrideAccess: true,
     });
   } catch (err) {
