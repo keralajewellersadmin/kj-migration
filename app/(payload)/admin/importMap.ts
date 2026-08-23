@@ -1,4 +1,4 @@
-import { PasswordField as PasswordField_b9837bf5f05068f9a453754ceb2d09fe } from '@/components/admin/shared/PasswordField'
+import { PasswordChangeForm as PasswordChangeForm_ed6bc4ad5c6c3a73a0a01588e1193761 } from '@/components/admin/shared/PasswordChangeForm'
 import { default as default_721af41e89cdeaaf1baf6f4f52649bd3 } from '@/components/admin/shared/AccountSetupActions'
 import { default as default_53bc2d3de2780aa49d5eface3cac329a } from '@/components/admin/shared/GoBackButton'
 import { default as default_8ada0b8e8083cee775c3a877da18285d } from '@/components/admin/shared/MediaFolderFilters'
@@ -15,7 +15,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 
 /** @type import('payload').ImportMap */
 export const importMap = {
-  "@/components/admin/shared/PasswordField#PasswordField": PasswordField_b9837bf5f05068f9a453754ceb2d09fe,
+  "@/components/admin/shared/PasswordChangeForm#PasswordChangeForm": PasswordChangeForm_ed6bc4ad5c6c3a73a0a01588e1193761,
   "@/components/admin/shared/AccountSetupActions#default": default_721af41e89cdeaaf1baf6f4f52649bd3,
   "@/components/admin/shared/GoBackButton#default": default_53bc2d3de2780aa49d5eface3cac329a,
   "@/components/admin/shared/MediaFolderFilters#default": default_8ada0b8e8083cee775c3a877da18285d,
