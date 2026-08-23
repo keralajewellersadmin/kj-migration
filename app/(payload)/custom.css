@@ -1407,3 +1407,95 @@ aside:empty {
   border-bottom: 1px solid #e2e8f0 !important;
   padding: 12px 24px !important;
 }
+/* --- Final Drawer UI Fixes --- */
+.drawer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+}
+
+.drawer__content {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 700px !important;
+  height: auto !important;
+  max-height: 90vh !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  overflow: hidden !important;
+  margin: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+}
+
+.drawer__header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  margin: 0 !important;
+}
+
+.drawer__header h2,
+.drawer__header h1 {
+  font-size: 1.25rem !important;
+  margin: 0 !important;
+}
+
+.drawer__content-children {
+  padding: 24px !important;
+  overflow-y: auto !important;
+  flex: 1 !important;
+  display: block !important;
+}
+
+/* Fix Dropzone */
+.file-field__dropZone,
+.file-field__upload {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 120px !important;
+  padding: 24px !important;
+  background: #f8fafc !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  gap: 12px !important;
+}
+
+.file-field__dropZone:hover,
+.file-field__upload:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+
+.file-field__dropZone .file-field__drop-bg,
+.file-field__upload .file-field__drop-bg,
+.file-field__dropZone > div,
+.file-field__upload > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.file-field__dropZone button,
+.file-field__upload button {
+  margin: 0 !important;
+}
