@@ -1058,3 +1058,109 @@ button.btn:disabled,
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+/* -- 12. Media File Details Card Redesign -- */
+.file-details {
+  background: #ffffff !important;
+  border: 1px solid #eef2f6 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03) !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+  margin-bottom: 32px !important;
+}
+
+@media (min-width: 768px) {
+  .file-details {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+  }
+}
+
+.file-details__preview {
+  width: 100% !important;
+  max-width: 320px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  border: 1px solid #eaecee !important;
+  background: #f8fafc !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.file-details__preview img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+.file-details__main-detail {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.file-details__meta {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.file-details__meta h3,
+.file-details__filename {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  word-break: break-all !important;
+}
+
+.file-details__meta-info {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px !important;
+  color: #64748b !important;
+}
+
+.file-details__meta-info span {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.file-details__meta-info span:not(:last-child)::after {
+  content: '•';
+  margin-left: 12px;
+  color: #cbd5e1;
+}
+
+.file-details__actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: auto !important;
+  padding-top: 16px !important;
+}
+
+.file-details__actions .btn {
+  padding: 10px 20px !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Remove default edit icon button that overlaps */
+.file-details__remove {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #dc2626 !important;
+}
+
+.file-details__remove:hover {
+  background: #fee2e2 !important;
+}
