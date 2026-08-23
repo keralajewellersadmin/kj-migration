@@ -733,13 +733,14 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
-      filterOptions: ({ siblingData }: { siblingData: any }) => {
-        if (siblingData?.metal) {
+      filterOptions: ({ data, siblingData }: any) => {
+        const metal = siblingData?.metal || data?.metal;
+        if (metal) {
           return {
-            metal: { equals: siblingData.metal },
+            metal: { equals: metal },
           };
         }
-        return true;
+        return { metal: { equals: 'none' } }; // Block all if no metal is selected
       },
     },
     { name: "weight", type: "text" },
