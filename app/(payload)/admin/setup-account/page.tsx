@@ -1,20 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ADMIN_PATH } from "@/lib/admin-path";
 
+const EyeIcon = ({ visible }: { visible: boolean }) => {
+  if (visible) {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+    );
+  }
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+  );
+};
+
 export default function SetupAccountPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   if (!token) {
     return (
@@ -74,60 +87,13 @@ export default function SetupAccountPage() {
       if (!res.ok) {
         throw new Error(data.error || "Failed to setup account");
       }
-      setSuccess(true);
+      
+      router.push(`${ADMIN_PATH}/login?message=Account+setup+successful.+Please+login.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          background: "#faf9f6",
-        }}
-      >
-        <div
-          style={{ textAlign: "center", padding: "2rem", maxWidth: "400px" }}
-        >
-          <Image
-            src="/assets/logo/kj-favicon-transparent.png"
-            alt="Kerala Jewellers"
-            width={80}
-            height={80}
-            unoptimized
-            style={{ margin: "0 auto 1.5rem" }}
-          />
-          <h2 style={{ color: "#16a34a", marginBottom: "1rem" }}>
-            Account Setup Successful
-          </h2>
-          <p style={{ color: "#666", marginBottom: "1.5rem" }}>
-            Your password has been set. You can now log in to your account.
-          </p>
-          <Link
-            href={`${ADMIN_PATH}/login`}
-            style={{
-              display: "inline-block",
-              background: "#9f1b1f",
-              color: "#fff",
-              padding: "0.75rem 2rem",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: 600,
-            }}
-          >
-            Go to Login
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -207,22 +173,44 @@ export default function SetupAccountPage() {
             >
               New Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 8 characters"
-              required
-              autoFocus
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "0.95rem",
-                boxSizing: "border-box",
-              }}
-            />
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min 8 characters"
+                required
+                autoFocus
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  paddingRight: "2.5rem",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "0.95rem",
+                  boxSizing: "border-box",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.5rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  color: "#6b7280",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0.25rem",
+                }}
+              >
+                <EyeIcon visible={showPassword} />
+              </button>
+            </div>
           </div>
 
           <div style={{ marginBottom: "1.5rem" }}>
@@ -236,21 +224,43 @@ export default function SetupAccountPage() {
             >
               Confirm Password
             </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter password"
-              required
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "0.95rem",
-                boxSizing: "border-box",
-              }}
-            />
+            <div style={{ position: "relative" }}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter password"
+                required
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  paddingRight: "2.5rem",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "0.95rem",
+                  boxSizing: "border-box",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.5rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  color: "#6b7280",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0.25rem",
+                }}
+              >
+                <EyeIcon visible={showConfirmPassword} />
+              </button>
+            </div>
           </div>
 
           <button
@@ -271,15 +281,6 @@ export default function SetupAccountPage() {
             {loading ? "Setting Password..." : "Set Password"}
           </button>
         </form>
-
-        <p style={{ textAlign: "center", marginTop: "1.5rem" }}>
-          <Link
-            href={`${ADMIN_PATH}/login`}
-            style={{ color: "#9f1b1f", fontSize: "0.9rem" }}
-          >
-            Back to Login
-          </Link>
-        </p>
       </div>
     </div>
   );

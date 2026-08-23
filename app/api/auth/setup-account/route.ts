@@ -160,6 +160,12 @@ export async function POST(request: Request) {
     overrideAccess: true,
   });
 
+  // Send success email
+  const { sendSetupSuccessEmail } = await import("@/lib/auth/email");
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (request.headers.get("origin") || "http://localhost:3000");
+  const loginUrl = `${siteUrl}/kj-portal-0d7cfad1/login`;
+  await sendSetupSuccessEmail(user.email as string, user.name || user.username, loginUrl);
+
   return NextResponse.json({
     success: true,
     message: "Account setup successful. Please log in with your new password.",

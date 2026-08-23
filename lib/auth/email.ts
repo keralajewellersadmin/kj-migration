@@ -148,3 +148,42 @@ export async function findUserByIdentifier(payload: any, identifier: string) {
 
   return { user: null, matchedVia: null };
 }
+
+export async function sendSetupSuccessEmail(
+  toEmail: string,
+  name: string,
+  loginUrl: string,
+) {
+  if (process.env.NODE_ENV !== "production" && process.env.AUTH_DEBUG === "true") {
+    console.log("\n╔══════════════════════════════════════╗");
+    console.log("║    DEV MODE — ACCOUNT SETUP SUCCESS  ║");
+    console.log(`║  To: ${toEmail}`);
+    console.log(`║  URL: ${loginUrl}`);
+    console.log("╚══════════════════════════════════════╝\n");
+    return;
+  }
+
+  try {
+    await sendEmail({
+      to: toEmail,
+      subject: "Account Setup Successful - Kerala Jewellers CMS",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+          <h2 style="color: #16a34a;">Account Ready, ${name}!</h2>
+          <p>Your password has been successfully set and your account is now active.</p>
+          <p>You can now access the Kerala Jewellers Admin Portal by clicking the link below:</p>
+          <a href="${loginUrl}" style="display:inline-block;background:#991f23;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;margin:16px 0;">
+            Go to Admin Portal
+          </a>
+          <p style="color: #6b7280; font-size: 13px;">
+            If you did not perform this action, please contact your administrator immediately.
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+  }
+}
