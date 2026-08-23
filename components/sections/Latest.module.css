@@ -25,7 +25,8 @@
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  height: 360px;
+  aspect-ratio: 4 / 5;
+  height: auto;
   display: flex;
   cursor: pointer;
   transition:
@@ -118,7 +119,7 @@
   }
 
   .banner {
-    height: 380px;
+    width: 100%;
   }
 
   .bannerTitle {
@@ -145,7 +146,7 @@
   }
 
   .banner {
-    height: clamp(280px, 52vw, 380px);
+    width: 100%;
   }
 
   .overlay {
@@ -160,7 +161,7 @@
   }
 
   .banner {
-    height: 300px;
+    width: 100%;
   }
 
   .overlay {
