@@ -296,10 +296,10 @@ function makeAutoSlug(collectionSlug: string): CollectionBeforeValidateHook {
 const Media: CollectionConfig = {
   slug: "media",
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } },
     useAsTitle: "alt",
     defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
     components: {
+      edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] },
       beforeListTable: [
         "@/components/admin/MediaFolderFilters",
       ],
@@ -733,7 +733,7 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
-      filterOptions: ({ siblingData }) => {
+      filterOptions: ({ siblingData }: { siblingData: any }) => {
         if (siblingData?.metal) {
           return {
             metal: { equals: siblingData.metal },
