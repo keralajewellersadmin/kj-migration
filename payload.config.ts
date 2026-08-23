@@ -705,6 +705,7 @@ const AdminUsers: CollectionConfig = {
         position: "sidebar",
         readOnly: true,
         description: "Checked when the user completes their account setup.",
+        condition: (data) => Boolean(data?.id),
       },
       access: {
         create: adminIsActiveFieldAccess,
@@ -721,7 +722,7 @@ const AdminUsers: CollectionConfig = {
         },
         condition: (data, siblingData, { user }) => {
           // Show account actions (Resend Setup / Reset Password) if super-admin is editing someone else
-          return user?.id !== data?.id && user?.role === "super-admin";
+          return Boolean(data?.id) && user?.id !== data?.id && user?.role === "super-admin";
         },
       },
     },
