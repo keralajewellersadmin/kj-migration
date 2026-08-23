@@ -708,7 +708,6 @@ const Product: CollectionConfig = {
     {
       name: "slug",
       type: "text",
-      required: true,
       unique: true,
       admin: {
         readOnly: true,
@@ -821,7 +820,6 @@ const Category: CollectionConfig = {
     {
       name: "slug",
       type: "text",
-      required: true,
       unique: true,
       admin: {
         readOnly: true,
