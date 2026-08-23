@@ -1198,3 +1198,41 @@ main,
 .file-details__remove:hover {
   background: #fee2e2 !important;
 }
+
+/* ── 16. Media Upload Dropzone Redesign ── */
+.file-field__dropZone,
+.file-field__upload {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 48px 24px !important;
+  background: #f8fafc !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-height: 200px !important;
+  gap: 16px !important;
+  text-align: center !important;
+}
+
+.file-field__dropZone:hover,
+.file-field__upload:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+
+.file-field__dropZone > div,
+.file-field__upload > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* The buttons inside the dropzone */
+.file-field__dropZone button,
+.file-field__upload button {
+  margin: 0 !important;
+}

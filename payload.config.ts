@@ -730,10 +730,10 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
-      filterOptions: ({ data }) => {
-        if (data?.metal) {
+      filterOptions: ({ siblingData }) => {
+        if (siblingData?.metal) {
           return {
-            metal: { equals: data.metal },
+            metal: { equals: siblingData.metal },
           };
         }
         return true;
