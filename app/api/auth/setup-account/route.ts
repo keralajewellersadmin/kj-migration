@@ -109,13 +109,22 @@ export async function POST(request: Request) {
   }
 
   // Get the user to validate password against their data
-  const userId =
+  let rawUserId =
     (resetRecord.userId as { id: string | number })?.id || resetRecord.userId;
-  const user = await payload.findByID({
-    collection: "admin-users",
-    id: userId as string | number,
-    overrideAccess: true,
-  });
+  // Payload Postgres uses numeric IDs by default for admin-users
+  const userId = !isNaN(Number(rawUserId)) ? Number(rawUserId) : rawUserId;
+  
+  let user;
+  try {
+    user = await payload.findByID({
+      collection: "admin-users",
+      id: userId as string | number,
+      overrideAccess: true,
+    });
+  } catch (err) {
+    console.error("Failed to find user with ID:", userId, err);
+    return NextResponse.json({ error: "User not found" }, { status: 400 });
+  }
 
   // Validate password
   const validation = validateAdminPassword(password, {
@@ -131,15 +140,20 @@ export async function POST(request: Request) {
   }
 
   // Update password and activate account
-  await payload.update({
-    collection: "admin-users",
-    id: userId as string | number,
-    data: { 
-      password,
-      accountActivated: true 
-    },
-    overrideAccess: true,
-  });
+  try {
+    await payload.update({
+      collection: "admin-users",
+      id: userId as string | number,
+      data: { 
+        password,
+        accountActivated: true 
+      },
+      overrideAccess: true,
+    });
+  } catch (err) {
+    console.error("Failed to update user password:", err);
+    return NextResponse.json({ error: "Failed to update password" }, { status: 500 });
+  }
 
   // Invalidate all existing sessions for this user
   try {
