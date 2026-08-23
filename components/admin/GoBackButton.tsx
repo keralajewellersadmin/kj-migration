@@ -2,14 +2,31 @@
 
 import Link from 'next/link'
 import { useConfig } from '@payloadcms/ui'
+import { usePathname } from 'next/navigation'
 
 const GoBackButton = () => {
   const { config: { routes: { admin: adminRoute } } } = useConfig()
+  const pathname = usePathname()
+  
+  if (!pathname) return null;
+
+  const parts = pathname.split('/')
+  const collectionsIndex = parts.indexOf('collections')
+  
+  if (collectionsIndex === -1 || collectionsIndex + 1 >= parts.length) {
+    return null; // Not inside a collection view
+  }
+  
+  const collectionSlug = parts[collectionsIndex + 1]
+  const backUrl = `${adminRoute}/collections/${collectionSlug}`
+  
+  // Format the collection slug to a nice readable name
+  const title = collectionSlug.charAt(0).toUpperCase() + collectionSlug.slice(1).replace(/-/g, ' ')
 
   return (
     <div style={{ marginBottom: '1.5rem', display: 'flex' }}>
       <Link 
-        href={`${adminRoute}/collections/inquiries`}
+        href={backUrl}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -27,7 +44,7 @@ const GoBackButton = () => {
         onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#e5e7eb' }}
         onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6' }}
       >
-        <span style={{ marginRight: '0.5rem' }}>&larr;</span> Go Back to Inquiries
+        <span style={{ marginRight: '0.5rem' }}>&larr;</span> Go Back to {title}
       </Link>
     </div>
   )
