@@ -5,7 +5,8 @@ import type {
 import fs from "node:fs/promises";
 import { getCloudinaryFolder, extractPublicIdFromUrl } from "./cloudinary.ts";
 
-let cloudinaryClient: Record<string, unknown> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let cloudinaryClient: any = null;
 async function getCloudinaryClient() {
   if (cloudinaryClient) return cloudinaryClient;
   const { v2: cloudinary } = await import("cloudinary");
@@ -63,7 +64,8 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
     // Use Cloudinary's native transformations instead of sharp to prevent Vercel memory/binary issues
     const publicId = data.filename ? data.filename.split('.')[0] + '-' + Date.now() : Date.now().toString();
 
-    const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await new Promise<any>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
@@ -75,7 +77,8 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
             { width: 1920, crop: "limit" }
           ]
         },
-        (error: Error | null, uploadResult?: Record<string, unknown>) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (error: any, uploadResult?: any) => {
           if (error) reject(error);
           else resolve(uploadResult!);
         },

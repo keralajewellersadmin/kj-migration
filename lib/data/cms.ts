@@ -1064,6 +1064,7 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     whatsapp: (settings.whatsapp as string) || DEFAULT_SETTINGS.whatsapp,
     email: (settings.email as string) || DEFAULT_SETTINGS.email,
     storeTiming: (settings.storeTiming as string) || DEFAULT_SETTINGS.storeTiming,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     bestsellerProducts: (Array.isArray(settings.bestsellerProducts) ? settings.bestsellerProducts : []).map((p: any) => ({
       id: p.id || "",
       name: p.title || p.name || "",
@@ -1304,6 +1305,7 @@ async function loadArrayDataViaSQL(
         mapQ: r.map_q || "",
         mapEmbedUrl: r.map_embed_url || "",
       })) : data.branches,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       bestsellerProducts: bestsellersRes.rows.map((r: any) => ({
         id: String(r.id || ""),
         name: r.title || "",

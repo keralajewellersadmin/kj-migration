@@ -12,7 +12,7 @@ import {
 
 type AdminRole = "super-admin" | "admin" | "enquiry-manager";
 
-const adminRoles: AdminRole[] = [
+export const adminRoles: AdminRole[] = [
   "super-admin",
   "admin",
   "enquiry-manager",

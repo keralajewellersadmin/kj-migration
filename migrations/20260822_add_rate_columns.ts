@@ -1,6 +1,6 @@
-import { type MigrateUpArgs, type MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { type MigrateUpArgs, type MigrateDownArgs } from '@payloadcms/db-postgres'
 
-export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ payload }: MigrateUpArgs): Promise<void> {
   await payload.db.execute({ raw: `
     ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "rate_updated" timestamp(3) with time zone;
     ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "rate_gold22" varchar;
@@ -10,7 +10,7 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
   `})
 }
 
-export async function down({ payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ payload }: MigrateDownArgs): Promise<void> {
   await payload.db.execute({ raw: `
     ALTER TABLE "site_settings" DROP COLUMN IF EXISTS "rate_updated";
     ALTER TABLE "site_settings" DROP COLUMN IF EXISTS "rate_gold22";

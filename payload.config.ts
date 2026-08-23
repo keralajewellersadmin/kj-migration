@@ -410,6 +410,7 @@ const AdminUsers: CollectionConfig = {
             }
 
             // 3. Verify current password if updating own account (super-admins can bypass for others)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const user = req.user as any;
             if (operation === "update" && (!user || user.role !== "super-admin" || user.id === originalDoc?.id)) {
               if (!currentPassword) {
@@ -765,6 +766,7 @@ const Product: CollectionConfig = {
       name: "category",
       type: "relationship",
       relationTo: "categories",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filterOptions: ({ data, siblingData }: any) => {
         const metal = siblingData?.metal || data?.metal;
         if (metal) {
