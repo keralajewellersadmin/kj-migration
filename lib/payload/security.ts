@@ -146,10 +146,15 @@ export const canManageInquiriesField: FieldAccess = ({ req }) =>
   hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]);
 
 // Media — admin + super-admin for CRUD, public read for frontend image population
+// EM excluded — they only need rates + inquiries
 export const canReadMedia: Access = ({ req }) => {
-  if (hasRole(getUser(req), ["super-admin", "admin", "enquiry-manager"]))
-    return true;
-  return true; // public read for SSR/frontend
+  const user = getUser(req);
+  // Authenticated admin/super-admin can always read
+  if (user?.isActive && (user.role === "super-admin" || user.role === "admin")) return true;
+  // EM: deny (admin panel uses overrideAccess: false, frontend uses true so bypasses this)
+  if (user?.isActive && user.role === "enquiry-manager") return false;
+  // Public / anonymous read for SSR/frontend
+  return true;
 };
 
 // AuditLogs — super-admin only
