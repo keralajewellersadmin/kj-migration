@@ -467,7 +467,7 @@ const AdminUsers: CollectionConfig = {
           const tokenHash = hashValue(rawToken);
           const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
 
-          // Create the reset record
+          // Create the setup record (using password-resets collection for simplicity)
           await req.payload.create({
             collection: "password-resets",
             overrideAccess: true,
@@ -481,7 +481,7 @@ const AdminUsers: CollectionConfig = {
 
           // Send the welcome email
           const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (req.headers && req.headers.get ? req.headers.get("origin") : "") || "http://localhost:3000";
-          const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
+          const resetUrl = `${siteUrl}${ADMIN_PATH}/setup-account?token=${rawToken}`;
           
           await sendWelcomeEmail(doc.email, doc.name || doc.username, resetUrl);
         } catch (err) {
@@ -605,6 +605,10 @@ const AdminUsers: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "Change Password (leave blank to keep current)",
+        condition: (data, siblingData, { user }: { user?: Record<string, unknown> }) => {
+          // Only show password change fields if editing own profile
+          return user?.id === data?.id;
+        },
       },
       fields: [
         {
@@ -686,6 +690,34 @@ const AdminUsers: CollectionConfig = {
         read: () => false,
         create: () => false,
         update: () => false,
+      },
+    },
+    {
+      name: "accountActivated",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description: "Checked when the user completes their account setup.",
+      },
+      access: {
+        create: adminIsActiveFieldAccess,
+        update: adminIsActiveFieldAccess,
+      },
+    },
+    {
+      name: "accountActions",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        components: {
+          Field: "@/components/admin/shared/AccountSetupActions",
+        },
+        condition: (data, siblingData, { user }: { user?: Record<string, unknown> }) => {
+          // Show account actions (Resend Setup / Reset Password) if super-admin is editing someone else
+          return user?.id !== data?.id && user?.role === "super-admin";
+        },
       },
     },
   ],

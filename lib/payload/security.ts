@@ -70,6 +70,7 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
       collection?: string;
       id?: string | number;
       isActive?: boolean;
+      accountActivated?: boolean;
       email?: string;
       username?: string;
       name?: string;
@@ -91,6 +92,8 @@ export const adminUsersJwtStrategy: AuthStrategyFunction = async ({
     if (claims.collection !== "admin-users") return { user: null };
     if (typeof claims.id === "undefined") return { user: null };
     if (claims.isActive === false) return { user: null };
+    // Block login if account is not activated (setup incomplete)
+    if (claims.accountActivated === false) return { user: null };
 
     return {
       user: {

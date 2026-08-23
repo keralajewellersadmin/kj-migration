@@ -4,7 +4,7 @@ import {
   findUserByIdentifier,
   generateResetToken,
   hashValue,
-  sendPasswordResetEmail,
+  sendWelcomeEmail,
 } from "@/lib/auth/email";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import { getLoginSql } from "@/lib/auth/admin-login";
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   // IP-based rate limit: max 5 resets per hour per IP
   const ip = getClientIp(request);
   const ipHash = hashValue(ip);
-  const rateLimitKey = `reset:ip:${ipHash}`;
+  const rateLimitKey = `resend-setup:ip:${ipHash}`;
 
   try {
     const sql = getLoginSql();
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     } else if ((Number(current.count) || 0) >= MAX_RESETS_PER_IP) {
       return NextResponse.json({
         success: true,
-        message: "If an account exists, a reset link has been sent.",
+        message: "A setup link has been sent.",
       });
     } else {
       await sql.query(
@@ -71,15 +71,14 @@ export async function POST(request: Request) {
     // If rate limit DB is unavailable, deny the request (fail closed)
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
+      message: "A setup link has been sent.",
     });
   }
 
-  // Always return generic message (no account enumeration)
   if (!identifier) {
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
+      message: "A setup link has been sent.",
     });
   }
 
@@ -90,14 +89,14 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
+      message: "A setup link has been sent.",
     });
   }
 
-  if (user.accountActivated === false) {
+  if (user.accountActivated === true) {
     return NextResponse.json({
       success: false,
-      message: "This account hasn't been set up yet — check your email for a setup link, or contact your administrator to resend it",
+      message: "This account is already activated. Use the Forgot Password flow instead.",
     }, { status: 400 });
   }
 
@@ -122,14 +121,14 @@ export async function POST(request: Request) {
   if (recentCount >= 3) {
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
+      message: "A setup link has been sent.",
     });
   }
 
   // Generate token
   const rawToken = generateResetToken();
   const tokenHash = hashValue(rawToken);
-  const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
 
   await payload.create({
     collection: "password-resets",
@@ -142,17 +141,17 @@ export async function POST(request: Request) {
     },
   });
 
-  // Send reset email
+  // Send setup email
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
-  const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
+  const resetUrl = `${siteUrl}${ADMIN_PATH}/setup-account?token=${rawToken}`;
   try {
-    await sendPasswordResetEmail(user.email as string, resetUrl);
+    await sendWelcomeEmail(user.email as string, user.name || user.username, resetUrl);
   } catch {
-    // Silently fail — user gets generic response anyway
+    // Silently fail
   }
 
   return NextResponse.json({
     success: true,
-    message: "If an account exists, a reset link has been sent.",
+    message: "A setup link has been sent.",
   });
 }
