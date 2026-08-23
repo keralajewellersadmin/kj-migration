@@ -268,6 +268,12 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
       </svg>
     ),
+    profile: (
+      <svg {...props}>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
     menu: (
       <svg {...props}>
         <line x1="3" y1="6" x2="21" y2="6" />
@@ -312,15 +318,17 @@ function isActive(pathname: string, searchParams: URLSearchParams, href: string,
 export default function AdminSidebar({
   displayName,
   role,
+  userId,
   inquiryCount,
 }: {
   displayName: string;
   role: string;
+  userId: string;
   inquiryCount: number;
 }) {
   return (
     <Suspense fallback={<aside className={styles.sidebar} />}>
-      <SidebarInner displayName={displayName} role={role} inquiryCount={inquiryCount} />
+      <SidebarInner displayName={displayName} role={role} userId={userId} inquiryCount={inquiryCount} />
     </Suspense>
   );
 }
@@ -328,10 +336,12 @@ export default function AdminSidebar({
 function SidebarInner({
   displayName,
   role,
+  userId,
   inquiryCount,
 }: {
   displayName: string;
   role: string;
+  userId: string;
   inquiryCount: number;
 }) {
   const pathname = usePathname();
@@ -431,6 +441,16 @@ function SidebarInner({
         </nav>
 
         <div className={styles.footer}>
+          <Link
+            href={userId ? `${ADMIN_PATH}/account` : `${ADMIN_PATH}/logout`}
+            className={styles.profileBtn}
+            title="My Profile / Change Password"
+            aria-label="My Profile / Change Password"
+            prefetch={false}
+          >
+            <Icon name="profile" />
+            {!collapsed && <span>My Profile / Change Password</span>}
+          </Link>
           <div className={styles.userCard}>
             <div className={styles.avatar}>{initials}</div>
             {!collapsed && (

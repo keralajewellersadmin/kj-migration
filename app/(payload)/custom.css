@@ -8,6 +8,10 @@
 /* Hide API tab on document edit pages */
 .doc-tabs .doc-tab[href*="/api"] { display: none !important; }
 
+/* Hide Payload's default top-right account (avatar) menu — replaced by
+   the "My Profile / Change Password" link in the custom sidebar footer. */
+.app-header__account { display: none !important; }
+
 /* Hide Columns toggle button, drawer, and password column on list views */
 .list-controls__toggle-columns,
 #toggle-list-columns,

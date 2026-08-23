@@ -18,11 +18,13 @@ export default async function AdminSidebarServer({ payload, user }: ServerProps)
   const userMap = user as unknown as Record<string, unknown>;
   const displayName = String(userMap.name || userMap.username || user.email || "Admin");
   const role = String(userMap.role || "admin");
+  const userId = String(userMap.id || "");
 
   return (
     <AdminSidebar
       displayName={displayName}
       role={role}
+      userId={userId}
       inquiryCount={inquiryCount}
     />
   );
