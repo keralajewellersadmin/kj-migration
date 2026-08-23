@@ -740,7 +740,7 @@ const Product: CollectionConfig = {
             metal: { equals: metal },
           };
         }
-        return { metal: { equals: 'none' } }; // Block all if no metal is selected
+        return false; // Safely disable the field if no metal is selected
       },
     },
     { name: "weight", type: "text" },
