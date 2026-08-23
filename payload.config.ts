@@ -360,9 +360,10 @@ const Media: CollectionConfig = {
       name: "cloudinaryPublicId",
       type: "text",
       admin: {
-        readOnly: true,
+        position: "sidebar",
         description: "Cloudinary public ID (auto-set on upload)",
       },
+      dbName: "cloudinary_public_id",
     },
   ],
 };
@@ -605,7 +606,7 @@ const AdminUsers: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "Change Password (leave blank to keep current)",
-        condition: (data, siblingData, { user }: { user?: Record<string, unknown> }) => {
+        condition: (data, siblingData, { user }: { user?: Record<string, unknown> | null }) => {
           // Only show password change fields if editing own profile
           return user?.id === data?.id;
         },
@@ -714,7 +715,7 @@ const AdminUsers: CollectionConfig = {
         components: {
           Field: "@/components/admin/shared/AccountSetupActions",
         },
-        condition: (data, siblingData, { user }: { user?: Record<string, unknown> }) => {
+        condition: (data, siblingData, { user }: { user?: Record<string, unknown> | null }) => {
           // Show account actions (Resend Setup / Reset Password) if super-admin is editing someone else
           return user?.id !== data?.id && user?.role === "super-admin";
         },
