@@ -1236,3 +1236,58 @@ main,
 .file-field__upload button {
   margin: 0 !important;
 }
+
+/* ── 17. Payload v3 File Details Fix ── */
+.file-details header {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+  width: 100% !important;
+}
+
+@media (min-width: 768px) {
+  .file-details header {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+}
+
+.file-details__thumbnail {
+  width: 100% !important;
+  max-width: 320px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  border: 1px solid #eaecee !important;
+  background: #f8fafc !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.file-details__thumbnail img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+/* Force empty sidebars to collapse so main content can be full width */
+.document-layout__sidebar:empty,
+aside:empty {
+  display: none !important;
+}
+
+/* Ensure the main document grid expands if there is no sidebar */
+.document-layout {
+  display: flex !important;
+  flex-direction: column !important;
+}
+@media (min-width: 1024px) {
+  .document-layout {
+    display: grid !important;
+    grid-template-columns: 1fr 320px !important;
+    gap: 32px !important;
+  }
+  .document-layout:has(> aside:empty) {
+    grid-template-columns: 1fr !important;
+  }
+}

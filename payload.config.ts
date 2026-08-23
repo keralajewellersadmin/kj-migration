@@ -296,6 +296,7 @@ function makeAutoSlug(collectionSlug: string): CollectionBeforeValidateHook {
 const Media: CollectionConfig = {
   slug: "media",
   admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } },
     useAsTitle: "alt",
     defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
     components: {
@@ -377,7 +378,8 @@ const AdminUsers: CollectionConfig = {
     },
     strategies: [{ name: "admin-users-jwt", authenticate: adminUsersJwtStrategy }],
   },
-  admin: { useAsTitle: "username" },
+  admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "username" },
   hooks: {
     beforeValidate: [
       enforceAdminRoleRestrictions,
@@ -691,7 +693,8 @@ const AdminUsers: CollectionConfig = {
 
 const Product: CollectionConfig = {
   slug: "products",
-  admin: { useAsTitle: "title" },
+  admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -784,7 +787,8 @@ const Product: CollectionConfig = {
 
 const Category: CollectionConfig = {
   slug: "categories",
-  admin: { useAsTitle: "name" },
+  admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "name" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -839,7 +843,8 @@ const Category: CollectionConfig = {
 
 const BlogPost: CollectionConfig = {
   slug: "blog-posts",
-  admin: { useAsTitle: "title" },
+  admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -934,7 +939,8 @@ const BlogPost: CollectionConfig = {
 const LegalPage: CollectionConfig = {
   slug: "legal-pages",
   labels: { singular: "Legal Page", plural: "Legal Pages" },
-  admin: { useAsTitle: "title", group: "Content" },
+  admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title", group: "Content" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -1278,6 +1284,7 @@ const PasswordReset: CollectionConfig = {
 const Review: CollectionConfig = {
   slug: "reviews",
   admin: {
+    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } },
     useAsTitle: "author",
     defaultColumns: ["author", "text", "location", "createdAt"],
     listSearchableFields: ["author", "text", "location"],
