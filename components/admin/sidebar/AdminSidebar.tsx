@@ -444,12 +444,12 @@ function SidebarInner({
           <Link
             href={userId ? `${ADMIN_PATH}/account` : `${ADMIN_PATH}/logout`}
             className={styles.profileBtn}
-            title="My Profile / Change Password"
-            aria-label="My Profile / Change Password"
+            title="My Profile"
+            aria-label="My Profile"
             prefetch={false}
           >
             <Icon name="profile" />
-            {!collapsed && <span>My Profile / Change Password</span>}
+            {!collapsed && <span>My Profile</span>}
           </Link>
           <div className={styles.userCard}>
             <div className={styles.avatar}>{initials}</div>
