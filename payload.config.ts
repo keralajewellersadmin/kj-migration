@@ -610,9 +610,9 @@ const AdminUsers: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "Change Password (leave blank to keep current)",
-        condition: (data, siblingData, { user }) => {
-          // Only show password change fields if editing own profile
-          return user?.id === data?.id;
+        condition: (data) => {
+          // Only show password change fields for existing users, not on creation
+          return Boolean(data?.id);
         },
       },
       fields: [
