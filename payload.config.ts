@@ -608,7 +608,6 @@ const AdminUsers: CollectionConfig = {
       type: "group",
       virtual: true,
       admin: {
-        position: "sidebar",
         description: "Change Password (leave blank to keep current)",
         condition: (data) => {
           // Only show password change fields for existing users, not on creation
