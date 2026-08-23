@@ -299,9 +299,9 @@ const Media: CollectionConfig = {
     useAsTitle: "alt",
     defaultColumns: ["alt", "mediaType", "mimeType", "filesize", "updatedAt"],
     components: {
-      edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] },
+      edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] },
       beforeListTable: [
-        "@/components/admin/MediaFolderFilters",
+        "@/components/admin/shared/MediaFolderFilters",
       ],
     },
   },
@@ -379,7 +379,7 @@ const AdminUsers: CollectionConfig = {
     strategies: [{ name: "admin-users-jwt", authenticate: adminUsersJwtStrategy }],
   },
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "username" },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } }, useAsTitle: "username" },
   hooks: {
     beforeValidate: [
       enforceAdminRoleRestrictions,
@@ -612,7 +612,7 @@ const AdminUsers: CollectionConfig = {
           type: "text",
           admin: {
             description: "Required to change your own password.",
-            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+            components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
           },
         },
         {
@@ -620,7 +620,7 @@ const AdminUsers: CollectionConfig = {
           type: "text",
           admin: {
             description: "Must be at least 8 characters.",
-            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+            components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
           },
         },
         {
@@ -628,7 +628,7 @@ const AdminUsers: CollectionConfig = {
           type: "text",
           admin: {
             description: "Must match the new password.",
-            components: { Field: "@/components/admin/PasswordField#PasswordField" },
+            components: { Field: "@/components/admin/shared/PasswordField#PasswordField" },
           },
         }
       ]
@@ -694,7 +694,7 @@ const AdminUsers: CollectionConfig = {
 const Product: CollectionConfig = {
   slug: "products",
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title" },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } }, useAsTitle: "title" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -788,7 +788,7 @@ const Product: CollectionConfig = {
 const Category: CollectionConfig = {
   slug: "categories",
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "name" },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } }, useAsTitle: "name" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -844,7 +844,7 @@ const Category: CollectionConfig = {
 const BlogPost: CollectionConfig = {
   slug: "blog-posts",
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title" },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } }, useAsTitle: "title" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -940,7 +940,7 @@ const LegalPage: CollectionConfig = {
   slug: "legal-pages",
   labels: { singular: "Legal Page", plural: "Legal Pages" },
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } }, useAsTitle: "title", group: "Content" },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } }, useAsTitle: "title", group: "Content" },
   access: {
     read: publicRead,
     create: canManageContent,
@@ -1034,12 +1034,12 @@ const Inquiry: CollectionConfig = {
     listSearchableFields: ["name", "email"],
     components: {
       beforeListTable: [
-        "@/components/admin/InquiryQuickFilters",
+        "@/components/admin/inquiries/InquiryQuickFilters",
       ],
       edit: {
         beforeDocumentControls: [
-          "@/components/admin/GoBackButton",
-          "@/components/admin/InquiryReadMarker",
+          "@/components/admin/shared/GoBackButton",
+          "@/components/admin/inquiries/InquiryReadMarker",
         ],
       },
     },
@@ -1081,7 +1081,7 @@ const Inquiry: CollectionConfig = {
       admin: {
         readOnly: true,
         components: {
-          Cell: "@/components/admin/InquirySourcePill",
+          Cell: "@/components/admin/inquiries/InquirySourcePill",
         },
       },
     },
@@ -1284,7 +1284,7 @@ const PasswordReset: CollectionConfig = {
 const Review: CollectionConfig = {
   slug: "reviews",
   admin: {
-    components: { edit: { beforeDocumentControls: ["@/components/admin/GoBackButton"] } },
+    components: { edit: { beforeDocumentControls: ["@/components/admin/shared/GoBackButton"] } },
     useAsTitle: "author",
     defaultColumns: ["author", "text", "location", "createdAt"],
     listSearchableFields: ["author", "text", "location"],
@@ -1719,20 +1719,20 @@ export default buildConfig({
       ],
     },
     components: {
-      Nav: "@/components/admin/AdminSidebarServer",
+      Nav: "@/components/admin/sidebar/AdminSidebarServer",
       graphics: {
-        Icon: "@/components/admin/AdminLogo",
-        Logo: "@/components/admin/AdminLogo",
+        Icon: "@/components/admin/shared/AdminLogo",
+        Logo: "@/components/admin/shared/AdminLogo",
       },
       views: {
         dashboard: {
-          Component: "@/components/admin/DashboardNew",
+          Component: "@/components/admin/dashboard/DashboardNew",
         },
         login: {
-          Component: "@/components/admin/CustomLogin",
+          Component: "@/components/admin/login/CustomLogin",
         },
         "update-rates": {
-          Component: "@/components/admin/UpdateRatesServer",
+          Component: "@/components/admin/rates/UpdateRatesServer",
           path: "/update-rates",
         },
         pages: {

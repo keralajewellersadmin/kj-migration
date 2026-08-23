@@ -24,29 +24,23 @@ const GoBackButton = () => {
   const title = collectionSlug.charAt(0).toUpperCase() + collectionSlug.slice(1).replace(/-/g, ' ')
 
   return (
-    <div style={{ marginBottom: '1.5rem', display: 'flex' }}>
-      <Link 
-        href={backUrl}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#f3f4f6',
-          border: '1px solid #e5e7eb',
-          borderRadius: '4px',
-          color: '#374151',
-          textDecoration: 'none',
-          fontSize: '14px',
-          fontWeight: 500,
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#e5e7eb' }}
-        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6' }}
-      >
-        <span style={{ marginRight: '0.5rem' }}>&larr;</span> Go Back to {title}
-      </Link>
-    </div>
+    <Link
+      href={backUrl}
+      className="btn btn--style-secondary"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        marginRight: 'auto',
+        whiteSpace: 'nowrap',
+        fontSize: '13px',
+        fontWeight: 500,
+        padding: '8px 14px',
+        textDecoration: 'none',
+      }}
+    >
+      <span>&larr;</span> Go Back to {title}
+    </Link>
   )
 }
 

@@ -12,8 +12,7 @@
 .banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 21 / 9;
-  min-height: 400px;
+  height: clamp(380px, 35vw, 500px);
   padding: 20px 0;
   display: flex;
   align-items: stretch;
@@ -188,18 +187,14 @@
   }
 
   .banner {
-    aspect-ratio: 16 / 9;
-    min-height: 330px;
-    height: auto;
+    height: clamp(300px, 44vw, 380px);
     overflow: hidden;
     background-position: 62% center;
   }
 
   .silver .banner,
   .diamond .banner {
-    aspect-ratio: 16 / 9;
-    min-height: 330px;
-    height: auto;
+    height: clamp(300px, 44vw, 380px);
   }
 
   .heading {
@@ -244,8 +239,7 @@
 
   .banner {
     height: auto;
-    aspect-ratio: 4 / 5;
-    min-height: 315px;
+    min-height: clamp(280px, 52vh, 340px);
     padding: 22px 0;
     background-position: 66% center;
   }
@@ -253,8 +247,7 @@
   .silver .banner,
   .diamond .banner {
     height: auto;
-    aspect-ratio: 4 / 5;
-    min-height: 315px;
+    min-height: clamp(280px, 52vh, 340px);
     padding: 22px 0;
   }
 

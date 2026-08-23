@@ -45,17 +45,7 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
   if (typeof incomingUrl === "string" && incomingUrl.includes("res.cloudinary.com")) return data;
 
   // In beforeChange, the file buffer is either in req.file.data or written to tempFilePath
-  if (req.file) {
-    console.log("[Cloudinary Debug] req.file keys:", Object.keys(req.file));
-    if (req.file.data) {
-      console.log("[Cloudinary Debug] req.file.data type:", typeof req.file.data);
-    }
-    console.log("[Cloudinary Debug] req.file.size:", req.file.size);
-    console.log("[Cloudinary Debug] req.file.tempFilePath:", req.file.tempFilePath);
-  }
-
   if (!req.file || (!req.file.data && !req.file.tempFilePath)) {
-    console.log("[Cloudinary Debug] Bailing out because req.file data/tempFilePath is missing");
     return data;
   }
 

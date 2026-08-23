@@ -3,7 +3,7 @@ import config from "@payload-config";
 import { importMap } from "../../admin/importMap";
 import { RootPage, generatePageMetadata } from "@payloadcms/next/views";
 import { redirect } from "next/navigation";
-import CustomLogin from "@/components/admin/CustomLogin";
+import CustomLogin from "@/components/admin/login/CustomLogin";
 import { ADMIN_PATH } from "@/lib/admin-path";
 
 type Args = {

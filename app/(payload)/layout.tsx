@@ -9,7 +9,7 @@ import "@payloadcms/next/css";
 import "./custom.css";
 import React from "react";
 import { importMap } from "./admin/importMap";
-import TabSwitcher from "@/components/admin/TabSwitcher";
+import TabSwitcher from "@/components/admin/shared/TabSwitcher";
 
 type Args = {
   children: React.ReactNode;
