@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { getPageDef, type PageDef, type FieldDef } from "./pageDefs";
-import { updateSiteSettings, updateLegalPage } from "@/lib/actions/updatePageContent";
+import { updateSiteSettings, updateLegalPage, getSiteSettingsData } from "@/lib/actions/updatePageContent";
 import ArrayFieldEditor from "./ArrayFieldEditor";
 import ImagePicker from "./ImagePicker";
 
@@ -46,8 +46,7 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
     (async () => {
       try {
         if (def.source === "global") {
-          const res = await fetch("/api/globals/site-settings");
-          const data: Record<string, unknown> = await res.json();
+          const data: Record<string, unknown> = await getSiteSettingsData();
           if (cancelled) return;
           setDoc(data);
           const initial: Record<string, string> = {};

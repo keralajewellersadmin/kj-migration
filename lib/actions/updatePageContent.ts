@@ -4,6 +4,12 @@ import { revalidatePath } from "next/cache";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
+export async function getSiteSettingsData() {
+  const payload = await getPayload({ config });
+  const settings = await payload.findGlobal({ slug: "site-settings" });
+  return JSON.parse(JSON.stringify(settings));
+}
+
 export async function updateSiteSettings(patch: Record<string, unknown>) {
   const payload = await getPayload({ config });
   await payload.updateGlobal({
