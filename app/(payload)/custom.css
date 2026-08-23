@@ -357,6 +357,48 @@ body,
   border-bottom: 1px solid #f1f5f9 !important;
 }
 
+/* Sidebar group field — prevent text clipping in narrow sidebar */
+.document-layout .group-field__wrap {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.document-layout .group-field__header,
+.document-layout .group-field__header h3,
+.document-layout .group-field__header label {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+/* Sidebar position fields */
+.field-type--group[data-position="sidebar"],
+.group-field[data-position="sidebar"] {
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix sidebar text clipping — Payload sidebar may have left padding/transform */
+.document-layout__sidebar .group-field,
+.document-layout__sidebar .field-type--group {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+.document-layout__sidebar .group-field__header,
+.document-layout__sidebar .group-field__header h3,
+.document-layout__sidebar .group-field__header label {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+  transform: none !important;
+}
+
+.document-layout__sidebar .field-type {
+  min-width: 0 !important;
+}
+
 .group-field__header h3,
 .array-field__header h3,
 .array-field__header label {
