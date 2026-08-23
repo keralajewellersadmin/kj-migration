@@ -1,13 +1,11 @@
 import type {
-  CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
   CollectionBeforeChangeHook,
 } from "payload";
 import fs from "node:fs/promises";
-import path from "node:path";
 import { getCloudinaryFolder, extractPublicIdFromUrl } from "./cloudinary.ts";
 
-let cloudinaryClient: any = null;
+let cloudinaryClient: Record<string, unknown> | null = null;
 async function getCloudinaryClient() {
   if (cloudinaryClient) return cloudinaryClient;
   const { v2: cloudinary } = await import("cloudinary");
@@ -65,8 +63,7 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
     // Use Cloudinary's native transformations instead of sharp to prevent Vercel memory/binary issues
     const publicId = data.filename ? data.filename.split('.')[0] + '-' + Date.now() : Date.now().toString();
 
-    let result: any;
-    result = await new Promise<any>((resolve, reject) => {
+    const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
@@ -78,9 +75,9 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
             { width: 1920, crop: "limit" }
           ]
         },
-        (error: any, uploadResult: any) => {
+        (error: Error | null, uploadResult?: Record<string, unknown>) => {
           if (error) reject(error);
-          else resolve(uploadResult);
+          else resolve(uploadResult!);
         },
       );
       uploadStream.end(originalBuffer);
