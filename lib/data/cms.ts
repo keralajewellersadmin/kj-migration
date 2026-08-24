@@ -47,6 +47,9 @@ function getPool(): Pool {
 const _cache = new Map<string, { data: unknown; ts: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+  if (process.env.VERCEL === "1") {
+    return fn();
+  }
   const hit = _cache.get(key);
   if (hit && Date.now() - hit.ts < CACHE_TTL) return Promise.resolve(hit.data as T);
   return fn().then((data) => {
