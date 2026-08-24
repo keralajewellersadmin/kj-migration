@@ -127,9 +127,14 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
             if (Array.isArray(parsed)) {
               parsed.forEach((item: Record<string, any>) => {
                 // Ensure empty strings are set to null for image fields inside array items
+                // and convert string IDs to numbers for Payload relationship fields
                 f.arrayFields?.forEach((af) => {
-                  if (af.type === "image" && item[af.name] === "") {
-                    item[af.name] = null;
+                  if (af.type === "image") {
+                    if (item[af.name] === "") {
+                      item[af.name] = null;
+                    } else if (typeof item[af.name] === "string" && /^\d+$/.test(item[af.name])) {
+                      item[af.name] = Number(item[af.name]);
+                    }
                   }
                 });
                 if (f.path === "features" && !item.blockType) item.blockType = "circleBanner";

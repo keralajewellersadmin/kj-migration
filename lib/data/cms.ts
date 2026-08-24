@@ -169,7 +169,7 @@ const PRODUCT_SQL_BASE = `
   LEFT JOIN media m ON p.image_id = m.id
 `;
 
-function isPostgres(): boolean {
+export function isPostgres(): boolean {
   const dbUri = process.env.DATABASE_URL || process.env.DATABASE_URI;
   return !!dbUri && (dbUri.startsWith("postgresql") || dbUri.startsWith("postgres://"));
 }
@@ -702,7 +702,6 @@ export async function getCategories(
         query += " ORDER BY display_order";
         const { rows } = await pool.query(query, params);
         if (rows.length > 0) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return rows.map((r: any) => ({ name: r.name, slug: r.slug }));
         }
       } catch {
@@ -894,7 +893,7 @@ export interface SiteSettingsData {
   };
 }
 
-const DEFAULT_SETTINGS: SiteSettingsData = {
+export const DEFAULT_SETTINGS: SiteSettingsData = {
   rateGold22: "7,450",
   rateGold18: "6,080",
   rateSilver: "92",
@@ -1296,7 +1295,7 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
   };
 }
 
-async function loadArrayDataViaSQL(
+export async function loadArrayDataViaSQL(
   data: SiteSettingsData,
 ): Promise<SiteSettingsData> {
   try {
@@ -1426,6 +1425,79 @@ async function loadArrayDataViaSQL(
     };
   } catch {
     return data;
+  }
+}
+
+export async function loadArrayDataForEditor(): Promise<Record<string, unknown>> {
+  try {
+    const pool = getPool();
+    const ss = await pool.query(`SELECT id, slider_paused, bestseller_products FROM site_settings LIMIT 1`);
+    const ssId = ss.rows[0]?.id;
+    if (!ssId) return {};
+
+    const heroRes = await pool.query(
+      `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, h.image_id
+       FROM site_settings_hero_slides h
+       WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
+    const circleBannerRes = await pool.query(
+      `SELECT b.title, b.description, b.alt, b.image_id
+       FROM site_settings_blocks_circle_banner b
+       WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
+    const imageBannerRes = await pool.query(
+      `SELECT b.alt, b.title, b.cta_text, b.href, b.image_id
+       FROM site_settings_blocks_image_banner b
+       WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
+    const heritageRes = await pool.query(
+      `SELECT h.heading, h.description, h.image_id
+       FROM site_settings_heritage h
+       WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
+    const catsRes = await pool.query(
+      `SELECT c.title, c.description, c.cta_text, c.cta_href, c.variant, c.image_id
+       FROM site_settings_categories c
+       WHERE c._parent_id = $1 ORDER BY _order`, [ssId]);
+
+    return {
+      heroSliderPaused: Boolean(ss.rows[0]?.slider_paused),
+      bestsellerProducts: ss.rows[0]?.bestseller_products || "",
+      heroSlides: heroRes.rows.map((r: any) => ({
+        heading: r.heading || "",
+        description: r.description || "",
+        ctaText: r.cta_text || "",
+        ctaHref: r.cta_href || "",
+        image: r.image_id != null ? String(r.image_id) : "",
+        isPinned: Boolean(r.is_pinned),
+      })),
+      features: circleBannerRes.rows.map((r: any) => ({
+        blockType: "circleBanner",
+        title: r.title || "",
+        description: r.description || "",
+        image: r.image_id != null ? String(r.image_id) : "",
+        alt: r.alt || "",
+      })),
+      banners: imageBannerRes.rows.map((r: any) => ({
+        blockType: "imageBanner",
+        title: r.title || "",
+        image: r.image_id != null ? String(r.image_id) : "",
+        alt: r.alt || "",
+        ctaText: r.cta_text || "",
+        href: r.href || "",
+      })),
+      heritage: heritageRes.rows.map((r: any) => ({
+        heading: r.heading || "",
+        description: r.description || "",
+        image: r.image_id != null ? String(r.image_id) : "",
+      })),
+      categories: catsRes.rows.map((r: any) => ({
+        title: r.title || "",
+        description: r.description || "",
+        ctaText: r.cta_text || "",
+        ctaHref: r.cta_href || "",
+        variant: r.variant || "",
+        image: r.image_id != null ? String(r.image_id) : "",
+      })),
+    };
+  } catch {
+    return {};
   }
 }
 

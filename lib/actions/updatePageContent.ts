@@ -3,11 +3,19 @@
 import { revalidatePath } from "next/cache";
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { isPostgres, loadArrayDataForEditor } from "@/lib/data/cms";
 
 export async function getSiteSettingsData() {
   const payload = await getPayload({ config });
   const settings = await payload.findGlobal({ slug: "site-settings" });
-  return JSON.parse(JSON.stringify(settings));
+  const data = JSON.parse(JSON.stringify(settings));
+
+  if (isPostgres()) {
+    const editorData = await loadArrayDataForEditor();
+    return { ...data, ...editorData };
+  }
+
+  return data;
 }
 
 export async function updateSiteSettings(patch: Record<string, unknown>) {
