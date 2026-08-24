@@ -79,7 +79,8 @@ export default function ImagePicker({ value, onChange }: Props) {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      fd.append("alt", alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "));
+      const cleanAlt = alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      fd.append("_payload", JSON.stringify({ alt: cleanAlt }));
       const res = await fetch(`/api/media`, {
         method: "POST",
         body: fd,
