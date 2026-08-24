@@ -22,18 +22,16 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   serverExternalPackages: ["pg", "payload"],
-  images: cloudinaryCloudName
-    ? {
-        formats: ["image/avif", "image/webp"],
-        remotePatterns: [
-          {
-            protocol: "https",
-            hostname: "res.cloudinary.com",
-            pathname: `/${cloudinaryCloudName}/**`,
-          },
-        ],
-      }
-    : undefined,
+  images: {
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
+  },
   async redirects() {
     return [
       {
