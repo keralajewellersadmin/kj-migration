@@ -78,7 +78,8 @@
 .banner {
   position: relative;
   width: 100%;
-  height: clamp(400px, 45vh, 480px);
+  height: clamp(500px, 50vh, 560px);
+  min-height: 500px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -216,7 +217,8 @@
   }
 
   .banner {
-    height: clamp(380px, 45vh, 450px);
+    height: clamp(500px, 50vh, 560px);
+    min-height: 500px;
   }
 
   .bgImage {
@@ -259,7 +261,8 @@
 /* Responsive: Tablet */
 @media (max-width: 991px) {
   .banner {
-    height: 400px;
+    height: clamp(500px, 65vh, 540px);
+    min-height: 500px;
   }
 
   .bgImage {
@@ -288,7 +291,8 @@
   }
 
   .banner {
-    height: 320px;
+    height: 300px;
+    min-height: 300px;
     align-items: stretch;
   }
 
@@ -344,6 +348,7 @@
 @media (max-width: 479px) {
   .banner {
     height: 300px;
+    min-height: 300px;
   }
 
   .content {
