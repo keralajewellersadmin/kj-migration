@@ -1,8 +1,7 @@
-﻿/* Features Grid (section-2) */
 .featuresSection {
   background-color: var(--color-white);
-  padding-top: var(--space-12);
-  padding-bottom: var(--space-12);
+  padding-top: 75px;
+  padding-bottom: 75px;
   overflow-x: hidden;
 }
 
