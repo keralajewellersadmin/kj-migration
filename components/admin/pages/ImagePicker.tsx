@@ -79,7 +79,7 @@ export default function ImagePicker({ value, onChange }: Props) {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      if (alt) fd.append("alt", alt);
+      fd.append("alt", alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "));
       const res = await fetch(`/api/media`, {
         method: "POST",
         body: fd,
