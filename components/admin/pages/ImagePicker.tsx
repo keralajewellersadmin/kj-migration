@@ -32,7 +32,7 @@ export default function ImagePicker({ value, onChange }: Props) {
   const fetchPreview = useCallback(async (mediaId: string) => {
     if (!mediaId) { setPreviewUrl(""); return; }
     try {
-      const res = await fetch(`${ADMIN_PATH}/api/media/${mediaId}?depth=0`);
+      const res = await fetch(`/api/media/${mediaId}?depth=0`);
       const doc = await res.json();
       if (doc.url) setPreviewUrl(doc.url);
     } catch {
@@ -51,7 +51,7 @@ export default function ImagePicker({ value, onChange }: Props) {
       const where = search
         ? `&where[or][0][alt][contains]=${encodeURIComponent(search)}&where[or][1][filename][contains]=${encodeURIComponent(search)}`
         : "";
-      const res = await fetch(`${ADMIN_PATH}/api/media?limit=24&sort=-createdAt&depth=0${where}`);
+      const res = await fetch(`/api/media?limit=24&sort=-createdAt&depth=0${where}`);
       const data = await res.json();
       setResults(data.docs || []);
     } catch {
@@ -80,7 +80,7 @@ export default function ImagePicker({ value, onChange }: Props) {
       const fd = new FormData();
       fd.append("file", file);
       if (alt) fd.append("alt", alt);
-      const res = await fetch(`${ADMIN_PATH}/api/media`, {
+      const res = await fetch(`/api/media`, {
         method: "POST",
         body: fd,
       });
