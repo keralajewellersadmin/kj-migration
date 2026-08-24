@@ -51,7 +51,7 @@ export default async function ProductsPage(props: {
       <ProductsHero
         title={heroTitle}
         subtitle={heroSubtitle}
-        bgImage={metals.find((m) => m.slug === "gold")!.heroBg}
+        bgImage={goldHero.image || metals.find((m) => m.slug === "gold")!.heroBg}
         metal="gold"
       />
       <section className={styles.section} id="product-grid">

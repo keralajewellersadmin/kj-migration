@@ -845,10 +845,23 @@ export interface SiteSettingsData {
     formTitle: string;
   };
   productsPage: {
-    goldHero: { title: string; subtitle: string };
-    silverHero: { title: string; subtitle: string };
-    diamondHero: { title: string; subtitle: string };
-    platinumHero: { title: string; subtitle: string };
+    goldHero: { title: string; subtitle: string; image?: string };
+    silverHero: { title: string; subtitle: string; image?: string };
+    diamondHero: { title: string; subtitle: string; image?: string };
+    platinumHero: { title: string; subtitle: string; image?: string };
+  };
+  thangaMazhai: {
+    banner: string;
+    title: string;
+    heading: string;
+    description: string;
+    benefits: Array<{ text: string }>;
+    whyChoose: Array<{ text: string }>;
+  };
+  swarnavarsha: {
+    title: string;
+    tcHeading: string;
+    bullets: Array<{ text: string }>;
   };
   aboutPage: {
     goldenOccasions: {
@@ -951,10 +964,23 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
     formTitle: "Send Us a Message",
   },
   productsPage: {
-    goldHero: { title: "Elegant & Timeless Gold Jewellery", subtitle: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion." },
-    silverHero: { title: "Classic Elegance in Silver", subtitle: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment." },
-    diamondHero: { title: "Timeless Brilliance in Diamonds", subtitle: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
-    platinumHero: { title: "Exquisite Platinum Jewellery", subtitle: "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury." },
+    goldHero: { title: "Elegant & Timeless Gold Jewellery", subtitle: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion.", image: "" },
+    silverHero: { title: "Classic Elegance in Silver", subtitle: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment.", image: "" },
+    diamondHero: { title: "Timeless Brilliance in Diamonds", subtitle: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion.", image: "" },
+    platinumHero: { title: "Exquisite Platinum Jewellery", subtitle: "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury.", image: "" },
+  },
+  thangaMazhai: {
+    banner: "",
+    title: "Thanga Mazhai Scheme",
+    heading: "THANGA MAZHAI IS A ONE TIME INVESTMENT SCHEME WHERE YOU CAN DEPOSIT",
+    description: "Old gold ornaments of 916 purity or equivalent cash value (via card, UPI, etc.)",
+    benefits: [],
+    whyChoose: [],
+  },
+  swarnavarsha: {
+    title: "Swarnavarsha Scheme",
+    tcHeading: "TERMS & CONDITIONS:",
+    bullets: [],
   },
   aboutPage: {
     goldenOccasions: {
@@ -1130,10 +1156,45 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
       const diamond = pp?.diamondHero as Record<string, unknown> | undefined;
       const platinum = pp?.platinumHero as Record<string, unknown> | undefined;
       return {
-        goldHero: { title: (gold?.title as string) || DEFAULT_SETTINGS.productsPage.goldHero.title, subtitle: (gold?.subtitle as string) || DEFAULT_SETTINGS.productsPage.goldHero.subtitle },
-        silverHero: { title: (silver?.title as string) || DEFAULT_SETTINGS.productsPage.silverHero.title, subtitle: (silver?.subtitle as string) || DEFAULT_SETTINGS.productsPage.silverHero.subtitle },
-        diamondHero: { title: (diamond?.title as string) || DEFAULT_SETTINGS.productsPage.diamondHero.title, subtitle: (diamond?.subtitle as string) || DEFAULT_SETTINGS.productsPage.diamondHero.subtitle },
-        platinumHero: { title: (platinum?.title as string) || DEFAULT_SETTINGS.productsPage.platinumHero.title, subtitle: (platinum?.subtitle as string) || DEFAULT_SETTINGS.productsPage.platinumHero.subtitle },
+        goldHero: {
+          title: (gold?.title as string) || DEFAULT_SETTINGS.productsPage.goldHero.title,
+          subtitle: (gold?.subtitle as string) || DEFAULT_SETTINGS.productsPage.goldHero.subtitle,
+          image: gold?.image ? resolveMediaUrl(gold.image) : "",
+        },
+        silverHero: {
+          title: (silver?.title as string) || DEFAULT_SETTINGS.productsPage.silverHero.title,
+          subtitle: (silver?.subtitle as string) || DEFAULT_SETTINGS.productsPage.silverHero.subtitle,
+          image: silver?.image ? resolveMediaUrl(silver.image) : "",
+        },
+        diamondHero: {
+          title: (diamond?.title as string) || DEFAULT_SETTINGS.productsPage.diamondHero.title,
+          subtitle: (diamond?.subtitle as string) || DEFAULT_SETTINGS.productsPage.diamondHero.subtitle,
+          image: diamond?.image ? resolveMediaUrl(diamond.image) : "",
+        },
+        platinumHero: {
+          title: (platinum?.title as string) || DEFAULT_SETTINGS.productsPage.platinumHero.title,
+          subtitle: (platinum?.subtitle as string) || DEFAULT_SETTINGS.productsPage.platinumHero.subtitle,
+          image: platinum?.image ? resolveMediaUrl(platinum.image) : "",
+        },
+      };
+    })(),
+    thangaMazhai: (() => {
+      const tm = (settings as unknown as Record<string, unknown>)?.thangaMazhai as Record<string, unknown> | undefined;
+      return {
+        banner: tm?.banner ? resolveMediaUrl(tm.banner) : "",
+        title: (tm?.title as string) || DEFAULT_SETTINGS.thangaMazhai.title,
+        heading: (tm?.heading as string) || DEFAULT_SETTINGS.thangaMazhai.heading,
+        description: (tm?.description as string) || DEFAULT_SETTINGS.thangaMazhai.description,
+        benefits: (tm?.benefits as Array<Record<string, unknown>> || []).map((b) => ({ text: (b.text as string) || "" })),
+        whyChoose: (tm?.whyChoose as Array<Record<string, unknown>> || []).map((w) => ({ text: (w.text as string) || "" })),
+      };
+    })(),
+    swarnavarsha: (() => {
+      const sw = (settings as unknown as Record<string, unknown>)?.swarnavarsha as Record<string, unknown> | undefined;
+      return {
+        title: (sw?.title as string) || DEFAULT_SETTINGS.swarnavarsha.title,
+        tcHeading: (sw?.tcHeading as string) || DEFAULT_SETTINGS.swarnavarsha.tcHeading,
+        bullets: (sw?.bullets as Array<Record<string, unknown>> || []).map((b) => ({ text: (b.text as string) || "" })),
       };
     })(),
     defaultSeo: (() => {

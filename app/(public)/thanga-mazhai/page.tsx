@@ -1,12 +1,13 @@
 import styles from "./page.module.css";
+import { getSiteSettings } from "@/lib/data/cms";
 
-const BENEFITS = [
+const DEFAULT_BENEFITS = [
   "NO WASTAGE",
   "NO MAKING CHARGES",
   "ONLY PAY GST ON REDEEMED WEIGHT",
 ];
 
-const WHY_CHOOSE = [
+const DEFAULT_WHY_CHOOSE = [
   "One-time deposit: old gold or equivalent cash",
   "11-month maturity period",
   "Redeem in gold, diamond, silver",
@@ -23,24 +24,39 @@ const WHY_CHOOSE = [
   "Kerala Jewellers reserves the rights to modify the terms",
 ];
 
-export default function ThangaMazhaiPage() {
+export default async function ThangaMazhaiPage() {
+  const settings = await getSiteSettings();
+  const tm = settings.thangaMazhai;
+
+  const benefits = tm.benefits?.length
+    ? tm.benefits.map((b) => b.text)
+    : DEFAULT_BENEFITS;
+
+  const whyChoose = tm.whyChoose?.length
+    ? tm.whyChoose.map((w) => w.text)
+    : DEFAULT_WHY_CHOOSE;
+
+  const title = tm.title || "Thanga Mazhai Scheme";
+  const heading = tm.heading || "THANGA MAZHAI IS A ONE TIME INVESTMENT SCHEME WHERE YOU CAN DEPOSIT";
+  const description = tm.description || "Old gold ornaments of 916 purity or equivalent cash value (via card, UPI, etc.)";
+  
+  const bannerStyle = tm.banner
+    ? { backgroundImage: `url(${tm.banner})` }
+    : undefined;
+
   return (
     <>
       <div className={styles.bannerWrap}>
-        <div className={styles.banner} />
+        <div className={styles.banner} style={bannerStyle} />
       </div>
 
       <div className={styles.richText}>
+        <h1 style={{ display: "none" }}>{title}</h1>
         <h4 className={styles.schemeHeading}>
-          <strong>
-            THANGA MAZHAI IS A ONE TIME INVESTMENT SCHEME WHERE YOU CAN DEPOSIT
-          </strong>
+          <strong>{heading}</strong>
         </h4>
 
-        <p>
-          Old gold ornaments of 916 purity or equivalent cash value (via card,
-          UPI, etc.)
-        </p>
+        <p>{description}</p>
 
         <p className={styles.uppercase}>
           AFTER 11 MONTHS (335 DAYS), WALK IN AND CHOOSE FROM Our latest
@@ -49,7 +65,7 @@ export default function ThangaMazhaiPage() {
         </p>
 
         <ul>
-          {BENEFITS.map((b, i) => (
+          {benefits.map((b, i) => (
             <li key={i}>
               <strong>{b}</strong>
             </li>
@@ -65,7 +81,7 @@ export default function ThangaMazhaiPage() {
         </p>
 
         <ul>
-          {WHY_CHOOSE.map((item, i) => (
+          {whyChoose.map((item, i) => (
             <li key={i}>{item}</li>
           ))}
         </ul>

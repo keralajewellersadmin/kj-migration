@@ -64,7 +64,7 @@ export default async function MetalProductsPage(props: {
       <ProductsHero
         title={heroTitle}
         subtitle={heroSubtitle}
-        bgImage={metal.heroBg}
+        bgImage={cmsHero.image || metal.heroBg}
         metal={metalKey}
       />
       <section className={styles.section} id="product-grid">

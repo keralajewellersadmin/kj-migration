@@ -50,20 +50,25 @@ const defaultSlides: HeroSlide[] = [
 
 export default function Hero({
   slides: cmsSlides = [],
-  paused: initialPaused = false,
+  paused = false,
 }: {
   slides?: HeroSlide[];
   paused?: boolean;
 }) {
   const slides = cmsSlides.length ? cmsSlides : defaultSlides;
-  const [paused, setPaused] = useState(initialPaused);
   const currentRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // If paused, only show the pinned slide (or fallback to the first slide)
+  const displayedSlides = paused
+    ? [slides.find((s) => s.isPinned) || slides[0]]
+    : slides;
+
   const goTo = useCallback(
     (idx: number) => {
-      const total = slides.length;
+      const total = displayedSlides.length;
+      if (total <= 1) return;
       const next = ((idx % total) + total) % total;
       currentRef.current = next;
 
@@ -80,7 +85,7 @@ export default function Hero({
         }
       });
     },
-    [slides.length],
+    [displayedSlides.length],
   );
 
   const startTimer = useCallback(() => {
@@ -90,17 +95,8 @@ export default function Hero({
     }, 5000);
   }, [goTo]);
 
-  // When paused from the CMS, jump to the pinned slide (if configured).
   useEffect(() => {
-    if (initialPaused) {
-      const pinnedIdx = slides.findIndex((s) => s.isPinned);
-      if (pinnedIdx >= 0) goTo(pinnedIdx);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialPaused]);
-
-  useEffect(() => {
-    if (paused || slides.length <= 1) {
+    if (paused || displayedSlides.length <= 1) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
@@ -108,16 +104,7 @@ export default function Hero({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [paused, slides.length, startTimer]);
-
-  const togglePause = () => {
-    const next = !paused;
-    setPaused(next);
-    if (next) {
-      const pinnedIdx = slides.findIndex((s) => s.isPinned);
-      if (pinnedIdx >= 0) goTo(pinnedIdx);
-    }
-  };
+  }, [paused, displayedSlides.length, startTimer]);
 
   return (
     <section className={styles.heroSection}>
@@ -125,7 +112,7 @@ export default function Hero({
         <div className={styles.sliderWrapper}>
           <div className={styles.slider}>
             <div className={styles.stack} ref={containerRef}>
-              {slides.map((slide, i) => (
+              {displayedSlides.map((slide, i) => (
                 <div
                   key={i}
                   className={`${styles.slide} ${i === 0 ? styles.active : ""}`}
@@ -166,17 +153,6 @@ export default function Hero({
                 </div>
               ))}
             </div>
-            {slides.length > 1 && (
-              <button
-                type="button"
-                className={styles.pauseToggle}
-                onClick={togglePause}
-                aria-label={paused ? "Play slideshow" : "Pause slideshow"}
-                title={paused ? "Play slideshow" : "Pause slideshow"}
-              >
-                {paused ? "▶" : "❚❚"}
-              </button>
-            )}
           </div>
         </div>
       </div>

@@ -143,7 +143,7 @@ export async function POST(request: Request) {
 
   // Send setup email
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
-  const resetUrl = `${siteUrl}${ADMIN_PATH}/setup-account?token=${rawToken}`;
+  const resetUrl = `${siteUrl}/setup-account?token=${rawToken}`;
   try {
     await sendWelcomeEmail(user.email as string, user.name || user.username, resetUrl);
   } catch {

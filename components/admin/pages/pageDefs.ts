@@ -69,6 +69,20 @@ export const PAGE_DEFS: PageDef[] = [
         ],
       },
       {
+        path: "homepageSections.bestsellersTitle",
+        label: "Bestsellers Title",
+        type: "text",
+        section: "Bestsellers Section",
+        placeholder: "e.g. Our Bestsellers",
+      },
+      {
+        path: "homepageSections.bestsellersSubtitle",
+        label: "Bestsellers Subtitle",
+        type: "textarea",
+        section: "Bestsellers Section",
+        placeholder: "Subtitle describing the bestseller products",
+      },
+      {
         path: "features",
         label: "Feature Highlights",
         type: "array",
@@ -95,6 +109,18 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "href", label: "Button Link", type: "text", placeholder: "e.g. /collections/wedding" },
         ],
       },
+      {
+        path: "heritage",
+        label: "Heritage Section",
+        type: "array",
+        section: "Heritage Section",
+        description: "Heritage design section on the homepage.",
+        arrayFields: [
+          { name: "heading", label: "Heading", type: "text", placeholder: "e.g. Intricate & Intimate" },
+          { name: "description", label: "Description", type: "textarea", placeholder: "Detailed description of heritage work" },
+          { name: "image", label: "Heritage Image", type: "image" },
+        ],
+      },
     ],
   },
   {
@@ -106,6 +132,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.goldHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Gold Jewellery Collection" },
       { path: "productsPage.goldHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
+      { path: "productsPage.goldHero.image", label: "Hero Banner Image", type: "image", section: "Hero" },
     ],
   },
   {
@@ -117,6 +144,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.silverHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Silver Jewellery Collection" },
       { path: "productsPage.silverHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
+      { path: "productsPage.silverHero.image", label: "Hero Banner Image", type: "image", section: "Hero" },
     ],
   },
   {
@@ -128,6 +156,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.diamondHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Diamond Jewellery Collection" },
       { path: "productsPage.diamondHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
+      { path: "productsPage.diamondHero.image", label: "Hero Banner Image", type: "image", section: "Hero" },
     ],
   },
   {
@@ -139,6 +168,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.platinumHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Platinum Jewellery Collection" },
       { path: "productsPage.platinumHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
+      { path: "productsPage.platinumHero.image", label: "Hero Banner Image", type: "image", section: "Hero" },
     ],
   },
   {
@@ -149,6 +179,7 @@ export const PAGE_DEFS: PageDef[] = [
     source: "global",
     fields: [
       { path: "aboutPage.goldenOccasions.heading", label: "Heading", type: "text", section: "Hero Section", placeholder: "e.g. Golden Occasions & Gleaming Beginnings" },
+      { path: "aboutPage.goldenOccasions.image", label: "Hero Image", type: "image", section: "Hero Section" },
       { path: "aboutPage.goldenOccasions.alt", label: "Image Description", type: "text", section: "Hero Section", placeholder: "Describe the hero image for accessibility" },
       {
         path: "aboutPage.goldenOccasions.paragraphs",
@@ -161,7 +192,7 @@ export const PAGE_DEFS: PageDef[] = [
         ],
       },
       { path: "aboutPage.tasteMeetsTradition.heading", label: "Heading", type: "text", section: "Taste Meets Tradition", placeholder: "e.g. Taste Meets Tradition" },
-      { path: "aboutPage.tasteMeetsTradition.text", label: "Content", type: "textarea", section: "Taste MeetsTradition", placeholder: "Describe how taste meets tradition…" },
+      { path: "aboutPage.tasteMeetsTradition.text", label: "Content", type: "textarea", section: "Taste Meets Tradition", placeholder: "Describe how taste meets tradition…" },
       { path: "aboutPage.origins.heading", label: "Heading", type: "text", section: "Our Origins", placeholder: "e.g. The Origins" },
       { path: "aboutPage.origins.intro", label: "Introduction", type: "textarea", section: "Our Origins", placeholder: "Tell the story of how Kerala Jewellers began…" },
       {
@@ -174,10 +205,12 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "year", label: "Year", type: "text", placeholder: "e.g. 1995" },
           { name: "title", label: "Title", type: "text", placeholder: "e.g. First Store Opened" },
           { name: "text", label: "Description", type: "textarea", placeholder: "What happened in this year?" },
+          { name: "image", label: "Milestone Image", type: "image" },
         ],
       },
       { path: "aboutPage.ventures.heading", label: "Heading", type: "text", section: "Our Ventures", placeholder: "e.g. Our Ventures" },
       { path: "aboutPage.ventures.subheading", label: "Subheading", type: "text", section: "Our Ventures", placeholder: "e.g. Our Dedicated Wedding Hall" },
+      { path: "aboutPage.ventures.image", label: "Ventures Image", type: "image", section: "Our Ventures" },
       { path: "aboutPage.ventures.alt", label: "Image Description", type: "text", section: "Our Ventures", placeholder: "Describe the ventures image for accessibility" },
       {
         path: "aboutPage.ventures.bullets",
@@ -201,14 +234,34 @@ export const PAGE_DEFS: PageDef[] = [
     description: "Edit the hero, contact card and branches section of the Contact page.",
     icon: "contact",
     source: "global",
-    note: "Phone numbers, email, address and working hours are managed under Site Settings → Footer & Contact Details.",
     fields: [
       { path: "contactPage.heroTitle", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Get In Touch" },
       { path: "contactPage.heroSubtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short message shown below the title" },
       { path: "contactPage.cardTitle", label: "Card Title", type: "text", section: "Contact Card", placeholder: "e.g. Send Us a Message" },
       { path: "contactPage.cardDescription", label: "Card Description", type: "textarea", section: "Contact Card", placeholder: "Description shown inside the contact card" },
       { path: "contactPage.cardQuote", label: "Quote", type: "text", section: "Contact Card", placeholder: "e.g. We'd love to hear from you" },
-      { path: "contactPage.branchesTitle", label: "Section Title", type: "text", section: "Branches", placeholder: "e.g. Our Branches" },
+      { path: "contactPage.branchesTitle", label: "Section Title", type: "text", section: "Branches Title", placeholder: "e.g. Our Branches" },
+      {
+        path: "branches",
+        label: "Branch Outlets",
+        type: "array",
+        section: "Branch Details",
+        description: "Outlets shown with maps and details on the contact page.",
+        arrayFields: [
+          { name: "name", label: "Branch Name", type: "text", placeholder: "e.g. Pondy Bazaar" },
+          { name: "address", label: "Branch Address", type: "textarea" },
+          { name: "phone", label: "Display Phone", type: "text", placeholder: "e.g. 98400 88324" },
+          { name: "phoneFull", label: "Dialable Phone Number (Digits only)", type: "text", placeholder: "e.g. 9840088324" },
+          { name: "email", label: "Branch Email", type: "text" },
+          { name: "hours", label: "Store Timings", type: "text", placeholder: "e.g. Mon–Sat: 10 AM – 8 PM" },
+          { name: "mapQ", label: "Google Maps Query Name", type: "text", placeholder: "e.g. Kerala+Jewellers+T.Nagar" },
+          { name: "mapEmbedUrl", label: "Custom Map Embed URL (Optional)", type: "text" },
+        ],
+      },
+      { path: "phone", label: "Global Contact Phone", type: "text", section: "Global Site Contacts" },
+      { path: "whatsapp", label: "Global WhatsApp Number", type: "text", section: "Global Site Contacts" },
+      { path: "email", label: "Global Contact Email", type: "text", section: "Global Site Contacts" },
+      { path: "storeTiming", label: "Global Store Timing", type: "text", section: "Global Site Contacts" },
     ],
   },
   {
@@ -221,10 +274,55 @@ export const PAGE_DEFS: PageDef[] = [
       { path: "blogPage.promoHeading", label: "Promo Heading", type: "text", section: "Promotional Banner", placeholder: "e.g. Latest from Our Blog" },
       { path: "blogPage.promoDescription", label: "Promo Description", type: "textarea", section: "Promotional Banner", placeholder: "Short description for the promotional banner" },
       { path: "blogPage.promoCtaText", label: "Button Text", type: "text", section: "Promotional Banner", placeholder: "e.g. Read More" },
-      { path: "blogPage.promoImage", label: "Image (Media ID)", type: "text", section: "Promotional Banner", placeholder: "Numeric ID from the Media collection", description: "Find the ID in Content → Media. This image appears on the promotional banner." },
+      { path: "blogPage.promoImage", label: "Image", type: "image", section: "Promotional Banner" },
       { path: "blogPage.headerTitle", label: "Page Heading", type: "text", section: "Page Header", placeholder: "e.g. Our Blog" },
       { path: "blogPage.headerSubtitle", label: "Page Subheading", type: "textarea", section: "Page Header", placeholder: "A short tagline below the heading" },
       { path: "blogPage.emptyText", label: "Empty State Message", type: "textarea", section: "Empty State", placeholder: "Message shown when there are no blog posts", description: "This message appears when the blog has no published posts." },
+    ],
+  },
+  {
+    slug: "thanga-mazhai",
+    title: "Thanga Mazhai Scheme",
+    description: "Edit the banner image and details of the Thanga Mazhai savings scheme page.",
+    icon: "scheme",
+    source: "global",
+    fields: [
+      { path: "thangaMazhai.banner", label: "Banner Image", type: "image", section: "Page Banner" },
+      { path: "thangaMazhai.title", label: "Page Title", type: "text", section: "Scheme Heading", placeholder: "e.g. Thanga Mazhai Scheme" },
+      { path: "thangaMazhai.heading", label: "Scheme Header Text", type: "text", section: "Scheme Heading", placeholder: "Large bold uppercase heading text" },
+      { path: "thangaMazhai.description", label: "Scheme Description", type: "textarea", section: "Scheme Heading" },
+      {
+        path: "thangaMazhai.benefits",
+        label: "Scheme Benefits (Points)",
+        type: "array",
+        section: "Benefits",
+        arrayFields: [{ name: "text", label: "Benefit Point", type: "textarea" }],
+      },
+      {
+        path: "thangaMazhai.whyChoose",
+        label: "Why Choose Points",
+        type: "array",
+        section: "Why Choose",
+        arrayFields: [{ name: "text", label: "Why Choose Reason", type: "textarea" }],
+      },
+    ],
+  },
+  {
+    slug: "swarnavarsha",
+    title: "Swarnavarsha Scheme",
+    description: "Edit the title and clauses list of the Swarnavarsha terms scheme page.",
+    icon: "scheme",
+    source: "global",
+    fields: [
+      { path: "swarnavarsha.title", label: "Page Title", type: "text", section: "General Settings" },
+      { path: "swarnavarsha.tcHeading", label: "Terms Heading", type: "text", section: "General Settings" },
+      {
+        path: "swarnavarsha.bullets",
+        label: "Terms & Conditions List",
+        type: "array",
+        section: "Terms List",
+        arrayFields: [{ name: "text", label: "Terms Point", type: "textarea" }],
+      },
     ],
   },
 ];

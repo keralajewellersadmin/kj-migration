@@ -1562,12 +1562,13 @@ const SiteSettings: GlobalConfig = {
               type: "group",
               label: "Products Page",
               fields: [
-                {
+                 {
                   name: "goldHero",
                   type: "group",
                   fields: [
                     { name: "title", type: "text", defaultValue: "Elegant & Timeless Gold Jewellery" },
                     { name: "subtitle", type: "textarea", defaultValue: "Discover our exclusive collection of gold jewellery that stands the test of time. Perfect for every occasion." },
+                    { name: "image", type: "upload", relationTo: "media" },
                   ],
                 },
                 {
@@ -1576,6 +1577,7 @@ const SiteSettings: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", defaultValue: "Classic Elegance in Silver" },
                     { name: "subtitle", type: "textarea", defaultValue: "Explore our collection of timeless silver jewellery. Perfectly crafted for every moment." },
+                    { name: "image", type: "upload", relationTo: "media" },
                   ],
                 },
                 {
@@ -1584,6 +1586,7 @@ const SiteSettings: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", defaultValue: "Timeless Brilliance in Diamonds" },
                     { name: "subtitle", type: "textarea", defaultValue: "Discover our exquisite collection of diamond jewellery, crafted to perfection for every occasion." },
+                    { name: "image", type: "upload", relationTo: "media" },
                   ],
                 },
                 {
@@ -1592,8 +1595,32 @@ const SiteSettings: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", defaultValue: "Exquisite Platinum Jewellery" },
                     { name: "subtitle", type: "textarea", defaultValue: "Explore our refined collection of platinum jewellery, crafted for those who appreciate understated luxury." },
+                    { name: "image", type: "upload", relationTo: "media" },
                   ],
                 },
+              ],
+            },
+            {
+              name: "thangaMazhai",
+              type: "group",
+              label: "Thanga Mazhai Scheme",
+              fields: [
+                { name: "banner", type: "upload", relationTo: "media" },
+                { name: "title", type: "text", defaultValue: "Thanga Mazhai Scheme" },
+                { name: "heading", type: "text", defaultValue: "THANGA MAZHAI IS A ONE TIME INVESTMENT SCHEME WHERE YOU CAN DEPOSIT" },
+                { name: "description", type: "textarea", defaultValue: "Old gold ornaments of 916 purity or equivalent cash value (via card, UPI, etc.)" },
+                { name: "benefits", type: "array", fields: [{ name: "text", type: "textarea" }] },
+                { name: "whyChoose", type: "array", fields: [{ name: "text", type: "textarea" }] },
+              ],
+            },
+            {
+              name: "swarnavarsha",
+              type: "group",
+              label: "Swarnavarsha Scheme",
+              fields: [
+                { name: "title", type: "text", defaultValue: "Swarnavarsha Scheme" },
+                { name: "tcHeading", type: "text", defaultValue: "TERMS & CONDITIONS:" },
+                { name: "bullets", type: "array", fields: [{ name: "text", type: "textarea" }] },
               ],
             },
           ],

@@ -144,7 +144,7 @@ export async function POST(request: Request) {
 
   // Send reset email
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestOrigin;
-  const resetUrl = `${siteUrl}${ADMIN_PATH}/reset-password?token=${rawToken}`;
+  const resetUrl = `${siteUrl}/reset-password?token=${rawToken}`;
   try {
     await sendPasswordResetEmail(user.email as string, resetUrl);
   } catch {
