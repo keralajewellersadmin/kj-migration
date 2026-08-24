@@ -1012,6 +1012,24 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   },
 };
 
+// The `bestsellerProducts` site setting is stored as a comma-separated list of
+// product slugs in the `site_settings.bestseller_products` column (not a join table).
+// Normalize whatever form it arrives in (CSV string, array of slugs, or array of
+// resolved product docs) into an ordered array of product slugs.
+function parseBestsellerSlugs(input: unknown): string[] {
+  if (!input) return [];
+  if (Array.isArray(input)) {
+    return input
+      .map((p) => (typeof p === "string" ? p : (p as Record<string, unknown>)?.slug || (p as Record<string, unknown>)?.id || ""))
+      .map((s) => String(s).trim())
+      .filter(Boolean);
+  }
+  return String(input)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPayload>>): Promise<SiteSettingsData> {
   const settings = await payload.findGlobal({
     slug: "site-settings",
@@ -1097,14 +1115,32 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     email: (settings.email as string) || DEFAULT_SETTINGS.email,
     storeTiming: (settings.storeTiming as string) || DEFAULT_SETTINGS.storeTiming,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    bestsellerProducts: (Array.isArray(settings.bestsellerProducts) ? settings.bestsellerProducts : []).map((p: any) => ({
-      id: p.id || "",
-      name: p.title || p.name || "",
-      slug: p.slug || "",
-      image: resolveMediaUrl(p.image) || "",
-      metal: p.metal || "",
-      category: p.category?.name || "",
-    })),
+    bestsellerProducts: await (async () => {
+      const bestSlugs = parseBestsellerSlugs(settings.bestsellerProducts);
+      if (!bestSlugs.length) return [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res = await payload.find({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- collection type exists after types regen
+        collection: "products" as any,
+        where: { slug: { in: bestSlugs } },
+        limit: 100,
+        depth: 0,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const bySlug = new Map<string, any>((res.docs as any[]).map((p) => [p.slug, p]));
+      return bestSlugs
+        .map((slug: string) => bySlug.get(slug))
+        .filter(Boolean)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((p: any) => ({
+          id: String(p.id || ""),
+          name: p.title || p.name || "",
+          slug: p.slug || "",
+          image: resolveMediaUrl(p.image) || "",
+          metal: p.metal || "",
+          category: p.category?.name || "",
+        }));
+    })(),
     headingFont: ((settings as unknown as Record<string, unknown>)["headingFont"] as string) || DEFAULT_SETTINGS.headingFont,
     bodyFont: ((settings as unknown as Record<string, unknown>)["bodyFont"] as string) || DEFAULT_SETTINGS.bodyFont,
     uiFont: ((settings as unknown as Record<string, unknown>)["uiFont"] as string) || DEFAULT_SETTINGS.uiFont,
@@ -1274,9 +1310,10 @@ async function loadArrayDataViaSQL(
 ): Promise<SiteSettingsData> {
   try {
     const pool = getPool();
-    const ss = await pool.query(`SELECT id, slider_paused FROM site_settings LIMIT 1`);
+    const ss = await pool.query(`SELECT id, slider_paused, bestseller_products FROM site_settings LIMIT 1`);
     const ssId = ss.rows[0]?.id;
     const ssSliderPaused = Boolean(ss.rows[0]?.slider_paused);
+    const ssBestsellerSlugs = parseBestsellerSlugs(ss.rows[0]?.bestseller_products);
     if (!ssId) return data;
 
     const heroRes = await pool.query(
@@ -1305,14 +1342,15 @@ async function loadArrayDataViaSQL(
     const branchesRes = await pool.query(
       `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
        FROM site_settings_branches WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
-    const bestsellersRes = await pool.query(
-      `SELECT p.id, p.title, p.slug, p.metal, c.name AS category_name,
-              m.url AS image_url, m.cloudinary_public_id AS cloudinary_public_id
-       FROM site_settings_bestseller_products bp
-       JOIN products p ON bp.product_id = p.id
-       LEFT JOIN categories c ON p.category_id = c.id
-       LEFT JOIN media m ON p.image_id = m.id
-       WHERE bp._parent_id = $1 ORDER BY bp._order`, [ssId]);
+    const bestsellersRes = ssBestsellerSlugs.length
+      ? await pool.query(
+          `SELECT p.id, p.title, p.slug, p.metal, c.name AS category_name,
+                  m.url AS image_url, m.cloudinary_public_id AS cloudinary_public_id
+           FROM products p
+           LEFT JOIN categories c ON p.category_id = c.id
+           LEFT JOIN media m ON p.image_id = m.id
+           WHERE p.slug = ANY($1::text[])`, [ssBestsellerSlugs])
+      : { rows: [] as any[] };
 
     return {
       ...data,
@@ -1376,16 +1414,24 @@ async function loadArrayDataViaSQL(
         mapEmbedUrl: r.map_embed_url || "",
       })) : data.branches,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      bestsellerProducts: bestsellersRes.rows.map((r: any) => ({
-        id: String(r.id || ""),
-        name: r.title || "",
-        slug: r.slug || "",
-        image: r.cloudinary_public_id
-          ? cloudinaryUrl(r.cloudinary_public_id)
-          : normalizeMigratedMediaUrl(r.image_url) || "",
-        metal: r.metal || "",
-        category: r.category_name || "",
-      })),
+      bestsellerProducts: (() => {
+        const bySlug = new Map<string, any>(
+          bestsellersRes.rows.map((r: any) => [r.slug, r]),
+        );
+        return ssBestsellerSlugs
+          .map((slug: string) => bySlug.get(slug))
+          .filter(Boolean)
+          .map((r: any) => ({
+            id: String(r.id || ""),
+            name: r.title || "",
+            slug: r.slug || "",
+            image: r.cloudinary_public_id
+              ? cloudinaryUrl(r.cloudinary_public_id)
+              : normalizeMigratedMediaUrl(r.image_url) || "",
+            metal: r.metal || "",
+            category: r.category_name || "",
+          }));
+      })(),
     };
   } catch {
     return data;
