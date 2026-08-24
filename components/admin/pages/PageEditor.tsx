@@ -83,6 +83,8 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
               initial[f.path] = JSON.stringify(raw ?? null, null, 2);
             } else if (f.type === "array") {
               initial[f.path] = JSON.stringify(raw ?? [], null, 2);
+            } else if (f.type === "checkbox") {
+              initial[f.path] = raw ? "true" : "false";
             } else {
               initial[f.path] = String(raw ?? "");
             }
@@ -144,6 +146,8 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
             setError(`Invalid JSON in "${f.label}". Please fix and try again.`);
             return;
           }
+        } else if (f.type === "checkbox") {
+          setPath(patch, f.path, raw === "true");
         } else {
           setPath(patch, f.path, raw);
         }
@@ -235,6 +239,15 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
                       value={values[f.path] ?? ""}
                       onChange={(val) => handleChange(f.path, val)}
                     />
+                  ) : f.type === "checkbox" ? (
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: "#333" }}>
+                      <input
+                        type="checkbox"
+                        checked={values[f.path] === "true"}
+                        onChange={(e) => handleChange(f.path, e.target.checked ? "true" : "false")}
+                      />
+                      {values[f.path] === "true" ? "Enabled" : "Disabled"}
+                    </label>
                   ) : f.type === "textarea" ? (
                     <textarea
                       id={f.path}

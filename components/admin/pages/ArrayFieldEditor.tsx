@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ImagePicker from "./ImagePicker";
 
-export type ArrayField = { name: string; label: string; type: "text" | "textarea" | "image"; placeholder?: string };
+export type ArrayField = { name: string; label: string; type: "text" | "textarea" | "image" | "checkbox"; placeholder?: string };
 
 interface Props {
   path: string;
@@ -14,22 +14,22 @@ interface Props {
 }
 
 export default function ArrayFieldEditor({ path, label, arrayFields, value, onChange }: Props) {
-  const [items, setItems] = useState<Record<string, string>[]>(() => {
+  const [items, setItems] = useState<Record<string, string | boolean>[]>(() => {
     try {
       const parsed: unknown = JSON.parse(value || "[]");
-      return Array.isArray(parsed) ? (parsed as Record<string, string>[]) : [];
+      return Array.isArray(parsed) ? (parsed as Record<string, string | boolean>[]) : [];
     } catch {
       return [];
     }
   });
 
-  const emit = (newItems: Record<string, string>[]) => {
+  const emit = (newItems: Record<string, string | boolean>[]) => {
     setItems(newItems);
     onChange(path, JSON.stringify(newItems, null, 2));
   };
 
   const addItem = () => {
-    const blank: Record<string, string> = {};
+    const blank: Record<string, string | boolean> = {};
     arrayFields.forEach((f) => (blank[f.name] = ""));
     emit([...items, blank]);
   };
@@ -38,7 +38,7 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
     emit(items.filter((_r, i) => i !== idx));
   };
 
-  const updateField = (idx: number, field: string, val: string) => {
+  const updateField = (idx: number, field: string, val: string | boolean) => {
     const copy = items.map((item, i) =>
       i === idx ? { ...item, [field]: val } : item,
     );
@@ -77,21 +77,30 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
                 <label style={fieldLabelStyle}>{f.label}</label>
                 {f.type === "image" ? (
                   <ImagePicker
-                    value={item[f.name] ?? ""}
+                    value={String(item[f.name] ?? "")}
                     onChange={(val) => updateField(idx, f.name, val)}
                   />
                 ) : f.type === "textarea" ? (
                   <textarea
-                    value={item[f.name] ?? ""}
+                    value={String(item[f.name] ?? "")}
                     onChange={(e) => updateField(idx, f.name, e.target.value)}
                     placeholder={f.placeholder}
                     rows={2}
                     style={fieldInputStyle}
                   />
+                ) : f.type === "checkbox" ? (
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12.5, color: "#333" }}>
+                    <input
+                      type="checkbox"
+                      checked={item[f.name] === true || String(item[f.name]) === "true"}
+                      onChange={(e) => updateField(idx, f.name, e.target.checked)}
+                    />
+                    {item[f.name] === true || String(item[f.name]) === "true" ? "Yes" : "No"}
+                  </label>
                 ) : (
                   <input
                     type="text"
-                    value={item[f.name] ?? ""}
+                    value={String(item[f.name] ?? "")}
                     onChange={(e) => updateField(idx, f.name, e.target.value)}
                     placeholder={f.placeholder}
                     style={fieldInputStyle}

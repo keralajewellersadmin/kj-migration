@@ -751,7 +751,9 @@ export interface SiteSettingsData {
     ctaText: string;
     ctaHref: string;
     image: string;
+    isPinned?: boolean;
   }>;
+  heroSliderPaused?: boolean;
   reviews: Array<{ text: string; author: string; location: string }>;
   banners: Array<{
     blockType: string;
@@ -895,6 +897,7 @@ const DEFAULT_SETTINGS: SiteSettingsData = {
   ratePlatinum: "3,890",
   rateUpdated: "27-06-2026",
   heroSlides: [],
+  heroSliderPaused: false,
   reviews: [],
   banners: [],
   features: [],
@@ -996,6 +999,7 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     ctaText: s.ctaText || "",
     ctaHref: s.ctaHref || "",
     image: resolveMediaUrl(s.image),
+    isPinned: Boolean(s.isPinned),
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapCircleBanner = (b: any) => ({
@@ -1043,8 +1047,10 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     variant: c.variant || "",
     image: resolveMediaUrl(c.image),
   });
+  const heroSliderPaused = Boolean((settings as unknown as Record<string, unknown>)["sliderPaused"]);
   return {
     heroSlides: (settings.heroSlides || []).map(mapSlide),
+    heroSliderPaused,
     features: (settings.features || []).map(mapCircleBanner),
     banners: (settings.banners || []).map(mapImageBanner),
     heritage: (settings.heritage || []).map(mapHeritage),
@@ -1207,12 +1213,13 @@ async function loadArrayDataViaSQL(
 ): Promise<SiteSettingsData> {
   try {
     const pool = getPool();
-    const ss = await pool.query(`SELECT id FROM site_settings LIMIT 1`);
+    const ss = await pool.query(`SELECT id, slider_paused FROM site_settings LIMIT 1`);
     const ssId = ss.rows[0]?.id;
+    const ssSliderPaused = Boolean(ss.rows[0]?.slider_paused);
     if (!ssId) return data;
 
     const heroRes = await pool.query(
-      `SELECT h.heading, h.description, h.cta_text, h.cta_href, m.url as image_url
+      `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, m.url as image_url
        FROM site_settings_hero_slides h LEFT JOIN media m ON h.image_id = m.id
        WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
     const circleBannerRes = await pool.query(
@@ -1255,7 +1262,9 @@ async function loadArrayDataViaSQL(
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
         image: normalizeMigratedMediaUrl(r.image_url),
+        isPinned: Boolean(r.is_pinned),
       })),
+      heroSliderPaused: ssSliderPaused,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       features: circleBannerRes.rows.map((r: any) => ({
         blockType: "circleBanner" as const,

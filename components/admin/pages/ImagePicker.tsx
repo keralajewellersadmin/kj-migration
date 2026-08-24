@@ -23,6 +23,11 @@ export default function ImagePicker({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [tab, setTab] = useState<"browse" | "upload">("browse");
+  const [file, setFile] = useState<File | null>(null);
+  const [alt, setAlt] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   const fetchPreview = useCallback(async (mediaId: string) => {
     if (!mediaId) { setPreviewUrl(""); return; }
@@ -56,8 +61,48 @@ export default function ImagePicker({ value, onChange }: Props) {
   };
 
   const handleOpen = () => {
+    setTab("browse");
+    setFile(null);
+    setAlt("");
+    setUploadError("");
     setOpen(true);
     fetchMedia();
+  };
+
+  const uploadImage = async () => {
+    if (!file) {
+      setUploadError("Choose an image file first.");
+      return;
+    }
+    setUploading(true);
+    setUploadError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      if (alt) fd.append("alt", alt);
+      const res = await fetch(`${ADMIN_PATH}/api/media`, {
+        method: "POST",
+        body: fd,
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const msg =
+          (errData?.errors && errData.errors[0]?.message) ||
+          `Upload failed (${res.status})`;
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      const doc = data.doc || data;
+      if (doc && doc.id) {
+        onChange(String(doc.id));
+        setOpen(false);
+      } else {
+        throw new Error("Upload succeeded but no media was returned.");
+      }
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : "Upload failed.");
+    }
+    setUploading(false);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -117,41 +162,86 @@ export default function ImagePicker({ value, onChange }: Props) {
               <span style={{ fontSize: 15, fontWeight: 600 }}>Select Image</span>
               <button type="button" onClick={() => setOpen(false)} style={closeBtnStyle}>X</button>
             </div>
-            <form onSubmit={handleSearch} style={{ display: "flex", gap: 6, padding: "0 16px 12px" }}>
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name or filename..."
-                style={{ ...inputStyle, flex: 1, fontSize: 14, fontFamily: "inherit" }}
-              />
-              <button type="submit" style={browseBtnStyle}>Search</button>
-            </form>
-            <div style={gridStyle}>
-              {loading && <div style={{ padding: 20, color: "#999", fontSize: 13 }}>Loading...</div>}
-              {!loading && results.length === 0 && (
-                <div style={{ padding: 20, color: "#999", fontSize: 13 }}>No media found. Upload images in Content &gt; Media first.</div>
-              )}
-              {results.map((doc) => (
-                <button
-                  key={doc.id}
-                  type="button"
-                  onClick={() => selectImage(doc)}
-                  style={thumbBtnStyle}
-                  title={doc.alt || doc.filename || `Media #${doc.id}`}
-                >
-                  <Image
-                    src={doc.url}
-                    alt={doc.alt || ""}
-                    width={100}
-                    height={100}
-                    style={{ objectFit: "cover", borderRadius: 4, width: "100%", height: "100%" }}
-                    unoptimized
-                  />
-                  <span style={thumbIdStyle}>#{doc.id}</span>
-                </button>
-              ))}
+            <div style={tabBarStyle}>
+              <button
+                type="button"
+                onClick={() => setTab("browse")}
+                style={tab === "browse" ? tabActiveStyle : tabBtnStyle}
+              >
+                Browse Media
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("upload")}
+                style={tab === "upload" ? tabActiveStyle : tabBtnStyle}
+              >
+                Upload New
+              </button>
             </div>
+            {tab === "browse" ? (
+              <>
+                <form onSubmit={handleSearch} style={{ display: "flex", gap: 6, padding: "12px 16px" }}>
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search by name or filename..."
+                    style={{ ...inputStyle, flex: 1, fontSize: 14, fontFamily: "inherit" }}
+                  />
+                  <button type="submit" style={browseBtnStyle}>Search</button>
+                </form>
+                <div style={gridStyle}>
+                  {loading && <div style={{ padding: 20, color: "#999", fontSize: 13 }}>Loading...</div>}
+                  {!loading && results.length === 0 && (
+                    <div style={{ padding: 20, color: "#999", fontSize: 13 }}>No media found. Switch to the &ldquo;Upload New&rdquo; tab to add an image.</div>
+                  )}
+                  {results.map((doc) => (
+                    <button
+                      key={doc.id}
+                      type="button"
+                      onClick={() => selectImage(doc)}
+                      style={thumbBtnStyle}
+                      title={doc.alt || doc.filename || `Media #${doc.id}`}
+                    >
+                      <Image
+                        src={doc.url}
+                        alt={doc.alt || ""}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "cover", borderRadius: 4, width: "100%", height: "100%" }}
+                        unoptimized
+                      />
+                      <span style={thumbIdStyle}>#{doc.id}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div style={uploadFormStyle}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  style={{ fontSize: 13 }}
+                />
+                <input
+                  type="text"
+                  value={alt}
+                  onChange={(e) => setAlt(e.target.value)}
+                  placeholder="Alt text (optional)"
+                  style={inputStyle}
+                />
+                {uploadError && <div style={uploadErrStyle}>{uploadError}</div>}
+                <button
+                  type="button"
+                  onClick={uploadImage}
+                  disabled={uploading}
+                  style={uploadBtnStyle}
+                >
+                  {uploading ? "Uploading..." : "Upload Image"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -259,6 +349,53 @@ const gridStyle: React.CSSProperties = {
   padding: 16,
   overflowY: "auto",
   flex: 1,
+};
+
+const tabBarStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 4,
+  padding: "10px 16px 0",
+  borderBottom: "1px solid #eee",
+};
+
+const tabBtnStyle: React.CSSProperties = {
+  padding: "8px 14px",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "#666",
+  background: "none",
+  border: "none",
+  borderBottom: "2px solid transparent",
+  cursor: "pointer",
+};
+
+const tabActiveStyle: React.CSSProperties = {
+  ...tabBtnStyle,
+  color: "#9f1b1f",
+  borderBottom: "2px solid #9f1b1f",
+};
+
+const uploadFormStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 12,
+  padding: 20,
+};
+
+const uploadErrStyle: React.CSSProperties = {
+  color: "#b00000",
+  fontSize: 12.5,
+};
+
+const uploadBtnStyle: React.CSSProperties = {
+  padding: "10px 16px",
+  fontSize: 13,
+  fontWeight: 600,
+  color: "#fff",
+  background: "#9f1b1f",
+  border: "none",
+  borderRadius: 6,
+  cursor: "pointer",
 };
 
 const thumbBtnStyle: React.CSSProperties = {

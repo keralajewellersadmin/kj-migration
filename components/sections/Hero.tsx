@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import Image from "next/image";
 import styles from "./Hero.module.css";
 import { IMG } from "@/lib/image-urls";
@@ -11,6 +11,7 @@ type HeroSlide = {
   ctaText: string;
   ctaHref: string;
   image?: string;
+  isPinned?: boolean;
 };
 
 const defaultSlides: HeroSlide[] = [
@@ -49,10 +50,13 @@ const defaultSlides: HeroSlide[] = [
 
 export default function Hero({
   slides: cmsSlides = [],
+  paused: initialPaused = false,
 }: {
   slides?: HeroSlide[];
+  paused?: boolean;
 }) {
   const slides = cmsSlides.length ? cmsSlides : defaultSlides;
+  const [paused, setPaused] = useState(initialPaused);
   const currentRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,12 +90,34 @@ export default function Hero({
     }, 5000);
   }, [goTo]);
 
+  // When paused from the CMS, jump to the pinned slide (if configured).
   useEffect(() => {
+    if (initialPaused) {
+      const pinnedIdx = slides.findIndex((s) => s.isPinned);
+      if (pinnedIdx >= 0) goTo(pinnedIdx);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPaused]);
+
+  useEffect(() => {
+    if (paused || slides.length <= 1) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
     startTimer();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [startTimer]);
+  }, [paused, slides.length, startTimer]);
+
+  const togglePause = () => {
+    const next = !paused;
+    setPaused(next);
+    if (next) {
+      const pinnedIdx = slides.findIndex((s) => s.isPinned);
+      if (pinnedIdx >= 0) goTo(pinnedIdx);
+    }
+  };
 
   return (
     <section className={styles.heroSection}>
@@ -140,6 +166,17 @@ export default function Hero({
                 </div>
               ))}
             </div>
+            {slides.length > 1 && (
+              <button
+                type="button"
+                className={styles.pauseToggle}
+                onClick={togglePause}
+                aria-label={paused ? "Play slideshow" : "Pause slideshow"}
+                title={paused ? "Play slideshow" : "Pause slideshow"}
+              >
+                {paused ? "▶" : "❚❚"}
+              </button>
+            )}
           </div>
         </div>
       </div>

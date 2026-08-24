@@ -426,7 +426,7 @@ const AdminUsers: CollectionConfig = {
 
           // Send the welcome email
           const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (req.headers && req.headers.get ? req.headers.get("origin") : "") || "http://localhost:3000";
-          const resetUrl = `${siteUrl}${ADMIN_PATH}/setup-account?token=${rawToken}`;
+          const resetUrl = `${siteUrl}/setup-account?token=${rawToken}`;
           
           await sendWelcomeEmail(doc.email, doc.name || doc.username, resetUrl);
         } catch (err) {
@@ -1288,6 +1288,15 @@ const SiteSettings: GlobalConfig = {
           label: "Homepage",
           fields: [
             {
+              name: "sliderPaused",
+              type: "checkbox",
+              label: "Pause Hero Slider",
+              admin: {
+                description:
+                  "When enabled, the homepage hero shows a single pinned slide instead of rotating through all slides.",
+              },
+            },
+            {
               name: "heroSlides",
               type: "array",
               label: "Hero Slides",
@@ -1297,6 +1306,15 @@ const SiteSettings: GlobalConfig = {
                 { name: "ctaText", type: "text", defaultValue: "EXPLORE" },
                 { name: "ctaHref", type: "text", defaultValue: "/products" },
                 { name: "image", type: "upload", relationTo: "media" },
+                {
+                  name: "isPinned",
+                  type: "checkbox",
+                  label: "Pin this slide",
+                  admin: {
+                    description:
+                      "When the slider is paused, this slide is shown as the static hero image.",
+                  },
+                },
               ],
             },
             {

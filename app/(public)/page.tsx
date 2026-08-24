@@ -31,7 +31,7 @@ export default async function Home() {
 
   return (
     <>
-      <Hero slides={settings.heroSlides} />
+      <Hero slides={settings.heroSlides} paused={settings.heroSliderPaused} />
       <Features features={settings.features} />
       <Categories categories={settings.categories} />
       <Bestsellers

@@ -1,6 +1,6 @@
 import type { ArrayField } from "./ArrayFieldEditor";
 
-export type FieldType = "text" | "textarea" | "json" | "array" | "image";
+export type FieldType = "text" | "textarea" | "json" | "array" | "image" | "checkbox";
 
 export type FieldDef = {
   path: string;
@@ -32,6 +32,13 @@ export const PAGE_DEFS: PageDef[] = [
     source: "global",
     fields: [
       {
+        path: "sliderPaused",
+        label: "Pause Hero Slider",
+        type: "checkbox",
+        section: "Hero Slides",
+        description: "When enabled, the homepage hero shows a single pinned slide instead of rotating. Mark one slide below as 'Pin this slide'.",
+      },
+      {
         path: "heroSlides",
         label: "Hero Slides",
         type: "array",
@@ -43,6 +50,7 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. Explore Now" },
           { name: "ctaHref", label: "Button Link", type: "text", placeholder: "e.g. /collections/gold" },
           { name: "image", label: "Background Image", type: "image" },
+          { name: "isPinned", label: "Pin this slide (shown when slider is paused)", type: "checkbox" },
         ],
       },
       {
