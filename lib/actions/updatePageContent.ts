@@ -13,6 +13,37 @@ export async function getSiteSettingsData() {
 export async function updateSiteSettings(patch: Record<string, unknown>) {
   try {
     const payload = await getPayload({ config });
+
+    // Map bestsellerProducts from comma-separated slugs to product IDs if it is a string
+    if (typeof patch.bestsellerProducts === "string") {
+      const slugs = patch.bestsellerProducts
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (slugs.length > 0) {
+        const productsResult = await payload.find({
+          collection: "products" as any,
+          where: {
+            slug: {
+              in: slugs,
+            },
+          },
+          limit: 100,
+          depth: 0,
+        });
+
+        const slugToIdMap = new Map(productsResult.docs.map((p) => [p.slug, p.id]));
+        const productIds = slugs
+          .map((slug) => slugToIdMap.get(slug))
+          .filter((id): id is string | number => id !== undefined);
+
+        patch.bestsellerProducts = productIds;
+      } else {
+        patch.bestsellerProducts = [];
+      }
+    }
+
     await payload.updateGlobal({
       slug: "site-settings",
       data: patch,

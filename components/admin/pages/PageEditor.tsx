@@ -52,7 +52,9 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
           const initial: Record<string, string> = {};
           for (const f of def.fields) {
             const raw = getPath(data, f.path);
-            if (f.type === "json") {
+            if (f.path === "bestsellerProducts" && Array.isArray(raw)) {
+              initial[f.path] = raw.map((p: any) => p?.slug || p?.id || p).join(",");
+            } else if (f.type === "json") {
               initial[f.path] = JSON.stringify(raw ?? null, null, 2);
             } else if (f.type === "array") {
               initial[f.path] = JSON.stringify(raw ?? [], null, 2);
