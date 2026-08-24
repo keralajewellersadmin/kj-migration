@@ -5,17 +5,43 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { isPostgres, loadArrayDataForEditor } from "@/lib/data/cms";
 
+// Recursively normalize image fields from objects to string IDs for the editor
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeImageFields(obj: any): any {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(normalizeImageFields);
+  const result: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val != null && typeof val === "object" && !Array.isArray(val) && "id" in val && (key === "image" || key === "ogImage" || key === "banner" || key === "promoImage")) {
+      result[key] = String((val as Record<string, unknown>).id);
+    } else if (Array.isArray(val)) {
+      result[key] = val.map((item: unknown) => {
+        if (item != null && typeof item === "object" && !Array.isArray(item)) {
+          return normalizeImageFields(item);
+        }
+        return item;
+      });
+    } else if (val != null && typeof val === "object" && !Array.isArray(val)) {
+      result[key] = normalizeImageFields(val);
+    } else {
+      result[key] = val;
+    }
+  }
+  return result;
+}
+
 export async function getSiteSettingsData() {
   const payload = await getPayload({ config });
-  const settings = await payload.findGlobal({ slug: "site-settings" });
-  const data = JSON.parse(JSON.stringify(settings));
+  const settings = await payload.findGlobal({ slug: "site-settings", depth: 1 });
+  let data = JSON.parse(JSON.stringify(settings));
 
   if (isPostgres()) {
     const editorData = await loadArrayDataForEditor();
-    return { ...data, ...editorData };
+    data = { ...data, ...editorData };
   }
 
-  return data;
+  // Normalize image objects to string IDs for the editor
+  return normalizeImageFields(data);
 }
 
 export async function updateSiteSettings(patch: Record<string, unknown>) {

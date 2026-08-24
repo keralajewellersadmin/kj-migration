@@ -1455,6 +1455,34 @@ export async function loadArrayDataForEditor(): Promise<Record<string, unknown>>
       `SELECT c.title, c.description, c.cta_text, c.cta_href, c.variant, c.image_id
        FROM site_settings_categories c
        WHERE c._parent_id = $1 ORDER BY _order`, [ssId]);
+    const timelineRes = await pool.query(
+      `SELECT t.year, t.title, t.text, t.image_id
+       FROM site_settings_about_page_timeline t
+       WHERE t._parent_id = $1 ORDER BY t._order`, [ssId]);
+    const paragraphsRes = await pool.query(
+      `SELECT p.text
+       FROM site_settings_about_page_golden_occasions_paragraphs p
+       WHERE p._parent_id = $1 ORDER BY p._order`, [ssId]);
+    const bulletsRes = await pool.query(
+      `SELECT b.text
+       FROM site_settings_about_page_ventures_bullets b
+       WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
+    const benefitsRes = await pool.query(
+      `SELECT b.text
+       FROM site_settings_thanga_mazhai_benefits b
+       WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
+    const whyChooseRes = await pool.query(
+      `SELECT w.text
+       FROM site_settings_thanga_mazhai_why_choose w
+       WHERE w._parent_id = $1 ORDER BY w._order`, [ssId]);
+    const swarnavarshaBulletsRes = await pool.query(
+      `SELECT b.text
+       FROM site_settings_swarnavarsha_bullets b
+       WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
+    const branchesRes = await pool.query(
+      `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
+       FROM site_settings_branches
+       WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
 
     return {
       heroSliderPaused: Boolean(ss.rows[0]?.slider_paused),
@@ -1495,6 +1523,37 @@ export async function loadArrayDataForEditor(): Promise<Record<string, unknown>>
         variant: r.variant || "",
         image: r.image_id != null ? String(r.image_id) : "",
       })),
+      branches: branchesRes.rows.map((r: any) => ({
+        name: r.name || "",
+        address: r.address || "",
+        phone: r.phone || "",
+        phoneFull: r.phone_full || "",
+        email: r.email || "",
+        hours: r.hours || "",
+        mapQ: r.map_q || "",
+        mapEmbedUrl: r.map_embed_url || "",
+      })),
+      aboutPage: {
+        goldenOccasions: {
+          paragraphs: paragraphsRes.rows.map((r: any) => ({ text: r.text || "" })),
+        },
+        timeline: timelineRes.rows.map((r: any) => ({
+          year: r.year || "",
+          title: r.title || "",
+          text: r.text || "",
+          image: r.image_id != null ? String(r.image_id) : "",
+        })),
+        ventures: {
+          bullets: bulletsRes.rows.map((r: any) => ({ text: r.text || "" })),
+        },
+      },
+      thangaMazhai: {
+        benefits: benefitsRes.rows.map((r: any) => ({ text: r.text || "" })),
+        whyChoose: whyChooseRes.rows.map((r: any) => ({ text: r.text || "" })),
+      },
+      swarnavarsha: {
+        bullets: swarnavarshaBulletsRes.rows.map((r: any) => ({ text: r.text || "" })),
+      },
     };
   } catch {
     return {};
