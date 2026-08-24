@@ -116,18 +116,6 @@ function resolveMediaUrl(val: unknown): string {
 
 function normalizeMigratedMediaUrl(url?: string): string {
   if (!url) return "";
-  if (url.includes("66ae1d64b0ff185260ad9b44_Rectangle")) {
-    return "/assets/images/66ae1d64b0ff185260ad9b44_Rectangle%20367%20(1).png";
-  }
-  if (url.includes("66ae22bea9cab6312ffdd45d_Rectangle")) {
-    return "/assets/images/66ae22bea9cab6312ffdd45d_Rectangle%20367%20(7).png";
-  }
-  if (url.includes("66ae22bef52614a0871d61a2_Rectangle")) {
-    return "/assets/images/66ae22bef52614a0871d61a2_Rectangle%20367%20(8).png";
-  }
-  if (url.includes("66a9d8eca2a871357e55ff2c_3_5405220")) {
-    return "/assets/images/66a9d8eca2a871357e55ff2c_3%205405220.png";
-  }
   return normalizeCloudinaryDeliveryUrl(url);
 }
 
