@@ -11,31 +11,41 @@ export async function getSiteSettingsData() {
 }
 
 export async function updateSiteSettings(patch: Record<string, unknown>) {
-  const payload = await getPayload({ config });
-  await payload.updateGlobal({
-    slug: "site-settings",
-    data: patch,
-    overrideAccess: true,
-  });
-  void import("@/lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
-  revalidatePath("/contact");
-  revalidatePath("/about");
-  return { success: true };
+  try {
+    const payload = await getPayload({ config });
+    await payload.updateGlobal({
+      slug: "site-settings",
+      data: patch,
+      overrideAccess: true,
+    });
+    void import("@/lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/products/gold");
+    revalidatePath("/products/silver");
+    revalidatePath("/products/diamond");
+    revalidatePath("/products/platinum");
+    revalidatePath("/contact");
+    revalidatePath("/about");
+    return { success: true };
+  } catch (err: any) {
+    console.error("updateSiteSettings error:", err);
+    return { success: false, error: err.message || "Failed to save settings." };
+  }
 }
 
 export async function updateLegalPage(id: string, patch: Record<string, unknown>) {
-  const payload = await getPayload({ config });
-  await payload.update({
-    collection: "legal-pages",
-    id,
-    data: patch,
-    overrideAccess: true,
-  });
-  return { success: true };
+  try {
+    const payload = await getPayload({ config });
+    await payload.update({
+      collection: "legal-pages",
+      id,
+      data: patch,
+      overrideAccess: true,
+    });
+    return { success: true };
+  } catch (err: any) {
+    console.error("updateLegalPage error:", err);
+    return { success: false, error: err.message || "Failed to save page." };
+  }
 }

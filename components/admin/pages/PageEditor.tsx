@@ -122,14 +122,16 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
         if (f.type === "array") {
           try {
             const parsed: unknown = JSON.parse(raw || "[]");
-            if (f.path === "features" && Array.isArray(parsed)) {
-              parsed.forEach((item: Record<string, unknown>) => {
-                if (!item.blockType) item.blockType = "circleBanner";
-              });
-            }
-            if (f.path === "banners" && Array.isArray(parsed)) {
-              parsed.forEach((item: Record<string, unknown>) => {
-                if (!item.blockType) item.blockType = "imageBanner";
+            if (Array.isArray(parsed)) {
+              parsed.forEach((item: Record<string, any>) => {
+                // Ensure empty strings are set to null for image fields inside array items
+                f.arrayFields?.forEach((af) => {
+                  if (af.type === "image" && item[af.name] === "") {
+                    item[af.name] = null;
+                  }
+                });
+                if (f.path === "features" && !item.blockType) item.blockType = "circleBanner";
+                if (f.path === "banners" && !item.blockType) item.blockType = "imageBanner";
               });
             }
             setPath(patch, f.path, parsed);
@@ -149,22 +151,30 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
         } else if (f.type === "checkbox") {
           setPath(patch, f.path, raw === "true");
         } else {
-          setPath(patch, f.path, raw);
+          // Ensure empty strings are set to null for top-level image fields
+          const val = (f.type === "image" && raw === "") ? null : raw;
+          setPath(patch, f.path, val);
         }
       }
 
       try {
+        let result;
         if (def.source === "global") {
-          await updateSiteSettings(patch);
+          result = await updateSiteSettings(patch);
         } else if (legalId) {
-          await updateLegalPage(legalId, patch);
+          result = await updateLegalPage(legalId, patch);
         }
-        setDoc(patch);
-        setStatus("saved");
-        setTimeout(() => setStatus("idle"), 2000);
-      } catch {
+        if (result && !result.success) {
+          setStatus("error");
+          setError(result.error || "Failed to save. Try again.");
+        } else {
+          setDoc(patch);
+          setStatus("saved");
+          setTimeout(() => setStatus("idle"), 2000);
+        }
+      } catch (err: any) {
         setStatus("error");
-        setError("Failed to save. Try again.");
+        setError(err?.message || "Failed to save. Try again.");
       }
     },
     [def, doc, values, legalId],
