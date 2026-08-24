@@ -75,3 +75,86 @@
 /* ── Responsive: Tablet ── */
 @media (max-width: 991px) { .rectItem { aspect-ratio: 3 / 1; } }
 @media (max-width: 767px) { .rectItem { aspect-ratio: 16 / 9; } }
+
+/* ── Carousel (≤991px) ── */
+.carouselTrack {
+  display: flex;
+  gap: 0;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.carouselTrack:active {
+  cursor: grabbing;
+}
+
+.carouselSlide {
+  flex: 0 0 100%;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Active slide: fully visible, centered */
+.pos-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Previous slide: off-screen left */
+.pos-prev {
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Next slide: off-screen right */
+.pos-next {
+  opacity: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Hidden slides: not visible */
+.pos-hidden,
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Carousel overrides for grid on mobile */
+@media (max-width: 991px) {
+  .grid:not(.carouselTrack) {
+    grid-template-columns: 1fr;
+  }
+  .carouselTrack {
+    position: relative;
+    min-height: 320px;
+  }
+  .item {
+    justify-content: center;
+    padding: 0 20px;
+  }
+  .imageWrap {
+    max-width: 160px;
+    margin-bottom: var(--space-4);
+  }
+  .title {
+    font-size: 28px;
+  }
+  .description {
+    font-size: 16px;
+  }
+}

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-
-const ADMIN_PATH = "/kj-portal-0d7cfad1";
+import Cropper from "react-easy-crop";
+import "react-easy-crop/react-easy-crop.css";
 
 interface MediaDoc {
   id: string;
@@ -15,9 +15,39 @@ interface MediaDoc {
 interface Props {
   value: string;
   onChange: (val: string) => void;
+  aspectRatio?: number;
+  recommendedWidth?: number;
+  recommendedHeight?: number;
 }
 
-export default function ImagePicker({ value, onChange }: Props) {
+function getCroppedImg(imageSrc: string, cropPixels: { x: number; y: number; width: number; height: number }): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const image = new window.Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = cropPixels.width;
+      canvas.height = cropPixels.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("No canvas context")); return; }
+      ctx.drawImage(
+        image,
+        cropPixels.x, cropPixels.y,
+        cropPixels.width, cropPixels.height,
+        0, 0,
+        cropPixels.width, cropPixels.height,
+      );
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Failed to create blob"));
+      }, "image/jpeg", 0.92);
+    };
+    image.onerror = () => reject(new Error("Failed to load image"));
+    image.src = imageSrc;
+  });
+}
+
+export default function ImagePicker({ value, onChange, aspectRatio, recommendedWidth, recommendedHeight }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<MediaDoc[]>([]);
   const [open, setOpen] = useState(false);
@@ -28,6 +58,13 @@ export default function ImagePicker({ value, onChange }: Props) {
   const [alt, setAlt] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImage, setCropImage] = useState("");
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [cropping, setCropping] = useState(false);
 
   const fetchPreview = useCallback(async (mediaId: string) => {
     if (!mediaId) { setPreviewUrl(""); return; }
@@ -69,18 +106,91 @@ export default function ImagePicker({ value, onChange }: Props) {
     fetchMedia();
   };
 
+  const uploadFile = async (blob: Blob) => {
+    setUploading(true);
+    setUploadError("");
+    try {
+      const fd = new FormData();
+      const fileName = file?.name || "image.jpg";
+      fd.append("file", new Blob([blob], { type: "image/jpeg" }), fileName);
+      const cleanAlt = alt.trim() || fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      fd.append("_payload", JSON.stringify({ alt: cleanAlt }));
+      const res = await fetch(`/api/media`, {
+        method: "POST",
+        body: fd,
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const msg =
+          (errData?.errors && errData.errors[0]?.message) ||
+          `Upload failed (${res.status})`;
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      const doc = data.doc || data;
+      if (doc && doc.id) {
+        onChange(String(doc.id));
+        setOpen(false);
+        setCropOpen(false);
+      } else {
+        throw new Error("Upload succeeded but no media was returned.");
+      }
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : "Upload failed.");
+    }
+    setUploading(false);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null;
+    setFile(selected);
+    if (selected && aspectRatio) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setCropImage(ev.target?.result as string);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+        setCropOpen(true);
+      };
+      reader.readAsDataURL(selected);
+    }
+  };
+
+  const handleCropConfirm = async () => {
+    if (!croppedAreaPixels || !cropImage) return;
+    setCropping(true);
+    try {
+      const blob = await getCroppedImg(cropImage, croppedAreaPixels);
+      await uploadFile(blob);
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : "Crop failed.");
+    }
+    setCropping(false);
+  };
+
   const uploadImage = async () => {
     if (!file) {
       setUploadError("Choose an image file first.");
       return;
     }
+    if (aspectRatio) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setCropImage(ev.target?.result as string);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+        setCropOpen(true);
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+    const fd = new FormData();
+    fd.append("file", file);
+    const cleanAlt = alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+    fd.append("_payload", JSON.stringify({ alt: cleanAlt }));
     setUploading(true);
     setUploadError("");
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const cleanAlt = alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-      fd.append("_payload", JSON.stringify({ alt: cleanAlt }));
       const res = await fetch(`/api/media`, {
         method: "POST",
         body: fd,
@@ -116,8 +226,19 @@ export default function ImagePicker({ value, onChange }: Props) {
     setOpen(false);
   };
 
+  const ratioLabel = aspectRatio
+    ? recommendedWidth && recommendedHeight
+      ? `${recommendedWidth}×${recommendedHeight}px (${formatRatio(aspectRatio)})`
+      : formatRatio(aspectRatio)
+    : null;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {ratioLabel && (
+        <div style={{ fontSize: 11, color: "#888", lineHeight: 1.3 }}>
+          Recommended: {ratioLabel}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
         {value && previewUrl ? (
           <div style={previewStyle}>
@@ -156,13 +277,72 @@ export default function ImagePicker({ value, onChange }: Props) {
         </div>
       </div>
 
-      {open && (
+      {cropOpen && (
+        <div style={modalOverlayStyle} onClick={() => setCropOpen(false)}>
+          <div style={{ ...modalStyle, maxWidth: 600 }} onClick={(e) => e.stopPropagation()}>
+            <div style={modalHeaderStyle}>
+              <span style={{ fontSize: 15, fontWeight: 600 }}>Crop Image</span>
+              <button type="button" onClick={() => setCropOpen(false)} style={closeBtnStyle}>X</button>
+            </div>
+            {ratioLabel && (
+              <div style={{ padding: "8px 16px", fontSize: 12, color: "#666", borderBottom: "1px solid #eee" }}>
+                Target: {ratioLabel}
+              </div>
+            )}
+            <div style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a" }}>
+              <Cropper
+                image={cropImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspectRatio || 1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+                cropShape="rect"
+                showGrid
+                style={{ containerStyle: { width: "100%", height: "100%" } }}
+              />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
+              <label style={{ fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>Zoom</label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                style={{ flex: 1 }}
+              />
+              <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{zoom.toFixed(1)}x</span>
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
+              <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>
+              <button
+                type="button"
+                onClick={handleCropConfirm}
+                disabled={cropping || uploading}
+                style={{ ...uploadBtnStyle, opacity: cropping || uploading ? 0.6 : 1 }}
+              >
+                {cropping ? "Cropping..." : uploading ? "Uploading..." : "Crop & Upload"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {open && !cropOpen && (
         <div style={modalOverlayStyle} onClick={() => setOpen(false)}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
             <div style={modalHeaderStyle}>
               <span style={{ fontSize: 15, fontWeight: 600 }}>Select Image</span>
               <button type="button" onClick={() => setOpen(false)} style={closeBtnStyle}>X</button>
             </div>
+            {ratioLabel && (
+              <div style={{ padding: "8px 16px", fontSize: 12, color: "#666", borderBottom: "1px solid #eee" }}>
+                Recommended: {ratioLabel} — images will be cropped to fit
+              </div>
+            )}
             <div style={tabBarStyle}>
               <button
                 type="button"
@@ -222,9 +402,14 @@ export default function ImagePicker({ value, onChange }: Props) {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  onChange={handleFileSelect}
                   style={{ fontSize: 13 }}
                 />
+                {aspectRatio && file && (
+                  <div style={{ fontSize: 11, color: "#888" }}>
+                    After selecting, you&rsquo;ll be able to crop to {formatRatio(aspectRatio)}.
+                  </div>
+                )}
                 <input
                   type="text"
                   value={alt}
@@ -239,7 +424,7 @@ export default function ImagePicker({ value, onChange }: Props) {
                   disabled={uploading}
                   style={uploadBtnStyle}
                 >
-                  {uploading ? "Uploading..." : "Upload Image"}
+                  {uploading ? "Uploading..." : aspectRatio ? "Next: Crop Image" : "Upload Image"}
                 </button>
               </div>
             )}
@@ -248,6 +433,27 @@ export default function ImagePicker({ value, onChange }: Props) {
       )}
     </div>
   );
+}
+
+function formatRatio(ratio: number): string {
+  const r = Math.round(ratio * 100) / 100;
+  const common: Record<number, string> = {
+    1: "1:1",
+    0.5: "1:2",
+    0.6667: "2:3",
+    0.75: "3:4",
+    1.3333: "4:3",
+    1.5: "3:2",
+    1.6: "8:5",
+    1.7778: "16:9",
+    2: "2:1",
+    2.7429: "19:7",
+    0.8: "4:5",
+  };
+  for (const [val, label] of Object.entries(common)) {
+    if (Math.abs(r - Number(val)) < 0.02) return label;
+  }
+  return `${r.toFixed(1)}:1`;
 }
 
 const previewStyle: React.CSSProperties = {

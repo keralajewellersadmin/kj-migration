@@ -248,6 +248,9 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
                     <ImagePicker
                       value={values[f.path] ?? ""}
                       onChange={(val) => handleChange(f.path, val)}
+                      aspectRatio={f.aspectRatio}
+                      recommendedWidth={f.recommendedWidth}
+                      recommendedHeight={f.recommendedHeight}
                     />
                   ) : f.type === "checkbox" ? (
                     <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: "#333" }}>

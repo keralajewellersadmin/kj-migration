@@ -3,7 +3,16 @@
 import { useState } from "react";
 import ImagePicker from "./ImagePicker";
 
-export type ArrayField = { name: string; label: string; type: "text" | "textarea" | "image" | "checkbox"; placeholder?: string };
+export type ArrayField = {
+  name: string;
+  label: string;
+  type: "text" | "textarea" | "image" | "checkbox";
+  placeholder?: string;
+  description?: string;
+  aspectRatio?: number;
+  recommendedWidth?: number;
+  recommendedHeight?: number;
+};
 
 interface Props {
   path: string;
@@ -75,10 +84,14 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
             {arrayFields.map((f) => (
               <div key={f.name}>
                 <label style={fieldLabelStyle}>{f.label}</label>
+                {f.description && <div style={{ fontSize: 11, color: "#888", marginBottom: 4, lineHeight: 1.3 }}>{f.description}</div>}
                 {f.type === "image" ? (
                   <ImagePicker
                     value={String(item[f.name] ?? "")}
                     onChange={(val) => updateField(idx, f.name, val)}
+                    aspectRatio={f.aspectRatio}
+                    recommendedWidth={f.recommendedWidth}
+                    recommendedHeight={f.recommendedHeight}
                   />
                 ) : f.type === "textarea" ? (
                   <textarea
