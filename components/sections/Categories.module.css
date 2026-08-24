@@ -99,7 +99,7 @@
 .gold {
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, transparent 60%),
-    url("https://res.cloudinary.com/htl6k8cd/image/upload/v1785494453/kerala-jewellers/banners/66a9d9929d7e6142879f3154_Frame_2085665012__1_.png");
+    url("/assets/images/gold-category-bg.webp");
   background-size: cover;
   background-position: center;
 }
