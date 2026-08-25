@@ -1,6 +1,8 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
+// Trigger production deployment to link custom domains
+
 const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const isProduction = process.env.NODE_ENV === "production";
 
