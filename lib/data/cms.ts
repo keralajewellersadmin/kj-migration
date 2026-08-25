@@ -1307,26 +1307,31 @@ export async function loadArrayDataViaSQL(
     if (!ssId) return data;
 
     const heroRes = await pool.query(
-      `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, m.url as image_url
+      `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, 
+              m.url as image_url, m.cloudinary_public_id as cloudinary_public_id
        FROM site_settings_hero_slides h LEFT JOIN media m ON h.image_id = m.id
        WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
     const circleBannerRes = await pool.query(
-      `SELECT b.title, b.description, b.alt, m.url as image_url
+      `SELECT b.title, b.description, b.alt, 
+              m.url as image_url, m.cloudinary_public_id as cloudinary_public_id
        FROM site_settings_blocks_circle_banner b LEFT JOIN media m ON b.image_id = m.id
        WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
     const imageBannerRes = await pool.query(
-      `SELECT b.alt, b.title, b.cta_text, b.href, m.url as image_url
+      `SELECT b.alt, b.title, b.cta_text, b.href, 
+              m.url as image_url, m.cloudinary_public_id as cloudinary_public_id
        FROM site_settings_blocks_image_banner b LEFT JOIN media m ON b.image_id = m.id
        WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
     const heritageRes = await pool.query(
-      `SELECT h.heading, h.description, m.url as image_url
+      `SELECT h.heading, h.description, 
+              m.url as image_url, m.cloudinary_public_id as cloudinary_public_id
        FROM site_settings_heritage h LEFT JOIN media m ON h.image_id = m.id
        WHERE h._parent_id = $1 ORDER BY h._order`, [ssId]);
     const reviewsRes = await pool.query(
       `SELECT text, author, location FROM reviews
        ORDER BY created_at ASC`);
     const catsRes = await pool.query(
-      `SELECT c.title, c.description, c.cta_text, c.cta_href, c.variant, m.url as image_url
+      `SELECT c.title, c.description, c.cta_text, c.cta_href, c.variant, 
+              m.url as image_url, m.cloudinary_public_id as cloudinary_public_id
        FROM site_settings_categories c LEFT JOIN media m ON c.image_id = m.id
        WHERE c._parent_id = $1 ORDER BY _order`, [ssId]);
     const branchesRes = await pool.query(
@@ -1350,7 +1355,7 @@ export async function loadArrayDataViaSQL(
         description: r.description || "",
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
-        image: normalizeMigratedMediaUrl(r.image_url),
+        image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
         isPinned: Boolean(r.is_pinned),
       })),
       heroSliderPaused: ssSliderPaused,
@@ -1359,13 +1364,13 @@ export async function loadArrayDataViaSQL(
         blockType: "circleBanner" as const,
         title: r.title || "",
         description: r.description || "",
-        image: normalizeMigratedMediaUrl(r.image_url),
+        image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
         alt: r.alt || "",
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       banners: imageBannerRes.rows.map((r: any) => ({
         blockType: "imageBanner" as const,
-        image: normalizeMigratedMediaUrl(r.image_url),
+        image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
         alt: r.alt || "",
         title: r.title || "",
         ctaText: r.cta_text || "",
@@ -1375,7 +1380,7 @@ export async function loadArrayDataViaSQL(
       heritage: heritageRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
-        image: normalizeMigratedMediaUrl(r.image_url),
+        image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reviews: reviewsRes.rows.map((r: any) => ({
@@ -1390,7 +1395,7 @@ export async function loadArrayDataViaSQL(
         ctaText: r.cta_text || "",
         ctaHref: r.cta_href || "",
         variant: r.variant || "",
-        image: normalizeMigratedMediaUrl(r.image_url),
+        image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
       })),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       branches: branchesRes.rows.length > 0 ? branchesRes.rows.map((r: any) => ({

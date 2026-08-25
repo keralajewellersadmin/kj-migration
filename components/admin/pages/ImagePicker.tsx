@@ -20,14 +20,21 @@ interface Props {
   recommendedHeight?: number;
 }
 
-function getCroppedImg(imageSrc: string, cropPixels: { x: number; y: number; width: number; height: number }): Promise<Blob> {
+function getCroppedImg(
+  imageSrc: string,
+  cropPixels: { x: number; y: number; width: number; height: number },
+  targetWidth?: number,
+  targetHeight?: number,
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const image = new window.Image();
     image.crossOrigin = "anonymous";
     image.onload = () => {
       const canvas = document.createElement("canvas");
-      canvas.width = cropPixels.width;
-      canvas.height = cropPixels.height;
+      const outW = targetWidth && targetHeight ? targetWidth : cropPixels.width;
+      const outH = targetWidth && targetHeight ? targetHeight : cropPixels.height;
+      canvas.width = outW;
+      canvas.height = outH;
       const ctx = canvas.getContext("2d");
       if (!ctx) { reject(new Error("No canvas context")); return; }
       ctx.drawImage(
@@ -35,7 +42,7 @@ function getCroppedImg(imageSrc: string, cropPixels: { x: number; y: number; wid
         cropPixels.x, cropPixels.y,
         cropPixels.width, cropPixels.height,
         0, 0,
-        cropPixels.width, cropPixels.height,
+        outW, outH,
       );
       canvas.toBlob((blob) => {
         if (blob) resolve(blob);
@@ -162,7 +169,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
     if (!croppedAreaPixels || !cropImage) return;
     setCropping(true);
     try {
-      const blob = await getCroppedImg(cropImage, croppedAreaPixels);
+      const blob = await getCroppedImg(cropImage, croppedAreaPixels, recommendedWidth, recommendedHeight);
       await uploadFile(blob);
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : "Crop failed.");
@@ -181,6 +188,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
         setCropImage(ev.target?.result as string);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
+        setFreeCrop(false);
         setCropOpen(true);
       };
       reader.readAsDataURL(file);
@@ -321,6 +329,25 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 style={{ flex: 1 }}
               />
               <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{zoom.toFixed(1)}x</span>
+              {aspectRatio ? (
+                <button
+                  type="button"
+                  onClick={() => { setFreeCrop(!freeCrop); setCrop({ x: 0, y: 0 }); setZoom(1); }}
+                  style={{
+                    marginLeft: "auto",
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: freeCrop ? "#fff" : "#9f1b1f",
+                    background: freeCrop ? "#9f1b1f" : "none",
+                    border: "1px solid #9f1b1f",
+                    borderRadius: 4,
+                    padding: "3px 10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {freeCrop ? "Free Crop On" : "Free Crop"}
+                </button>
+              ) : null}
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
               <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>
