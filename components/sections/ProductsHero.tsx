@@ -16,7 +16,7 @@ export default function ProductsHero({
   metal = "gold",
 }: ProductsHeroProps) {
   return (
-    <section className={`${styles.hero} ${styles[metal] || styles.gold}`}>
+    <section className={`${styles.hero} ${styles[metal] || ""}`}>
       <div className={styles.container}>
         <div
           className={styles.banner}

@@ -1576,6 +1576,42 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
           ]),
         ),
       };
+
+      // findGlobal depth:0 returns upload fields as raw media IDs. Resolve the
+      // product-page hero images (gold/silver/diamond/platinum) to URLs so the
+      // frontend can render them instead of a broken `url(<id>)`.
+      const heroes = raw.productsPage as
+        | {
+            goldHero?: { image?: unknown };
+            silverHero?: { image?: unknown };
+            diamondHero?: { image?: unknown };
+            platinumHero?: { image?: unknown };
+          }
+        | undefined;
+      const heroList = heroes
+        ? [heroes.goldHero, heroes.silverHero, heroes.diamondHero, heroes.platinumHero]
+        : [];
+      const heroImgIds = heroList
+        .map((h) => h?.image)
+        .filter((id): id is number => typeof id === "number");
+      if (heroImgIds.length > 0) {
+        const mediaRes = await payload.find({
+          collection: "media" as never,
+          where: { id: { in: heroImgIds } },
+          depth: 0,
+          limit: 100,
+        });
+        const mediaUrlById = new Map<number, string>();
+        for (const doc of mediaRes.docs as Array<Record<string, unknown>>) {
+          mediaUrlById.set(Number(doc.id), resolveMediaUrl(doc));
+        }
+        for (const hero of heroList) {
+          if (hero && typeof hero.image === "number") {
+            hero.image = mediaUrlById.get(hero.image) || "";
+          }
+        }
+      }
+
       const result = {
         ...raw,
         ...resolveFontsFromPairing(

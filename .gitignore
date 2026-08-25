@@ -58,3 +58,5 @@ proxy.ts
 
 # Payload upload dir
 public/media/
+
+devserver.log
