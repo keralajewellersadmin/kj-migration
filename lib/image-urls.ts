@@ -49,9 +49,9 @@ export const IMG = normalizeImageMap({
   latestBanner2: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683322/kerala-jewellers/banners/66aa067372c8bb1c084deda0_Rectangle%20340.png",
   latestBanner3: "/assets/images/66ae22bef52614a0871d61a2_Rectangle%20367%20(8).png",
 
-  // Static content
-  aboutFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683338/kerala-jewellers/banners/69e32fa4d2963d91340807f8_carousel-01.jpg",
-  blogDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785683296/kerala-jewellers/gallery/67a74d23579de99844e4ba6d_Group%202085665159.png",
+  // Static content — origin hero images (CMS-managed, fallback matches origin)
+  aboutFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787693749/kerala-jewellers/heritage/66ab36052626ce8e9edda3ca_Rectangle_355.png",
+  blogDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787694059/kerala-jewellers/blog/66ab5ac76305a6ebd97fd501_Group_2085665034_1.png",
 
   // Hero slide backgrounds (fallback when CMS heroSlides empty)
   heroSlide1: "https://res.cloudinary.com/htl6k8cd/image/upload/v1785763761/kerala-jewellers/gallery/hero-slide-1-celebrate.webp",

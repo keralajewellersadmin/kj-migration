@@ -32,21 +32,23 @@ export default async function BlogPage() {
       >
         <div className={styles.hero}>
           <div className={styles.heroContent}>
-            <h2 className={styles.heroTitle}>{bp.promoHeading}</h2>
-            <Image
-              src={bp.promoImage || IMG.blogDecorative}
-              alt=""
-              className={styles.heroImage}
-              width={280}
-              height={280}
-              priority
-            />
-            <p className={styles.heroPara}>
-              {bp.promoDescription}
-            </p>
-            <a href={bp.promoCtaHref} className={styles.heroBtn}>
-              {bp.promoCtaText}
-            </a>
+            <div className={styles.heroInner}>
+              <div className={styles.heroBorderBox}>
+                <h2 className={styles.heroTitle}>{bp.promoHeading}</h2>
+                <Image
+                  src={bp.promoImage || IMG.blogDecorative}
+                  alt=""
+                  className={styles.heroImage}
+                  width={400}
+                  height={46}
+                  priority
+                />
+                <p className={styles.heroPara}>{bp.promoDescription}</p>
+                <a href={bp.promoCtaHref} className={styles.heroBtn}>
+                  {bp.promoCtaText}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

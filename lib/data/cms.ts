@@ -1612,6 +1612,57 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         }
       }
 
+      // Resolve scalar upload IDs that depth:0 leaves as numbers (aboutPage, blogPage, defaultSeo)
+      const scalarIds: number[] = [];
+      const pushId = (v: unknown) => {
+        if (typeof v === "number") scalarIds.push(v);
+      };
+      const rawAp = (raw as any)?.aboutPage;
+      pushId(rawAp?.goldenOccasions?.image);
+      pushId(rawAp?.ventures?.image);
+      pushId((raw as any)?.blogPage?.promoImage);
+      pushId((raw as any)?.defaultSeo?.ogImage);
+      // also collect timeline images if present (depth 0 returns numbers)
+      if (Array.isArray(rawAp?.timeline)) {
+        for (const t of rawAp.timeline) pushId((t as any)?.image);
+      }
+      let scalarUrlById: Map<number, string> | null = null;
+      if (scalarIds.length > 0) {
+        const uniq = [...new Set(scalarIds)];
+        const mRes = await payload.find({
+          collection: "media" as never,
+          where: { id: { in: uniq } },
+          depth: 0,
+          limit: 100,
+        });
+        scalarUrlById = new Map<number, string>();
+        for (const doc of mRes.docs as Array<Record<string, unknown>>) {
+          scalarUrlById.set(Number(doc.id), resolveMediaUrl(doc));
+        }
+        const resolveScalar = (v: unknown): string => {
+          if (typeof v === "number") return scalarUrlById!.get(v) || "";
+          return resolveMediaUrl(v);
+        };
+        // Patch raw in place so downstream result builder picks resolved URLs
+        if (rawAp?.goldenOccasions && typeof rawAp.goldenOccasions.image === "number") {
+          rawAp.goldenOccasions.image = resolveScalar(rawAp.goldenOccasions.image);
+        }
+        if (rawAp?.ventures && typeof rawAp.ventures.image === "number") {
+          rawAp.ventures.image = resolveScalar(rawAp.ventures.image);
+        }
+        if ((raw as any)?.blogPage && typeof (raw as any).blogPage.promoImage === "number") {
+          (raw as any).blogPage.promoImage = resolveScalar((raw as any).blogPage.promoImage);
+        }
+        if ((raw as any)?.defaultSeo && typeof (raw as any).defaultSeo.ogImage === "number") {
+          (raw as any).defaultSeo.ogImage = resolveScalar((raw as any).defaultSeo.ogImage);
+        }
+        if (Array.isArray(rawAp?.timeline)) {
+          for (const t of rawAp.timeline as any[]) {
+            if (typeof t.image === "number") t.image = resolveScalar(t.image);
+          }
+        }
+      }
+
       const result = {
         ...raw,
         ...resolveFontsFromPairing(

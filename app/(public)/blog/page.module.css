@@ -48,9 +48,9 @@
   color: var(--color-text-muted);
 }
 
-/* ── Wedding Season hero band — matches live site exactly ── */
+/* ── Wedding Season hero band — matches origin exactly ── */
 .heroOuter {
-  padding: 75px 30px; /* one-off — matches div-block-60 */
+  padding: 75px 30px; /* matches .div-block-60 */
 }
 
 .hero {
@@ -58,9 +58,9 @@
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
-  border-radius: 15px; /* one-off — matches banner-slider1-blog */
+  border-radius: 15px; /* matches .banner-slider1-blog */
   width: 100%;
-  height: 50vh; /* one-off — matches live */
+  height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,48 +69,71 @@
 
 .heroContent {
   text-align: center;
-  width: 70%; /* one-off — matches intro-content-blog */
+  width: 70%; /* matches .intro-content-blog */
   max-width: 1140px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 24px; /* matches .intro-text-2-blog gap */
+}
+
+.heroBorderBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%; /* matches .border-box-blog */
+  padding-left: 20px;
+  padding-right: 20px;
+  gap: 5px;
+}
+
 .heroTitle {
   font-family: var(--font-decorative);
-  font-size: clamp(40px, 6vw, 60px);
-  font-weight: 400;
+  font-size: 60px; /* matches .kj-hero-heading-blog */
+  font-weight: 700;
   color: var(--color-white);
   margin: 0 0 10px;
-  line-height: 1.15;
-  letter-spacing: 0;
+  line-height: 76px;
+  letter-spacing: -0.04em;
+  text-align: center;
 }
 
 .heroImage {
-  width: 40%; /* one-off — matches image-blog */
+  width: 40%; /* matches .image-blog */
   height: auto;
+  display: block;
 }
 
 .heroPara {
   font-family: var(--font-body);
-  font-size: 20.667px; /* one-off — matches paragraph-bigger-2-blog */
+  font-size: 20.667px; /* matches .paragraph-bigger-2-blog */
   line-height: 25px;
-  color: var(--color-gold-warm);
+  color: var(--color-gold-warm); /* #9e5500 */
   text-align: center;
-  width: 50%; /* one-off — matches paragraph-bigger-2-blog */
+  width: 50%;
   margin: 18px 0;
+  letter-spacing: -0.827px;
 }
 
 .heroBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 25px; /* one-off — matches button-blog */
+  padding: 12px 25px;
   border-radius: 5px;
-  background-color: var(--color-gold-warm);
+  background-color: var(--color-gold-warm); /* #9e5500 — matches .button-blog */
   color: var(--color-white);
   font-family: var(--font-decorative);
-  font-size: 27.556px; /* one-off — matches button-blog */
+  font-size: 27.556px;
   font-weight: 300;
   letter-spacing: 2px;
   line-height: 20px;
@@ -123,6 +146,8 @@
 
 .heroBtn:hover {
   opacity: 0.9;
+  color: var(--color-white);
+  background-color: #32343a;
 }
 
 @media (max-width: 991px) {
@@ -145,8 +170,17 @@
   .heroContent {
     width: min(86%, 620px);
   }
+  .heroInner {
+    gap: 15px;
+  }
+  .heroBorderBox {
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
   .heroTitle {
     font-size: clamp(34px, 6vw, 46px);
+    line-height: 1.15;
   }
   .heroImage {
     width: min(48%, 260px);
