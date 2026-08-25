@@ -1,4 +1,3 @@
-import Image from "next/image";
 import styles from "./Heritage.module.css";
 import { IMG } from "@/lib/image-urls";
 
@@ -24,13 +23,13 @@ export default function Heritage({
       <div className={styles.container}>
         <div className={styles.layout}>
           <div className={styles.imageSide}>
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={imageSrc}
               alt="Heritage designs, Kerala Jewellers Porur"
               className={styles.heroImage}
-              width={600}
-              height={400}
               loading="lazy"
+              decoding="async"
             />
           </div>
           <div className={styles.textSide}>
