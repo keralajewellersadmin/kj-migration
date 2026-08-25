@@ -63,6 +63,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
   const [cropImage, setCropImage] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [freeCrop, setFreeCrop] = useState(false);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [cropping, setCropping] = useState(false);
 
@@ -150,6 +151,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
         setCropImage(ev.target?.result as string);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
+        setFreeCrop(false);
         setCropOpen(true);
       };
       reader.readAsDataURL(selected);
@@ -289,24 +291,25 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 Target: {ratioLabel}
               </div>
             )}
-            <div style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a", overflow: "hidden", touchAction: "none" }}>
+            <div className="kj-cropper-wrap" style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a", touchAction: "none", userSelect: "none" }}>
               <Cropper
                 image={cropImage}
                 crop={crop}
                 zoom={zoom}
-                aspect={aspectRatio || 1}
+                aspect={freeCrop ? NaN : (aspectRatio || 1)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
                 cropShape="rect"
                 showGrid
                 style={{
-                  containerStyle: { width: "100%", height: "100%", position: "relative" },
-                  cropAreaStyle: { border: "2px solid rgba(255,255,255,0.8)", borderRadius: 4 },
+                  containerStyle: { width: "100%", height: "100%", position: "relative", overflow: "hidden" },
+                  cropAreaStyle: { border: "2px solid rgba(255,255,255,0.8)", cursor: "grab", zIndex: 10 },
+                  mediaStyle: { cursor: "move" },
                 }}
               />
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", flexWrap: "wrap" }}>
               <label style={{ fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>Zoom</label>
               <input
                 type="range"

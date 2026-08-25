@@ -52,7 +52,7 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "description", label: "Description", type: "textarea", placeholder: "Short tagline shown below the heading" },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. Explore Now" },
           { name: "ctaHref", label: "Button Link", type: "text", placeholder: "e.g. /collections/gold" },
-          { name: "image", label: "Background Image", type: "image", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+          { name: "image", label: "Background Image", type: "image", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
           { name: "isPinned", label: "Pin this slide (shown when slider is paused)", type: "checkbox" },
         ],
       },
@@ -65,7 +65,7 @@ export const PAGE_DEFS: PageDef[] = [
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Gold Jewellery" },
           { name: "description", label: "Short Description", type: "textarea", placeholder: "One-line description for the card" },
-          { name: "image", label: "Background Image", type: "image", description: "Recommended: 1200×600px (2:1 ratio)", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
+          { name: "image", label: "Background Image", type: "image", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. View Collection" },
           { name: "ctaHref", label: "Button Link", type: "text", placeholder: "e.g. /collections/gold" },
           { name: "variant", label: "Style", type: "text", placeholder: "gold, silver, diamond, or platinum" },
@@ -102,7 +102,7 @@ export const PAGE_DEFS: PageDef[] = [
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Certified Purity" },
           { name: "description", label: "Description", type: "textarea", placeholder: "Brief description of this highlight" },
-          { name: "image", label: "Image", type: "image", description: "Recommended: 400×400px (1:1 square)", aspectRatio: 1, recommendedWidth: 400, recommendedHeight: 400 },
+          { name: "image", label: "Image", type: "image", aspectRatio: 1, recommendedWidth: 400, recommendedHeight: 400 },
           { name: "alt", label: "Image Description", type: "text", placeholder: "Describe the image for accessibility" },
         ],
       },
@@ -114,7 +114,7 @@ export const PAGE_DEFS: PageDef[] = [
         description: "Full-width image banners shown near the bottom of the homepage.",
         arrayFields: [
           { name: "title", label: "Title", type: "text", placeholder: "e.g. Wedding Season Sale" },
-          { name: "image", label: "Banner Image", type: "image", description: "Recommended: 800×1000px (4:5 ratio)", aspectRatio: 4/5, recommendedWidth: 800, recommendedHeight: 1000 },
+          { name: "image", label: "Banner Image", type: "image", aspectRatio: 4/5, recommendedWidth: 800, recommendedHeight: 1000 },
           { name: "alt", label: "Image Description", type: "text", placeholder: "Describe the image for accessibility" },
           { name: "ctaText", label: "Button Text", type: "text", placeholder: "e.g. Shop Now" },
           { name: "href", label: "Button Link", type: "text", placeholder: "e.g. /collections/wedding" },
@@ -129,7 +129,7 @@ export const PAGE_DEFS: PageDef[] = [
         arrayFields: [
           { name: "heading", label: "Heading", type: "text", placeholder: "e.g. Intricate & Intimate" },
           { name: "description", label: "Description", type: "textarea", placeholder: "Detailed description of heritage work" },
-          { name: "image", label: "Heritage Image", type: "image", description: "Recommended: 600×400px (3:2 ratio)", aspectRatio: 3/2, recommendedWidth: 600, recommendedHeight: 400 },
+          { name: "image", label: "Heritage Image", type: "image", aspectRatio: 3/2, recommendedWidth: 600, recommendedHeight: 400 },
         ],
       },
     ],
@@ -143,7 +143,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.goldHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Gold Jewellery Collection" },
       { path: "productsPage.goldHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
-      { path: "productsPage.goldHero.image", label: "Hero Banner Image", type: "image", section: "Hero", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+      { path: "productsPage.goldHero.image", label: "Hero Banner Image", type: "image", section: "Hero", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
     ],
   },
   {
@@ -155,7 +155,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.silverHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Silver Jewellery Collection" },
       { path: "productsPage.silverHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
-      { path: "productsPage.silverHero.image", label: "Hero Banner Image", type: "image", section: "Hero", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+      { path: "productsPage.silverHero.image", label: "Hero Banner Image", type: "image", section: "Hero", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
     ],
   },
   {
@@ -167,7 +167,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.diamondHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Diamond Jewellery Collection" },
       { path: "productsPage.diamondHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
-      { path: "productsPage.diamondHero.image", label: "Hero Banner Image", type: "image", section: "Hero", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+      { path: "productsPage.diamondHero.image", label: "Hero Banner Image", type: "image", section: "Hero", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
     ],
   },
   {
@@ -179,7 +179,7 @@ export const PAGE_DEFS: PageDef[] = [
     fields: [
       { path: "productsPage.platinumHero.title", label: "Page Title", type: "text", section: "Hero", placeholder: "e.g. Platinum Jewellery Collection" },
       { path: "productsPage.platinumHero.subtitle", label: "Page Subtitle", type: "textarea", section: "Hero", placeholder: "A short tagline shown below the title" },
-      { path: "productsPage.platinumHero.image", label: "Hero Banner Image", type: "image", section: "Hero", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+      { path: "productsPage.platinumHero.image", label: "Hero Banner Image", type: "image", section: "Hero", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
     ],
   },
   {
@@ -190,7 +190,7 @@ export const PAGE_DEFS: PageDef[] = [
     source: "global",
     fields: [
       { path: "aboutPage.goldenOccasions.heading", label: "Heading", type: "text", section: "Hero Section", placeholder: "e.g. Golden Occasions & Gleaming Beginnings" },
-      { path: "aboutPage.goldenOccasions.image", label: "Hero Image", type: "image", section: "Hero Section", description: "Recommended: 1200×600px (2:1 ratio)", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
+      { path: "aboutPage.goldenOccasions.image", label: "Hero Image", type: "image", section: "Hero Section", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
       { path: "aboutPage.goldenOccasions.alt", label: "Image Description", type: "text", section: "Hero Section", placeholder: "Describe the hero image for accessibility" },
       {
         path: "aboutPage.goldenOccasions.paragraphs",
@@ -216,12 +216,12 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "year", label: "Year", type: "text", placeholder: "e.g. 1995" },
           { name: "title", label: "Title", type: "text", placeholder: "e.g. First Store Opened" },
           { name: "text", label: "Description", type: "textarea", placeholder: "What happened in this year?" },
-          { name: "image", label: "Milestone Image", type: "image", description: "Recommended: 400×400px (1:1 square)", aspectRatio: 1, recommendedWidth: 400, recommendedHeight: 400 },
+          { name: "image", label: "Milestone Image", type: "image", aspectRatio: 1, recommendedWidth: 400, recommendedHeight: 400 },
         ],
       },
       { path: "aboutPage.ventures.heading", label: "Heading", type: "text", section: "Our Ventures", placeholder: "e.g. Our Ventures" },
       { path: "aboutPage.ventures.subheading", label: "Subheading", type: "text", section: "Our Ventures", placeholder: "e.g. Our Dedicated Wedding Hall" },
-      { path: "aboutPage.ventures.image", label: "Ventures Image", type: "image", section: "Our Ventures", description: "Recommended: 1200×600px (2:1 ratio)", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
+      { path: "aboutPage.ventures.image", label: "Ventures Image", type: "image", section: "Our Ventures", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
       { path: "aboutPage.ventures.alt", label: "Image Description", type: "text", section: "Our Ventures", placeholder: "Describe the ventures image for accessibility" },
       {
         path: "aboutPage.ventures.bullets",
@@ -285,7 +285,7 @@ export const PAGE_DEFS: PageDef[] = [
       { path: "blogPage.promoHeading", label: "Promo Heading", type: "text", section: "Promotional Banner", placeholder: "e.g. Latest from Our Blog" },
       { path: "blogPage.promoDescription", label: "Promo Description", type: "textarea", section: "Promotional Banner", placeholder: "Short description for the promotional banner" },
       { path: "blogPage.promoCtaText", label: "Button Text", type: "text", section: "Promotional Banner", placeholder: "e.g. Read More" },
-      { path: "blogPage.promoImage", label: "Image", type: "image", section: "Promotional Banner", description: "Recommended: 1200×600px (2:1 ratio)", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
+      { path: "blogPage.promoImage", label: "Image", type: "image", section: "Promotional Banner", aspectRatio: 2/1, recommendedWidth: 1200, recommendedHeight: 600 },
       { path: "blogPage.headerTitle", label: "Page Heading", type: "text", section: "Page Header", placeholder: "e.g. Our Blog" },
       { path: "blogPage.headerSubtitle", label: "Page Subheading", type: "textarea", section: "Page Header", placeholder: "A short tagline below the heading" },
       { path: "blogPage.emptyText", label: "Empty State Message", type: "textarea", section: "Empty State", placeholder: "Message shown when there are no blog posts", description: "This message appears when the blog has no published posts." },
@@ -298,7 +298,7 @@ export const PAGE_DEFS: PageDef[] = [
     icon: "scheme",
     source: "global",
     fields: [
-      { path: "thangaMazhai.banner", label: "Banner Image", type: "image", section: "Page Banner", description: "Recommended: 1920×700px (2.74:1 ratio)", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
+      { path: "thangaMazhai.banner", label: "Banner Image", type: "image", section: "Page Banner", aspectRatio: 1920/700, recommendedWidth: 1920, recommendedHeight: 700 },
       { path: "thangaMazhai.title", label: "Page Title", type: "text", section: "Scheme Heading", placeholder: "e.g. Thanga Mazhai Scheme" },
       { path: "thangaMazhai.heading", label: "Scheme Header Text", type: "text", section: "Scheme Heading", placeholder: "Large bold uppercase heading text" },
       { path: "thangaMazhai.description", label: "Scheme Description", type: "textarea", section: "Scheme Heading" },

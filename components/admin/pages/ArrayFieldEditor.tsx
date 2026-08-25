@@ -62,29 +62,29 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
       : singular;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {items.length === 0 && (
-        <div style={{ fontSize: 13, color: "#aaa", padding: "12px 0" }}>
+        <div className="kj-pe-empty">
           No items yet.
         </div>
       )}
       {items.map((item, idx) => (
-        <div key={idx} style={itemStyle}>
-          <div style={itemHeaderStyle}>
-            <span style={{ fontSize: 12, color: "#999" }}>{idx + 1}.</span>
+        <div key={idx} className="kj-pe-repeater-card">
+          <div className="kj-pe-repeater-header">
+            <span className="kj-pe-repeater-badge">{singular} {idx + 1}</span>
             <button
               type="button"
               onClick={() => removeItem(idx)}
-              style={removeStyle}
+              className="kj-pe-remove-btn"
             >
               Remove
             </button>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+          <div className="kj-pe-fields">
             {arrayFields.map((f) => (
               <div key={f.name}>
-                <label style={fieldLabelStyle}>{f.label}</label>
-                {f.description && <div style={{ fontSize: 11, color: "#888", marginBottom: 4, lineHeight: 1.3 }}>{f.description}</div>}
+                <label className="kj-pe-field-label">{f.label}</label>
+                {f.description && <div className="kj-pe-hint">{f.description}</div>}
                 {f.type === "image" ? (
                   <ImagePicker
                     value={String(item[f.name] ?? "")}
@@ -102,7 +102,7 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
                     style={fieldInputStyle}
                   />
                 ) : f.type === "checkbox" ? (
-                  <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12.5, color: "#333" }}>
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12.5, color: "#334155", fontWeight: 500 }}>
                     <input
                       type="checkbox"
                       checked={item[f.name] === true || String(item[f.name]) === "true"}
@@ -127,44 +127,13 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
       <button
         type="button"
         onClick={addItem}
-        style={addStyle}
+        className="kj-pe-add-btn"
       >
         + Add {addItemLabel}
       </button>
     </div>
   );
 }
-
-const itemStyle: React.CSSProperties = {
-  border: "1px solid #e8e8e8",
-  borderRadius: 5,
-  padding: "12px 14px",
-  background: "#fafafa",
-};
-
-const itemHeaderStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: 8,
-};
-
-const removeStyle: React.CSSProperties = {
-  fontSize: 12,
-  color: "#999",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: 0,
-};
-
-const fieldLabelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 12,
-  fontWeight: 500,
-  color: "#666",
-  marginBottom: 4,
-};
 
 const fieldInputStyle: React.CSSProperties = {
   width: "100%",
@@ -176,14 +145,4 @@ const fieldInputStyle: React.CSSProperties = {
   color: "#161616",
   boxSizing: "border-box",
   outline: "none",
-};
-
-const addStyle: React.CSSProperties = {
-  fontSize: 13,
-  color: "#888",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: "4px 0",
-  textAlign: "left" as const,
 };

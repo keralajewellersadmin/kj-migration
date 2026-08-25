@@ -112,46 +112,53 @@ export default function Hero({
         <div className={styles.sliderWrapper}>
           <div className={styles.slider}>
             <div className={styles.stack} ref={containerRef}>
-              {displayedSlides.map((slide, i) => (
-                <div
-                  key={i}
-                  className={`${styles.slide} ${i === 0 ? styles.active : ""}`}
-                >
-                  <div className={styles.banner}>
-                    {slide.image && (
-                      <Image
-                        src={slide.image}
-                        alt={slide.heading}
-                        fill
-                        className={styles.bgImage}
-                        priority={i === 0}
-                      />
-                    )}
-                    <div className={styles.content}>
-                      <h1 className={styles.heading}>{slide.heading}</h1>
-                      <div className={styles.textContent}>
-                        <div className={styles.decorativeLine}>
-                          <Image
-                            src={IMG.heroDecorative}
-                            alt=""
-                            width={400}
-                            height={132}
-                            className={styles.decorativeImg}
-                          />
+              {displayedSlides.map((slide, i) => {
+                const hasText = Boolean(slide.heading || slide.description || slide.ctaText);
+                return (
+                  <div
+                    key={i}
+                    className={`${styles.slide} ${i === 0 ? styles.active : ""}`}
+                  >
+                    <div className={`${styles.banner} ${!hasText ? styles.bannerOnly : ""}`}>
+                      {slide.image && (
+                        <Image
+                          src={slide.image}
+                          alt={slide.heading || "Banner"}
+                          fill
+                          className={styles.bgImage}
+                          priority={i === 0}
+                        />
+                      )}
+                      {hasText && (
+                        <div className={styles.content}>
+                          <h1 className={styles.heading}>{slide.heading}</h1>
+                          <div className={styles.textContent}>
+                            <div className={styles.decorativeLine}>
+                              <Image
+                                src={IMG.heroDecorative}
+                                alt=""
+                                width={400}
+                                height={132}
+                                className={styles.decorativeImg}
+                              />
+                            </div>
+                            <p className={styles.description}>
+                              {slide.description}
+                            </p>
+                            {slide.ctaText && (
+                              <a href={slide.ctaHref} className={styles.cta}>
+                                <span className={styles.ctaText}>
+                                  {slide.ctaText}
+                                </span>
+                              </a>
+                            )}
+                          </div>
                         </div>
-                        <p className={styles.description}>
-                          {slide.description}
-                        </p>
-                        <a href={slide.ctaHref} className={styles.cta}>
-                          <span className={styles.ctaText}>
-                            {slide.ctaText}
-                          </span>
-                        </a>
-                      </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

@@ -233,18 +233,21 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
       <form onSubmit={handleSubmit}>
         {sections.map((section, sIdx) => (
           <div key={section.name ?? sIdx}>
-            {sIdx > 0 && <div style={{ borderTop: "1px solid #f0f0f0", margin: "24px 0" }} />}
+            {sIdx > 0 && <div className="kj-pe-section-divider" />}
             {section.name && (
-              <div style={{ fontSize: 11, fontWeight: 600, color: "#999", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 16 }}>
+              <div className="kj-pe-section">
                 {section.name}
               </div>
             )}
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div className="kj-pe-fields">
               {section.fields.map((f) => (
                 <div key={f.path}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#333", marginBottom: 5 }}>
+                  <label className="kj-pe-field-label">
                     {f.label}
                   </label>
+                  {f.description && (
+                    <div className="kj-pe-hint">{f.description}</div>
+                  )}
                   {f.type === "array" && f.arrayFields ? (
                     <ArrayFieldEditor
                       path={f.path}
@@ -262,7 +265,7 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
                       recommendedHeight={f.recommendedHeight}
                     />
                   ) : f.type === "checkbox" ? (
-                    <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: "#333" }}>
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12.5, color: "#334155", fontWeight: 500 }}>
                       <input
                         type="checkbox"
                         checked={values[f.path] === "true"}
