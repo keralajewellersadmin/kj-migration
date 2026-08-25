@@ -29,7 +29,19 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
   operation,
 }) => {
   if (operation !== "create" && operation !== "update") return data;
+
+  // Local-only mode: if Cloudinary isn't configured at all, store the file
+  // locally and skip Cloudinary. (Used for local dev without Cloudinary.)
   if (!process.env.CLOUDINARY_CLOUD_NAME) return data;
+
+  // Misconfiguration guard: cloud name is set but credentials are missing.
+  // Fail loudly instead of silently storing the file locally with no
+  // Cloudinary copy.
+  if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    throw new Error(
+      "[Cloudinary] CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET must be set for image uploads.",
+    );
+  }
 
   // File size limit: 10 MB
   const MAX_SIZE = 10 * 1024 * 1024;
@@ -97,8 +109,11 @@ export const cloudinaryUploadHook: CollectionBeforeChangeHook = async ({
       cloudinaryPublicId: result.public_id,
     };
   } catch (err) {
+    // Fail loudly: do NOT silently store the file locally with no Cloudinary
+    // copy. Surface the error so the upload is retried/fixed.
     console.error(`[Cloudinary] Upload failed:`, err);
-    return data;
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`[Cloudinary] Failed to upload image: ${message}`);
   }
 };
 
