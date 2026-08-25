@@ -44,6 +44,21 @@ export async function getSiteSettingsData() {
   return normalizeImageFields(data);
 }
 
+function cleanUploadFields(obj: any): void {
+  if (obj == null || typeof obj !== "object") return;
+  const uploadKeys = ["image", "banner", "promoImage", "ogImage"];
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (uploadKeys.includes(key) && val === "") {
+      obj[key] = null;
+    } else if (Array.isArray(val)) {
+      val.forEach((item) => cleanUploadFields(item));
+    } else if (typeof val === "object" && val !== null) {
+      cleanUploadFields(val);
+    }
+  }
+}
+
 export async function updateSiteSettings(patch: Record<string, unknown>) {
   try {
     const payload = await getPayload({ config });
@@ -77,6 +92,9 @@ export async function updateSiteSettings(patch: Record<string, unknown>) {
         patch.bestsellerProducts = [];
       }
     }
+
+    // Recursively normalize all empty image/upload strings to null across the entire document
+    cleanUploadFields(patch);
 
     await payload.updateGlobal({
       slug: "site-settings",
