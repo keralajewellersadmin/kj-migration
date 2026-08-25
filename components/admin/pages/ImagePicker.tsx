@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Cropper from "react-easy-crop";
 import "react-easy-crop/react-easy-crop.css";
+import FreeCropOverlay from "./FreeCropOverlay";
 
 interface MediaDoc {
   id: string;
@@ -70,6 +71,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
   const [cropImage, setCropImage] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [cropMode, setCropMode] = useState<"fixed" | "free">("fixed");
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [cropping, setCropping] = useState(false);
 
@@ -151,12 +153,13 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     setFile(selected);
-    if (selected && aspectRatio) {
+    if (selected) {
       const reader = new FileReader();
       reader.onload = (ev) => {
         setCropImage(ev.target?.result as string);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
+        setCropMode(aspectRatio ? "fixed" : "free");
         setCropOpen(true);
       };
       reader.readAsDataURL(selected);
@@ -175,52 +178,30 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
     setCropping(false);
   };
 
+  const handleFreeCropConfirm = useCallback((pixels: { x: number; y: number; width: number; height: number }) => {
+    setCroppedAreaPixels(pixels);
+    setTimeout(() => {
+      setCropping(true);
+      getCroppedImg(cropImage, pixels, recommendedWidth, recommendedHeight)
+        .then((blob) => uploadFile(blob))
+        .catch((e) => { setUploadError(e instanceof Error ? e.message : "Crop failed."); setCropping(false); });
+    }, 0);
+  }, [cropImage, recommendedWidth, recommendedHeight]);
+
   const uploadImage = async () => {
     if (!file) {
       setUploadError("Choose an image file first.");
       return;
     }
-    if (aspectRatio) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setCropImage(ev.target?.result as string);
-        setCrop({ x: 0, y: 0 });
-        setZoom(1);
-        setCropOpen(true);
-      };
-      reader.readAsDataURL(file);
-      return;
-    }
-    const fd = new FormData();
-    fd.append("file", file);
-    const cleanAlt = alt.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-    fd.append("_payload", JSON.stringify({ alt: cleanAlt }));
-    setUploading(true);
-    setUploadError("");
-    try {
-      const res = await fetch(`/api/media`, {
-        method: "POST",
-        body: fd,
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        const msg =
-          (errData?.errors && errData.errors[0]?.message) ||
-          `Upload failed (${res.status})`;
-        throw new Error(msg);
-      }
-      const data = await res.json();
-      const doc = data.doc || data;
-      if (doc && doc.id) {
-        onChange(String(doc.id));
-        setOpen(false);
-      } else {
-        throw new Error("Upload succeeded but no media was returned.");
-      }
-    } catch (e) {
-      setUploadError(e instanceof Error ? e.message : "Upload failed.");
-    }
-    setUploading(false);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setCropImage(ev.target?.result as string);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCropMode(aspectRatio ? "fixed" : "free");
+      setCropOpen(true);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -291,53 +272,93 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
               <span style={{ fontSize: 15, fontWeight: 600 }}>Crop Image</span>
               <button type="button" onClick={() => setCropOpen(false)} style={closeBtnStyle}>X</button>
             </div>
-            {ratioLabel && (
+            {ratioLabel ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 0, borderBottom: "1px solid #eee" }}>
+                <button
+                  type="button"
+                  onClick={() => { setCropMode("fixed"); setCrop({ x: 0, y: 0 }); setZoom(1); }}
+                  style={{
+                    flex: 1, padding: "8px 12px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
+                    background: cropMode === "fixed" ? "#9f1b1f" : "transparent",
+                    color: cropMode === "fixed" ? "#fff" : "#666",
+                  }}
+                >
+                  Fixed Ratio ({ratioLabel})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setCropMode("free"); setCrop({ x: 0, y: 0 }); setZoom(1); }}
+                  style={{
+                    flex: 1, padding: "8px 12px", fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer",
+                    background: cropMode === "free" ? "#9f1b1f" : "transparent",
+                    color: cropMode === "free" ? "#fff" : "#666",
+                  }}
+                >
+                  Free Crop (Any Size)
+                </button>
+              </div>
+            ) : (
               <div style={{ padding: "8px 16px", fontSize: 12, color: "#666", borderBottom: "1px solid #eee" }}>
-                Target: {ratioLabel}
+                Drag handles to resize. Drag inside to reposition.
               </div>
             )}
-            <div className="kj-cropper-wrap" style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a", touchAction: "none", userSelect: "none" }}>
-              <Cropper
-                image={cropImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={aspectRatio || 1}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
-                cropShape="rect"
-                showGrid
-                style={{
-                  containerStyle: { width: "100%", height: "100%", position: "relative", overflow: "hidden" },
-                  cropAreaStyle: { border: "2px solid rgba(255,255,255,0.8)", cursor: "grab", zIndex: 10 },
-                  mediaStyle: { cursor: "move" },
-                }}
-              />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", flexWrap: "wrap" }}>
-              <label style={{ fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>Zoom</label>
-              <input
-                type="range"
-                min={0.5}
-                max={5}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                style={{ flex: 1 }}
-              />
-              <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{zoom.toFixed(1)}x</span>
-            </div>
-            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
-              <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>
-              <button
-                type="button"
-                onClick={handleCropConfirm}
-                disabled={cropping || uploading}
-                style={{ ...uploadBtnStyle, opacity: cropping || uploading ? 0.6 : 1 }}
-              >
-                {cropping ? "Cropping..." : uploading ? "Uploading..." : "Crop & Upload"}
-              </button>
-            </div>
+            {cropMode === "fixed" ? (
+              <>
+                <div className="kj-cropper-wrap" style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a", touchAction: "none", userSelect: "none" }}>
+                  <Cropper
+                    image={cropImage}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={aspectRatio || 1}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+                    cropShape="rect"
+                    showGrid
+                    style={{
+                      containerStyle: { width: "100%", height: "100%", position: "relative", overflow: "hidden" },
+                      cropAreaStyle: { border: "2px solid rgba(255,255,255,0.8)", cursor: "grab", zIndex: 10 },
+                      mediaStyle: { cursor: "move" },
+                    }}
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", flexWrap: "wrap" }}>
+                  <label style={{ fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>Zoom</label>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={5}
+                    step={0.1}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    style={{ flex: 1 }}
+                  />
+                  <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{zoom.toFixed(1)}x</span>
+                </div>
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
+                  <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>
+                  <button
+                    type="button"
+                    onClick={handleCropConfirm}
+                    disabled={cropping || uploading}
+                    style={{ ...uploadBtnStyle, opacity: cropping || uploading ? 0.6 : 1 }}
+                  >
+                    {cropping ? "Cropping..." : uploading ? "Uploading..." : "Crop & Upload"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <FreeCropOverlay
+                  imageSrc={cropImage}
+                  onCrop={handleFreeCropConfirm}
+                  containerHeight={400}
+                />
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
+                  <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
