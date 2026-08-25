@@ -117,8 +117,10 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
       setStatus("saving");
       setError("");
 
+      // Build patch from scratch with only managed fields — avoids sending
+      // depth:1 resolved objects back to Payload which causes validation errors
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const patch: Record<string, any> = JSON.parse(JSON.stringify(doc));
+      const patch: Record<string, any> = {};
       for (const f of def.fields) {
         const raw = values[f.path] ?? "";
         if (f.type === "array") {
@@ -126,8 +128,6 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
             const parsed: unknown = JSON.parse(raw || "[]");
             if (Array.isArray(parsed)) {
               parsed.forEach((item: Record<string, any>) => {
-                // Ensure empty strings are set to null for image fields inside array items
-                // and convert string IDs to numbers for Payload relationship fields
                 f.arrayFields?.forEach((af) => {
                   if (af.type === "image") {
                     if (item[af.name] === "") {
@@ -158,8 +158,6 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
         } else if (f.type === "checkbox") {
           setPath(patch, f.path, raw === "true");
         } else {
-          // Ensure empty strings are set to null for top-level image fields
-          // and convert string IDs to numbers for Payload relationship fields
           let val: unknown = (f.type === "image" && raw === "") ? null : raw;
           if (f.type === "image" && typeof val === "string" && /^\d+$/.test(val)) {
             val = Number(val);
@@ -179,7 +177,7 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
           setStatus("error");
           setError(result.error || "Failed to save. Try again.");
         } else {
-          setDoc(patch);
+          setDoc({ ...doc, ...patch } as Record<string, unknown>);
           setStatus("saved");
           setTimeout(() => setStatus("idle"), 2000);
         }

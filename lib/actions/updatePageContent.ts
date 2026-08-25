@@ -51,6 +51,8 @@ function cleanUploadFields(obj: any): void {
     const val = obj[key];
     if (uploadKeys.includes(key) && val === "") {
       obj[key] = null;
+    } else if (uploadKeys.includes(key) && typeof val === "string" && /^\d+$/.test(val)) {
+      obj[key] = Number(val);
     } else if (Array.isArray(val)) {
       val.forEach((item) => cleanUploadFields(item));
     } else if (typeof val === "object" && val !== null) {
