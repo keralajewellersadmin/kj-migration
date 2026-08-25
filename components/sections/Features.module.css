@@ -1,89 +1,119 @@
 .featuresSection {
   background-color: var(--color-white);
-  padding-top: 75px;
-  padding-bottom: 75px;
+  padding-top: clamp(60px, 6vw, 100px);
+  padding-bottom: clamp(60px, 6vw, 100px);
   overflow-x: hidden;
 }
 
 .container {
-  max-width: var(--layout-container);
+  max-width: var(--layout-container, 1200px);
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--header-padding-x);
-  padding-right: var(--header-padding-x);
+  padding-left: var(--header-padding-x, 24px);
+  padding-right: var(--header-padding-x, 24px);
 }
 
 .grid {
-  display: grid;
-  gap: 0;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  column-gap: 3rem;
-  row-gap: 4rem;
+  display: grid !important;
+  align-items: stretch !important;
+  grid-template-columns: repeat(3, minmax(0px, 1fr)) !important;
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin: 0px auto !important;
+  gap: clamp(30px, 4vw, 64px) !important;
 }
 
 .item {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: flex-start;
-  text-align: center;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: center !important;
+  height: 100% !important;
+  cursor: pointer;
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-/* Circular image wrapper */
+.item:hover {
+  transform: scale(1.025);
+  filter: saturate(1.06) contrast(1.03);
+}
+
+/* Circular image wrapper matching Webflow styles */
 .imageWrap {
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  margin: 0px auto clamp(20px, 2vw, 32px) !important;
   position: relative;
-  border-radius: 50%;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  margin: 0 auto var(--space-6);
-  overflow: hidden;
+  width: clamp(170px, 15vw, 210px) !important;
+  height: clamp(170px, 15vw, 210px) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 1024px) {
+  .imageWrap {
+    width: clamp(210px, 18vw, 250px) !important;
+    height: clamp(210px, 18vw, 250px) !important;
+  }
 }
 
 .image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
   display: block;
 }
 
-/* Title */
+/* Title matching Webflow font-decorative and size styling */
 .title {
-  margin: 0 0 var(--space-2);
-  color: var(--color-maroon);
-  font-family: var(--font-decorative);
-  font-size: 40px;
-  font-weight: 400;
-  line-height: 1.25;
+  color: rgb(153, 31, 35) !important; /* Maroon (#991f23) */
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-weight: 400 !important;
+  line-height: 1.08 !important;
+  margin: 0px 0px 8px !important;
+  font-size: clamp(26px, 2.5vw, 32px) !important;
 }
 
-/* Description */
+@media (min-width: 1024px) {
+  .title {
+    font-size: clamp(34px, 3vw, 44px) !important;
+    margin: 0px 0px 12px !important;
+  }
+}
+
+/* Description matching Webflow font-body and spacing styling */
 .description {
-  margin: 0;
-  color: var(--color-charcoal-soft);
-  font-family: var(--font-body);
-  font-size: 20px;
-  line-height: 1.5;
-  width: 77%;
+  color: rgb(109, 93, 91) !important; /* Slate gray (#6d5d5b) */
+  font-family: Montserrat, var(--font-body), sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 1.46 !important;
+  margin: 0px auto !important;
+  max-width: 320px !important;
+  text-align: center !important;
+  text-wrap: balance;
+  font-size: clamp(15px, 1.1vw, 17px) !important;
 }
 
-/* ── Responsive: Tablet ── */
-@media (max-width: 991px) { .rectItem { aspect-ratio: 3 / 1; } }
-@media (max-width: 767px) { .rectItem { aspect-ratio: 16 / 9; } }
+@media (min-width: 1024px) {
+  .description {
+    min-height: 64px !important;
+    font-size: clamp(18px, 1.45vw, 22px) !important;
+  }
+}
 
-/* ── Carousel (≤991px) ── */
+/* ── Carousel for Mobile Viewports (≤ 991px) ── */
 .carouselTrack {
-  display: flex;
-  gap: 0;
+  display: flex !important;
+  grid-template-columns: none !important;
+  gap: 0px !important;
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: grab;
   user-select: none;
   touch-action: pan-y;
+  position: relative;
+  min-height: 380px;
 }
 
 .carouselTrack:active {
@@ -91,17 +121,17 @@
 }
 
 .carouselSlide {
-  flex: 0 0 100%;
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  height: 100% !important;
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-/* Active slide: fully visible, centered */
 .pos-active {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* Previous slide: off-screen left */
 .pos-prev {
   opacity: 0;
   transform: translateX(-100%);
@@ -112,7 +142,6 @@
   width: 100%;
 }
 
-/* Next slide: off-screen right */
 .pos-next {
   opacity: 0;
   transform: translateX(100%);
@@ -123,9 +152,7 @@
   width: 100%;
 }
 
-/* Hidden slides: not visible */
-.pos-hidden,
-.hidden {
+.pos-hidden {
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -134,27 +161,14 @@
   width: 100%;
 }
 
-/* Carousel overrides for grid on mobile */
 @media (max-width: 991px) {
   .grid:not(.carouselTrack) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
   }
-  .carouselTrack {
-    position: relative;
-    min-height: 320px;
-  }
+  
   .item {
-    justify-content: center;
-    padding: 0 20px;
-  }
-  .imageWrap {
-    max-width: 160px;
-    margin-bottom: var(--space-4);
-  }
-  .title {
-    font-size: 28px;
-  }
-  .description {
-    font-size: 16px;
+    justify-content: center !important;
+    padding: 0 20px !important;
   }
 }

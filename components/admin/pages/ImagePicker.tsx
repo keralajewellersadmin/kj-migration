@@ -289,7 +289,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 Target: {ratioLabel}
               </div>
             )}
-            <div style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a" }}>
+            <div style={{ position: "relative", width: "100%", height: 400, background: "#1a1a1a", overflow: "hidden", touchAction: "none" }}>
               <Cropper
                 image={cropImage}
                 crop={crop}
@@ -300,7 +300,10 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
                 cropShape="rect"
                 showGrid
-                style={{ containerStyle: { width: "100%", height: "100%" } }}
+                style={{
+                  containerStyle: { width: "100%", height: "100%", position: "relative" },
+                  cropAreaStyle: { border: "2px solid rgba(255,255,255,0.8)", borderRadius: 4 },
+                }}
               />
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
