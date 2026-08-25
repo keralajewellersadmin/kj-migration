@@ -263,8 +263,6 @@ export const PAGE_DEFS: PageDef[] = [
           { name: "address", label: "Branch Address", type: "textarea" },
           { name: "phone", label: "Display Phone", type: "text", placeholder: "e.g. 98400 88324" },
           { name: "phoneFull", label: "Dialable Phone Number (Digits only)", type: "text", placeholder: "e.g. 9840088324" },
-          { name: "email", label: "Branch Email", type: "text" },
-          { name: "hours", label: "Store Timings", type: "text", placeholder: "e.g. Mon–Sat: 10 AM – 8 PM" },
           { name: "mapQ", label: "Google Maps Query Name", type: "text", placeholder: "e.g. Kerala+Jewellers+T.Nagar" },
           { name: "mapEmbedUrl", label: "Custom Map Embed URL (Optional)", type: "text" },
         ],

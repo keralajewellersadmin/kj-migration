@@ -70,7 +70,6 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
   const [cropImage, setCropImage] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [freeCrop, setFreeCrop] = useState(false);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [cropping, setCropping] = useState(false);
 
@@ -158,7 +157,6 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
         setCropImage(ev.target?.result as string);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
-        setFreeCrop(false);
         setCropOpen(true);
       };
       reader.readAsDataURL(selected);
@@ -188,7 +186,6 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
         setCropImage(ev.target?.result as string);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
-        setFreeCrop(false);
         setCropOpen(true);
       };
       reader.readAsDataURL(file);
@@ -304,7 +301,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 image={cropImage}
                 crop={crop}
                 zoom={zoom}
-                aspect={freeCrop ? Infinity : (aspectRatio || 1)}
+                aspect={aspectRatio || 1}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
@@ -321,33 +318,14 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
               <label style={{ fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>Zoom</label>
               <input
                 type="range"
-                min={1}
-                max={3}
+                min={0.5}
+                max={5}
                 step={0.1}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
                 style={{ flex: 1 }}
               />
               <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{zoom.toFixed(1)}x</span>
-              {aspectRatio ? (
-                <button
-                  type="button"
-                  onClick={() => { setFreeCrop(!freeCrop); setCrop({ x: 0, y: 0 }); setZoom(1); }}
-                  style={{
-                    marginLeft: "auto",
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: freeCrop ? "#fff" : "#9f1b1f",
-                    background: freeCrop ? "#9f1b1f" : "none",
-                    border: "1px solid #9f1b1f",
-                    borderRadius: 4,
-                    padding: "3px 10px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {freeCrop ? "Free Crop On" : "Free Crop"}
-                </button>
-              ) : null}
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", padding: "0 16px 16px" }}>
               <button type="button" onClick={() => setCropOpen(false)} style={clearBtnStyle}>Cancel</button>

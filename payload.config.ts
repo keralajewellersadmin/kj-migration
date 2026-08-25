@@ -1463,8 +1463,6 @@ const SiteSettings: GlobalConfig = {
                 { name: "address", type: "textarea" },
                 { name: "phone", type: "text", admin: { description: 'Display phone (e.g. "98400 88324")' } },
                 { name: "phoneFull", type: "text", admin: { description: 'Raw digits for tel: links (e.g. "9840088324")' } },
-                { name: "email", type: "text" },
-                { name: "hours", type: "text", admin: { description: 'e.g. "Mon–Sat: 10 AM – 8 PM"' } },
                 { name: "mapQ", type: "text", admin: { description: 'Google Maps query (e.g. "Kerala+Jewellers+Pondy+Bazaar+Chennai")' } },
                 { name: "mapEmbedUrl", type: "text", admin: { description: "Full Google Maps embed URL (optional)" } },
               ],

@@ -158,17 +158,6 @@ function BranchCard({ branch }: { branch: Branch }) {
         <strong>Phone:</strong>{" "}
         <a href={`tel:${branch.phoneFull}`}>{branch.phone}</a>
       </p>
-      {branch.email && (
-        <p className={styles.branchPhone}>
-          <strong>Email:</strong>{" "}
-          <a href={`mailto:${branch.email}`}>{branch.email}</a>
-        </p>
-      )}
-      {branch.hours && (
-        <p className={styles.branchPhone}>
-          <strong>Hours:</strong> {branch.hours}
-        </p>
-      )}
       <div className={styles.branchActions}>
         <a href={`tel:${branch.phoneFull}`} className={styles.branchBtn}>
           Call Store

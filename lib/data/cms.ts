@@ -785,8 +785,6 @@ export interface SiteSettingsData {
     address: string;
     phone: string;
     phoneFull: string;
-    email: string;
-    hours: string;
     mapQ: string;
     mapEmbedUrl: string;
   }>;
@@ -1284,8 +1282,6 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
           address: (b.address as string) || "",
           phone: (b.phone as string) || "",
           phoneFull: (b.phoneFull as string) || "",
-          email: (b.email as string) || "",
-          hours: (b.hours as string) || "",
           mapQ: (b.mapQ as string) || "",
           mapEmbedUrl: (b.mapEmbedUrl as string) || "",
         }));
@@ -1335,7 +1331,7 @@ export async function loadArrayDataViaSQL(
        FROM site_settings_categories c LEFT JOIN media m ON c.image_id = m.id
        WHERE c._parent_id = $1 ORDER BY _order`, [ssId]);
     const branchesRes = await pool.query(
-      `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
+      `SELECT name, address, phone, phone_full, map_q, map_embed_url
        FROM site_settings_branches WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
     const bestsellersRes = ssBestsellerSlugs.length
       ? await pool.query(
@@ -1397,14 +1393,11 @@ export async function loadArrayDataViaSQL(
         variant: r.variant || "",
         image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       branches: branchesRes.rows.length > 0 ? branchesRes.rows.map((r: any) => ({
         name: r.name || "",
         address: r.address || "",
         phone: r.phone || "",
         phoneFull: r.phone_full || "",
-        email: r.email || "",
-        hours: r.hours || "",
         mapQ: r.map_q || "",
         mapEmbedUrl: r.map_embed_url || "",
       })) : data.branches,
