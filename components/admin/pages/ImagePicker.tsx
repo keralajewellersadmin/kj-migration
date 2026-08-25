@@ -266,8 +266,8 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
       </div>
 
       {cropOpen && (
-        <div style={modalOverlayStyle} onClick={() => setCropOpen(false)}>
-          <div style={{ ...modalStyle, maxWidth: 600 }} onClick={(e) => e.stopPropagation()}>
+        <div style={modalOverlayStyle}>
+          <div style={{ ...modalStyle, maxWidth: 600 }}>
             <div style={modalHeaderStyle}>
               <span style={{ fontSize: 15, fontWeight: 600 }}>Crop Image</span>
               <button type="button" onClick={() => setCropOpen(false)} style={closeBtnStyle}>X</button>
