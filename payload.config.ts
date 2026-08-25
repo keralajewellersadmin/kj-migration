@@ -1301,7 +1301,7 @@ const SiteSettings: GlobalConfig = {
               type: "array",
               label: "Hero Slides",
               fields: [
-                { name: "heading", type: "text", required: true },
+                { name: "heading", type: "text" },
                 { name: "description", type: "textarea" },
                 { name: "ctaText", type: "text", defaultValue: "EXPLORE" },
                 { name: "ctaHref", type: "text", defaultValue: "/products" },

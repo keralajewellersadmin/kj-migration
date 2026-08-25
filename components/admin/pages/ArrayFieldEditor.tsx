@@ -39,11 +39,7 @@ export default function ArrayFieldEditor({ path, label, arrayFields, value, onCh
 
   const addItem = () => {
     const blank: Record<string, string | boolean> = {};
-    arrayFields.forEach((f) => {
-      if (f.type === "checkbox") blank[f.name] = false;
-      else if (f.name === "heading" || f.name === "title") blank[f.name] = "New " + (f.label || f.name);
-      else blank[f.name] = "";
-    });
+    arrayFields.forEach((f) => (blank[f.name] = f.type === "checkbox" ? false : ""));
     emit([...items, blank]);
   };
 

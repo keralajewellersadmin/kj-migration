@@ -98,17 +98,20 @@ export async function updateSiteSettings(patch: Record<string, unknown>) {
     // Recursively normalize all empty image/upload strings to null across the entire document
     cleanUploadFields(patch);
 
-    // Auto-clean incomplete array rows that would fail Payload validation
-    // (e.g. an empty Hero Slide heading after + Add). Remove rows where a
-    // required text field like heading/title is blank, so the user isn't
-    // blocked by a hidden empty row when editing an unrelated section.
+    // Auto-clean fully empty rows (no heading, no image) that would have
+    // previously blocked saves. Image-only slides are now allowed — keep any
+    // row that has at least a heading, description, or image.
     if (Array.isArray((patch as Record<string, unknown>).heroSlides)) {
       const slides = (patch as Record<string, unknown>).heroSlides as Record<string, unknown>[];
-      const cleaned = slides.filter((s) => String(s.heading ?? "").trim() !== "");
+      const cleaned = slides.filter(
+        (s) =>
+          String(s.heading ?? "").trim() !== "" ||
+          String(s.description ?? "").trim() !== "" ||
+          s.image != null,
+      );
       if (cleaned.length !== slides.length) {
         (patch as Record<string, unknown>).heroSlides = cleaned;
       }
-      // If still invalid after cleaning, let Payload surface the error normally
     }
 
     await payload.updateGlobal({
