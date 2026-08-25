@@ -36,9 +36,8 @@
 
 .heroImage {
   width: 100%;
-  aspect-ratio: 1;
-  height: auto;
-  object-fit: cover;
+  height: 50vh;
+  object-fit: contain;
   display: block;
   border-radius: 15px;
   box-shadow: 0 4px 24px #96a3b514;
@@ -85,9 +84,8 @@
   }
 
   .heroImage {
-    aspect-ratio: 1;
-    height: auto;
-    object-fit: cover;
+    height: 40vh;
+    object-fit: contain;
   }
 
   .heading {
