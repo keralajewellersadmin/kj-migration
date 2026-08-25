@@ -159,7 +159,11 @@ export default function PageEditor({ slug: slugProp }: { slug?: string }) {
           setPath(patch, f.path, raw === "true");
         } else {
           // Ensure empty strings are set to null for top-level image fields
-          const val = (f.type === "image" && raw === "") ? null : raw;
+          // and convert string IDs to numbers for Payload relationship fields
+          let val: unknown = (f.type === "image" && raw === "") ? null : raw;
+          if (f.type === "image" && typeof val === "string" && /^\d+$/.test(val)) {
+            val = Number(val);
+          }
           setPath(patch, f.path, val);
         }
       }
