@@ -304,7 +304,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
                 image={cropImage}
                 crop={crop}
                 zoom={zoom}
-                aspect={freeCrop ? NaN : (aspectRatio || 1)}
+                aspect={freeCrop ? Infinity : (aspectRatio || 1)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
