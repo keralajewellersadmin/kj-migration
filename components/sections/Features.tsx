@@ -142,38 +142,7 @@ export default function Features({
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
-          {features.map((feature, i) => {
-            if (feature.blockType === "rectangleBanner") {
-              return (
-                <div key={i} className={styles.rectItem}>
-                  {feature.image && (
-                    <Image
-                      src={feature.image}
-                      alt={feature.alt || feature.heading || ""}
-                      className={styles.rectImage}
-                      fill
-                      sizes="(max-width: 991px) 100vw, 940px"
-                      loading="lazy"
-                    />
-                  )}
-                  <div className={styles.rectOverlay}>
-                    <h2 className={styles.rectHeading}>{feature.heading}</h2>
-                    {feature.description && (
-                      <p className={styles.rectDesc}>{feature.description}</p>
-                    )}
-                    {feature.ctaText && (
-                      <a
-                        href={feature.ctaLink || "#"}
-                        className={styles.rectCta}
-                      >
-                        {feature.ctaText}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              );
-            }
-            return (
+          {features.map((feature, i) => (
               <div
                 key={i}
                 className={`${styles.item} ${isCarousel ? styles.carouselSlide : ""} ${isCarousel ? styles[`pos-${position(i)}`] : ""}`}
@@ -194,8 +163,7 @@ export default function Features({
                 <h2 className={styles.title}>{feature.title}</h2>
                 <p className={styles.description}>{feature.description}</p>
               </div>
-            );
-          })}
+            ))}
         </div>
       </div>
     </section>
