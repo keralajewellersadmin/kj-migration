@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getSiteSettings } from "../../../lib/data/cms";
 import styles from "./page.module.css";
 import { IMG } from "@/lib/image-urls";
+import TimelineSection from "./TimelineSection";
 
 export const revalidate = 300;
 
@@ -96,135 +97,11 @@ export default async function AboutPage() {
       </section>
 
       {/* ── Timeline ────────────────────────────────────────────── */}
-      <section className={styles.timelineSection}>
-        <div className={styles.timelineWrap}>
-          <div className={styles.timelinePadding}>
-            <div className={styles.timelineHeader}>
-              <h2 className={styles.timelineTitle}>
-                {aboutPage.origins.heading}
-              </h2>
-              <p className={styles.timelineIntro}>
-                {aboutPage.origins.intro || (
-                  <>
-                    A glimpse into the history of{" "}
-                    <strong>
-                      <em>Kerala Jewellers</em>
-                    </strong>
-                    . Kerala Jewellers is a living tradition, continually
-                    evolving while staying true to its roots. Each piece is a
-                    narrative of the past, a celebration of the present, and a
-                    legacy for the future.
-                  </>
-                )}
-              </p>
-            </div>
-
-            {/* Desktop: Alternating timeline grid rows */}
-            <div className={styles.timelineDesktop}>
-              <div className={styles.timelineGridInner}>
-                {aboutPage.timeline.map((item, i) => {
-                  const isLeft = i % 2 === 0;
-                  return (
-                    <div key={item.year} className={styles.timelineRow}>
-                      {/* Left Side */}
-                      <div className={styles.timelineSide}>
-                        {isLeft ? (
-                          <div className={`${styles.timelineItemWrap} ${styles.leftAlign}`}>
-                            <p className={styles.timelineYear}>{item.year}</p>
-                            <p className={`${styles.timelineText} ${styles.alignRight}`}>
-                              {item.title ? `${item.title}. ` : ""}
-                              {item.text}
-                            </p>
-                            {item.image && (
-                              <div className={styles.timelineImageCard}>
-                                <Image
-                                  src={item.image}
-                                  alt={item.title || ""}
-                                  className={styles.timelineImage}
-                                  width={270}
-                                  height={300}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div />
-                        )}
-                      </div>
-
-                      {/* Center Track */}
-                      <div className={styles.timelineTrackWrap}>
-                        <div className={styles.timelineTrack}>
-                          <div className={styles.timelineDot} />
-                        </div>
-                      </div>
-
-                      {/* Right Side */}
-                      <div className={styles.timelineSide}>
-                        {!isLeft ? (
-                          <div className={`${styles.timelineItemWrap} ${styles.rightAlign}`}>
-                            <p className={styles.timelineYear}>{item.year}</p>
-                            <p className={styles.timelineText}>
-                              {item.title ? `${item.title}. ` : ""}
-                              {item.text}
-                            </p>
-                            {item.image && (
-                              <div className={styles.timelineImageCard}>
-                                <Image
-                                  src={item.image}
-                                  alt={item.title || ""}
-                                  className={styles.timelineImage}
-                                  width={270}
-                                  height={300}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Mobile: single column */}
-            <div className={styles.timelineMobile}>
-              <div className={styles.timelineMobileGrid}>
-                <div className={styles.timelineMobileProgress} />
-                <div className={styles.timelineMobileGridInner}>
-                  {aboutPage.timeline.map((item) => (
-                    <div key={item.year}>
-                      <div className={styles.timelineMobileTrack}>
-                        <div className={styles.timelineMobileItem}>
-                          <p className={styles.timelineMobileItemYear}>
-                            {item.year}
-                          </p>
-                          <p className={styles.timelineMobileItemText}>
-                            {item.title ? `${item.title}. ` : ""}
-                            {item.text}
-                          </p>
-                        </div>
-                        {item.image && (
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            className={styles.timelineMobileItemImage}
-                            width={400}
-                            height={220}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <TimelineSection
+        timeline={aboutPage.timeline}
+        intro={aboutPage.origins.intro}
+        heading={aboutPage.origins.heading}
+      />
 
       {/* ── Our Ventures — Title Banner ────────────────────────── */}
       <section className={styles.venturesTitleSection}>
