@@ -1327,7 +1327,7 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
             text: (t.text as string) || "",
             image: resolveMediaUrl(t.image) || "",
           }));
-          return (dbTimeline.length > 0 && dbTimeline.some((t: any) => String(t.year) === "1933")) ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
+          return (dbTimeline.length === 11 && dbTimeline.every((t: any) => t.image && t.image.trim() !== "")) ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
         })(),
         ventures: {
           heading: (ve?.heading as string) || DEFAULT_SETTINGS.aboutPage.ventures.heading,
@@ -1782,7 +1782,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
                 text: t.text || "",
                 image: resolveMediaUrl(t.image) || "",
               }));
-              return (dbTimeline.length > 0 && dbTimeline.some((t: any) => String(t.year) === "1933")) ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
+              return (dbTimeline.length === 11 && dbTimeline.every((t: any) => t.image && t.image.trim() !== "")) ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
             })(),
             ventures: {
               heading: ve?.heading || DEFAULT_SETTINGS.aboutPage.ventures.heading,
