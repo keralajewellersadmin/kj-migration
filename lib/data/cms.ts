@@ -979,7 +979,74 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
     },
     tasteMeetsTradition: { heading: "Taste Meets Tradition", text: "" },
     origins: { heading: "The Origins", intro: "" },
-    timeline: [],
+    timeline: [
+      {
+        year: "1933",
+        title: "",
+        text: "In 1933, Mr.P.C.Varghese, a visionary entrepreneur with a deep appreciation for fine jewellery, founded Kerala Jewellers in Ponkunnam, Kottayam district,Kerala. Mrs.Annamma Varghese was a visionary designer whose work significantly impacted the world of gold jewellery. Her designs brought a fresh perspective to traditional jewellery and she was the inspiration to start this gold business.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/67986b979c74971ca6057553_Frame%202085665174.png"
+      },
+      {
+        year: "1958",
+        title: "The Next Generation",
+        text: "Mr.Jose Cheeramvelil Vision was the same with Mr.P.C.Varghese, his son Mr. Jose Cheeramvelil took over the reins of Kerala Jewellers.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/67986b979c74971ca6057545_Rectangle%20361.png"
+      },
+      {
+        year: "1959",
+        title: "Relocation to Ranganathan Street, T Nagar",
+        text: "Recognizing the evolving market and the need for a more prominent presence, Kerala Jewellers was moved to Ranganathan Street, T Nagar, Chennai's bustling main shopping area. A Blessing for Chennai Shoppers. The move to T Nagar was a blessing for the people of Chennai. Kerala Jewellers became a highly sought-after destination for those seeking high-quality gold jewellery. The store gained a reputation for offering lightweight designs, which was elegant while retaining the essence of traditional South Indian styles",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/67986b979c74971ca605754c_Rectangle%20363.png"
+      },
+      {
+        year: "1972",
+        title: "A New Era with Mr.George Joseph (Wilson)",
+        text: "The addition of Mr. George Joseph, also known as Wilson, to Kerala Jewellers marked the beginning of a new chapter in the family's illustrious business. Bringing with him a fresh perspective and a deep commitment to continuing the family's tradition of excellence, Mr Wilson played a pivotal role in furthering the brand’s reputation and reach.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1615ca0720284bf1565b_Rectangle%20369%20(4).png"
+      },
+      {
+        year: "1988",
+        title: "The New Showroom on Ranganathan Street",
+        text: "Recognizing the need to innovate and expand, Mr. George Joseph launched his unique showroom on the bustling Ranganathan Street in T Nagar. This area, known as the heart of Chennai's shopping district,",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae249ccb35781959eac6fc_Rectangle%20366%20(6).png"
+      },
+      {
+        year: "1992",
+        title: "The Opening of the Second Store",
+        text: "On April 13, 1992, Mr. George Joseph inaugurated the second Kerala Jewellers store in Pondy Bazaar. This new location was strategically chosen for its high foot traffic and reputation as a bustling commercial hub in Chennai.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae22bef52614a0871d61a2_Rectangle%20367%20(8).png"
+      },
+      {
+        year: "2001",
+        title: "The Inception of Ayswariya Mahal",
+        text: "Ayswariya Mahal was conceived with the idea of providing a luxurious and spacious venue for weddings exhibition and other grand events. Recognizing the growing demand for premium event spaces in Chennai, Mr. George Joseph decided to expand his business portfolio by entering the hospitality sector. The marriage hall was designed to offer a perfect blend of elegance and functionality, making it an ideal choice for various celebrations.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1617c6c2ad9398a45485_Rectangle%20369%20(1).png"
+      },
+      {
+        year: "2002",
+        title: "Expansion to Purasaiwalkam",
+        text: "In 2002, Kerala Jewellers embarked on a new venture with the opening of a store in Purasaiwalkam, a bustling area in Chennai. This expansion was overseen and managed by Mr. Siby Joseph, the son-in-law of Mr. George Joseph (Wilson), marking a significant milestone in the family business.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae22bea9cab6312ffdd45d_Rectangle%20367%20(7).png"
+      },
+      {
+        year: "2008",
+        title: "The Porur Branch Opening",
+        text: "On December 3, 2008, Kerala Jewellers expanded its reach further with the opening of a new branch in Porur, Chennai. This new store was managed by Mr. Roopesh George, the son of Mr. George Joseph (Wilson), marking another significant milestone in the family business.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1616868e2e539cbfc0c9_Rectangle%20368%20(2).png"
+      },
+      {
+        year: "2015",
+        title: "The Launch of Pebbles",
+        text: "On February 15, 2015, Mr. George Joseph (Wilson) expanded his entrepreneurial portfolio into the hospitality sector with the launch of \"Pebbles,\" a service apartment. This new venture marked a significant addition to his diverse business interests and demonstrated his continued commitment to excellence in service.",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae16158fbb46cce3ea01a5_Rectangle%20368%20(1).png"
+      },
+      {
+        year: "2022",
+        title: "Renovation of the Pondy Bazaar Showroom",
+        text: "The Pondy Bazaar showroom of Kerala Jewellers underwent a significant renovation to transform it into a boutique store, reflecting a fresh and modern approach. This renovation marked a new chapter in the showroom’s evolution, aiming to enhance the customer experience and align with contemporary retail trends.with wide range ofcollections in Gold,Silver and Diamonds we always make sure the purity of gold is our priority and customers service and satisfaction is key",
+        image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1617c6c2ad9398a45485_Rectangle%20369%20(1).png"
+      }
+    ],
     ventures: {
       heading: "Our Ventures",
       subheading: "Our Dedicated Wedding Hall",
@@ -1253,12 +1320,15 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
           heading: (or?.heading as string) || DEFAULT_SETTINGS.aboutPage.origins.heading,
           intro: (or?.intro as string) || "",
         },
-        timeline: (ap.timeline as Array<Record<string, unknown>> || []).map((t) => ({
-          year: (t.year as string) || "",
-          title: (t.title as string) || "",
-          text: (t.text as string) || "",
-          image: resolveMediaUrl(t.image) || "",
-        })),
+        timeline: (() => {
+          const dbTimeline = (ap.timeline as Array<Record<string, unknown>> || []).map((t) => ({
+            year: (t.year as string) || "",
+            title: (t.title as string) || "",
+            text: (t.text as string) || "",
+            image: resolveMediaUrl(t.image) || "",
+          }));
+          return dbTimeline.length > 0 ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
+        })(),
         ventures: {
           heading: (ve?.heading as string) || DEFAULT_SETTINGS.aboutPage.ventures.heading,
           subheading: (ve?.subheading as string) || "Our Dedicated Wedding Hall",
@@ -1705,12 +1775,15 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
               heading: or?.heading || DEFAULT_SETTINGS.aboutPage.origins.heading,
               intro: or?.intro || "",
             },
-            timeline: (ap.timeline || []).map((t: PayloadDoc) => ({
-              year: t.year || "",
-              title: t.title || "",
-              text: t.text || "",
-              image: resolveMediaUrl(t.image) || "",
-            })),
+            timeline: (() => {
+              const dbTimeline = (ap.timeline || []).map((t: PayloadDoc) => ({
+                year: t.year || "",
+                title: t.title || "",
+                text: t.text || "",
+                image: resolveMediaUrl(t.image) || "",
+              }));
+              return dbTimeline.length > 0 ? dbTimeline : DEFAULT_SETTINGS.aboutPage.timeline;
+            })(),
             ventures: {
               heading: ve?.heading || DEFAULT_SETTINGS.aboutPage.ventures.heading,
               subheading: ve?.subheading || "Our Dedicated Wedding Hall",
