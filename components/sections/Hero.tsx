@@ -121,21 +121,13 @@ export default function Hero({
                   >
                     <div className={`${styles.banner} ${!hasText ? styles.bannerOnly : ""}`}>
                       {slide.image && (
-                        !hasText ? (
-                          <img
-                            src={slide.image}
-                            alt={slide.heading || "Banner"}
-                            className={styles.responsiveImage}
-                          />
-                        ) : (
-                          <Image
-                            src={slide.image}
-                            alt={slide.heading || "Banner"}
-                            fill
-                            className={styles.bgImage}
-                            priority={i === 0}
-                          />
-                        )
+                        <Image
+                          src={slide.image}
+                          alt={slide.heading || "Banner"}
+                          fill
+                          className={styles.bgImage}
+                          priority={i === 0}
+                        />
                       )}
                       {hasText && (
                         <div className={styles.content}>
