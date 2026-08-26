@@ -233,32 +233,21 @@
   margin: 0;
 }
 
+/* Desktop: alternating 3-col grid — origin .timeline_grid (1fr .25fr 1fr) */
 .timelineDesktop {
-  display: flex;
-  flex-direction: column;
-  grid-row-gap: 6em;
+  display: block;
+}
+
+.timelineGridWrap {
+  position: relative;
 }
 
 .timelineGrid {
-  position: relative;
-}
-
-.timelineGridInner {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  width: 100%;
-}
-
-.timelineRow {
   display: grid;
-  grid-template-columns: 1fr 120px 1fr;
-  width: 100%;
-  align-items: center;
-  position: relative;
-}
-
-.timelineSide {
+  grid-column-gap: 1.5em;
+  grid-row-gap: 0em;
+  grid-template-rows: auto auto auto;
+  grid-template-columns: 1fr 0.25fr 1fr;
   width: 100%;
 }
 
@@ -280,8 +269,15 @@
   text-align: left;
 }
 
+.timelineImageCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .timelineYear {
-  color: #b00000; /* var(--bright-red) */
+  color: #b00000;
   font-family: var(--font-body);
   font-size: 32px;
   font-weight: 500;
@@ -312,74 +308,47 @@
 
 .timelineTrackWrap {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  align-self: stretch;
+  position: relative;
 }
 
 .timelineTrack {
+  background-image: linear-gradient(#fff, #fff);
+  flex-direction: column;
+  align-items: center;
   width: 2px;
-  background-color: #ad1c20;
   height: 100%;
   min-height: 160px;
-  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.timelineTrackAbsolute {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  background-color: #ffffff;
-  z-index: 1;
-}
-
-.timelineTrackPlaceholder {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-}
-
-.timelineDot {
-  width: 24px;
-  height: 24px;
-  background-color: #ffffff;
-  border: 0.8px solid #ad1c20;
-  border-radius: 99px;
-  margin-bottom: -12px;
-  flex-shrink: 0;
-  z-index: 4;
 }
 
 .timelineProgress {
-  z-index: 2;
-  background-image: linear-gradient(
-    #ffffff,
-    #ad1c20 28%,
-    #470b0d 52%,
-    #ad1c20 72%,
-    #ffffff
-  );
-  width: 3px;
-  display: flex;
+  z-index: 1;
+  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  width: 3px;
+  height: 5%;
+  display: flex;
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0% 0% auto 50%;
+  transform: translate(-50%);
   transition: height 0.1s ease-out;
+}
+
+.timelineDot {
+  z-index: 1;
+  background-color: #fff;
+  border: 1px solid #ad1c20;
+  border-radius: 99px;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: -12px;
 }
 
 .timelineImageCard {
@@ -391,53 +360,21 @@
   width: 100%;
 }
 
-.timelineImageRow {
-  display: flex;
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
-}
-
 .timelineImage {
-  border-radius: 5px;
-  width: 100%;
-  height: auto;
-  max-width: 380px;
+  border-radius: 15px;
+  width: 270px;
+  height: 300px;
   object-fit: cover;
+  display: block;
 }
 
+/* Mobile: single-column stack — origin .timeline_inner-mobile */
 .timelineMobile {
   display: none;
 }
 
-.timelineMobileGrid {
+.timelineMobileGridWrap {
   position: relative;
-}
-
-.timelineMobileGridInner {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.timelineMobileProgress {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3px;
-  background-image: linear-gradient(
-    #ffffff,
-    #ad1c20 28%,
-    #470b0d 52%,
-    #ad1c20 72%,
-    #ffffff
-  );
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  z-index: 2;
-  transition: height 0.1s ease-out;
 }
 
 .timelineMobileTrack {
@@ -446,8 +383,38 @@
   bottom: 0;
   left: 2.5em;
   width: 2px;
-  background-color: #ffffff;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  z-index: 0;
+}
+
+.timelineMobileProgress {
+  position: absolute;
+  top: 0;
+  left: 2.5em;
+  transform: translateX(-50%);
+  width: 3px;
+  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   z-index: 1;
+  transition: height 0.1s ease-out;
+}
+
+.timelineMobileGridInner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.timelineMobileRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .timelineMobileItem {
@@ -882,7 +849,7 @@
     font-size: 1rem;
   }
 
-  /* Timeline mobile: collapse to single column */
+  /* Timeline mobile: collapse to single column — origin 767px */
   .timelineDesktop {
     display: none;
   }
@@ -891,12 +858,13 @@
     display: block;
   }
 
-  .timelineGridInner {
-    display: flex;
+  .timelineGrid {
+    grid-row-gap: 32px;
     flex-flow: column;
     grid-template-rows: none;
     grid-template-columns: 100%;
-    grid-row-gap: 32px;
+    grid-auto-flow: row;
+    display: flex;
   }
 
   .timelinePadding {
@@ -916,15 +884,11 @@
 
   .timelineItemWrap {
     grid-row-gap: 12px;
+    flex-flow: column;
     justify-content: flex-start;
     align-items: stretch;
     width: 100%;
     padding-top: 0;
-  }
-
-  .timelineItemWrap.right {
-    justify-content: flex-start;
-    align-items: stretch;
   }
 
   .timelineTrackWrap {
@@ -936,10 +900,9 @@
     padding-top: 0;
   }
 
-  .timelineTrackWrap.right {
-    justify-content: flex-start;
-    align-items: stretch;
-    padding-top: 0;
+  .timelineImageCell {
+    width: 100%;
+    justify-content: center;
   }
 
   .timelineYear {
@@ -964,13 +927,6 @@
     align-items: stretch;
   }
 
-  .timelineImageRow {
-    flex-flow: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-
   .timelineImage {
     width: 100%;
     height: 220px;
@@ -981,7 +937,11 @@
 
   .timelineProgress {
     display: none;
-    inset: 0 auto auto 2.5em;
+  }
+
+  .timelineDot {
+    width: 20px;
+    height: 20px;
   }
 }
 
