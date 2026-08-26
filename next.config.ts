@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "keralajewellerssiterebuild.vercel.app",
+        pathname: "/**",
+      },
     ],
   },
   async redirects() {
