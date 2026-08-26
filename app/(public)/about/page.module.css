@@ -1,16 +1,28 @@
 /* =========================================================================
-   About Page — matches live site structure
+   About Page — pixel-matched to origin keralajewellerssiterebuild.vercel.app
+   Origin classes mapped:
+   .section-3/.container-4/.w-container/.div-block-54 → hero outer padding
+   .banner-11 → heroBanner
+   .intro-center/.center-text-banner/.heading-center-about → hero header
+   .layout192_component → goldenGrid / venturesGrid (about-grid)
+   .l-section/.div-block-51-copy/.c-blur/.div-block-35 → taste section
+   .timeline/.timeline_wrap/.page-padding-m/.center-text-banner1/.heading-center-about2222
+   .text-2/.text-3/.timeline_grid/.timeline_track etc → timeline
+   .banner-14/.about-grid/.layout192_image-12/.heading-center-12/.text-size-medium-12
+   .button-primary-5 → ventures
+   Breakpoints: 991, 767, 479 — exact values from origin style.css
    ========================================================================= */
 
-/* --- Hero Banner --- */
+/* --- Hero Section — mirrors .section-3 > .container-4.w-container > .div-block-54 > .banner-11 --- */
 .heroSection {
   background: var(--color-white);
 }
 
 .heroContainer {
   max-width: 940px;
-  margin: 0 auto;
-  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 75px 30px;
 }
 
 .heroBanner {
@@ -18,33 +30,37 @@
   flex-direction: column;
   width: 100%;
   border-radius: 15px;
-  gap: 75px;
+  grid-column-gap: 75px;
+  grid-row-gap: 75px;
 }
 
 .heroIntro {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .heroHeadingWrap {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   width: 60%;
-  gap: 15px;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
 }
 
 .heroTitle {
-  color: var(--color-maroon-bright);
+  color: #9f1b1f;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, var(--color-maroon-bright), var(--color-maroon-end));
+  background-image: linear-gradient(90deg, #9f1b1f, #e41c24);
   -webkit-background-clip: text;
   background-clip: text;
   width: 100%;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   font-family: var(--font-decorative);
   font-size: 85px;
   font-weight: 300;
@@ -52,36 +68,38 @@
   text-align: center;
 }
 
-/* --- Golden Occasions Grid --- */
+/* --- Golden Occasions Grid — mirrors .layout192_component --- */
 .goldenGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   grid-column-gap: 5rem;
   grid-row-gap: 3rem;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-columns: 1fr;
   align-items: center;
 }
 
 .goldenImageWrap {
   position: relative;
-  border-radius: 15px;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .goldenImage {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
 }
 
 .goldenContent {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-flow: column;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
 }
 
 .goldenHeading {
-  color: var(--color-gold-dark); /* origin --dark-gold #d2ab00 */
+  color: #d2ab00; /* origin var(--dark-gold) */
   font-family: var(--font-decorative);
   font-size: 55px;
   font-weight: 300;
@@ -91,12 +109,13 @@
 
 .goldenTextWrap {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-flow: column;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
 }
 
 .goldenText {
-  color: #222; /* origin .text-size-medium-2 */
+  color: #222;
   font-family: var(--font-body);
   font-size: 20px;
   line-height: 150%;
@@ -105,21 +124,27 @@
   margin: 0;
 }
 
-/* --- Taste Meets Tradition --- */
+/* --- Taste Meets Tradition — mirrors .l-section > .container-4.w-container > .div-block-51-copy > .c-blur > .div-block-35 --- */
 .tasteSection {
   background-image:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(253, 253, 253, 0)),
+    linear-gradient(90deg, #000000b3, #fdfdfd00),
     url("https://res.cloudinary.com/htl6k8cd/image/upload/q_auto,f_auto,cs_srgb/v1785693283/kerala-jewellers/backgrounds/66ab3c6cdab04df4b1d00432_Group%202085665110.webp");
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
   width: 100vw;
+  height: auto;
+  position: relative;
 }
 
 .tasteContainer {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 75px 30px;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .tasteContent {
@@ -133,8 +158,9 @@
 
 .tasteInner {
   display: flex;
-  flex-direction: column;
-  gap: 28px;
+  flex-flow: column;
+  grid-column-gap: 28px;
+  grid-row-gap: 28px;
 }
 
 .tasteHeading {
@@ -152,12 +178,12 @@
   font-family: var(--font-body);
   font-size: 20px;
   line-height: 150%;
-  text-align: justify;
   letter-spacing: -0.8px;
+  text-align: justify;
   margin: 0;
 }
 
-/* --- Timeline Section --- */
+/* --- Timeline Section — mirrors .timeline > .timeline_wrap > .container-20 > .page-padding-m --- */
 .timelineSection {
   position: relative;
 }
@@ -175,19 +201,23 @@
 
 .timelineHeader {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  flex-flow: column;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
   margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
 }
 
 .timelineTitle {
-  color: var(--color-maroon-bright);
+  color: #9f1b1f;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, var(--color-maroon-bright), var(--color-maroon-end));
+  background-image: linear-gradient(90deg, #9f1b1f, #e41c24);
   -webkit-background-clip: text;
   background-clip: text;
   width: 100%;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   font-family: var(--font-decorative);
   font-size: 55px;
   font-weight: 300;
@@ -196,7 +226,7 @@
 }
 
 .timelineIntro {
-  color: var(--color-charcoal-dark);
+  color: #222;
   font-family: var(--font-body);
   font-size: 20px;
   line-height: 150%;
@@ -205,11 +235,11 @@
   margin: 0;
 }
 
-/* Desktop timeline — 3-column grid */
+/* Desktop timeline — 3-column grid — mirrors .timeline_grid */
 .timelineDesktop {
   display: flex;
   flex-direction: column;
-  gap: 6em;
+  grid-row-gap: 6em;
 }
 
 .timelineGrid {
@@ -218,18 +248,21 @@
 
 .timelineGridInner {
   display: grid;
+  grid-column-gap: 1.5em;
+  grid-row-gap: 0;
+  grid-template-rows: auto;
   grid-template-columns: 1fr 0.25fr 1fr;
-  gap: 1.5em 0;
   width: 100%;
 }
 
-/* Text items */
+/* Text items — mirrors .timeline_item-wrap.is-hidden-mobile */
 .timelineItemWrap {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
   justify-content: center;
   align-items: flex-end;
-  gap: 15px;
 }
 
 .timelineItemWrap.right {
@@ -238,14 +271,17 @@
 }
 
 .timelineYear {
-  color: var(--color-bright-red);
+  color: #b00000; /* var(--bright-red) */
   font-family: var(--font-body);
   font-size: 32px;
   font-weight: 500;
   line-height: 100%;
+  letter-spacing: -0.04em;
   display: flex;
+  justify-content: center;
   align-items: flex-end;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .timelineText {
@@ -254,22 +290,24 @@
   font-size: 18px;
   font-weight: 300;
   line-height: 120%;
-  text-align: left;
   letter-spacing: -0.04em;
-  margin: 0;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .timelineText.alignRight {
   text-align: right;
 }
 
-/* Track column */
+/* Track column — mirrors .timeline_track-wrap + .timeline_track */
 .timelineTrackWrap {
   display: flex;
   flex-direction: column;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
   justify-content: center;
   align-items: flex-start;
-  gap: 20px;
   position: relative;
 }
 
@@ -287,20 +325,37 @@
   align-items: center;
 }
 
-/* Image items */
+/* Progress line — mirrors .timeline_progress + .timeline_dot (hidden on desktop except 5% height) */
+.timelineProgress {
+  z-index: 1;
+  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 3px;
+  height: 5%;
+  display: flex;
+  position: absolute;
+  inset: 0 0 auto 50%;
+  transform: translate(-50%);
+}
+
+/* Image items — mirrors .timeline_item.is-3 + .layout192_image-wrapper-2 + .layout192_image-13 */
 .timelineImageCard {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  grid-row-gap: 1em;
   background-color: #fff;
   border-radius: 0.5em;
   padding: 2em;
-  margin: 1.9em 0;
+  margin-top: 1.9em;
+  margin-bottom: 1.9em;
 }
 
 .timelineImageRow {
   display: flex;
-  gap: 5px;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
 }
 
 .timelineImage {
@@ -310,7 +365,7 @@
   object-fit: cover;
 }
 
-/* Mobile timeline */
+/* Mobile timeline — hidden on desktop, mirrors .timeline_inner-mobile */
 .timelineMobile {
   display: none;
 }
@@ -348,7 +403,7 @@
 }
 
 .timelineMobileItemYear {
-  color: var(--color-bright-red);
+  color: #b00000;
   font-family: var(--font-body);
   font-size: 28px;
   font-weight: 500;
@@ -364,7 +419,6 @@
   font-size: 16px;
   font-weight: 300;
   line-height: 1.5;
-  text-align: left;
   letter-spacing: -0.04em;
   margin: 0;
 }
@@ -376,49 +430,56 @@
   object-fit: cover;
 }
 
-/* --- Ventures Section --- */
+/* --- Ventures Title — mirrors .section-3 > .container-4.w-container > .div-block-51 > .banner-11 --- */
 .venturesTitleSection {
   background: var(--color-white);
 }
 
 .venturesContainer {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 30px;
+  /* origin .div-block-51: padding-top 0, left/right 30px */
 }
 
 .venturesBanner {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   width: 100%;
+  height: auto;
   border-radius: 15px;
-  gap: 75px;
+  grid-column-gap: 75px;
+  grid-row-gap: 75px;
 }
 
 .venturesIntro {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .venturesHeadingWrap {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   width: 60%;
-  gap: 15px;
+  grid-column-gap: 15px;
+  grid-row-gap: 15px;
 }
 
 .venturesMainTitle {
-  color: var(--color-maroon-bright);
+  color: #9f1b1f;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, var(--color-maroon-bright), var(--color-maroon-end));
+  background-image: linear-gradient(90deg, #9f1b1f, #e41c24);
   -webkit-background-clip: text;
   background-clip: text;
   width: 100%;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   font-family: var(--font-decorative);
   font-size: 85px;
   font-weight: 300;
@@ -426,66 +487,88 @@
   text-align: center;
 }
 
+/* --- Ventures Content — mirrors .section-3 > .container-4.w-container > .div-block-50 > .banner-14 > .about-grid --- */
 .venturesContentSection {
   background: var(--color-white);
 }
 
 .venturesContentContainer {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 75px 30px;
+  /* origin .div-block-50: 75px 30px */
 }
 
 .venturesGrid {
   display: grid;
+  grid-column-gap: 40px;
+  grid-row-gap: 40px;
+  grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
-  grid-column-gap: 5rem;
-  grid-row-gap: 3rem;
+  grid-auto-columns: 1fr;
   align-items: center;
 }
 
 .venturesImageWrap {
   position: relative;
-  border-radius: 15px;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .venturesImage {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  border-radius: 5px; /* origin .layout192_image-12 radius 5px */
 }
 
 .venturesTextContent {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-flow: column;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
 }
 
 .venturesSubHeading {
-  color: var(--color-gold-dark);
+  color: #9f1b1f;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(90deg, #9f1b1f, #e41c24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 5px;
   font-family: var(--font-decorative);
   font-size: 55px;
   font-weight: 300;
-  margin: 0;
+  line-height: 100px;
+  text-align: left;
 }
 
 .venturesBullets {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin: 0;
-  padding: 0;
+  flex-flow: column;
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
   list-style: none;
 }
 
 .venturesBullet {
-  color: var(--color-charcoal-dark);
+  color: #636363;
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: 18px;
   line-height: 150%;
-  letter-spacing: -0.8px;
-  margin: 0;
+  letter-spacing: -0.872px;
+  margin-bottom: 0;
   position: relative;
   padding-left: 24px;
 }
@@ -494,35 +577,39 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
+  top: 12px;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-gold);
+  background: #d2ab00;
 }
 
 .venturesSubBullets {
   margin: 12px 0 0;
-  padding: 0;
-  padding-left: 18px;
+  padding: 0 0 0 18px;
   list-style: none;
 }
 
 .venturesSubBullets li {
   position: relative;
   padding-left: 16px;
-  font-size: var(--text-base);
+  color: #636363;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 150%;
+  letter-spacing: -0.872px;
+  list-style-type: disc;
 }
 
 .venturesSubBullets li::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
+  top: 12px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--color-gold-muted);
+  background: #b58f35;
 }
 
 .venturesButtons {
@@ -535,179 +622,380 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-maroon);
-  color: var(--color-white);
+  background: #ad1c20;
+  color: #fff;
   font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.72px;
+  text-transform: capitalize;
+  text-align: center;
   text-decoration: none;
-  padding: 14px 28px;
+  padding: 12px 25px;
   border-radius: 5px;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease;
+  transition: all 0.2s;
   white-space: nowrap;
+  line-height: 20px;
 }
 
 .venturesBtn:hover {
-  background: var(--color-maroon-deep);
-  transform: translateY(-1px);
+  background: #32343a;
+  color: #fff;
+}
+
+.venturesBtn:active {
+  background: #43464d;
 }
 
 /* =========================================================================
-   Responsive
+   Responsive — exact origin breakpoints
    ========================================================================= */
 
-/* Tablet */
-@media (max-width: 991px) {
-  .heroContainer,
-  .tasteContainer {
-    padding: 0 22px;
-  }
-  .heroBanner {
-    gap: 36px;
-  }
+/* Tablet: 768px – 991px  (origin: @media (min-width:768px) and (max-width:991px) + @media (max-width:991px)) */
+@media screen and (min-width: 768px) and (max-width: 991px) {
   .heroHeadingWrap {
-    width: min(84%, 720px);
+    width: 70%;
   }
+
   .heroTitle {
-    font-size: clamp(46px, 7vw, 64px);
-    line-height: 1.08;
+    font-size: 50px;
+    line-height: 70px;
   }
+
+  .heroBanner {
+    grid-column-gap: 45px;
+    grid-row-gap: 45px;
+  }
+
   .goldenGrid {
-    grid-column-gap: 2rem;
-    grid-row-gap: 2rem;
+    grid-column-gap: 3rem;
+    grid-template-columns: 1fr 1fr;
   }
+
   .goldenHeading {
-    font-size: clamp(34px, 5vw, 46px);
-    line-height: 1.12;
+    font-size: 30px;
+    line-height: 30px;
   }
+
   .goldenText {
-    font-size: 16px;
-    letter-spacing: 0;
+    font-size: 15px;
   }
+
   .tasteContent {
-    width: min(76%, 680px);
-    padding: 76px 0;
+    width: 70%;
   }
-  .tasteHeading {
-    font-size: clamp(48px, 7vw, 64px);
-    line-height: 1;
-    letter-spacing: 0;
-  }
-  .tasteText {
-    letter-spacing: 0;
-    text-align: left;
-  }
+
   .timelineTitle {
-    font-size: clamp(40px, 6vw, 52px);
+    font-size: 50px;
   }
-  .timelineIntro {
-    font-size: 17px;
-    letter-spacing: 0;
+
+  .timelinePadding {
+    padding-left: 4%;
+    padding-right: 4%;
   }
+
   .venturesGrid {
-    grid-column-gap: 2rem;
-    grid-row-gap: 2rem;
+    grid-column-gap: 3rem;
+  }
+
+  .venturesMainTitle {
+    font-size: 50px;
+    line-height: 70px;
+  }
+
+  .venturesSubHeading {
+    font-size: 40px;
+    line-height: 50px;
   }
 }
 
-/* Mobile */
-@media (max-width: 767px) {
-  .heroContainer,
+@media screen and (max-width: 991px) {
+  .heroContainer {
+    max-width: 728px;
+    padding-top: 45px;
+    padding-bottom: 45px;
+  }
+
   .tasteContainer {
-    padding: 0 16px;
+    max-width: 728px;
+    padding-top: 45px;
+    padding-bottom: 45px;
   }
-  .heroBanner {
-    gap: 22px;
+
+  .venturesContainer {
+    max-width: 728px;
   }
+
+  .venturesContentContainer {
+    max-width: 728px;
+    padding-top: 45px;
+    padding-bottom: 45px;
+  }
+}
+
+/* Mobile: ≤767px  (origin: @media screen and (max-width:767px)) */
+@media screen and (max-width: 767px) {
+  .heroContainer {
+    max-width: none;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 25px 10px;
+  }
+
   .heroHeadingWrap {
-    width: 100%;
+    width: 70%;
   }
+
   .heroTitle {
-    font-size: clamp(38px, 11vw, 52px);
-    line-height: 1.08;
+    font-size: 50px;
+    line-height: 64px;
   }
+
+  .heroBanner {
+    grid-column-gap: 25px;
+    grid-row-gap: 25px;
+  }
+
   .goldenGrid {
-    grid-template-columns: 1fr;
     grid-column-gap: 20px;
     grid-row-gap: 20px;
+    grid-template-columns: 1fr;
   }
+
   .goldenHeading {
-    text-align: left;
-    font-size: clamp(30px, 8vw, 38px);
-    line-height: 1.14;
-    text-wrap: balance;
+    text-align: justify;
+    font-size: 30px;
+    line-height: 30px;
   }
+
   .goldenText {
     text-align: justify;
     font-size: 1rem;
   }
+
+  .tasteContainer {
+    max-width: none;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 45px 10px;
+  }
+
   .tasteContent {
     width: auto;
-    padding: 68px 0;
+    margin-left: 0;
   }
+
   .tasteHeading {
-    font-size: clamp(38px, 10vw, 48px);
+    font-size: 45px;
   }
+
   .tasteText {
     text-align: left;
     font-size: 18px;
     line-height: 120%;
   }
 
-  /* Timeline mobile */
-  .timelineDesktop {
-    display: none;
+  .venturesContainer {
+    max-width: none;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-left: 0;
+    padding-right: 0;
   }
-  .timelineMobile {
-    display: block;
-  }
-  .timelinePadding {
-    padding: 3em 4% 4em;
-  }
-  .timelineTitle {
-    font-size: clamp(36px, 10vw, 48px);
+
+  .venturesContentContainer {
+    max-width: none;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 25px 10px;
   }
 
   .venturesGrid {
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
     grid-template-columns: 1fr;
+  }
+
+  .venturesMainTitle {
+    font-size: 50px;
+    line-height: 64px;
+  }
+
+  .venturesSubHeading {
+    font-size: 35px;
+    line-height: 50px;
+  }
+
+  .venturesBullets {
+    font-size: 1rem;
+  }
+
+  .venturesBullet {
+    font-size: 1rem;
+  }
+
+  /* Timeline mobile: collapse to single column */
+  .timelineDesktop {
+    display: none;
+  }
+
+  .timelineMobile {
+    display: block;
+  }
+
+  .timelineGridInner {
+    display: flex;
+    flex-flow: column;
+    grid-template-rows: none;
+    grid-template-columns: 100%;
+    grid-row-gap: 32px;
+  }
+
+  .timelinePadding {
+    padding-left: 3.5%;
+    padding-right: 3.5%;
+  }
+
+  .timelineTitle {
+    font-size: 50px;
+  }
+
+  .timelineHeader {
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .timelineItemWrap {
+    grid-row-gap: 12px;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .timelineItemWrap.right {
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  .timelineTrackWrap {
+    grid-row-gap: 12px;
+    flex-flow: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .timelineTrackWrap.right {
+    justify-content: flex-start;
+    align-items: stretch;
+    padding-top: 0;
+  }
+
+  .timelineYear {
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .timelineText,
+  .timelineText.alignRight {
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .timelineImageCard {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    align-items: stretch;
+    background-color: #fff;
+  }
+
+  .timelineImageRow {
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .timelineImage {
+    width: 100%;
+    height: 220px;
+    border-radius: 8px;
+    order: -1;
+    object-fit: cover;
+  }
+
+  .timelineProgress {
+    display: none;
+    inset: 0 auto auto 2.5em;
   }
 }
 
-/* Small mobile */
-@media (max-width: 479px) {
+/* Small mobile: ≤479px  (origin: @media screen and (max-width:479px)) */
+@media screen and (max-width: 479px) {
   .heroTitle {
-    font-size: 34px;
-    line-height: 1.12;
+    font-size: 36px;
+    line-height: 48px;
   }
-  .goldenText {
-    text-align: left;
-    line-height: 1.6;
+
+  .heroContainer {
+    padding-left: 10px;
+    padding-right: 10px;
   }
+
+  .tasteContainer {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
   .goldenHeading {
     font-size: 30px;
-    line-height: 1.16;
   }
+
   .tasteHeading {
     font-size: 36px;
   }
-  .tasteText {
-    text-align: left;
-    font-size: 18px;
-    line-height: 1.5;
-  }
+
   .timelineTitle {
     font-size: 40px;
   }
-  .timelineMobileProgress {
+
+  .timelinePadding {
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+
+  .timelineProgress {
     left: 2em;
   }
+
+  .venturesMainTitle {
+    font-size: 36px;
+    line-height: 48px;
+  }
+
+  .venturesSubHeading {
+    font-size: 32px;
+    line-height: 30px;
+  }
+
+  .venturesContentContainer {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 25px;
+  }
+
   .venturesButtons {
     flex-direction: column;
   }
+
   .venturesBtn {
     box-sizing: border-box;
     width: 100%;

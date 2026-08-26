@@ -51,6 +51,7 @@ export const IMG = normalizeImageMap({
 
   // Static content — origin hero images (CMS-managed, fallback matches origin)
   aboutFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787693749/kerala-jewellers/heritage/66ab36052626ce8e9edda3ca_Rectangle_355.png",
+  aboutVenturesFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787693759/kerala-jewellers/banners/66ab51b4545fb122260daa62_Rectangle_343_2.png",
   blogDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787694059/kerala-jewellers/blog/66ab5ac76305a6ebd97fd501_Group_2085665034_1.png",
 
   // Hero slide backgrounds (fallback when CMS heroSlides empty)

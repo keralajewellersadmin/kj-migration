@@ -30,6 +30,7 @@ export default async function AboutPage() {
                   alt={aboutPage.goldenOccasions.alt}
                   width={940}
                   height={600}
+                  sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 940px"
                   className={styles.goldenImage}
                   priority
                 />
@@ -245,7 +246,7 @@ export default async function AboutPage() {
             <div className={styles.venturesImageWrap}>
               <Image
                 src={
-                  aboutPage.ventures.image || IMG.aboutFallback
+                  aboutPage.ventures.image || IMG.aboutVenturesFallback
                 }
                 alt={
                   aboutPage.ventures.alt ||
@@ -253,6 +254,7 @@ export default async function AboutPage() {
                 }
                 width={940}
                 height={600}
+                sizes="100vw"
                 className={styles.venturesImage}
                 loading="lazy"
               />
