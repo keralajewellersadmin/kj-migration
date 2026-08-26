@@ -13,7 +13,6 @@
    Breakpoints: 991, 767, 479 — exact values from origin style.css
    ========================================================================= */
 
-/* --- Hero Section — mirrors .section-3 > .container-4.w-container > .div-block-54 > .banner-11 --- */
 .heroSection {
   background: var(--color-white);
 }
@@ -68,7 +67,6 @@
   text-align: center;
 }
 
-/* --- Golden Occasions Grid — mirrors .layout192_component --- */
 .goldenGrid {
   display: grid;
   grid-column-gap: 5rem;
@@ -99,7 +97,7 @@
 }
 
 .goldenHeading {
-  color: #d2ab00; /* origin var(--dark-gold) */
+  color: #d2ab00;
   font-family: var(--font-decorative);
   font-size: 55px;
   font-weight: 300;
@@ -124,12 +122,13 @@
   margin: 0;
 }
 
-/* --- Taste Meets Tradition — mirrors .l-section > .container-4.w-container > .div-block-51-copy > .c-blur > .div-block-35 --- */
 .tasteSection {
   background-image:
     linear-gradient(90deg, #000000b3, #fdfdfd00),
     url("https://res.cloudinary.com/htl6k8cd/image/upload/q_auto,f_auto,cs_srgb/v1785693283/kerala-jewellers/backgrounds/66ab3c6cdab04df4b1d00432_Group%202085665110.webp");
-  background-position: 0 0, 50%;
+  background-position:
+    0 0,
+    50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
   width: 100vw;
@@ -183,7 +182,6 @@
   margin: 0;
 }
 
-/* --- Timeline Section — mirrors .timeline > .timeline_wrap > .container-20 > .page-padding-m --- */
 .timelineSection {
   position: relative;
 }
@@ -235,7 +233,6 @@
   margin: 0;
 }
 
-/* Desktop timeline — 3-column grid — mirrors .timeline_grid */
 .timelineDesktop {
   display: flex;
   flex-direction: column;
@@ -265,7 +262,6 @@
   width: 100%;
 }
 
-/* Text items — mirrors .timeline_item-wrap.is-hidden-mobile */
 .timelineItemWrap {
   display: flex;
   flex-flow: column;
@@ -314,7 +310,6 @@
   text-align: right;
 }
 
-/* Track column — mirrors .timeline_track-wrap + .timeline_track */
 .timelineTrackWrap {
   display: flex;
   justify-content: center;
@@ -348,10 +343,15 @@
   box-shadow: 0 0 0 4px rgba(173, 28, 32, 0.15);
 }
 
-/* Progress line — mirrors .timeline_progress + .timeline_dot (hidden on desktop except 5% height) */
 .timelineProgress {
   z-index: 1;
-  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
+  background-image: linear-gradient(
+    #fff,
+    #ad1c20 28%,
+    #470b0d 52%,
+    #ad1c20 72%,
+    #fff
+  );
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
@@ -363,7 +363,6 @@
   transform: translate(-50%);
 }
 
-/* Image items — mirrors .timeline_item.is-3 + .layout192_image-wrapper-2 + .layout192_image-13 */
 .timelineImageCard {
   display: flex;
   flex-direction: column;
@@ -388,7 +387,6 @@
   object-fit: cover;
 }
 
-/* Mobile timeline — hidden on desktop, mirrors .timeline_inner-mobile */
 .timelineMobile {
   display: none;
 }
@@ -409,7 +407,13 @@
   left: 2.5em;
   width: 3px;
   height: 100%;
-  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
+  background-image: linear-gradient(
+    #fff,
+    #ad1c20 28%,
+    #470b0d 52%,
+    #ad1c20 72%,
+    #fff
+  );
   z-index: 1;
 }
 
@@ -453,7 +457,6 @@
   object-fit: cover;
 }
 
-/* --- Ventures Title — mirrors .section-3 > .container-4.w-container > .div-block-51 > .banner-11 --- */
 .venturesTitleSection {
   background: var(--color-white);
 }
@@ -509,7 +512,6 @@
   text-align: center;
 }
 
-/* --- Ventures Content — mirrors .section-3 > .container-4.w-container > .div-block-50 > .banner-14 > .about-grid --- */
 .venturesContentSection {
   background: var(--color-white);
 }
@@ -519,7 +521,6 @@
   margin-left: auto;
   margin-right: auto;
   padding: 75px 30px;
-  /* origin .div-block-50: 75px 30px */
 }
 
 .venturesGrid {
@@ -543,7 +544,7 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  border-radius: 5px; /* origin .layout192_image-12 radius 5px */
+  border-radius: 5px;
 }
 
 .venturesTextContent {
@@ -673,7 +674,6 @@
    Responsive — exact origin breakpoints
    ========================================================================= */
 
-/* Tablet: 768px – 991px  (origin: @media (min-width:768px) and (max-width:991px) + @media (max-width:991px)) */
 @media screen and (min-width: 768px) and (max-width: 991px) {
   .heroHeadingWrap {
     width: 70%;
@@ -755,7 +755,6 @@
   }
 }
 
-/* Mobile: ≤767px  (origin: @media screen and (max-width:767px)) */
 @media screen and (max-width: 767px) {
   .heroContainer {
     max-width: none;
@@ -960,7 +959,6 @@
   }
 }
 
-/* Small mobile: ≤479px  (origin: @media screen and (max-width:479px)) */
 @media screen and (max-width: 479px) {
   .heroTitle {
     font-size: 36px;

@@ -48,7 +48,6 @@
   color: var(--color-text-muted);
 }
 
-/* ── Wedding Season hero band — matches origin exactly ── */
 .heroOuter {
   padding: 75px 30px; /* matches .div-block-60 */
 }

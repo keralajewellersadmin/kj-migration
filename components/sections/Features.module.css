@@ -32,7 +32,6 @@
   text-align: center;
 }
 
-/* Circular image wrapper - Original 200px limit */
 .imageWrap {
   position: relative;
   border-radius: 50%;
@@ -99,7 +98,9 @@
 
 .carouselSlide {
   flex: 0 0 100%;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
 }
 
 .pos-active {
