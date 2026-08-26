@@ -81,8 +81,23 @@
 }
 
 /* Banner-only mode: no gradient, no text overlay — pure image */
+.bannerOnly {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+}
+
 .bannerOnly::before {
   display: none;
+}
+
+.responsiveImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 15px;
 }
 
 /* Content */
