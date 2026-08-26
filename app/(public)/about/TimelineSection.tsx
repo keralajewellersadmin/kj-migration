@@ -19,29 +19,43 @@ interface TimelineSectionProps {
 
 export default function TimelineSection({ timeline, intro, heading }: TimelineSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+      if (!trackRef.current) return;
       
-      // Calculate scroll progress through the section
-      const totalHeight = rect.height;
-      // Start progress when top of the section enters the center of viewport
-      const start = rect.top - windowHeight / 2;
-      const current = -start;
-      
-      let p = (current / totalHeight) * 100;
-      if (p < 0) p = 0;
-      if (p > 100) p = 100;
-      setProgress(p);
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const viewportHeight = window.innerHeight;
+      const viewportMid = viewportHeight / 2;
+      const currentScroll = scrollTop + viewportMid; // Trigger point is the middle of the screen
+
+      const trackRect = trackRef.current.getBoundingClientRect();
+      const trackTop = trackRect.top + scrollTop;
+      const trackHeight = trackRect.height;
+      const trackBottom = trackTop + trackHeight;
+
+      let percentage = 0;
+      if (currentScroll < trackTop) {
+        percentage = 0;
+      } else if (currentScroll > trackBottom) {
+        percentage = 100;
+      } else {
+        percentage = ((currentScroll - trackTop) / trackHeight) * 100;
+      }
+
+      setProgress(percentage);
     };
 
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
 
   return (
@@ -49,7 +63,7 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
       <div className={styles.timelineContainer}>
         <div className={styles.timelineIntroWrap}>
           <h2 className={styles.timelineMainTitle}>
-            {heading || "The Origins"}
+            {heading || "Our Origins"}
           </h2>
           {intro && (
             <p className={styles.timelineIntro}>
@@ -60,13 +74,16 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
 
         {/* Desktop: Alternating timeline grid */}
         <div className={styles.timelineDesktop}>
-          <div className={styles.timelineGridInner}>
+          <div className={styles.timelineGridInner} ref={trackRef}>
             {/* Absolute track in the center */}
             <div className={styles.timelineTrackAbsolute}>
               <div
                 className={styles.timelineProgress}
                 style={{ height: `${progress}%` }}
-              />
+              >
+                {/* Single moving dot at the bottom of the progress bar */}
+                <div className={styles.timelineDot} />
+              </div>
             </div>
 
             {timeline.map((item, i) => {
@@ -79,7 +96,13 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                       <div className={`${styles.timelineItemWrap} ${styles.leftAlign}`}>
                         <p className={styles.timelineYear}>{item.year}</p>
                         <p className={`${styles.timelineText} ${styles.alignRight}`}>
-                          {item.title ? `${item.title}. ` : ""}
+                          {item.title ? (
+                            <>
+                              <strong>{item.title}</strong>
+                              <br />
+                              <br />
+                            </>
+                          ) : null}
                           {item.text}
                         </p>
                       </div>
@@ -90,8 +113,8 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                             src={item.image}
                             alt={item.title || ""}
                             className={styles.timelineImage}
-                            width={270}
-                            height={300}
+                            width={380}
+                            height={250}
                             loading="lazy"
                           />
                         </div>
@@ -99,11 +122,9 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                     )}
                   </div>
 
-                  {/* Center Dot */}
+                  {/* Center Column Spacer */}
                   <div className={styles.timelineTrackWrap}>
-                    <div className={styles.timelineTrackPlaceholder}>
-                      <div className={styles.timelineDot} />
-                    </div>
+                    <div className={styles.timelineTrackPlaceholder} />
                   </div>
 
                   {/* Right Side */}
@@ -112,7 +133,13 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                       <div className={`${styles.timelineItemWrap} ${styles.rightAlign}`}>
                         <p className={styles.timelineYear}>{item.year}</p>
                         <p className={styles.timelineText}>
-                          {item.title ? `${item.title}. ` : ""}
+                          {item.title ? (
+                            <>
+                              <strong>{item.title}</strong>
+                              <br />
+                              <br />
+                            </>
+                          ) : null}
                           {item.text}
                         </p>
                       </div>
@@ -123,8 +150,8 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                             src={item.image}
                             alt={item.title || ""}
                             className={styles.timelineImage}
-                            width={270}
-                            height={300}
+                            width={380}
+                            height={250}
                             loading="lazy"
                           />
                         </div>
@@ -140,24 +167,34 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
         {/* Mobile: single column */}
         <div className={styles.timelineMobile}>
           <div className={styles.timelineMobileGrid}>
-            <div
-              className={styles.timelineMobileProgress}
-              style={{ height: `${progress}%` }}
-            />
+            <div className={styles.timelineMobileTrack}>
+              <div
+                className={styles.timelineMobileProgress}
+                style={{ height: `${progress}%` }}
+              >
+                <div className={styles.timelineDot} />
+              </div>
+            </div>
             <div className={styles.timelineMobileGridInner}>
               {timeline.map((item) => (
-                <div key={item.year}>
-                  <div className={styles.timelineMobileTrack}>
-                    <div className={styles.timelineMobileItem}>
-                      <p className={styles.timelineMobileItemYear}>
-                        {item.year}
-                      </p>
-                      <p className={styles.timelineMobileItemText}>
-                        {item.title ? `${item.title}. ` : ""}
-                        {item.text}
-                      </p>
-                    </div>
-                    {item.image && (
+                <div key={item.year} className={styles.timelineMobileRow}>
+                  <div className={styles.timelineMobileItem}>
+                    <p className={styles.timelineMobileItemYear}>
+                      {item.year}
+                    </p>
+                    <p className={styles.timelineMobileItemText}>
+                      {item.title ? (
+                        <>
+                          <strong>{item.title}</strong>
+                          <br />
+                          <br />
+                        </>
+                      ) : null}
+                      {item.text}
+                    </p>
+                  </div>
+                  {item.image && (
+                    <div className={styles.timelineMobileImageWrap}>
                       <Image
                         src={item.image}
                         alt={item.title || ""}
@@ -166,8 +203,8 @@ export default function TimelineSection({ timeline, intro, heading }: TimelineSe
                         height={220}
                         loading="lazy"
                       />
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

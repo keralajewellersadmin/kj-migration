@@ -335,9 +335,8 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 3px;
-  background-color: #ad1c20;
-  opacity: 0.15;
+  width: 2px;
+  background-color: #ffffff;
   z-index: 1;
 }
 
@@ -352,42 +351,44 @@
 }
 
 .timelineDot {
-  width: 14px;
-  height: 14px;
-  background-color: #ad1c20;
-  border: 2.5px solid #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  background-color: #ffffff;
+  border: 0.8px solid #ad1c20;
+  border-radius: 99px;
+  margin-bottom: -12px;
+  flex-shrink: 0;
   z-index: 4;
-  box-shadow: 0 0 0 4px rgba(173, 28, 32, 0.15);
 }
 
 .timelineProgress {
   z-index: 2;
   background-image: linear-gradient(
-    #ad1c20,
-    #470b0d 50%,
-    #ad1c20
+    #ffffff,
+    #ad1c20 28%,
+    #470b0d 52%,
+    #ad1c20 72%,
+    #ffffff
   );
-  width: 100%;
+  width: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   transition: height 0.1s ease-out;
 }
 
 .timelineImageCard {
   display: flex;
-  flex-direction: column;
-  grid-row-gap: 1em;
-  background-color: #fff;
-  border-radius: 0.5em;
-  padding: 2em;
+  justify-content: center;
+  align-items: center;
   margin-top: 1.9em;
   margin-bottom: 1.9em;
+  width: 100%;
 }
 
 .timelineImageRow {
@@ -397,9 +398,10 @@
 }
 
 .timelineImage {
-  border-radius: 15px;
-  width: 270px;
-  height: 300px;
+  border-radius: 5px;
+  width: 100%;
+  height: auto;
+  max-width: 380px;
   object-fit: cover;
 }
 
@@ -420,23 +422,32 @@
 .timelineMobileProgress {
   position: absolute;
   top: 0;
-  left: 2.5em;
+  left: 50%;
+  transform: translateX(-50%);
   width: 3px;
-  height: 100%;
   background-image: linear-gradient(
-    #fff,
+    #ffffff,
     #ad1c20 28%,
     #470b0d 52%,
     #ad1c20 72%,
-    #fff
+    #ffffff
   );
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 2;
+  transition: height 0.1s ease-out;
 }
 
 .timelineMobileTrack {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2.5em;
+  width: 2px;
+  background-color: #ffffff;
+  z-index: 1;
 }
 
 .timelineMobileItem {
@@ -951,7 +962,6 @@
     margin-bottom: 0;
     padding: 0;
     align-items: stretch;
-    background-color: #fff;
   }
 
   .timelineImageRow {
