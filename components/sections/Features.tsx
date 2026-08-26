@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import styles from "./Features.module.css";
 import { IMG } from "@/lib/image-urls";
@@ -89,6 +89,14 @@ export default function Features({
     },
     [features.length],
   );
+
+  useEffect(() => {
+    if (!isCarousel) return;
+    const timer = setInterval(() => {
+      go(1);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isCarousel, go]);
 
   const onPointerDown = useCallback(
       (e: React.PointerEvent) => {
