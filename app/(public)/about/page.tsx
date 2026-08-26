@@ -120,71 +120,74 @@ export default async function AboutPage() {
             </div>
 
             {/* Desktop: 3-column grid */}
+            {/* Desktop: Alternating timeline grid rows */}
             <div className={styles.timelineDesktop}>
-              <div className={styles.timelineGrid}>
-                <div className={styles.timelineGridInner}>
-                  {aboutPage.timeline.map((item, i) => {
-                    const isLeft = i % 2 === 0;
-                    const nextItem = aboutPage.timeline[i + 1];
-                    const elements: React.ReactNode[] = [];
-
-                    // Text item
-                    elements.push(
-                      <div
-                        key={`text-${item.year}`}
-                        className={`${styles.timelineItemWrap} ${isLeft ? "" : styles.right}`}
-                      >
-                        <p className={styles.timelineYear}>{item.year}</p>
-                        <p
-                          className={`${styles.timelineText} ${isLeft ? styles.alignRight : ""}`}
-                        >
-                          {item.title ? `${item.title}. ` : ""}
-                          {item.text}
-                        </p>
-                      </div>,
-                    );
-
-                    // Track
-                    elements.push(
-                      <div
-                        key={`track-${item.year}`}
-                        className={styles.timelineTrackWrap}
-                      >
-                        <div className={styles.timelineTrack} />
-                      </div>,
-                    );
-
-                    // Image (or next text if no image)
-                    if (item.image) {
-                      elements.push(
-                        <div key={`img-${item.year}`}>
-                          <div className={styles.timelineImageCard}>
-                            <div className={styles.timelineImageRow}>
-                              <Image
-                                src={item.image}
-                                alt={item.title}
-                                className={styles.timelineImage}
-                                width={270}
-                                height={300}
-                              />
-                              {nextItem?.image && (
+              <div className={styles.timelineGridInner}>
+                {aboutPage.timeline.map((item, i) => {
+                  const isLeft = i % 2 === 0;
+                  return (
+                    <div key={item.year} className={styles.timelineRow}>
+                      {/* Left Side */}
+                      <div className={styles.timelineSide}>
+                        {isLeft ? (
+                          <div className={`${styles.timelineItemWrap} ${styles.leftAlign}`}>
+                            <p className={styles.timelineYear}>{item.year}</p>
+                            <p className={`${styles.timelineText} ${styles.alignRight}`}>
+                              {item.title ? `${item.title}. ` : ""}
+                              {item.text}
+                            </p>
+                            {item.image && (
+                              <div className={styles.timelineImageCard}>
                                 <Image
-                                  src={nextItem.image}
-                                  alt={nextItem.title}
+                                  src={item.image}
+                                  alt={item.title || ""}
                                   className={styles.timelineImage}
                                   width={270}
                                   height={300}
                                 />
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
-                        </div>,
-                      );
-                    }
+                        ) : (
+                          <div />
+                        )}
+                      </div>
 
-                    return elements;
-                  })}
-                </div>
+                      {/* Center Track */}
+                      <div className={styles.timelineTrackWrap}>
+                        <div className={styles.timelineTrack}>
+                          <div className={styles.timelineDot} />
+                        </div>
+                      </div>
+
+                      {/* Right Side */}
+                      <div className={styles.timelineSide}>
+                        {!isLeft ? (
+                          <div className={`${styles.timelineItemWrap} ${styles.rightAlign}`}>
+                            <p className={styles.timelineYear}>{item.year}</p>
+                            <p className={styles.timelineText}>
+                              {item.title ? `${item.title}. ` : ""}
+                              {item.text}
+                            </p>
+                            {item.image && (
+                              <div className={styles.timelineImageCard}>
+                                <Image
+                                  src={item.image}
+                                  alt={item.title || ""}
+                                  className={styles.timelineImage}
+                                  width={270}
+                                  height={300}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

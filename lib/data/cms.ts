@@ -1565,7 +1565,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
     if (isPostgres()) {
       const settings = await payload.findGlobal({
         slug: "site-settings",
-        depth: 0,
+        depth: 1,
       });
       const raw = {
         ...DEFAULT_SETTINGS,
