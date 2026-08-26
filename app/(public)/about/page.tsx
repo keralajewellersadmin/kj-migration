@@ -119,7 +119,6 @@ export default async function AboutPage() {
               </p>
             </div>
 
-            {/* Desktop: 3-column grid */}
             {/* Desktop: Alternating timeline grid rows */}
             <div className={styles.timelineDesktop}>
               <div className={styles.timelineGridInner}>
