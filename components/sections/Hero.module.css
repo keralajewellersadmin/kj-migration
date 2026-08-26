@@ -248,6 +248,12 @@
     min-height: 500px;
   }
 
+  .bannerOnly {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+
   .bgImage {
     object-position: 68% center;
   }
@@ -277,6 +283,12 @@
     height: 300px;
     min-height: 300px;
     align-items: stretch;
+  }
+
+  .bannerOnly {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
   }
 
   .bgImage {
