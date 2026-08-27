@@ -40,13 +40,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [
-      {
-        source: "/admin",
-        destination: "/kj-portal-0d7cfad1",
-        permanent: false,
-      },
-    ];
+    return [];
   },
   async headers() {
     return [

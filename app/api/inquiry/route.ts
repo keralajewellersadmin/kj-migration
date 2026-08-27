@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     parsed = inquirySchema.parse(await request.json());
   } catch (err) {
     console.error("[Inquiry] Validation failed:", err);
-    const details = err instanceof z.ZodError ? err.errors : String(err);
+    const details = err instanceof z.ZodError ? err.issues : String(err);
     return NextResponse.json({ error: "Invalid request.", details }, { status: 400 });
   }
 
