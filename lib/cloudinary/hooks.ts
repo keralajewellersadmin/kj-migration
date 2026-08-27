@@ -1,9 +1,9 @@
-import type {
+﻿import type {
   CollectionAfterDeleteHook,
   CollectionBeforeChangeHook,
 } from "payload";
 import fs from "node:fs/promises";
-import { getCloudinaryFolder, extractPublicIdFromUrl } from "./index.js";
+import { getCloudinaryFolder, extractPublicIdFromUrl } from "./index.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cloudinaryClient: any = null;
@@ -158,3 +158,4 @@ export const cloudinaryDeleteHook: CollectionAfterDeleteHook = async ({
 
   return doc;
 };
+

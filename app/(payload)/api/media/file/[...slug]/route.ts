@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { cloudinaryUrl } from "@/lib/cloudinary/index.js";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 const SIZE_RE = /^(.+)-(\d+)x(\d+)\.\w+$/;
 
@@ -68,3 +68,4 @@ export async function GET(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+

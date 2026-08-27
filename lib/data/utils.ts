@@ -1,5 +1,5 @@
-import { IMG } from "../cloudinary/fallbacks.js";
-import { normalizeCloudinaryDeliveryUrl } from "../cloudinary/index.js";
+﻿import { IMG } from "../cloudinary/fallbacks";
+import { normalizeCloudinaryDeliveryUrl } from "../cloudinary/index.ts";
 
 export function normalizeCategory(raw: string, metal?: string): string {
   const lower = raw.toLowerCase();
@@ -78,3 +78,4 @@ export const metals = [
     heroBg: normalizeCloudinaryDeliveryUrl("https://res.cloudinary.com/htl6k8cd/image/upload/v1786011524/kerala-jewellers/banners/products-hero-diamond.webp"),
   },
 ];
+
