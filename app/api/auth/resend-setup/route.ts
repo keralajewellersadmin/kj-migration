@@ -1,6 +1,6 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 import { NextResponse } from "next/server";
-import { getCachedPayload } from "@/lib/payload-singleton";
+import { getCachedPayload } from "@/lib/payload/singleton";
 import {
   findUserByIdentifier,
   generateResetToken,
@@ -154,3 +154,4 @@ export async function POST(request: Request) {
     message: "A setup link has been sent.",
   });
 }
+

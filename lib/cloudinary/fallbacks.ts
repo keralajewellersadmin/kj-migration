@@ -1,4 +1,4 @@
-import { normalizeCloudinaryDeliveryUrl } from "./cloudinary";
+import { normalizeCloudinaryDeliveryUrl } from "./index";
 
 function normalizeImageMap<T extends Record<string, string>>(images: T): T {
   return Object.fromEntries(

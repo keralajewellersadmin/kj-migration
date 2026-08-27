@@ -1,6 +1,6 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import styles from "./ProductsHero.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 interface ProductsHeroProps {
   title: string;
@@ -51,3 +51,4 @@ export default function ProductsHero({
     </section>
   );
 }
+

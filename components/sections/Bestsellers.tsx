@@ -1,6 +1,6 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import styles from "./Bestsellers.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 type BestsellerProduct = {
@@ -104,3 +104,4 @@ export default async function Bestsellers({
     </section>
   );
 }
+

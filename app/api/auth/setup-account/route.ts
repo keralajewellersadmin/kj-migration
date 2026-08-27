@@ -1,7 +1,7 @@
-import crypto from "crypto";
+﻿import crypto from "crypto";
 /* eslint-disable */
 import { NextResponse } from "next/server";
-import { getCachedPayload } from "@/lib/payload-singleton";
+import { getCachedPayload } from "@/lib/payload/singleton";
 import { hashValue } from "@/lib/auth/email";
 import { validateAdminPassword } from "@/lib/payload/security";
 import { getLoginSql } from "@/lib/auth/admin-login";
@@ -196,3 +196,4 @@ export async function POST(request: Request) {
     message: "Account setup successful. Please log in with your new password.",
   });
 }
+

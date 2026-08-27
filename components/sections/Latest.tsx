@@ -1,6 +1,6 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import styles from "./Latest.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 const defaultBanners = [
@@ -130,3 +130,4 @@ export default function Latest({
     </section>
   );
 }
+

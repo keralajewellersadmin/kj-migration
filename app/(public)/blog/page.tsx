@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import BlogCard from "@/components/ui/BlogCard";
 import { getBlogPosts, getSiteSettings } from "@/lib/data/cms";
 import styles from "./page.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog — Kerala Jewellers",
+  title: "Blog â€” Kerala Jewellers",
   description:
     "Shopping guides, lifestyle recommendations, and everything you need to know about gold, silver, and diamond jewellery from Kerala Jewellers.",
   openGraph: {
-    title: "Blog — Kerala Jewellers",
+    title: "Blog â€” Kerala Jewellers",
     description:
       "Shopping guides, lifestyle recommendations, and everything you need to know about jewellery.",
     url: "https://keralajewellers.in/blog",
@@ -79,3 +79,4 @@ export default async function BlogPage() {
     </>
   );
 }
+

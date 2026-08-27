@@ -1,4 +1,4 @@
-import { IMG } from "../image-urls";
+import { IMG } from "../cloudinary/fallbacks";
 import { normalizeCloudinaryDeliveryUrl } from "../cloudinary";
 
 export function normalizeCategory(raw: string, metal?: string): string {

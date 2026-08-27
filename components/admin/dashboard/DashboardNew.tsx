@@ -1,9 +1,9 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ServerProps } from "payload";
 import { ADMIN_PATH } from "@/lib/admin-path";
 import styles from "./DashboardNew.module.css";
 
-import { timeAgo } from "@/lib/utils";
+import { timeAgo } from "@/lib/format";
 
 interface DashboardInquiry {
   id: string | number;
@@ -51,10 +51,10 @@ async function getStats(payload: ServerProps["payload"], isEnquiryManager: boole
     blogPosts,
     recentInquiries: recentInquiries.docs,
     rates: {
-      gold22: String(settings?.rateGold22 || "—"),
-      gold18: String(settings?.rateGold18 || "—"),
-      silver: String(settings?.rateSilver || "—"),
-      platinum: String(settings?.ratePlatinum || "—"),
+      gold22: String(settings?.rateGold22 || "â€”"),
+      gold18: String(settings?.rateGold18 || "â€”"),
+      silver: String(settings?.rateSilver || "â€”"),
+      platinum: String(settings?.ratePlatinum || "â€”"),
       updated: String(settings?.rateUpdated || ""),
     },
   };
@@ -154,19 +154,19 @@ export default async function DashboardNew({ payload, user }: ServerProps) {
           <div className={styles.ratesGrid}>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Gold 22K</span>
-              <span className={styles.rateValue}>₹{stats.rates.gold22}</span>
+              <span className={styles.rateValue}>â‚¹{stats.rates.gold22}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Gold 18K</span>
-              <span className={styles.rateValue}>₹{stats.rates.gold18}</span>
+              <span className={styles.rateValue}>â‚¹{stats.rates.gold18}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Silver</span>
-              <span className={styles.rateValue}>₹{stats.rates.silver}</span>
+              <span className={styles.rateValue}>â‚¹{stats.rates.silver}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Platinum</span>
-              <span className={styles.rateValue}>₹{stats.rates.platinum}</span>
+              <span className={styles.rateValue}>â‚¹{stats.rates.platinum}</span>
             </div>
           </div>
           {stats.rates.updated && (
@@ -293,3 +293,4 @@ export default async function DashboardNew({ payload, user }: ServerProps) {
     </div>
   );
 }
+

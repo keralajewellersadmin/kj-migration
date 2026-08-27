@@ -1,7 +1,7 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { getSiteSettings } from "../../../lib/data/cms";
 import styles from "./page.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 import TimelineSection from "./TimelineSection";
 
 export const revalidate = 300;
@@ -12,7 +12,7 @@ export default async function AboutPage() {
 
   return (
     <main>
-      {/* ── Hero Banner ─────────────────────────────────────────── */}
+      {/* â”€â”€ Hero Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.heroSection}>
         <div className={styles.heroContainer}>
           <div className={styles.heroBanner}>
@@ -71,7 +71,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── Taste Meets Tradition ───────────────────────────────── */}
+      {/* â”€â”€ Taste Meets Tradition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.tasteSection}>
         <div className={styles.tasteContainer}>
           <div className={styles.tasteContent}>
@@ -96,14 +96,14 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── Timeline ────────────────────────────────────────────── */}
+      {/* â”€â”€ Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TimelineSection
         timeline={aboutPage.timeline}
         intro={aboutPage.origins.intro}
         heading={aboutPage.origins.heading}
       />
 
-      {/* ── Our Ventures — Title Banner ────────────────────────── */}
+      {/* â”€â”€ Our Ventures â€” Title Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesTitleSection}>
         <div className={styles.venturesContainer}>
           <div className={styles.venturesBanner}>
@@ -118,7 +118,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── Our Ventures — Content ──────────────────────────────── */}
+      {/* â”€â”€ Our Ventures â€” Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesContentSection}>
         <div className={styles.venturesContentContainer}>
           <div className={styles.venturesGrid}>
@@ -129,7 +129,7 @@ export default async function AboutPage() {
                 }
                 alt={
                   aboutPage.ventures.alt ||
-                  "Aishwarya Mahal — Kerala Jewellers Wedding Hall"
+                  "Aishwarya Mahal â€” Kerala Jewellers Wedding Hall"
                 }
                 width={940}
                 height={600}
@@ -198,3 +198,4 @@ export default async function AboutPage() {
     </main>
   );
 }
+

@@ -1,6 +1,6 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 import { NextResponse } from "next/server";
-import { getCachedPayload } from "@/lib/payload-singleton";
+import { getCachedPayload } from "@/lib/payload/singleton";
 import {
   findUserByIdentifier,
   generateResetToken,
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
   if (user.accountActivated === false) {
     return NextResponse.json({
       success: false,
-      message: "This account hasn't been set up yet — check your email for a setup link, or contact your administrator to resend it",
+      message: "This account hasn't been set up yet â€” check your email for a setup link, or contact your administrator to resend it",
     }, { status: 400 });
   }
 
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
   try {
     await sendPasswordResetEmail(user.email as string, resetUrl);
   } catch {
-    // Silently fail — user gets generic response anyway
+    // Silently fail â€” user gets generic response anyway
   }
 
   return NextResponse.json({
@@ -155,3 +155,4 @@ export async function POST(request: Request) {
     message: "If an account exists, a reset link has been sent.",
   });
 }
+

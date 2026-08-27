@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import styles from "./Features.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 type Feature = {
   blockType?: string;
@@ -177,3 +177,4 @@ export default function Features({
     </section>
   );
 }
+

@@ -1,9 +1,9 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import styles from "./Footer.module.css";
 import type { SiteSettingsData } from "@/lib/data/cms";
 import { DEFAULT_BRANCHES } from "@/lib/data/branches";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 function InstagramIcon() {
   return (
@@ -329,3 +329,4 @@ export default function Footer({
     </footer>
   );
 }
+

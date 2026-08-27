@@ -1,5 +1,5 @@
-import styles from "./Heritage.module.css";
-import { IMG } from "@/lib/image-urls";
+﻿import styles from "./Heritage.module.css";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 const defaultHeritage = {
   heading: "Intricate & Intimate",
@@ -41,3 +41,4 @@ export default function Heritage({
     </section>
   );
 }
+

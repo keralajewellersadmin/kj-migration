@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Suspense } from "react";
 import { useState, type FormEvent } from "react";
@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./page.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 import { apiPost } from "@/lib/api-client";
 
 function EnquiryForm() {
@@ -242,3 +242,4 @@ export default function EnquiryPage() {
     </Suspense>
   );
 }
+

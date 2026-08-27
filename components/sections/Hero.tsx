@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import styles from "./Hero.module.css";
-import { IMG } from "@/lib/image-urls";
+import { IMG } from "@/lib/cloudinary/fallbacks";
 
 type HeroSlide = {
   heading: string;
@@ -166,3 +166,4 @@ export default function Hero({
     </section>
   );
 }
+
