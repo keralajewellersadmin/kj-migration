@@ -2,7 +2,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { Pool } from "@neondatabase/serverless";
-import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary";
+import { cloudinaryUrl, normalizeCloudinaryDeliveryUrl } from "../cloudinary/index.js";
 import {
   type Product,
   type BlogPost,

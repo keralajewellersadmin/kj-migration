@@ -3,7 +3,7 @@ import type {
   CollectionBeforeChangeHook,
 } from "payload";
 import fs from "node:fs/promises";
-import { getCloudinaryFolder, extractPublicIdFromUrl } from "./index";
+import { getCloudinaryFolder, extractPublicIdFromUrl } from "./index.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cloudinaryClient: any = null;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryUrl } from "@/lib/cloudinary/index.js";
 
 const SIZE_RE = /^(.+)-(\d+)x(\d+)\.\w+$/;
 

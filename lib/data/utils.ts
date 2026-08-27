@@ -1,5 +1,5 @@
-import { IMG } from "../cloudinary/fallbacks";
-import { normalizeCloudinaryDeliveryUrl } from "../cloudinary";
+import { IMG } from "../cloudinary/fallbacks.js";
+import { normalizeCloudinaryDeliveryUrl } from "../cloudinary/index.js";
 
 export function normalizeCategory(raw: string, metal?: string): string {
   const lower = raw.toLowerCase();
