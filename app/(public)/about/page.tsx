@@ -103,7 +103,7 @@ export default async function AboutPage() {
         heading={aboutPage.origins.heading}
       />
 
-      {/* â”€â”€ Our Ventures â€” Title Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* â”€â”€ Our Ventures — Title Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesTitleSection}>
         <div className={styles.venturesContainer}>
           <div className={styles.venturesBanner}>
@@ -118,7 +118,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Our Ventures â€” Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* â”€â”€ Our Ventures — Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesContentSection}>
         <div className={styles.venturesContentContainer}>
           <div className={styles.venturesGrid}>
@@ -129,7 +129,7 @@ export default async function AboutPage() {
                 }
                 alt={
                   aboutPage.ventures.alt ||
-                  "Aishwarya Mahal â€” Kerala Jewellers Wedding Hall"
+                  "Aishwarya Mahal — Kerala Jewellers Wedding Hall"
                 }
                 width={940}
                 height={600}

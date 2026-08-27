@@ -8,11 +8,11 @@ import { IMG } from "@/lib/cloudinary/fallbacks";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog â€” Kerala Jewellers",
+  title: "Blog — Kerala Jewellers",
   description:
     "Shopping guides, lifestyle recommendations, and everything you need to know about gold, silver, and diamond jewellery from Kerala Jewellers.",
   openGraph: {
-    title: "Blog â€” Kerala Jewellers",
+    title: "Blog — Kerala Jewellers",
     description:
       "Shopping guides, lifestyle recommendations, and everything you need to know about jewellery.",
     url: "https://keralajewellers.in/blog",

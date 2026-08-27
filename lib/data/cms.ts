@@ -992,7 +992,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
       {
         year: "1972",
         title: "A New Era with Mr.George Joseph (Wilson)",
-        text: "The addition of Mr. George Joseph, also known as Wilson, to Kerala Jewellers marked the beginning of a new chapter in the family's illustrious business. Bringing with him a fresh perspective and a deep commitment to continuing the family's tradition of excellence, Mr Wilson played a pivotal role in furthering the brandâ€™s reputation and reach.",
+        text: "The addition of Mr. George Joseph, also known as Wilson, to Kerala Jewellers marked the beginning of a new chapter in the family's illustrious business. Bringing with him a fresh perspective and a deep commitment to continuing the family's tradition of excellence, Mr Wilson played a pivotal role in furthering the brand—™s reputation and reach.",
         image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1615ca0720284bf1565b_Rectangle%20369%20(4).png"
       },
       {
@@ -1034,7 +1034,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
       {
         year: "2022",
         title: "Renovation of the Pondy Bazaar Showroom",
-        text: "The Pondy Bazaar showroom of Kerala Jewellers underwent a significant renovation to transform it into a boutique store, reflecting a fresh and modern approach. This renovation marked a new chapter in the showroomâ€™s evolution, aiming to enhance the customer experience and align with contemporary retail trends.with wide range ofcollections in Gold,Silver and Diamonds we always make sure the purity of gold is our priority and customers service and satisfaction is key",
+        text: "The Pondy Bazaar showroom of Kerala Jewellers underwent a significant renovation to transform it into a boutique store, reflecting a fresh and modern approach. This renovation marked a new chapter in the showroom—™s evolution, aiming to enhance the customer experience and align with contemporary retail trends.with wide range ofcollections in Gold,Silver and Diamonds we always make sure the purity of gold is our priority and customers service and satisfaction is key",
         image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1617c6c2ad9398a45485_Rectangle%20369%20(1).png"
       }
     ],
@@ -1051,7 +1051,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
     },
   },
   defaultSeo: {
-    title: "Kerala Jewellers â€” Exquisite Gold, Silver & Diamond Jewellery",
+    title: "Kerala Jewellers — Exquisite Gold, Silver & Diamond Jewellery",
     description:
       "Kerala Jewellers offers exquisite gold, silver, and diamond jewellery crafted with precision. Shop traditional and modern designs.",
     ogImage: "",

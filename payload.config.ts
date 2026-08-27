@@ -122,7 +122,7 @@ const preventDeleteCategoryWithProducts: CollectionBeforeDeleteHook = async ({
       collection: "categories",
       errors: [
         {
-          message: `Cannot delete this category â€” ${totalDocs} product(s) still reference it. Reassign or remove them first.`,
+          message: `Cannot delete this category — ${totalDocs} product(s) still reference it. Reassign or remove them first.`,
           path: "name",
         },
       ],
@@ -663,7 +663,7 @@ const Product: CollectionConfig = {
       unique: true,
       admin: {
         readOnly: true,
-        description: "Auto-generated on creation â€” frozen after save.",
+        description: "Auto-generated on creation — frozen after save.",
       },
       hooks: {
         beforeChange: [
@@ -711,7 +711,7 @@ const Product: CollectionConfig = {
           type: "text",
           admin: {
             description:
-              "Custom meta title for search engines (defaults to product name). Recommended: 50â€“60 characters.",
+              "Custom meta title for search engines (defaults to product name). Recommended: 50—“60 characters.",
           },
         },
         {
@@ -719,7 +719,7 @@ const Product: CollectionConfig = {
           type: "textarea",
           admin: {
             description:
-              "Meta description for search results (defaults to product description). Recommended: 150â€“160 characters.",
+              "Meta description for search results (defaults to product description). Recommended: 150—“160 characters.",
           },
         },
         {
@@ -778,7 +778,7 @@ const Category: CollectionConfig = {
       unique: true,
       admin: {
         readOnly: true,
-        description: "Auto-generated â€” you don't need to edit this.",
+        description: "Auto-generated — you don't need to edit this.",
       },
     },
     {
@@ -816,7 +816,7 @@ const BlogPost: CollectionConfig = {
       unique: true,
       admin: {
         readOnly: true,
-        description: "Auto-generated on creation â€” frozen after save.",
+        description: "Auto-generated on creation — frozen after save.",
       },
     },
     { name: "excerpt", type: "textarea" },
@@ -862,7 +862,7 @@ const BlogPost: CollectionConfig = {
           type: "text",
           admin: {
             description:
-              "Custom meta title for search engines (defaults to post title). Recommended: 50â€“60 characters.",
+              "Custom meta title for search engines (defaults to post title). Recommended: 50—“60 characters.",
           },
         },
         {
@@ -870,7 +870,7 @@ const BlogPost: CollectionConfig = {
           type: "textarea",
           admin: {
             description:
-              "Meta description for search results (defaults to excerpt). Recommended: 150â€“160 characters.",
+              "Meta description for search results (defaults to excerpt). Recommended: 150—“160 characters.",
           },
         },
         {
@@ -912,7 +912,7 @@ const LegalPage: CollectionConfig = {
       unique: true,
       admin: {
         readOnly: true,
-        description: "Auto-generated on creation â€” frozen after save.",
+        description: "Auto-generated on creation — frozen after save.",
       },
     },
     {
@@ -924,7 +924,7 @@ const LegalPage: CollectionConfig = {
           type: "text",
           admin: {
             description:
-              "Custom meta title for search engines (defaults to page title). Recommended: 50â€“60 characters.",
+              "Custom meta title for search engines (defaults to page title). Recommended: 50—“60 characters.",
           },
         },
         {
@@ -932,7 +932,7 @@ const LegalPage: CollectionConfig = {
           type: "textarea",
           admin: {
             description:
-              "Meta description for search results. Recommended: 150â€“160 characters.",
+              "Meta description for search results. Recommended: 150—“160 characters.",
           },
         },
         {
@@ -1044,12 +1044,12 @@ const Inquiry: CollectionConfig = {
       admin: { readOnly: true, disableListFilter: true },
       access: { update: canManageInquiriesField },
     },
-    // System fields (not form inputs â€” kept for admin triage only)
+    // System fields (not form inputs — kept for admin triage only)
     {
       name: "status",
       type: "select",
       defaultValue: "new",
-      // The ONLY admin-editable field â€” used to triage enquiries
+      // The ONLY admin-editable field — used to triage enquiries
       // (New / Contacted / In Progress / Resolved / Closed / Spam)
       access: { update: canManageInquiriesField },
       options: [
@@ -1625,7 +1625,7 @@ const SiteSettings: GlobalConfig = {
         },
       ],
     },
-    // Metal Rates â€” managed via the dedicated /update-rates view; hidden here to declutter the global editor.
+    // Metal Rates — managed via the dedicated /update-rates view; hidden here to declutter the global editor.
     {
       name: "rateUpdated",
       type: "date",

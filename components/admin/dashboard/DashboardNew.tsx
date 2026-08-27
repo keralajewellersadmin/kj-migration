@@ -51,10 +51,10 @@ async function getStats(payload: ServerProps["payload"], isEnquiryManager: boole
     blogPosts,
     recentInquiries: recentInquiries.docs,
     rates: {
-      gold22: String(settings?.rateGold22 || "â€”"),
-      gold18: String(settings?.rateGold18 || "â€”"),
-      silver: String(settings?.rateSilver || "â€”"),
-      platinum: String(settings?.ratePlatinum || "â€”"),
+      gold22: String(settings?.rateGold22 || "—"),
+      gold18: String(settings?.rateGold18 || "—"),
+      silver: String(settings?.rateSilver || "—"),
+      platinum: String(settings?.ratePlatinum || "—"),
       updated: String(settings?.rateUpdated || ""),
     },
   };

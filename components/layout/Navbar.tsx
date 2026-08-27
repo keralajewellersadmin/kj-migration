@@ -128,7 +128,7 @@ function RateMenuItem({ item }: { item: RateItem }) {
         <span className={styles.rateRowUnit}>{item.unit}</span>
       </span>
       <span className={styles.rateRowPrice}>
-        â‚¹{item.price.replace(/^â‚¹/, "")}
+        ₹{item.price.replace(/^₹/, "")}
       </span>
     </div>
   );
@@ -172,9 +172,9 @@ function formatRateDate(raw: string): string {
 }
 
 function buildRatesText(rateTypes: RateItem[], updated: string): string {
-  const p = rateTypes.map((r) => `â‚¹${r.price.replace(/^â‚¹/, "")}`);
+  const p = rateTypes.map((r) => `₹${r.price.replace(/^₹/, "")}`);
   const dateStr = formatRateDate(updated);
-  return `Today's Rate${dateStr ? ` â€” ${dateStr}` : ""}  â€¢  GOLD 22 KT ${p[0]}/g  â€¢  GOLD 18 KT ${p[1]}/g  â€¢  PLATINUM ${p[2]}/g  â€¢  SILVER ${p[3]}/g`;
+  return `Today's Rate${dateStr ? ` — ${dateStr}` : ""}  —¢  GOLD 22 KT ${p[0]}/g  —¢  GOLD 18 KT ${p[1]}/g  —¢  PLATINUM ${p[2]}/g  —¢  SILVER ${p[3]}/g`;
 }
 
 export default function Navbar({
@@ -291,7 +291,7 @@ export default function Navbar({
                       role="menu"
                     >
                       <div className={styles.rateMenuHeader} suppressHydrationWarning>
-                        Today&apos;s Price â€” {dateStr}
+                        Today&apos;s Price — {dateStr}
                       </div>
                       {rateTypes.map((r, i) => (
                         <Fragment key={r.type}>
@@ -619,4 +619,5 @@ function MobileAccordion({
     </div>
   );
 }
+
 
