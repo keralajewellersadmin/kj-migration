@@ -502,7 +502,7 @@ function MegaMenuItem({
           >
             <div className={styles.megaCol}>
               <div className={styles.megaHeading}>
-                <span>âœ¦</span> {category}
+                <span>✦</span> {category}
               </div>
               <div className={styles.megaLinks}>
                 {links.map((link, i) => {
