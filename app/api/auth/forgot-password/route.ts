@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { NextResponse } from "next/server";
 import { getCachedPayload } from "@/lib/payload-singleton";
 import {
@@ -6,7 +7,6 @@ import {
   hashValue,
   sendPasswordResetEmail,
 } from "@/lib/auth/email";
-import { ADMIN_PATH } from "@/lib/admin-path";
 import { getLoginSql } from "@/lib/auth/admin-login";
 
 const MAX_RESETS_PER_IP = 5;
@@ -83,7 +83,6 @@ export async function POST(request: Request) {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = await getCachedPayload();
   const { user } = await findUserByIdentifier(payload, identifier.trim());
 

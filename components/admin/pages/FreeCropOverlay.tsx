@@ -129,6 +129,7 @@ export default function FreeCropOverlay({
 
       setCropRect({ x: nx, y: ny, w: nw, h: nh });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dragging, containerSize],
   );
 
@@ -171,6 +172,7 @@ export default function FreeCropOverlay({
         onMouseMove={handleMouseMove}
         style={{ position: "relative", width: "100%", height: containerSize.h, background: "#1a1a1a", overflow: "hidden", touchAction: "none", userSelect: "none" }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={imageSrc}

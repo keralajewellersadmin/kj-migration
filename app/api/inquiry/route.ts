@@ -100,8 +100,10 @@ export async function POST(request: Request) {
   let parsed: z.infer<typeof inquirySchema>;
   try {
     parsed = inquirySchema.parse(await request.json());
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  } catch (err) {
+    console.error("[Inquiry] Validation failed:", err);
+    const details = err instanceof z.ZodError ? err.errors : String(err);
+    return NextResponse.json({ error: "Invalid request.", details }, { status: 400 });
   }
 
   try {

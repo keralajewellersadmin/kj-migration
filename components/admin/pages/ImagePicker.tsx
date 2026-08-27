@@ -186,6 +186,7 @@ export default function ImagePicker({ value, onChange, aspectRatio, recommendedW
         .then((blob) => uploadFile(blob))
         .catch((e) => { setUploadError(e instanceof Error ? e.message : "Crop failed."); setCropping(false); });
     }, 0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cropImage, recommendedWidth, recommendedHeight]);
 
   const uploadImage = async () => {

@@ -109,7 +109,7 @@ export async function POST(request: Request) {
   }
 
   // Get the user to validate password against their data
-  let rawUserId =
+  const rawUserId =
     (resetRecord.userId as { id: string | number })?.id || resetRecord.userId;
   // Payload Postgres uses numeric IDs by default for admin-users
   const userId = !isNaN(Number(rawUserId)) ? Number(rawUserId) : rawUserId;

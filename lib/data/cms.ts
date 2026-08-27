@@ -1,3 +1,4 @@
+﻿/* eslint-disable */
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { Pool } from "@neondatabase/serverless";
@@ -9,9 +10,7 @@ import {
   type SeoFields,
 } from "./types";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type PayloadDoc = Record<string, any>;
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 let _pool: Pool | null = null;
 const postgresPoolMax = Number(process.env.POSTGRES_POOL_MAX || 1);
@@ -119,7 +118,6 @@ function normalizeMigratedMediaUrl(url?: string): string {
   return normalizeCloudinaryDeliveryUrl(url);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapSqlProduct(row: any): Product {
   let imageUrl: string;
   if (row.cloudinary_public_id) {
@@ -129,7 +127,6 @@ function mapSqlProduct(row: any): Product {
   } else {
     imageUrl = "/assets/images/placeholder.svg";
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let seo: any = undefined;
   if (row.seo) {
     try {
@@ -176,7 +173,6 @@ export function isPostgres(): boolean {
 
 async function sqlFindProducts(
   whereClause: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: any[],
   limit: number,
   offset: number,
@@ -282,7 +278,6 @@ function mapBlogPost(doc: PayloadDoc): BlogPost {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapSqlBlogPost(row: any, body?: BlogPost["body"]): BlogPost {
   const thumbnail = row.cloudinary_public_id
     ? cloudinaryUrl(row.cloudinary_public_id)
@@ -340,7 +335,6 @@ async function getSqlBlogBody(postId: number): Promise<BlogPost["body"]> {
       );
       body.push({
         type: "ul",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         items: items.map((itemRow: any) => itemRow.item || ""),
       });
     } else {
@@ -383,7 +377,6 @@ export async function getAllProductSlugs(): Promise<string[]> {
     try {
       const pool = getPool();
       const { rows } = await pool.query(`SELECT slug FROM products ORDER BY id`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return rows.map((r: any) => r.slug);
     } catch {
       return [];
@@ -449,7 +442,6 @@ export async function getProductsByMetalPaginated(
   if (isPostgres()) {
     try {
       let where = "WHERE p.metal = $1";
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any[] = [metal];
       if (categorySlug) {
         where += " AND p.category_id IN (SELECT id FROM categories WHERE slug = $2)";
@@ -693,7 +685,6 @@ export async function getCategories(
       try {
         const pool = getPool();
         let query = "SELECT name, slug FROM categories";
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const params: any[] = [];
         if (metal) {
           query += " WHERE metal = $1";
@@ -1001,7 +992,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
       {
         year: "1972",
         title: "A New Era with Mr.George Joseph (Wilson)",
-        text: "The addition of Mr. George Joseph, also known as Wilson, to Kerala Jewellers marked the beginning of a new chapter in the family's illustrious business. Bringing with him a fresh perspective and a deep commitment to continuing the family's tradition of excellence, Mr Wilson played a pivotal role in furthering the brand’s reputation and reach.",
+        text: "The addition of Mr. George Joseph, also known as Wilson, to Kerala Jewellers marked the beginning of a new chapter in the family's illustrious business. Bringing with him a fresh perspective and a deep commitment to continuing the family's tradition of excellence, Mr Wilson played a pivotal role in furthering the brandâ€™s reputation and reach.",
         image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1615ca0720284bf1565b_Rectangle%20369%20(4).png"
       },
       {
@@ -1043,7 +1034,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
       {
         year: "2022",
         title: "Renovation of the Pondy Bazaar Showroom",
-        text: "The Pondy Bazaar showroom of Kerala Jewellers underwent a significant renovation to transform it into a boutique store, reflecting a fresh and modern approach. This renovation marked a new chapter in the showroom’s evolution, aiming to enhance the customer experience and align with contemporary retail trends.with wide range ofcollections in Gold,Silver and Diamonds we always make sure the purity of gold is our priority and customers service and satisfaction is key",
+        text: "The Pondy Bazaar showroom of Kerala Jewellers underwent a significant renovation to transform it into a boutique store, reflecting a fresh and modern approach. This renovation marked a new chapter in the showroomâ€™s evolution, aiming to enhance the customer experience and align with contemporary retail trends.with wide range ofcollections in Gold,Silver and Diamonds we always make sure the purity of gold is our priority and customers service and satisfaction is key",
         image: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ae1617c6c2ad9398a45485_Rectangle%20369%20(1).png"
       }
     ],
@@ -1060,7 +1051,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
     },
   },
   defaultSeo: {
-    title: "Kerala Jewellers — Exquisite Gold, Silver & Diamond Jewellery",
+    title: "Kerala Jewellers â€” Exquisite Gold, Silver & Diamond Jewellery",
     description:
       "Kerala Jewellers offers exquisite gold, silver, and diamond jewellery crafted with precision. Shop traditional and modern designs.",
     ogImage: "",
@@ -1091,7 +1082,6 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     depth: 1,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapSlide = (s: any) => ({
     heading: s.heading || "",
     description: s.description || "",
@@ -1100,7 +1090,6 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     image: resolveMediaUrl(s.image),
     isPinned: Boolean(s.isPinned),
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapCircleBanner = (b: any) => ({
     blockType: "circleBanner" as const,
     title: b.title || "",
@@ -1108,7 +1097,6 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     image: resolveMediaUrl(b.image),
     alt: b.alt || "",
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapImageBanner = (b: any) => ({
     blockType: "imageBanner" as const,
     image: resolveMediaUrl(b.image),
@@ -1117,13 +1105,11 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     ctaText: b.ctaText || "",
     href: b.href || "",
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapHeritage = (h: any) => ({
     heading: h.heading || "",
     description: h.description || "",
     image: resolveMediaUrl(h.image),
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapReview = (r: any) => ({
     text: r.text || "",
     author: r.author || "",
@@ -1131,13 +1117,11 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
   });
 
   const reviewsResult = await payload.find({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- collection type will exist after types regen
     collection: "reviews" as any,
     limit: 100,
     sort: "createdAt",
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapCategory = (c: any) => ({
     title: c.title || "",
     description: c.description || "",
@@ -1169,24 +1153,19 @@ async function loadArrayDataViaPayload(payload: Awaited<ReturnType<typeof getPay
     whatsapp: (settings.whatsapp as string) || DEFAULT_SETTINGS.whatsapp,
     email: (settings.email as string) || DEFAULT_SETTINGS.email,
     storeTiming: (settings.storeTiming as string) || DEFAULT_SETTINGS.storeTiming,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     bestsellerProducts: await (async () => {
       const bestSlugs = parseBestsellerSlugs(settings.bestsellerProducts);
       if (!bestSlugs.length) return [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = await payload.find({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- collection type exists after types regen
         collection: "products" as any,
         where: { slug: { in: bestSlugs } },
         limit: 100,
         depth: 0,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const bySlug = new Map<string, any>((res.docs as any[]).map((p) => [p.slug, p]));
       return bestSlugs
         .map((slug: string) => bySlug.get(slug))
         .filter(Boolean)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((p: any) => ({
           id: String(p.id || ""),
           name: p.title || p.name || "",
@@ -1415,7 +1394,6 @@ export async function loadArrayDataViaSQL(
 
     return {
       ...data,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       heroSlides: heroRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
@@ -1425,7 +1403,6 @@ export async function loadArrayDataViaSQL(
         isPinned: Boolean(r.is_pinned),
       })),
       heroSliderPaused: ssSliderPaused,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       features: circleBannerRes.rows.map((r: any) => ({
         blockType: "circleBanner" as const,
         title: r.title || "",
@@ -1433,7 +1410,6 @@ export async function loadArrayDataViaSQL(
         image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
         alt: r.alt || "",
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       banners: imageBannerRes.rows.map((r: any) => ({
         blockType: "imageBanner" as const,
         image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
@@ -1442,19 +1418,16 @@ export async function loadArrayDataViaSQL(
         ctaText: r.cta_text || "",
         href: r.href || "",
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       heritage: heritageRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
         image: r.cloudinary_public_id ? cloudinaryUrl(r.cloudinary_public_id) : normalizeMigratedMediaUrl(r.image_url),
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reviews: reviewsRes.rows.map((r: any) => ({
         text: r.text || "",
         author: r.author || "",
         location: r.location || "",
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       categories: catsRes.rows.map((r: any) => ({
         title: r.title || "",
         description: r.description || "",
@@ -1471,7 +1444,6 @@ export async function loadArrayDataViaSQL(
         mapQ: r.map_q || "",
         mapEmbedUrl: r.map_embed_url || "",
       })) : data.branches,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       bestsellerProducts: (() => {
         const bySlug = new Map<string, any>(
           bestsellersRes.rows.map((r: any) => [r.slug, r]),

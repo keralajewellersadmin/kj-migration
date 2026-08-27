@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import styles from "./Hero.module.css";
 import { IMG } from "@/lib/image-urls";
