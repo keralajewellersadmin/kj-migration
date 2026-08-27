@@ -99,14 +99,9 @@ export async function POST(request: Request) {
   const ipHash = hashIp(ip);
   let parsed: z.infer<typeof inquirySchema>;
   try {
-    const rawBody = await request.text();
-    console.log("[Inquiry] Raw body:", rawBody.slice(0, 500));
-    const json = JSON.parse(rawBody);
-    parsed = inquirySchema.parse(json);
-  } catch (err) {
-    console.error("[Inquiry] Validation failed:", err);
-    const details = err instanceof z.ZodError ? err.issues : String(err);
-    return NextResponse.json({ error: "Invalid request.", details }, { status: 400 });
+    parsed = inquirySchema.parse(await request.json());
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
   try {
