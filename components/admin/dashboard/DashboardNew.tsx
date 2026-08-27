@@ -154,19 +154,19 @@ export default async function DashboardNew({ payload, user }: ServerProps) {
           <div className={styles.ratesGrid}>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Gold 22K</span>
-              <span className={styles.rateValue}>â‚¹{stats.rates.gold22}</span>
+              <span className={styles.rateValue}>₹{stats.rates.gold22}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Gold 18K</span>
-              <span className={styles.rateValue}>â‚¹{stats.rates.gold18}</span>
+              <span className={styles.rateValue}>₹{stats.rates.gold18}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Silver</span>
-              <span className={styles.rateValue}>â‚¹{stats.rates.silver}</span>
+              <span className={styles.rateValue}>₹{stats.rates.silver}</span>
             </div>
             <div className={styles.rateItem}>
               <span className={styles.rateLabel}>Platinum</span>
-              <span className={styles.rateValue}>â‚¹{stats.rates.platinum}</span>
+              <span className={styles.rateValue}>₹{stats.rates.platinum}</span>
             </div>
           </div>
           {stats.rates.updated && (
@@ -293,4 +293,6 @@ export default async function DashboardNew({ payload, user }: ServerProps) {
     </div>
   );
 }
+
+
 
