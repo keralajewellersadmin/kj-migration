@@ -16,8 +16,9 @@
   padding: 20px 0;
   display: flex;
   align-items: stretch;
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
+  background-repeat: no-repeat;
   border-radius: 15px;
   overflow: visible;
   box-sizing: border-box;
@@ -195,7 +196,8 @@
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
 
   .silver .banner,
@@ -272,18 +274,19 @@
   .banner {
     height: auto;
     min-height: 320px;
-    aspect-ratio: 4 / 3;
-    padding: 24px 0;
+    aspect-ratio: auto;
+    padding: 40px 0;
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
 
   .silver .banner,
   .diamond .banner {
     height: auto;
     min-height: 320px;
-    aspect-ratio: 4 / 3;
-    padding: 22px 0;
+    aspect-ratio: auto;
+    padding: 40px 0;
   }
 
   .banner::before {
@@ -370,15 +373,17 @@
 @media (max-width: 479px) {
   .banner {
     height: auto;
-    min-height: 0;
-    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    aspect-ratio: auto;
+    padding: 40px 0;
   }
 
   .silver .banner,
   .diamond .banner {
     height: auto;
-    min-height: 0;
-    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    aspect-ratio: auto;
+    padding: 40px 0;
   }
 
   .heading {
