@@ -8,6 +8,8 @@
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+  height: 100%;
+  min-height: 100%;
   padding: var(--product-card-padding-y-top) var(--product-card-padding-x) var(--product-card-padding-y-bottom);
   text-decoration: none;
   transform: translate3d(0, 0, 0);

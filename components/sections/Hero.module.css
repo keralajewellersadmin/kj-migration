@@ -391,8 +391,9 @@
 /* Responsive: Small Mobile */
 @media (max-width: 479px) {
   .banner {
-    height: 300px;
-    min-height: 300px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
   }
 
   .content {

@@ -368,12 +368,16 @@
 /* Responsive: Small Mobile */
 @media (max-width: 479px) {
   .banner {
-    min-height: 300px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
   }
 
   .silver .banner,
   .diamond .banner {
-    min-height: 300px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
   }
 
   .heading {
