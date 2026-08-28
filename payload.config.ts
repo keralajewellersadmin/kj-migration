@@ -728,7 +728,7 @@ const Product: CollectionConfig = {
           relationTo: "media",
           admin: {
             description:
-              "OG image for social sharing (defaults to product image). Recommended: 1200Ã—630px.",
+              "OG image for social sharing (defaults to product image). Recommended: 1200×630px.",
           },
         },
       ],
@@ -879,7 +879,7 @@ const BlogPost: CollectionConfig = {
           relationTo: "media",
           admin: {
             description:
-              "OG image for social sharing (defaults to post thumbnail). Recommended: 1200Ã—630px.",
+              "OG image for social sharing (defaults to post thumbnail). Recommended: 1200×630px.",
           },
         },
       ],
@@ -941,7 +941,7 @@ const LegalPage: CollectionConfig = {
           relationTo: "media",
           admin: {
             description:
-              "OG image for social sharing. Recommended: 1200Ã—630px.",
+              "OG image for social sharing. Recommended: 1200×630px.",
           },
         },
       ],
