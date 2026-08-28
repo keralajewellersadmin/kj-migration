@@ -131,14 +131,6 @@
   .category {
     font-size: var(--text-xs);
   }
-
-  .viewBtn {
-    width: auto;
-    align-self: flex-start;
-    min-height: 26px;
-    padding: 4px 12px;
-    font-size: 11px;
-  }
 }
 
 @media (max-width: 479px) {
@@ -158,13 +150,5 @@
   .category {
     font-size: 12px;
     letter-spacing: 0.1em;
-  }
-
-  .viewBtn {
-    width: auto;
-    align-self: flex-start;
-    min-height: 26px;
-    padding: 4px 12px;
-    font-size: 11px;
   }
 }
