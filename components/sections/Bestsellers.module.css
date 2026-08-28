@@ -245,9 +245,9 @@
   }
 
   .viewBtn {
-    min-height: 34px;
-    padding: 8px 18px;
-    font-size: 13px;
+    min-height: 30px;
+    padding: 6px 14px;
+    font-size: 12px;
     font-weight: 700;
     margin-top: 6px;
     box-shadow: 0 6px 16px rgba(153, 31, 35, 0.18);
@@ -265,9 +265,9 @@
   }
 
   .viewBtn {
-    min-height: 32px;
-    padding: 7px 16px;
-    font-size: 13px;
+    min-height: 30px;
+    padding: 6px 14px;
+    font-size: 12px;
     font-weight: 700;
   }
 }

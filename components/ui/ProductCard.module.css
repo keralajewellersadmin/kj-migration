@@ -132,12 +132,16 @@
     font-size: var(--text-xs);
   }
 
+  .content {
+    justify-content: center;
+  }
+
   .viewBtn {
     width: auto;
-    align-self: flex-start;
-    min-height: 34px;
-    padding: 8px 18px;
-    font-size: 13px;
+    align-self: center;
+    min-height: 30px;
+    padding: 6px 14px;
+    font-size: 12px;
   }
 }
 
@@ -162,9 +166,9 @@
 
   .viewBtn {
     width: auto;
-    align-self: flex-start;
-    min-height: 32px;
-    padding: 7px 16px;
-    font-size: 13px;
+    align-self: center;
+    min-height: 30px;
+    padding: 6px 14px;
+    font-size: 12px;
   }
 }
