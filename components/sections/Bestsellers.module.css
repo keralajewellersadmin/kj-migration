@@ -234,6 +234,25 @@
   .cardMedia {
     min-height: 235px;
   }
+
+  .cardBody {
+    padding: 16px 16px 18px;
+    gap: 8px;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+  }
+
+  .viewBtn {
+    min-height: 44px;
+    min-width: 140px;
+    padding: 12px 24px;
+    font-size: 13px;
+    margin-top: 8px;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(153, 31, 35, 0.22);
+  }
 }
 
 @media (max-width: 479px) {
@@ -244,5 +263,13 @@
 
   .cardImage {
     max-height: 210px;
+  }
+
+  .viewBtn {
+    min-height: 46px;
+    width: 100%;
+    max-width: 200px;
+    padding: 13px 24px;
+    font-size: 13px;
   }
 }

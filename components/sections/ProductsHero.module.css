@@ -190,9 +190,12 @@
   }
 
   .banner {
-    height: clamp(300px, 44vw, 380px);
+    height: auto;
+    min-height: clamp(320px, 48vh, 420px);
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    background-position: 62% center;
+    background-position: center;
+    background-size: cover;
   }
 
   .silver .banner,
@@ -219,19 +222,43 @@
   }
 
   .content {
-    width: 58%;
-    padding: 0 0 0 36px;
-    margin-left: 0;
+    width: 100%;
+    max-width: 560px;
+    padding: 24px 20px;
+    margin-left: auto;
+    margin-right: auto;
     gap: 16px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
   }
 
   .silver .content,
   .diamond .content {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 36px;
-    align-items: flex-start;
-    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .heading,
+  .silver .heading,
+  .diamond .heading {
+    text-align: center;
+  }
+
+  .description,
+  .silver .description,
+  .diamond .description {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .decorativeLine {
+    justify-content: center;
+    display: flex;
   }
 }
 
@@ -244,9 +271,11 @@
 
   .banner {
     height: auto;
-    min-height: clamp(280px, 52vh, 340px);
-    padding: 22px 0;
-    background-position: 66% center;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    padding: 24px 0;
+    background-position: center;
+    background-size: cover;
   }
 
   .silver .banner,
@@ -271,25 +300,50 @@
   .content {
     position: relative;
     z-index: 1;
-    width: 86%;
-    padding: 0 20px;
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .silver .content,
+  .diamond .content {
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+    text-align: center;
   }
 
   .heading {
     font-size: clamp(30px, 8.5vw, 38px);
     line-height: 1.08;
     width: 100%;
+    text-align: center;
   }
 
   .silver .heading,
   .diamond .heading {
     font-size: clamp(30px, 8.5vw, 38px);
     line-height: 1.12;
+    text-align: center;
   }
 
   .description {
     max-width: 100%;
     font-size: 15px;
+    text-align: center;
+  }
+
+  .silver .description,
+  .diamond .description {
+    text-align: center;
+  }
+
+  .decorativeLine {
+    justify-content: center;
+    display: flex;
   }
 
   .decorativeImg {
