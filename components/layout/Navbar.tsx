@@ -174,7 +174,7 @@ function formatRateDate(raw: string): string {
 function buildRatesText(rateTypes: RateItem[], updated: string): string {
   const p = rateTypes.map((r) => `₹${r.price.replace(/^₹/, "")}`);
   const dateStr = formatRateDate(updated);
-  return `Today's Rate${dateStr ? ` — ${dateStr}` : ""}  —¢  GOLD 22 KT ${p[0]}/g  —¢  GOLD 18 KT ${p[1]}/g  —¢  PLATINUM ${p[2]}/g  —¢  SILVER ${p[3]}/g`;
+  return `Today's Rate${dateStr ? ` — ${dateStr}` : ""}  •  GOLD 22 KT ${p[0]}/g  •  GOLD 18 KT ${p[1]}/g  •  PLATINUM ${p[2]}/g  •  SILVER ${p[3]}/g`;
 }
 
 export default function Navbar({
