@@ -169,7 +169,7 @@
 .ctaText {
   color: var(--color-maroon-mid);
   font-family: var(--font-decorative);
-  font-size: 27.556px;
+  font-size: 20px;
   font-weight: 300;
   line-height: 1.2;
 }
@@ -357,6 +357,11 @@
 
   .cta {
     margin-left: 0;
+    padding: 8px 16px;
+  }
+
+  .ctaText {
+    font-size: 16px;
   }
 }
 
@@ -393,5 +398,13 @@
   .silver .decorativeImg,
   .diamond .decorativeImg {
     width: 160px;
+  }
+
+  .cta {
+    padding: 7px 14px;
+  }
+
+  .ctaText {
+    font-size: 15px;
   }
 }
