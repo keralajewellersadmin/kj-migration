@@ -358,7 +358,8 @@ export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
         slugs,
       );
       return rows.rows.map(mapSqlProduct);
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getProductsBySlugs failed:", err);
       return [];
     }
   }
@@ -378,7 +379,8 @@ export async function getAllProductSlugs(): Promise<string[]> {
       const pool = getPool();
       const { rows } = await pool.query(`SELECT slug FROM products ORDER BY id`);
       return rows.map((r: any) => r.slug);
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getAllProductSlugs failed:", err);
       return [];
     }
   }
@@ -405,7 +407,8 @@ export async function getRelatedProducts(
         [metal, excludeSlug, limit],
       );
       return rows.rows.map(mapSqlProduct);
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getRelatedProducts failed:", err);
       return [];
     }
   }
@@ -457,7 +460,8 @@ export async function getProductsByMetalPaginated(
         page,
         hasNextPage: page < totalPages,
       };
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getProductsByMetalPaginated failed:", err);
       return {
         products: [],
         totalDocs: 0,
@@ -527,7 +531,8 @@ export async function getProductBySlug(
         rows = await pool.query(`${SIMPLE} WHERE p.slug = $1 LIMIT 1`, [slug]);
       }
       return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getProductBySlug failed:", err);
       return undefined;
     }
   }
@@ -550,7 +555,8 @@ export async function getBlogPosts(limit = 100): Promise<BlogPost[]> {
         [limit],
       );
       return rows.map((row) => mapSqlBlogPost(row));
-    } catch {
+    } catch (err) {
+      console.error("[CMS] getBlogPosts failed:", err);
       return [];
     }
   }

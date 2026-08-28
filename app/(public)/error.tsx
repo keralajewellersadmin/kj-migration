@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function GlobalError({
+export default function PublicError({
   error,
   reset,
 }: {
@@ -10,8 +10,9 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("[Global] Route error:", error);
+    console.error("[Public] Route error:", error);
   }, [error]);
+
   return (
     <section
       style={{
@@ -19,8 +20,8 @@ export default function GlobalError({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "60vh",
-        padding: "80px 24px",
+        minHeight: "50vh",
+        padding: "60px 24px",
         textAlign: "center",
         fontFamily: "var(--font-body)",
       }}
@@ -28,7 +29,7 @@ export default function GlobalError({
       <h1
         style={{
           fontFamily: "var(--font-decorative)",
-          fontSize: "clamp(40px, 8vw, 64px)",
+          fontSize: "clamp(32px, 6vw, 48px)",
           color: "#991f23",
           margin: 0,
           lineHeight: 1,
@@ -39,9 +40,9 @@ export default function GlobalError({
       <p
         style={{
           fontFamily: "var(--font-ui)",
-          fontSize: "18px",
+          fontSize: "16px",
           color: "#5a3c3e",
-          margin: "16px 0 8px",
+          margin: "14px 0 8px",
           fontWeight: 600,
           textTransform: "uppercase",
           letterSpacing: "0.08em",
@@ -52,9 +53,9 @@ export default function GlobalError({
       <p
         style={{
           fontFamily: "var(--font-body)",
-          fontSize: "15px",
+          fontSize: "14px",
           color: "#7d5f58",
-          margin: "0 0 32px",
+          margin: "0 0 24px",
           maxWidth: 420,
           lineHeight: 1.6,
         }}
@@ -65,17 +66,16 @@ export default function GlobalError({
         onClick={() => reset()}
         style={{
           fontFamily: "var(--font-ui)",
-          fontSize: "14px",
+          fontSize: "13px",
           fontWeight: 600,
           color: "#fff",
           backgroundColor: "#ad1c20",
-          padding: "12px 32px",
+          padding: "10px 28px",
           borderRadius: "5px",
           border: "none",
           cursor: "pointer",
           textTransform: "uppercase",
           letterSpacing: "0.04em",
-          transition: "background-color 0.3s",
         }}
       >
         Try Again

@@ -308,7 +308,15 @@ async function handleLogin(request: Request) {
         { status: 504 },
       );
     }
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    // Invalid credentials is only for explicit password mismatch; other errors (DB, etc.) are 500
+    const msg = err instanceof Error ? err.message : "";
+    if (/invalid credentials|invalid password/i.test(msg)) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+    return NextResponse.json(
+      { error: "Login service failed. Please try again." },
+      { status: 500 },
+    );
   }
 }
 

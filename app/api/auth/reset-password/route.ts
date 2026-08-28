@@ -121,9 +121,17 @@ export async function POST(request: Request) {
       id: userId as string | number,
       overrideAccess: true,
     });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
   } catch (err) {
     console.error("Failed to find user with ID:", userId, err);
-    return NextResponse.json({ error: "User not found" }, { status: 400 });
+    const isNotFound =
+      err instanceof Error && /not found/i.test(err.message);
+    return NextResponse.json(
+      { error: isNotFound ? "User not found" : "Service temporarily unavailable. Please try again." },
+      { status: isNotFound ? 404 : 500 },
+    );
   }
 
   // Validate password
