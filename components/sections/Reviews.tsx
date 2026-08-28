@@ -64,7 +64,7 @@ export default function Reviews({
   subtitle?: string;
 }) {
   const base = cmsReviews.length ? cmsReviews : baseReviews;
-  const reviews = [...base, ...base];
+  const reviews = base;
   const swiperRef = useRef<SwiperClass | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -111,9 +111,9 @@ export default function Reviews({
                 pauseOnMouseEnter: true,
               }}
               breakpoints={{
-                480: { slidesPerView: 1.5, spaceBetween: 20, centeredSlides: false },
-                768: { slidesPerView: 2.0, spaceBetween: 24 },
-                992: { slidesPerView: 2.0, spaceBetween: 24 },
+                480: { slidesPerView: 1, spaceBetween: 16, centeredSlides: false },
+                768: { slidesPerView: 1.5, spaceBetween: 20, centeredSlides: false },
+                992: { slidesPerView: 2, spaceBetween: 24 },
               }}
               className={styles.swiper}
             >
