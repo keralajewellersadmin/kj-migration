@@ -132,13 +132,9 @@
     font-size: var(--text-xs);
   }
 
-  .content {
-    justify-content: center;
-  }
-
   .viewBtn {
     width: auto;
-    align-self: center;
+    align-self: flex-start;
     min-height: 30px;
     padding: 6px 14px;
     font-size: 12px;
@@ -166,7 +162,7 @@
 
   .viewBtn {
     width: auto;
-    align-self: center;
+    align-self: flex-start;
     min-height: 30px;
     padding: 6px 14px;
     font-size: 12px;
