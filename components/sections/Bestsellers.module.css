@@ -245,12 +245,11 @@
   }
 
   .viewBtn {
-    min-height: 36px;
-    min-width: 120px;
-    padding: 8px 16px;
-    font-size: 12px;
+    min-height: 34px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 700;
     margin-top: 6px;
-    border-radius: 5px;
     box-shadow: 0 6px 16px rgba(153, 31, 35, 0.18);
   }
 }
@@ -266,10 +265,9 @@
   }
 
   .viewBtn {
-    min-height: 38px;
-    width: auto;
-    max-width: 160px;
-    padding: 9px 18px;
-    font-size: 12px;
+    min-height: 32px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 700;
   }
 }

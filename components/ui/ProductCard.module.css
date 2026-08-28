@@ -133,8 +133,11 @@
   }
 
   .viewBtn {
-    width: 100%;
+    width: auto;
+    align-self: flex-start;
     min-height: 34px;
+    padding: 8px 18px;
+    font-size: 13px;
   }
 }
 
@@ -159,9 +162,9 @@
 
   .viewBtn {
     width: auto;
-    min-width: 120px;
-    min-height: 38px;
-    font-size: 12px;
-    padding: 9px 14px;
+    align-self: flex-start;
+    min-height: 32px;
+    padding: 7px 16px;
+    font-size: 13px;
   }
 }
