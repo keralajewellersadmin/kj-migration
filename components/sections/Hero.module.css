@@ -307,16 +307,16 @@
 
   .banner {
     height: auto;
-    min-height: 0;
-    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    aspect-ratio: 4 / 3;
     align-items: center;
     justify-content: center;
   }
 
   .bannerOnly {
     height: auto !important;
-    min-height: 0 !important;
-    aspect-ratio: 16 / 9 !important;
+    min-height: 320px !important;
+    aspect-ratio: 4 / 3 !important;
   }
 
   .bgImage {
@@ -392,8 +392,14 @@
 @media (max-width: 479px) {
   .banner {
     height: auto;
-    min-height: 0;
-    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .bannerOnly {
+    height: auto !important;
+    min-height: 320px !important;
+    aspect-ratio: 4 / 3 !important;
   }
 
   .content {
