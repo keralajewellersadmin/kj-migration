@@ -11,18 +11,17 @@ export default async function AboutPage() {
   const { aboutPage } = settings;
 
   return (
-    <main>
-      {/* â”€â”€ Hero Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+    <main className={styles.aboutPage}>
       <section className={styles.heroSection}>
         <div className={styles.heroContainer}>
           <div className={styles.heroBanner}>
-            <div className={styles.heroIntro}>
+            <div className={`${styles.heroIntro} ${styles.fadeInUp}`}>
               <div className={styles.heroHeadingWrap}>
                 <h1 className={styles.heroTitle}>About Us</h1>
               </div>
             </div>
 
-            <div className={styles.goldenGrid}>
+            <div className={`${styles.goldenGrid} ${styles.fadeInUp} ${styles.fadeInUpDelay}`}>
               <div className={styles.goldenImageWrap}>
                 <Image
                   src={
@@ -35,8 +34,10 @@ export default async function AboutPage() {
                   className={styles.goldenImage}
                   priority
                 />
+                <div className={styles.imageGlow} aria-hidden />
               </div>
               <div className={styles.goldenContent}>
+                <p className={styles.sectionEyebrow}>Kerala Jewellers</p>
                 <h2 className={styles.goldenHeading}>
                   {aboutPage.goldenOccasions.heading}
                 </h2>
@@ -71,11 +72,11 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Taste Meets Tradition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.tasteSection}>
         <div className={styles.tasteContainer}>
-          <div className={styles.tasteContent}>
+          <div className={`${styles.tasteContent} ${styles.fadeInUp}`}>
             <div className={styles.tasteInner}>
+              <p className={styles.tasteEyebrow}>Signature Story</p>
               <h2 className={styles.tasteHeading}>
                 {aboutPage.tasteMeetsTradition.heading}
               </h2>
@@ -96,18 +97,16 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TimelineSection
         timeline={aboutPage.timeline}
         intro={aboutPage.origins.intro}
         heading={aboutPage.origins.heading}
       />
 
-      {/* â”€â”€ Our Ventures — Title Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesTitleSection}>
         <div className={styles.venturesContainer}>
           <div className={styles.venturesBanner}>
-            <div className={styles.venturesIntro}>
+            <div className={`${styles.venturesIntro} ${styles.fadeInUp}`}>
               <div className={styles.venturesHeadingWrap}>
                 <h2 className={styles.venturesMainTitle}>
                   {aboutPage.ventures.heading}
@@ -118,10 +117,9 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Our Ventures — Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className={styles.venturesContentSection}>
         <div className={styles.venturesContentContainer}>
-          <div className={styles.venturesGrid}>
+          <div className={`${styles.venturesGrid} ${styles.fadeInUp} ${styles.fadeInUpDelay}`}>
             <div className={styles.venturesImageWrap}>
               <Image
                 src={
@@ -137,8 +135,10 @@ export default async function AboutPage() {
                 className={styles.venturesImage}
                 loading="lazy"
               />
+              <div className={styles.imageGlow} aria-hidden />
             </div>
             <div className={styles.venturesTextContent}>
+              <p className={styles.sectionEyebrow}>Beyond Jewellery</p>
               <h3 className={styles.venturesSubHeading}>
                 {aboutPage.ventures.subheading}
               </h3>

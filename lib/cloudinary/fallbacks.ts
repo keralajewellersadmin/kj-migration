@@ -50,8 +50,8 @@ export const IMG = normalizeImageMap({
   latestBanner3: "/assets/images/66ae22bef52614a0871d61a2_Rectangle%20367%20(8).png",
 
   // Static content — origin hero images (CMS-managed, fallback matches origin)
-  aboutFallback: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787693749/kerala-jewellers/heritage/66ab36052626ce8e9edda3ca_Rectangle_355.png",
-  aboutVenturesFallback: "https://keralajewellerssiterebuild.vercel.app/assets/images/66ab51b4545fb122260daa62_Rectangle%20343_2.png",
+  aboutFallback: "/assets/images/66ab36052626ce8e9edda3ca_Rectangle%20355.png",
+  aboutVenturesFallback: "/assets/images/66ab51b4545fb122260daa62_Rectangle%20343%20(2).png",
   blogDecorative: "https://res.cloudinary.com/htl6k8cd/image/upload/v1787694059/kerala-jewellers/blog/66ab5ac76305a6ebd97fd501_Group_2085665034_1.png",
 
   // Hero slide backgrounds (fallback when CMS heroSlides empty)

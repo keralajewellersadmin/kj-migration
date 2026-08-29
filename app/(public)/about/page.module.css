@@ -15,13 +15,20 @@
 
 .heroSection {
   background: var(--color-white);
+  overflow: clip;
+}
+
+.aboutPage {
+  background:
+    radial-gradient(circle at top, rgba(212, 171, 0, 0.08), transparent 28%),
+    linear-gradient(180deg, #fffdfa 0%, #ffffff 24%, #fefcf8 62%, #fff 100%);
 }
 
 .heroContainer {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-  padding: 75px 30px;
+  padding: 88px 30px 78px;
 }
 
 .heroBanner {
@@ -39,8 +46,8 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 8px;
+  padding-bottom: 6px;
 }
 
 .heroHeadingWrap {
@@ -61,10 +68,11 @@
   margin-top: 0;
   margin-bottom: 0;
   font-family: var(--font-decorative);
-  font-size: 85px;
+  font-size: clamp(54px, 8vw, 86px);
   font-weight: 300;
-  line-height: 80px;
+  line-height: 0.92;
   text-align: center;
+  text-wrap: balance;
 }
 
 .goldenGrid {
@@ -81,28 +89,51 @@
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgba(74, 39, 12, 0.14);
 }
 
 .goldenImage {
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.goldenImageWrap:hover .goldenImage,
+.venturesImageWrap:hover .venturesImage {
+  transform: scale(1.035);
 }
 
 .goldenContent {
   display: flex;
   flex-flow: column;
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  justify-content: center;
+}
+
+.sectionEyebrow,
+.tasteEyebrow {
+  margin: 0 0 4px;
+  color: #9f1b1f;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
 }
 
 .goldenHeading {
   color: #d2ab00;
   font-family: var(--font-decorative);
-  font-size: 55px;
+  font-size: clamp(34px, 4.4vw, 56px);
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1.03;
   margin: 0;
+  text-wrap: balance;
 }
 
 .goldenTextWrap {
@@ -115,11 +146,11 @@
 .goldenText {
   color: #222;
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: clamp(17px, 1.45vw, 20px);
   line-height: 150%;
-  letter-spacing: -0.8px;
-  text-wrap: balance;
+  letter-spacing: -0.03em;
   margin: 0;
+  text-wrap: pretty;
 }
 
 .tasteSection {
@@ -134,6 +165,17 @@
   width: 100vw;
   height: auto;
   position: relative;
+  overflow: clip;
+}
+
+.tasteSection::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 12, 0.24), transparent 56%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.12));
+  pointer-events: none;
 }
 
 .tasteContainer {
@@ -144,13 +186,15 @@
   display: block;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .tasteContent {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 50%;
+  width: min(50%, 465px);
   height: 100%;
   overflow: hidden;
 }
@@ -158,28 +202,31 @@
 .tasteInner {
   display: flex;
   flex-flow: column;
-  grid-column-gap: 28px;
-  grid-row-gap: 28px;
+  grid-column-gap: 18px;
+  grid-row-gap: 18px;
+  padding: 22px 0;
 }
 
 .tasteHeading {
   color: var(--color-white);
   font-family: var(--font-decorative);
-  font-size: 96px;
+  font-size: clamp(50px, 7vw, 96px);
   font-weight: 300;
-  line-height: 88.542%;
-  letter-spacing: -1.92px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
   margin: 0;
+  text-wrap: balance;
 }
 
 .tasteText {
   color: var(--color-white);
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: clamp(17px, 1.45vw, 20px);
   line-height: 150%;
-  letter-spacing: -0.8px;
+  letter-spacing: -0.03em;
   text-align: justify;
   margin: 0;
+  max-width: 40ch;
 }
 
 .timelineSection {
@@ -217,7 +264,7 @@
   margin-top: 0;
   margin-bottom: 0;
   font-family: var(--font-decorative);
-  font-size: 55px;
+  font-size: clamp(36px, 4.6vw, 55px);
   font-weight: 300;
   line-height: 120%;
   text-align: center;
@@ -226,11 +273,12 @@
 .timelineIntro {
   color: #222;
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: clamp(17px, 1.45vw, 20px);
   line-height: 150%;
-  letter-spacing: -0.8px;
+  letter-spacing: -0.03em;
   text-align: center;
   margin: 0;
+  max-width: 50rem;
 }
 
 /* Desktop: alternating 3-col grid — origin .timeline_grid (1fr .25fr 1fr) */
@@ -322,21 +370,50 @@
   height: 100%;
   min-height: 160px;
   display: flex;
+  border-radius: 999px;
 }
 
 .timelineProgress {
   z-index: 1;
-  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
   width: 3px;
-  height: 5%;
-  display: flex;
+  height: 100%;
   position: absolute;
   inset: 0% 0% auto 50%;
   transform: translate(-50%);
-  transition: height 0.1s ease-out;
+  will-change: transform;
+  pointer-events: none;
+  border-radius: 999px;
+}
+
+.timelineProgressFill {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
+  border-radius: inherit;
+  transform: scaleY(var(--timeline-progress, 0));
+  transform-origin: top center;
+  will-change: transform;
+}
+
+.timelineMilestone {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid #ad1c20;
+  background: #fff;
+  z-index: 2;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.timelineMilestoneActive {
+  background: #ad1c20;
+  box-shadow: 0 0 0 5px rgba(173, 28, 32, 0.14);
 }
 
 .timelineDot {
@@ -346,9 +423,11 @@
   border-radius: 99px;
   width: 24px;
   height: 24px;
-  position: relative;
-  flex-shrink: 0;
-  margin-bottom: -12px;
+  position: absolute;
+  left: 50%;
+  top: calc((var(--timeline-progress-percent, 0) * 1%) - 12px);
+  transform: translateX(-50%);
+  will-change: top;
 }
 
 .timelineImageCard {
@@ -366,6 +445,7 @@
   height: 300px;
   object-fit: cover;
   display: block;
+  box-shadow: 0 20px 42px rgba(84, 46, 14, 0.14);
 }
 
 /* Mobile: single-column stack — origin .timeline_inner-mobile */
@@ -386,6 +466,7 @@
   background-color: #fff;
   background-image: linear-gradient(#fff, #fff);
   z-index: 0;
+  border-radius: 999px;
 }
 
 .timelineMobileProgress {
@@ -394,13 +475,15 @@
   left: 2.5em;
   transform: translateX(-50%);
   width: 3px;
-  background-image: linear-gradient(#fff, #ad1c20 28%, #470b0d 52%, #ad1c20 72%, #fff);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+  height: 100%;
   z-index: 1;
-  transition: height 0.1s ease-out;
+  will-change: transform;
+  pointer-events: none;
+  border-radius: 999px;
+}
+
+.timelineMilestoneMobile {
+  left: 2.5em;
 }
 
 .timelineMobileGridInner {
@@ -500,10 +583,11 @@
   margin-top: 0;
   margin-bottom: 0;
   font-family: var(--font-decorative);
-  font-size: 85px;
+  font-size: clamp(54px, 8vw, 86px);
   font-weight: 300;
-  line-height: 80px;
+  line-height: 0.92;
   text-align: center;
+  text-wrap: balance;
 }
 
 .venturesContentSection {
@@ -531,6 +615,9 @@
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(74, 39, 12, 0.14);
 }
 
 .venturesImage {
@@ -538,14 +625,16 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 18px;
+  transition: transform 0.7s ease;
 }
 
 .venturesTextContent {
   display: flex;
   flex-flow: column;
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+  justify-content: center;
 }
 
 .venturesSubHeading {
@@ -560,12 +649,12 @@
   width: auto;
   margin-top: 0;
   margin-bottom: 0;
-  padding-left: 5px;
   font-family: var(--font-decorative);
-  font-size: 55px;
+  font-size: clamp(36px, 4.2vw, 55px);
   font-weight: 300;
-  line-height: 100px;
+  line-height: 1;
   text-align: left;
+  text-wrap: balance;
 }
 
 .venturesBullets {
@@ -582,9 +671,9 @@
 .venturesBullet {
   color: #636363;
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: clamp(16px, 1.25vw, 18px);
   line-height: 150%;
-  letter-spacing: -0.872px;
+  letter-spacing: -0.03em;
   margin-bottom: 0;
   position: relative;
   padding-left: 24px;
@@ -612,9 +701,9 @@
   padding-left: 16px;
   color: #636363;
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: clamp(16px, 1.25vw, 18px);
   line-height: 150%;
-  letter-spacing: -0.872px;
+  letter-spacing: -0.03em;
   list-style-type: disc;
 }
 
@@ -632,7 +721,8 @@
 .venturesButtons {
   display: flex;
   gap: 16px;
-  padding-top: 8px;
+  padding-top: 16px;
+  flex-wrap: wrap;
 }
 
 .venturesBtn {
@@ -648,20 +738,55 @@
   text-transform: capitalize;
   text-align: center;
   text-decoration: none;
-  padding: 12px 25px;
-  border-radius: 5px;
-  transition: all 0.2s;
+  padding: 14px 26px;
+  border-radius: 999px;
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
   white-space: nowrap;
   line-height: 20px;
+  box-shadow: 0 16px 32px rgba(173, 28, 32, 0.18);
 }
 
 .venturesBtn:hover {
   background: #32343a;
   color: #fff;
+  transform: translateY(-2px);
 }
 
 .venturesBtn:active {
   background: #43464d;
+}
+
+.imageGlow {
+  position: absolute;
+  inset: auto auto 0 0;
+  width: 46%;
+  height: 44%;
+  background: radial-gradient(circle, rgba(210, 171, 0, 0.18), transparent 72%);
+  pointer-events: none;
+  filter: blur(8px);
+}
+
+.fadeInUp {
+  animation: aboutFadeInUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fadeInUpDelay {
+  animation-delay: 0.12s;
+}
+
+@keyframes aboutFadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 /* =========================================================================
@@ -684,8 +809,9 @@
   }
 
   .goldenGrid {
-    grid-column-gap: 3rem;
-    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 2rem;
+    grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+    align-items: start;
   }
 
   .goldenHeading {
@@ -698,7 +824,7 @@
   }
 
   .tasteContent {
-    width: 70%;
+    width: min(70%, 440px);
   }
 
   .timelineTitle {
@@ -706,12 +832,26 @@
   }
 
   .timelinePadding {
+    padding-top: 2.5em;
+    padding-bottom: 4.5em;
     padding-left: 4%;
     padding-right: 4%;
   }
 
+  .timelineGrid {
+    grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr);
+    grid-column-gap: 1rem;
+  }
+
+  .timelineImage {
+    width: 100%;
+    max-width: 248px;
+    height: 280px;
+  }
+
   .venturesGrid {
     grid-column-gap: 3rem;
+    align-items: start;
   }
 
   .venturesMainTitle {
@@ -754,7 +894,7 @@
     max-width: none;
     margin-left: 15px;
     margin-right: 15px;
-    padding: 25px 10px;
+    padding: 28px 10px;
   }
 
   .heroHeadingWrap {
@@ -777,14 +917,18 @@
     grid-template-columns: 1fr;
   }
 
+  .goldenContent {
+    grid-row-gap: 8px;
+  }
+
   .goldenHeading {
-    text-align: justify;
+    text-align: left;
     font-size: 30px;
-    line-height: 30px;
+    line-height: 1.05;
   }
 
   .goldenText {
-    text-align: justify;
+    text-align: left;
     font-size: 1rem;
   }
 
@@ -792,7 +936,7 @@
     max-width: none;
     margin-left: 15px;
     margin-right: 15px;
-    padding: 45px 10px;
+    padding: 38px 10px;
   }
 
   .tasteContent {
@@ -807,7 +951,8 @@
   .tasteText {
     text-align: left;
     font-size: 18px;
-    line-height: 120%;
+    line-height: 145%;
+    max-width: none;
   }
 
   .venturesContainer {
@@ -822,7 +967,7 @@
     max-width: none;
     margin-left: 15px;
     margin-right: 15px;
-    padding: 25px 10px;
+    padding: 28px 10px 34px;
   }
 
   .venturesGrid {
@@ -838,7 +983,7 @@
 
   .venturesSubHeading {
     font-size: 35px;
-    line-height: 50px;
+    line-height: 1.05;
   }
 
   .venturesBullets {
@@ -868,8 +1013,7 @@
   }
 
   .timelinePadding {
-    padding-left: 3.5%;
-    padding-right: 3.5%;
+    padding: 2.5em 4% 4em;
   }
 
   .timelineTitle {
@@ -930,9 +1074,45 @@
   .timelineImage {
     width: 100%;
     height: 220px;
-    border-radius: 8px;
+    border-radius: 12px;
     order: -1;
     object-fit: cover;
+  }
+
+  .timelineMobileGridInner {
+    gap: 28px;
+  }
+
+  .timelineMobileRow {
+    gap: 14px;
+    padding-left: 1.8rem;
+  }
+
+  .timelineMobileItem {
+    gap: 10px;
+  }
+
+  .timelineMobileItemYear {
+    font-size: 24px;
+  }
+
+  .timelineMobileItemText,
+  .timelineText,
+  .timelineText.alignRight {
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.02em;
+  }
+
+  .timelineMobileItemImage {
+    height: 210px;
+    border-radius: 12px;
+  }
+
+  .timelineMobileTrack,
+  .timelineMobileProgress,
+  .timelineMilestoneMobile {
+    left: 0.8rem;
   }
 
   .timelineProgress {
@@ -946,6 +1126,11 @@
 }
 
 @media screen and (max-width: 479px) {
+  .heroHeadingWrap,
+  .venturesHeadingWrap {
+    width: 100%;
+  }
+
   .heroTitle {
     font-size: 36px;
     line-height: 48px;
@@ -965,6 +1150,11 @@
     font-size: 30px;
   }
 
+  .goldenImageWrap,
+  .venturesImageWrap {
+    border-radius: 14px;
+  }
+
   .tasteHeading {
     font-size: 36px;
   }
@@ -974,12 +1164,7 @@
   }
 
   .timelinePadding {
-    padding-left: 4%;
-    padding-right: 4%;
-  }
-
-  .timelineProgress {
-    left: 2em;
+    padding: 2.15em 4% 3.4em;
   }
 
   .venturesMainTitle {
@@ -989,13 +1174,23 @@
 
   .venturesSubHeading {
     font-size: 32px;
-    line-height: 30px;
+    line-height: 1.05;
   }
 
   .venturesContentContainer {
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 25px;
+  }
+
+  .timelineMobileRow {
+    padding-left: 1.5rem;
+  }
+
+  .timelineMobileTrack,
+  .timelineMobileProgress,
+  .timelineMilestoneMobile {
+    left: 0.6rem;
   }
 
   .venturesButtons {
