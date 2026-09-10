@@ -11,12 +11,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL("/not-found", request.url), { status: 404 });
   }
 
-  // Maintenance mode: serve maintenance page for all public routes
+  // Maintenance mode: serve maintenance page for all routes (including admin)
   if (MAINTENANCE_MODE) {
-    // Allow admin, api, Next internals, assets, and the maintenance page itself
+    // Allow only Next internals, assets, and the maintenance page itself
+    // Admin (/kj-portal-0d7cfad1) is also paused per request
     if (
-      pathname.startsWith("/kj-portal-0d7cfad1") ||
-      pathname.startsWith("/api") ||
       pathname.startsWith("/_next") ||
       pathname.startsWith("/maintenance") ||
       pathname.startsWith("/assets") ||
