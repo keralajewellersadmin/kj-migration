@@ -34,9 +34,6 @@ export default function MaintenancePage() {
         Kerala Jewellers is currently under maintenance to bring you an even better
         shopping experience. Please check back shortly.
       </p>
-      <p style={{ fontSize: 13, color: "#9e8b88", marginTop: 20 }}>
-        For urgent enquiries: +91 95660 11899 · pondybazaar@keralajewellers.in
-      </p>
     </main>
   );
 }
