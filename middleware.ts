@@ -26,7 +26,9 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     // Rewrite everything else to /maintenance with 503
-    const res = NextResponse.rewrite(new URL("/maintenance", request.url));
+    const res = NextResponse.rewrite(new URL("/maintenance", request.url), {
+      status: 503,
+    });
     res.headers.set("Retry-After", "3600");
     return res;
   }
