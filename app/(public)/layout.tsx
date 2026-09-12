@@ -39,6 +39,8 @@ export default async function PublicLayout({
     diamond: diamondCategories,
   };
 
+  const heroLcp = settings.heroSlides?.[0]?.image || settings.heroSlides?.find((s: { isPinned?: boolean }) => s.isPinned)?.image;
+
   return (
     <html lang="en">
       <head>
@@ -51,6 +53,9 @@ export default async function PublicLayout({
           href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Mulish:wght@300;400;500;600;700&display=block"
         />
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        {heroLcp && (
+          <link rel="preload" as="image" href={heroLcp} fetchPriority="high" />
+        )}
         <link
           rel="shortcut icon"
           href="/assets/logo/favicon.png"

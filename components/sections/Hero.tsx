@@ -127,6 +127,8 @@ export default function Hero({
                           fill
                           className={styles.bgImage}
                           priority={i === 0}
+                          fetchPriority={i === 0 ? "high" : "auto"}
+                          sizes="100vw"
                         />
                       )}
                       {hasText && (
