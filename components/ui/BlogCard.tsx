@@ -19,6 +19,7 @@ export default function BlogCard({ post, headingLevel = "h2" }: Props) {
             alt={post.title}
             className={styles.image}
             fill
+            sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 33vw"
             loading="lazy"
           />
         </div>

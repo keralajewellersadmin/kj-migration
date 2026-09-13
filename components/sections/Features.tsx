@@ -160,7 +160,7 @@ export default function Features({
                   <div className={styles.imageWrap}>
                     <Image
                       src={feature.image}
-                      alt={feature.alt || ""}
+                      alt={feature.alt || feature.title || feature.heading || ""}
                       className={styles.image}
                       fill
                       sizes="(max-width: 991px) 340px, 200px"

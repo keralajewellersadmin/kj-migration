@@ -3,16 +3,15 @@ import type { NextConfig } from "next";
 
 // Trigger production deployment to link custom domains
 
-const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const isProduction = process.env.NODE_ENV === "production";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isProduction ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline'${isProduction ? "" : " 'unsafe-eval'"} https://www.googletagmanager.com https://www.google-analytics.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' https://fonts.gstatic.com",
-  "connect-src 'self'",
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com",
   "frame-src 'self' https://www.google.com https://maps.google.com https://res.cloudinary.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -34,7 +33,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "keralajewellerssiterebuild.vercel.app",
+        hostname: "kj-migration.vercel.app",
         pathname: "/**",
       },
     ],

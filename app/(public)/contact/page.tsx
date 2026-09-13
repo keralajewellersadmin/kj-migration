@@ -103,6 +103,7 @@ export default async function ContactPage() {
                   "https://www.instagram.com/keralajewellers1959/"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
               >
                 <svg viewBox="0 0 24 24" width="24" height="24">
@@ -118,6 +119,7 @@ export default async function ContactPage() {
                   "https://www.facebook.com/KeralaJewellers"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
               >
                 <svg viewBox="0 0 24 24" width="24" height="24">
@@ -130,6 +132,7 @@ export default async function ContactPage() {
                   "https://www.youtube.com/@kerala_jewellers"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="YouTube"
               >
                 <svg viewBox="0 0 24 24" width="24" height="24">
@@ -179,7 +182,7 @@ export default async function ContactPage() {
                       href={`https://www.google.com/maps?q=${branch.mapQ}`}
                       className={styles.branchBtn}
                       target="_blank"
-                      rel="noopener"
+                      rel="noopener noreferrer"
                       aria-label={`Get directions to Kerala Jewellers ${branch.name}`}
                     >
                       Get Directions

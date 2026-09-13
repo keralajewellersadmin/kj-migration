@@ -27,7 +27,7 @@ export default async function AboutPage() {
                   src={
                     aboutPage.goldenOccasions.image || IMG.aboutFallback
                   }
-                  alt={aboutPage.goldenOccasions.alt}
+                  alt={aboutPage.goldenOccasions.alt || "Kerala Jewellers — About Us, heritage jewellery since 1959"}
                   width={940}
                   height={600}
                   sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 940px"

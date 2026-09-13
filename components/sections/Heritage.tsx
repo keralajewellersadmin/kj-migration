@@ -1,4 +1,5 @@
-﻿import styles from "./Heritage.module.css";
+﻿import Image from "next/image";
+import styles from "./Heritage.module.css";
 import { IMG } from "@/lib/cloudinary/fallbacks";
 
 const defaultHeritage = {
@@ -23,13 +24,14 @@ export default function Heritage({
       <div className={styles.container}>
         <div className={styles.layout}>
           <div className={styles.imageSide}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={imageSrc}
-              alt="Heritage designs, Kerala Jewellers Porur"
+              alt="Heritage designs by Kerala Jewellers showcasing intricate traditional jewellery craftsmanship"
               className={styles.heroImage}
+              width={800}
+              height={600}
+              sizes="(max-width: 991px) 100vw, 462px"
               loading="lazy"
-              decoding="async"
             />
           </div>
           <div className={styles.textSide}>

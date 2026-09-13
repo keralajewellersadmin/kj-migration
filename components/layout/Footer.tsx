@@ -166,7 +166,7 @@ function BranchCard({ branch }: { branch: Branch }) {
           href={`https://www.google.com/maps?q=${branch.mapQ}`}
           className={`${styles.branchBtn} ${styles.branchBtnOutline}`}
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           aria-label={`Get directions to Kerala Jewellers ${branch.name}`}
         >
           Get Directions
@@ -230,6 +230,7 @@ export default function Footer({
                   "https://www.instagram.com/keralajewellers1959/"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Visit Kerala Jewellers on Instagram"
               >
                 <InstagramIcon />
@@ -240,6 +241,7 @@ export default function Footer({
                   "https://www.facebook.com/KeralaJewellers"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Visit Kerala Jewellers on Facebook"
               >
                 <FacebookIcon />
@@ -250,6 +252,7 @@ export default function Footer({
                   "https://www.youtube.com/@kerala_jewellers"
                 }
                 target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Visit Kerala Jewellers on YouTube"
               >
                 <YoutubeIcon />

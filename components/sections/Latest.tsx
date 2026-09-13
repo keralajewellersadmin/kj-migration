@@ -105,7 +105,7 @@ export default function Latest({
                 {banner.image && (
                   <Image
                     src={banner.image}
-                    alt={banner.alt || ""}
+                    alt={banner.alt || title || ""}
                     className={styles.bannerImage}
                     fill
                     sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 940px"

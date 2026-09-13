@@ -62,6 +62,8 @@ export default function Categories({
             <div
               key={i}
               className={`${styles.card} ${styles[cat.variant]}`}
+              role="img"
+              aria-label={cat.title ? `${cat.title} — Kerala Jewellers ${cat.variant} collection` : ""}
               style={cat.image ? {
                 backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.35) 0%, transparent 60%), url(${cat.image})`,
               } : undefined}

@@ -62,8 +62,33 @@ export default async function ProductDetailPage(props: {
 
   const related = await getRelatedProducts(product.metal, product.slug, 4);
 
+  const metal = product.metal.charAt(0).toUpperCase() + product.metal.slice(1);
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || `Shop ${product.name} — ${metal} jewellery at Kerala Jewellers.`,
+    image: product.image || undefined,
+    brand: {
+      "@type": "Brand",
+      name: "Kerala Jewellers",
+    },
+    sku: product.code || undefined,
+    offers: {
+      "@type": "Offer",
+      url: `https://keralajewellers.in/product/${product.slug}`,
+      availability: "https://schema.org/InStock",
+      priceCurrency: "INR",
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <section className={styles.section}>
         <div className={styles.container}>
           <div className={styles.layout}>

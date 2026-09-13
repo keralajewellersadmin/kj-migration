@@ -20,6 +20,8 @@ export default function ProductsHero({
       <div className={styles.container}>
         <div
           className={styles.banner}
+          role="img"
+          aria-label={`${title.replace(/<br\s*\/?>/gi, " ")} — Kerala Jewellers ${metal} collection`}
           style={{ backgroundImage: `url(${bgImage})` }}
         >
           <div className={styles.content}>
