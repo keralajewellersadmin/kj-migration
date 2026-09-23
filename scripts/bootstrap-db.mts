@@ -12,6 +12,40 @@
  */
 process.env.PAYLOAD_DB_PUSH = "true";
 
+// tsx rewrites payload's `import nextEnvImport from '@next/env'` into strict
+// `.default` access; @next/env is CJS without a default export (and payload
+// resolves its own NESTED copy), so wrap Module._load to attach `default` to
+// whichever instance gets required, before payload's loadEnv evaluates.
+{
+  const { createRequire } = await import("node:module");
+  const req = createRequire(import.meta.url);
+  const Mod = req("module") as unknown as {
+    _load: (request: string, ...rest: unknown[]) => unknown;
+    __kjNextEnvPatched?: boolean;
+  };
+  if (!Mod.__kjNextEnvPatched) {
+    Mod.__kjNextEnvPatched = true;
+    const orig = Mod._load;
+    Mod._load = function (request: string, ...rest: unknown[]) {
+      const out = orig.call(this, request, ...rest) as Record<string, unknown>;
+      if (
+        typeof request === "string" &&
+        request.includes("@next/env") &&
+        out &&
+        typeof out === "object" &&
+        !("default" in out)
+      ) {
+        try {
+          out.default = out;
+        } catch {
+          /* frozen namespace — leave as-is */
+        }
+      }
+      return out;
+    };
+  }
+}
+
 const { getPayload } = await import("payload");
 const { default: config } = await import("../payload.config.ts");
 

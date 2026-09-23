@@ -8,6 +8,38 @@
  */
 import crypto from "crypto";
 
+// tsx interop: payload's loadEnv default-imports CJS @next/env (nested copy);
+// wrap Module._load so `.default` exists on whichever instance is required.
+{
+  const { createRequire } = await import("node:module");
+  const req = createRequire(import.meta.url);
+  const Mod = req("module") as unknown as {
+    _load: (request: string, ...rest: unknown[]) => unknown;
+    __kjNextEnvPatched?: boolean;
+  };
+  if (!Mod.__kjNextEnvPatched) {
+    Mod.__kjNextEnvPatched = true;
+    const orig = Mod._load;
+    Mod._load = function (request: string, ...rest: unknown[]) {
+      const out = orig.call(this, request, ...rest) as Record<string, unknown>;
+      if (
+        typeof request === "string" &&
+        request.includes("@next/env") &&
+        out &&
+        typeof out === "object" &&
+        !("default" in out)
+      ) {
+        try {
+          out.default = out;
+        } catch {
+          /* frozen — leave */
+        }
+      }
+      return out;
+    };
+  }
+}
+
 const { getPayload } = await import("payload");
 const { default: config } = await import("../payload.config.ts");
 const { validateAdminPassword } = await import("../lib/payload/security.ts");

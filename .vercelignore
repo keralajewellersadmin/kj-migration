@@ -22,6 +22,7 @@ playwright/
 e2e/
 docs/
 .qodo/
+.env
 .env*.local
 
 # Public assets (large — served via CDN in production)

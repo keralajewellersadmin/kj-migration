@@ -12,7 +12,9 @@
 import pg from "pg";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { loadEnvConfig } from "@next/env";
+import nextEnv from "@next/env";
+
+const { loadEnvConfig } = nextEnv;
 
 loadEnvConfig(process.cwd());
 

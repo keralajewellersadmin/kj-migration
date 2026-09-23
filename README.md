@@ -42,6 +42,23 @@ DATABASE_URI=file:./dev.db
 
 If `DATABASE_URI` is omitted, the app uses `file:./dev.db`.
 
+### Production database
+
+Production runs on Neon (Postgres, free tier), migrated 2026-09-23:
+
+```env
+DATABASE_URL=postgresql://neondb_owner:YOUR_NEON_PASSWORD@ep-curly-dream-awgp7prw-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require
+```
+
+- Current project: `ep-curly-dream-awgp7prw` (US East); replaced suspended
+  `ep-broad-frost-awkb8sl3` after quota exhaustion (revives ~Oct 1 for the
+  pg_dump merge of blog/settings/product-field data).
+- Secrets stay in local `.env` + `.env.production.local` and the Vercel
+  project env — never in git.
+- Fresh-DB tooling: `scripts/bootstrap-db.mts` (schema push + migration
+  records) → `scripts/reseed.mjs` (12 categories / 127 media / 127 products)
+  → `scripts/setup-prod-admin.mts` (3 seed accounts, env-driven passwords).
+
 ## Project Structure
 
 ```text
