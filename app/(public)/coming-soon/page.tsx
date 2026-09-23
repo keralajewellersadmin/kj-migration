@@ -1,7 +1,7 @@
 import { getSiteSettings } from "@/lib/data/cms";
 import styles from "./coming-soon.module.css";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata = {
   title: "Coming Soon | Kerala Jewellers",

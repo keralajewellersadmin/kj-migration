@@ -6,7 +6,7 @@ import ProductsHero from "@/components/sections/ProductsHero";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import styles from "./products.module.css";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Gold Jewellery Collection — Kerala Jewellers",

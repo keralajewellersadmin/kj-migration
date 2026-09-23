@@ -44,17 +44,21 @@ function getPool(): Pool {
 }
 
 const _cache = new Map<string, { data: unknown; ts: number }>();
+const _inflight = new Map<string, Promise<unknown>>();
 const CACHE_TTL = 5 * 60 * 1000;
 function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  if (process.env.VERCEL === "1") {
-    return fn();
-  }
   const hit = _cache.get(key);
   if (hit && Date.now() - hit.ts < CACHE_TTL) return Promise.resolve(hit.data as T);
-  return fn().then((data) => {
-    _cache.set(key, { data, ts: Date.now() });
-    return data;
-  });
+  const pending = _inflight.get(key);
+  if (pending) return pending as Promise<T>;
+  const p = fn()
+    .then((data) => {
+      _cache.set(key, { data, ts: Date.now() });
+      return data;
+    })
+    .finally(() => _inflight.delete(key));
+  _inflight.set(key, p);
+  return p as Promise<T>;
 }
 
 export function clearSiteSettingsCache() {
@@ -368,49 +372,53 @@ async function getSqlBlogBody(postId: number): Promise<BlogPost["body"]> {
 
 export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
   if (!slugs.length) return [];
-  if (isPostgres()) {
-    try {
-      const placeholders = slugs.map((_, i) => `$${i + 1}`).join(",");
-      const pool = getPool();
-      const rows = await pool.query(
-        `${PRODUCT_SQL_BASE} WHERE p.slug IN (${placeholders})`,
-        slugs,
-      );
-      return rows.rows.map(mapSqlProduct);
-    } catch (err) {
-      console.error("[CMS] getProductsBySlugs failed:", err);
-      return [];
-    }
+  try {
+    return await cached(`products-by-slugs:${slugs.join("|")}`, async () => {
+      if (isPostgres()) {
+        const placeholders = slugs.map((_, i) => `$${i + 1}`).join(",");
+        const pool = getPool();
+        const rows = await pool.query(
+          `${PRODUCT_SQL_BASE} WHERE p.slug IN (${placeholders})`,
+          slugs,
+        );
+        return rows.rows.map(mapSqlProduct);
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "products",
+        where: { slug: { in: slugs } },
+        limit: slugs.length,
+        depth: 1,
+      });
+      return docs.map(mapProduct);
+    });
+  } catch (err) {
+    console.error("[CMS] getProductsBySlugs failed:", err);
+    return [];
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "products",
-    where: { slug: { in: slugs } },
-    limit: slugs.length,
-    depth: 1,
-  });
-  return docs.map(mapProduct);
 }
 
 export async function getAllProductSlugs(): Promise<string[]> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      const { rows } = await pool.query(`SELECT slug FROM products ORDER BY id`);
-      return rows.map((r: any) => r.slug);
-    } catch (err) {
-      console.error("[CMS] getAllProductSlugs failed:", err);
-      return [];
-    }
+  try {
+    return await cached("all-product-slugs", async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        const { rows } = await pool.query(`SELECT slug FROM products ORDER BY id`);
+        return rows.map((r: any) => r.slug);
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "products",
+        limit: 500,
+        depth: 0,
+        select: { slug: true },
+      });
+      return docs.map((d) => d.slug as string);
+    });
+  } catch (err) {
+    console.error("[CMS] getAllProductSlugs failed:", err);
+    return [];
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "products",
-    limit: 500,
-    depth: 0,
-    select: { slug: true },
-  });
-  return docs.map((d) => d.slug as string);
 }
 
 export async function getRelatedProducts(
@@ -418,32 +426,34 @@ export async function getRelatedProducts(
   excludeSlug: string,
   limit = 4,
 ): Promise<Product[]> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      const rows = await pool.query(
-        `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT $3`,
-        [metal, excludeSlug, limit],
-      );
-      return rows.rows.map(mapSqlProduct);
-    } catch (err) {
-      console.error("[CMS] getRelatedProducts failed:", err);
-      return [];
-    }
+  try {
+    return await cached(`related:${metal}:${excludeSlug}:${limit}`, async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        const rows = await pool.query(
+          `${PRODUCT_SQL_BASE} WHERE p.metal = $1 AND p.slug != $2 ORDER BY RANDOM() LIMIT $3`,
+          [metal, excludeSlug, limit],
+        );
+        return rows.rows.map(mapSqlProduct);
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "products",
+        where: {
+          and: [
+            { metal: { equals: metal } },
+            { slug: { not_equals: excludeSlug } },
+          ],
+        },
+        limit,
+        depth: 1,
+      });
+      return docs.map(mapProduct);
+    });
+  } catch (err) {
+    console.error("[CMS] getRelatedProducts failed:", err);
+    return [];
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "products",
-    where: {
-      and: [
-        { metal: { equals: metal } },
-        { slug: { not_equals: excludeSlug } },
-      ],
-    },
-    limit,
-    depth: 1,
-  });
-  return docs.map(mapProduct);
 }
 
 interface PaginatedProducts {
@@ -461,181 +471,192 @@ export async function getProductsByMetalPaginated(
   categorySlug?: string,
   sort?: string,
 ): Promise<PaginatedProducts> {
-  if (isPostgres()) {
-    try {
-      let where = "WHERE p.metal = $1";
-      const params: any[] = [metal];
-      if (categorySlug) {
-        where += " AND p.category_id IN (SELECT id FROM categories WHERE slug = $2)";
-        params.push(categorySlug);
+  const key = `products:${metal}:${page}:${limit}:${categorySlug || ""}:${sort || ""}`;
+  try {
+    return await cached(key, async () => {
+      if (isPostgres()) {
+        let where = "WHERE p.metal = $1";
+        const params: any[] = [metal];
+        if (categorySlug) {
+          where += " AND p.category_id IN (SELECT id FROM categories WHERE slug = $2)";
+          params.push(categorySlug);
+        }
+        const offset = (page - 1) * limit;
+        const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset, sort);
+        const totalPages = Math.ceil(totalDocs / limit);
+        return {
+          products,
+          totalDocs,
+          totalPages,
+          page,
+          hasNextPage: page < totalPages,
+        };
       }
-      const offset = (page - 1) * limit;
-      const { products, totalDocs } = await sqlFindProducts(where, params, limit, offset, sort);
-      const totalPages = Math.ceil(totalDocs / limit);
+      const payload = await getPayload({ config });
+
+      const where: PayloadDoc = { metal: { equals: metal } };
+
+      if (categorySlug) {
+        const { docs: catDocs } = await payload.find({
+          collection: "categories",
+          where: { slug: { equals: categorySlug } },
+          limit: 1,
+        });
+        if (catDocs.length > 0) {
+          where.category = { equals: catDocs[0].id };
+        }
+      }
+
+      let sortParam: string | undefined;
+      if (sort === "asc") sortParam = "title";
+      if (sort === "desc") sortParam = "-title";
+
+      const { docs, totalDocs, totalPages } = await payload.find({
+        collection: "products",
+        where,
+        page,
+        limit,
+        depth: 1,
+        ...(sortParam ? { sort: sortParam } : {}),
+      });
+
       return {
-        products,
+        products: docs.map(mapProduct),
         totalDocs,
         totalPages,
         page,
         hasNextPage: page < totalPages,
       };
-    } catch (err) {
-      console.error("[CMS] getProductsByMetalPaginated failed:", err);
-      return {
-        products: [],
-        totalDocs: 0,
-        totalPages: 0,
-        page,
-        hasNextPage: false,
-      };
-    }
-  }
-  const payload = await getPayload({ config });
-
-  const where: PayloadDoc = { metal: { equals: metal } };
-
-  if (categorySlug) {
-    const { docs: catDocs } = await payload.find({
-      collection: "categories",
-      where: { slug: { equals: categorySlug } },
-      limit: 1,
     });
-    if (catDocs.length > 0) {
-      where.category = { equals: catDocs[0].id };
-    }
+  } catch (err) {
+    console.error("[CMS] getProductsByMetalPaginated failed:", err);
+    return {
+      products: [],
+      totalDocs: 0,
+      totalPages: 0,
+      page,
+      hasNextPage: false,
+    };
   }
-
-  let sortParam: string | undefined;
-  if (sort === "asc") sortParam = "title";
-  if (sort === "desc") sortParam = "-title";
-
-  const { docs, totalDocs, totalPages } = await payload.find({
-    collection: "products",
-    where,
-    page,
-    limit,
-    depth: 1,
-    ...(sortParam ? { sort: sortParam } : {}),
-  });
-
-  return {
-    products: docs.map(mapProduct),
-    totalDocs,
-    totalPages,
-    page,
-    hasNextPage: page < totalPages,
-  };
 }
 
 export async function getProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      let rows;
-      try {
-        rows = await pool.query(`${PRODUCT_SQL_BASE} WHERE p.slug = $1 LIMIT 1`, [slug]);
-      } catch {
-        const SIMPLE = `
-          SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
-                 p.description,
-                 c.name AS category_name,
-                 m.url AS image_url, m.alt AS image_alt,
-                 m.cloudinary_public_id AS cloudinary_public_id
-          FROM products p
-          LEFT JOIN categories c ON p.category_id = c.id
-          LEFT JOIN media m ON p.image_id = m.id
-        `;
-        rows = await pool.query(`${SIMPLE} WHERE p.slug = $1 LIMIT 1`, [slug]);
+  try {
+    return await cached(`product:${slug}`, async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        let rows;
+        try {
+          rows = await pool.query(`${PRODUCT_SQL_BASE} WHERE p.slug = $1 LIMIT 1`, [slug]);
+        } catch {
+          const SIMPLE = `
+            SELECT p.id, p.title, p.slug, p.code, p.metal, p.weight, p.purity,
+                   p.description,
+                   c.name AS category_name,
+                   m.url AS image_url, m.alt AS image_alt,
+                   m.cloudinary_public_id AS cloudinary_public_id
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN media m ON p.image_id = m.id
+          `;
+          rows = await pool.query(`${SIMPLE} WHERE p.slug = $1 LIMIT 1`, [slug]);
+        }
+        return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
       }
-      return rows.rows[0] ? mapSqlProduct(rows.rows[0]) : undefined;
-    } catch (err) {
-      console.error("[CMS] getProductBySlug failed:", err);
-      return undefined;
-    }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "products",
+        where: { slug: { equals: slug } },
+        limit: 1,
+        depth: 1,
+      });
+      return docs[0] ? mapProduct(docs[0]) : undefined;
+    });
+  } catch (err) {
+    console.error("[CMS] getProductBySlug failed:", err);
+    return undefined;
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "products",
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 1,
-  });
-  return docs[0] ? mapProduct(docs[0]) : undefined;
 }
 
 export async function getBlogPosts(limit = 100): Promise<BlogPost[]> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      const { rows } = await pool.query(
-        `${BLOG_SQL_BASE} ORDER BY b.id DESC LIMIT $1`,
-        [limit],
-      );
-      return rows.map((row) => mapSqlBlogPost(row));
-    } catch (err) {
-      console.error("[CMS] getBlogPosts failed:", err);
-      return [];
-    }
+  try {
+    return await cached(`blog-posts:${limit}`, async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        const { rows } = await pool.query(
+          `${BLOG_SQL_BASE} ORDER BY b.id DESC LIMIT $1`,
+          [limit],
+        );
+        return rows.map((row) => mapSqlBlogPost(row));
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({ collection: "blog-posts", limit });
+      return docs.map(mapBlogPost);
+    });
+  } catch (err) {
+    console.error("[CMS] getBlogPosts failed:", err);
+    return [];
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({ collection: "blog-posts", limit });
-  return docs.map(mapBlogPost);
 }
 
 export async function getRelatedBlogPosts(
   excludeSlug: string,
   limit = 3,
 ): Promise<BlogPost[]> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      const { rows } = await pool.query(
-        `${BLOG_SQL_BASE}
-         WHERE b.slug != $1
-         ORDER BY b.id DESC
-         LIMIT $2`,
-        [excludeSlug, limit],
-      );
-      return rows.map((row) => mapSqlBlogPost(row));
-    } catch {
-      return [];
-    }
+  try {
+    return await cached(`related-blog:${excludeSlug}:${limit}`, async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        const { rows } = await pool.query(
+          `${BLOG_SQL_BASE}
+           WHERE b.slug != $1
+           ORDER BY b.id DESC
+           LIMIT $2`,
+          [excludeSlug, limit],
+        );
+        return rows.map((row) => mapSqlBlogPost(row));
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "blog-posts",
+        where: { slug: { not_equals: excludeSlug } },
+        limit,
+      });
+      return docs.map(mapBlogPost);
+    });
+  } catch {
+    return [];
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "blog-posts",
-    where: { slug: { not_equals: excludeSlug } },
-    limit,
-  });
-  return docs.map(mapBlogPost);
 }
 
 export async function getBlogPostBySlug(
   slug: string,
 ): Promise<BlogPost | undefined> {
-  if (isPostgres()) {
-    try {
-      const pool = getPool();
-      const { rows } = await pool.query(
-        `${BLOG_SQL_BASE} WHERE b.slug = $1 LIMIT 1`,
-        [slug],
-      );
-      if (!rows[0]) return undefined;
-      const body = await getSqlBlogBody(Number(rows[0].id));
-      return mapSqlBlogPost(rows[0], body);
-    } catch {
-      return undefined;
-    }
+  try {
+    return await cached(`blog:${slug}`, async () => {
+      if (isPostgres()) {
+        const pool = getPool();
+        const { rows } = await pool.query(
+          `${BLOG_SQL_BASE} WHERE b.slug = $1 LIMIT 1`,
+          [slug],
+        );
+        if (!rows[0]) return undefined;
+        const body = await getSqlBlogBody(Number(rows[0].id));
+        return mapSqlBlogPost(rows[0], body);
+      }
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "blog-posts",
+        where: { slug: { equals: slug } },
+        limit: 1,
+      });
+      return docs[0] ? mapBlogPost(docs[0]) : undefined;
+    });
+  } catch {
+    return undefined;
   }
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "blog-posts",
-    where: { slug: { equals: slug } },
-    limit: 1,
-  });
-  return docs[0] ? mapBlogPost(docs[0]) : undefined;
 }
 
 function mapLegalPage(doc: PayloadDoc): LegalPage {
@@ -672,13 +693,19 @@ function mapLegalPage(doc: PayloadDoc): LegalPage {
 export async function getLegalPageBySlug(
   slug: string,
 ): Promise<LegalPage | undefined> {
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "legal-pages",
-    where: { slug: { equals: slug } },
-    limit: 1,
-  });
-  return docs[0] ? mapLegalPage(docs[0]) : undefined;
+  try {
+    return await cached(`legal:${slug}`, async () => {
+      const payload = await getPayload({ config });
+      const { docs } = await payload.find({
+        collection: "legal-pages",
+        where: { slug: { equals: slug } },
+        limit: 1,
+      });
+      return docs[0] ? mapLegalPage(docs[0]) : undefined;
+    });
+  } catch {
+    return undefined;
+  }
 }
 
 const DEFAULT_CATEGORIES: Record<string, Array<{ name: string; slug: string }>> = {
@@ -1629,10 +1656,10 @@ export async function loadArrayDataForEditor(): Promise<Record<string, unknown>>
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData> {
-  return cached("site-settings", async () => {
-    const payload = await getPayload({ config });
-    try {
-    if (isPostgres()) {
+  try {
+    return await cached("site-settings", async () => {
+      const payload = await getPayload({ config });
+      if (isPostgres()) {
       const settings = await payload.findGlobal({
         slug: "site-settings",
         depth: 1,
@@ -1819,9 +1846,9 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
 
     // SQLite path: use Payload API with depth:1 to resolve relationships
     return await loadArrayDataViaPayload(payload);
+    });
   } catch {
     return DEFAULT_SETTINGS;
   }
-  });
 }
 
