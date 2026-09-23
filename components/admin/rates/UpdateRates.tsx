@@ -48,7 +48,12 @@ export default function UpdateRates() {
       e.preventDefault();
       setStatus("saving");
       try {
-        await updateRates(rates);
+        const result = await updateRates(rates);
+        if (!result.success) {
+          setStatus("error");
+          setTimeout(() => setStatus("idle"), 3000);
+          return;
+        }
         setStatus("saved");
         setLastUpdated(new Date().toISOString().split("T")[0]);
         setTimeout(() => {

@@ -66,46 +66,54 @@ const canReadAdminUserField = ({
     }),
   );
 
+const safeRevalidate = (path: string) => {
+  try {
+    revalidatePath(path);
+  } catch {
+    // outside Next request (scripts, some jobs) — cache TTL still expires
+  }
+};
+
 const revalidateProduct: CollectionAfterChangeHook = async ({ doc }) => {
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
+  safeRevalidate("/");
+  safeRevalidate("/products");
+  safeRevalidate("/products/gold");
+  safeRevalidate("/products/silver");
+  safeRevalidate("/products/diamond");
+  safeRevalidate("/products/platinum");
   if (doc?.slug) {
-    revalidatePath(`/product/${doc.slug}`);
+    safeRevalidate(`/product/${doc.slug}`);
   }
 };
 
 const revalidateBlog: CollectionAfterChangeHook = async ({ doc }) => {
-  revalidatePath("/blog");
+  safeRevalidate("/blog");
   if (doc?.slug) {
-    revalidatePath(`/blog/${doc.slug}`);
+    safeRevalidate(`/blog/${doc.slug}`);
   }
 };
 
 const revalidateLegal: CollectionAfterChangeHook = () => {
-  revalidatePath("/terms-conditions");
-  revalidatePath("/privacy-policy");
-  revalidatePath("/swarnavarsha");
+  safeRevalidate("/terms-conditions");
+  safeRevalidate("/privacy-policy");
+  safeRevalidate("/swarnavarsha");
 };
 
 const revalidateReviews: CollectionAfterChangeHook = () => {
-  revalidatePath("/");
+  safeRevalidate("/");
   void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
 };
 
 const revalidateSiteSettings: GlobalAfterChangeHook = () => {
   void import("./lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/products/gold");
-  revalidatePath("/products/silver");
-  revalidatePath("/products/diamond");
-  revalidatePath("/products/platinum");
-  revalidatePath("/contact");
-  revalidatePath("/blog");
+  safeRevalidate("/");
+  safeRevalidate("/products");
+  safeRevalidate("/products/gold");
+  safeRevalidate("/products/silver");
+  safeRevalidate("/products/diamond");
+  safeRevalidate("/products/platinum");
+  safeRevalidate("/contact");
+  safeRevalidate("/blog");
 };
 
 const preventDeleteCategoryWithProducts: CollectionBeforeDeleteHook = async ({

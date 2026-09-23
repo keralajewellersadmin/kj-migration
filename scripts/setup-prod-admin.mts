@@ -59,7 +59,7 @@ if (!passwordEnv.superadmin || !passwordEnv.admin || !passwordEnv.enquiry) {
 
 const accounts = [
   {
-    email: "superadmin@keralajewellers.in",
+    email: "keralajewellersadmin@gmail.com",
     username: "superadmin",
     name: "Super Admin",
     role: "super-admin",

@@ -120,14 +120,23 @@ export async function updateSiteSettings(patch: Record<string, unknown>) {
       overrideAccess: true,
     });
     void import("@/lib/data/cms").then(({ clearSiteSettingsCache }) => clearSiteSettingsCache());
-    revalidatePath("/");
-    revalidatePath("/products");
-    revalidatePath("/products/gold");
-    revalidatePath("/products/silver");
-    revalidatePath("/products/diamond");
-    revalidatePath("/products/platinum");
-    revalidatePath("/contact");
-    revalidatePath("/about");
+    const paths = [
+      "/",
+      "/products",
+      "/products/gold",
+      "/products/silver",
+      "/products/diamond",
+      "/products/platinum",
+      "/contact",
+      "/about",
+    ];
+    for (const path of paths) {
+      try {
+        revalidatePath(path);
+      } catch {
+        // ignore outside static generation context
+      }
+    }
     return { success: true };
   } catch (err: any) {
     console.error("updateSiteSettings error:", err);
