@@ -12,12 +12,6 @@ import {
 
 type AdminRole = "super-admin" | "admin" | "enquiry-manager";
 
-export const adminRoles: AdminRole[] = [
-  "super-admin",
-  "admin",
-  "enquiry-manager",
-];
-
 type UserWithRole = {
   role?: AdminRole;
   isActive?: boolean;

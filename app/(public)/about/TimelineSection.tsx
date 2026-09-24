@@ -47,11 +47,14 @@ function TimelineImage({
   height: number;
 }) {
   const fallbackSrc = timelineFallbackImageByYear[item.year] || "";
-  const [src, setSrc] = useState(item.image || fallbackSrc);
+  const desiredSrc = item.image || fallbackSrc;
+  const [src, setSrc] = useState(desiredSrc);
+  const [lastDesired, setLastDesired] = useState(desiredSrc);
 
-  useEffect(() => {
-    setSrc(item.image || fallbackSrc);
-  }, [fallbackSrc, item.image]);
+  if (lastDesired !== desiredSrc) {
+    setLastDesired(desiredSrc);
+    setSrc(desiredSrc);
+  }
 
   if (!src) return null;
 

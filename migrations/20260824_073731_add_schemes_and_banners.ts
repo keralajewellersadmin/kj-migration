@@ -1,6 +1,6 @@
 import { type MigrateUpArgs, type MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TABLE "site_settings_thanga_mazhai_benefits" (
   	"_order" integer NOT NULL,
@@ -56,7 +56,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "site_settings_thanga_mazhai_thanga_mazhai_banner_idx" ON "site_settings" USING btree ("thanga_mazhai_banner_id");`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    ALTER TABLE "site_settings_thanga_mazhai_benefits" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "site_settings_thanga_mazhai_why_choose" DISABLE ROW LEVEL SECURITY;

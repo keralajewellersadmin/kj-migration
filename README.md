@@ -1,103 +1,82 @@
-# Kerala Jewellers - Payload CMS Rebuild
+# Kerala Jewellers
 
-Kerala Jewellers is a Next.js + Payload CMS rebuild of the public jewellery website.
+Public website rebuild for Kerala Jewellers — Next.js App Router + Payload CMS.
 
 ## Stack
 
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- CSS Modules with shared tokens in `Frontend/styles/tokens.css`
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- CSS Modules with design tokens in `styles/tokens.css`
 - Payload CMS 3
-- SQLite through `@payloadcms/db-sqlite`
+- Postgres (Neon) in production; SQLite for local development
+- Cloudinary for media
 
-## Local Development
+## Local development
 
 ```bash
-cd Frontend
 npm install
 npm run dev
 ```
 
-The dev server runs on:
+Dev server: `http://localhost:4000`
 
-```text
-http://localhost:4000
-```
-
-Payload admin runs inside the same Next.js app:
-
-```text
-http://localhost:4000/admin
-```
+Admin panel: `http://localhost:4000/kj-portal-0d7cfad1`
 
 ## Environment
 
-Create `Frontend/.env.local` when needed:
-
-```env
-PAYLOAD_SECRET=change-this-secret
-DATABASE_URI=file:./dev.db
-```
-
-If `DATABASE_URI` is omitted, the app uses `file:./dev.db`.
-
-### Production database
-
-Production runs on Neon (Postgres, free tier), migrated 2026-09-23:
-
-```env
-DATABASE_URL=postgresql://neondb_owner:YOUR_NEON_PASSWORD@ep-curly-dream-awgp7prw-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require
-```
-
-- Current project: `ep-curly-dream-awgp7prw` (US East); replaced suspended
-  `ep-broad-frost-awkb8sl3` after quota exhaustion (revives ~Oct 1 for the
-  pg_dump merge of blog/settings/product-field data).
-- Secrets stay in local `.env` + `.env.production.local` and the Vercel
-  project env — never in git.
-- Fresh-DB tooling: `scripts/bootstrap-db.mts` (schema push + migration
-  records) → `scripts/reseed.mjs` (12 categories / 127 media / 127 products)
-  → `scripts/setup-prod-admin.mts` (3 seed accounts, env-driven passwords).
-
-## Project Structure
-
-```text
-Frontend/app/(public)        Public website routes
-Frontend/app/(payload)       Payload admin and API routes
-Frontend/app/api/inquiry     Public inquiry form API
-Frontend/app/api/seed        Development seed endpoint
-Frontend/components          Shared UI components
-Frontend/lib/data/cms.ts     Payload data adapter
-Frontend/lib/data/products.ts Seed data only
-Frontend/payload.config.ts   Payload collections and globals
-Frontend/public/assets       Static website assets
-```
-
-## CMS Model
-
-Collections:
-
-- `media`
-- `products`
-- `categories`
-- `blog-posts`
-- `inquiries`
-
-Global:
-
-- `site-settings`
-
-`site-settings` controls rates, homepage content, reviews, banners, branches, footer details, bestseller slugs, and typography.
-
-## Useful Commands
+Copy `.env.example` to `.env.local` and fill in values:
 
 ```bash
-npm run dev
-npm run build
-npm run lint
+cp .env.example .env.local
 ```
 
-## Notes
+Required for production:
 
-The public pages read live data from Payload through `Frontend/lib/data/cms.ts`.
-`Frontend/lib/data/products.ts` is seed data only and is not the runtime source of truth.
+| Variable | Purpose |
+| --- | --- |
+| `PAYLOAD_SECRET` | Payload session secret |
+| `DATABASE_URL` | Postgres connection string |
+| `CLOUDINARY_*` | Image uploads |
+| `GMAIL_OTP_SENDER_EMAIL` / `GMAIL_OTP_SENDER_APP_PASSWORD` | Admin OTP + password-reset email |
+| `NEXT_PUBLIC_SITE_URL` | Absolute site URL |
+
+Secrets belong only in local `.env*` files and the Vercel project environment — never in git.
+
+## Project structure
+
+```text
+app/(public)          Public website routes
+app/(payload)         Payload admin + admin API
+app/api/inquiry       Public enquiry form
+app/api/auth/*        Login, OTP, password reset
+components            UI components
+lib/data              CMS data access
+lib/auth              Auth + email helpers
+payload.config.ts     Collections and globals
+public/assets         Static assets
+scripts/              One-time DB bootstrap / seed tooling
+```
+
+## CMS model
+
+Collections: `media`, `products`, `categories`, `blog-posts`, `inquiries`, `admin-users`
+
+Global: `site-settings` — metal rates, homepage sections, reviews, banners, branches, footer, typography.
+
+## Commands
+
+```bash
+npm run dev        # dev server (port 4000)
+npm run build      # migrate (best-effort) + production build
+npm run start      # start production server
+npm run lint       # ESLint
+npm run typecheck  # tsc --noEmit
+```
+
+## Fresh database (optional)
+
+```bash
+npx tsx scripts/bootstrap-db.mts   # schema + migration records
+node scripts/reseed.mjs            # categories / media / products
+npx tsx scripts/setup-prod-admin.mts  # admin accounts (SEED_*_PASSWORD env)
+```

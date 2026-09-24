@@ -1,7 +1,6 @@
 ﻿import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd());
 
-import crypto from "crypto";
 import {
   buildConfig,
   ValidationError,
@@ -40,7 +39,6 @@ canReadAdminUsers,
   adminIsActiveFieldAccess,
   enforceAdminRoleRestrictions,
   enforceAccountLimit,
-  validateAdminPassword,
   adminUsersJwtStrategy,
 } from "./lib/payload/security.ts";
 import {
@@ -330,7 +328,9 @@ const Media: CollectionConfig = {
   upload: {
     disableLocalStorage: true,
     staticDir: process.env.MEDIA_DIR || "public/media",
-    adapter: 'dummy-cloudinary' as any,
+    // disableLocalStorage skips disk I/O; hooks handle Cloudinary upload/delete.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    adapter: "dummy-cloudinary" as any,
     mimeTypes: [
       "image/jpeg",
       "image/jpg",
@@ -396,9 +396,9 @@ const AdminUsers: CollectionConfig = {
     beforeValidate: [
       enforceAdminRoleRestrictions,
       enforceAccountLimit,
-      async ({ data, req, operation, originalDoc }) => {
+      async ({ data }) => {
         if (!data) return data;
-        
+
         // Prevent plaintext temporary fields from being saved
         delete data.password;
 

@@ -1,6 +1,4 @@
-// Structured legal-page content extracted from the reference site (E:\Kerala-Jewellers-final).
-// T&C and Privacy text reproduced to match the reference. The GRT Jewellers contact email in the
-// Privacy Policy was corrected to Kerala Jewellers' own address (see note in extract_legal step).
+// Legal-page content for Terms & Conditions and Privacy Policy.
 
 export type LegalBlock =
   { type: "p"; text: string } | { type: "ul"; items: string[] };

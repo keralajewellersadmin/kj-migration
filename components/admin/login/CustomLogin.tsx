@@ -15,7 +15,7 @@ async function readAuthResponse(res: Response) {
   return {
     error:
       res.status === 401 || res.status === 403
-        ? "This deployment is protected by Vercel. Disable deployment protection before sharing it with the client."
+        ? "Login service is not reachable. Please try again."
         : "Login service is not reachable. Please try again.",
   };
 }

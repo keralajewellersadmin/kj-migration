@@ -8,7 +8,7 @@ import { updateSiteSettings, updateLegalPage, getSiteSettingsData } from "@/lib/
 import ArrayFieldEditor from "./ArrayFieldEditor";
 import ImagePicker from "./ImagePicker";
 
-const ADMIN_PATH = "/kj-portal-0d7cfad1";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 function getPath(obj: Record<string, unknown>, path: string): unknown {
   return path.split(".").reduce<unknown>((acc, key) => {

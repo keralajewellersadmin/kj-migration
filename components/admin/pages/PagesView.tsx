@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PAGE_DEFS } from "./pageDefs";
 import PageEditor from "./PageEditor";
 
-const ADMIN_PATH = "/kj-portal-0d7cfad1";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 export default function PagesView() {
   const router = useRouter();

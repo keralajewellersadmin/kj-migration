@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { updateRates, getRates } from "@/lib/actions/updateRates";
 
-const ADMIN_PATH = "/kj-portal-0d7cfad1";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 const fields = [
   { key: "gold22", label: "Gold 22K", placeholder: "e.g. 7,450" },

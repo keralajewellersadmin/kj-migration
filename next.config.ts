@@ -1,8 +1,6 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
-// Trigger production deployment to link custom domains
-
 const isProduction = process.env.NODE_ENV === "production";
 
 const contentSecurityPolicy = [
@@ -29,11 +27,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "kj-migration.vercel.app",
         pathname: "/**",
       },
     ],

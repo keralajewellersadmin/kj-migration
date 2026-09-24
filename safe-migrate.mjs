@@ -1,9 +1,7 @@
 import { spawnSync } from "node:child_process";
 
-// Runs `payload migrate` before the build. A real migration error must fail
-// the build; a DB that is simply unreachable (Neon quota 402, auth rotation,
-// network timeouts) must NOT block deploys — ISR revalidates content once the
-// DB is back.
+// Run Payload migrations before build. Real migration failures fail the build;
+// an unreachable database (network/timeout) should not block deploys.
 const result = spawnSync("npm", ["run", "payload:migrate"], {
   shell: true,
   encoding: "utf8",
@@ -36,8 +34,7 @@ const unreachable = [
 
 if (unreachable.some((re) => re.test(output))) {
   console.warn(
-    "\n[build] payload migrate skipped: database unreachable (quota/network). " +
-      "Continuing build; content revalidates once the DB is back.",
+    "\n[build] payload migrate skipped: database unreachable. Continuing build.",
   );
   process.exit(0);
 }

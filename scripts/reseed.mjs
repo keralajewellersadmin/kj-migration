@@ -1,13 +1,13 @@
-/* Reseeds the new Neon project from scripts/phase1-db-dump.json:
+/* Reseeds the database from scripts/phase1-db-dump.json:
  * 12 categories, product-image media rows, 127 products.
  *
  * Original IDs are preserved so products.category_id and products.image_id
- * stay valid without remapping. Fields not captured by the phase1 dump
+ * stay valid without remapping. Fields not captured by the dump
  * (weight, purity, code, status, best_seller, seo_*, sort_order) stay NULL
- * until the Oct-1 pg_dump merge from the old suspended project.
+ * until migrated from the legacy database.
  *
  * Usage: node scripts/reseed.mjs
- * Pre:   schema bootstrapped (scripts/bootstrap-db.mts), DATABASE_URL = new project.
+ * Pre:   schema bootstrapped (scripts/bootstrap-db.mts), DATABASE_URL set.
  */
 import pg from "pg";
 import fs from "fs";

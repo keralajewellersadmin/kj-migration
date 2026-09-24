@@ -370,34 +370,6 @@ async function getSqlBlogBody(postId: number): Promise<BlogPost["body"]> {
   return body;
 }
 
-export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
-  if (!slugs.length) return [];
-  try {
-    return await cached(`products-by-slugs:${slugs.join("|")}`, async () => {
-      if (isPostgres()) {
-        const placeholders = slugs.map((_, i) => `$${i + 1}`).join(",");
-        const pool = getPool();
-        const rows = await pool.query(
-          `${PRODUCT_SQL_BASE} WHERE p.slug IN (${placeholders})`,
-          slugs,
-        );
-        return rows.rows.map(mapSqlProduct);
-      }
-      const payload = await getPayload({ config });
-      const { docs } = await payload.find({
-        collection: "products",
-        where: { slug: { in: slugs } },
-        limit: slugs.length,
-        depth: 1,
-      });
-      return docs.map(mapProduct);
-    });
-  } catch (err) {
-    console.error("[CMS] getProductsBySlugs failed:", err);
-    return [];
-  }
-}
-
 export async function getAllProductSlugs(): Promise<string[]> {
   try {
     return await cached("all-product-slugs", async () => {
