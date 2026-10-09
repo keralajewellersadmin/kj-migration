@@ -1372,11 +1372,16 @@ export async function loadArrayDataViaSQL(
 ): Promise<SiteSettingsData> {
   try {
     const pool = getPool();
-    const ss = await pool.query(`SELECT id, slider_paused, bestseller_products FROM site_settings LIMIT 1`);
+    const ss = await pool.query(`SELECT id, slider_paused FROM site_settings LIMIT 1`);
     const ssId = ss.rows[0]?.id;
     const ssSliderPaused = Boolean(ss.rows[0]?.slider_paused);
-    const ssBestsellerSlugs = parseBestsellerSlugs(ss.rows[0]?.bestseller_products);
     if (!ssId) return data;
+    const bestsellerSlugRes = await pool.query(
+      `SELECT p.slug FROM site_settings_rels r
+       JOIN products p ON p.id = r.products_id
+       WHERE r.parent_id = $1 AND r.path = 'bestsellerProducts'
+       ORDER BY r."order"`, [ssId]);
+    const ssBestsellerSlugs = bestsellerSlugRes.rows.map((r: any) => r.slug);
 
     const heroRes = await pool.query(
       `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, 
@@ -1498,9 +1503,15 @@ export async function loadArrayDataViaSQL(
 export async function loadArrayDataForEditor(): Promise<Record<string, unknown>> {
   try {
     const pool = getPool();
-    const ss = await pool.query(`SELECT id, slider_paused, bestseller_products FROM site_settings LIMIT 1`);
+    const ss = await pool.query(`SELECT id, slider_paused FROM site_settings LIMIT 1`);
     const ssId = ss.rows[0]?.id;
     if (!ssId) return {};
+    const bestsellerSlugRes = await pool.query(
+      `SELECT p.slug FROM site_settings_rels r
+       JOIN products p ON p.id = r.products_id
+       WHERE r.parent_id = $1 AND r.path = 'bestsellerProducts'
+       ORDER BY r."order"`, [ssId]);
+    const bestsellerCsv = bestsellerSlugRes.rows.map((r: any) => r.slug).join(",");
 
     const heroRes = await pool.query(
       `SELECT h.heading, h.description, h.cta_text, h.cta_href, h.is_pinned, h.image_id
@@ -1547,13 +1558,13 @@ export async function loadArrayDataForEditor(): Promise<Record<string, unknown>>
        FROM site_settings_swarnavarsha_bullets b
        WHERE b._parent_id = $1 ORDER BY b._order`, [ssId]);
     const branchesRes = await pool.query(
-      `SELECT name, address, phone, phone_full, email, hours, map_q, map_embed_url
+      `SELECT name, address, phone, phone_full, map_q, map_embed_url
        FROM site_settings_branches
        WHERE _parent_id = $1 ORDER BY _order`, [ssId]);
 
     return {
       heroSliderPaused: Boolean(ss.rows[0]?.slider_paused),
-      bestsellerProducts: ss.rows[0]?.bestseller_products || "",
+      bestsellerProducts: bestsellerCsv,
       heroSlides: heroRes.rows.map((r: any) => ({
         heading: r.heading || "",
         description: r.description || "",
@@ -1595,8 +1606,6 @@ export async function loadArrayDataForEditor(): Promise<Record<string, unknown>>
         address: r.address || "",
         phone: r.phone || "",
         phoneFull: r.phone_full || "",
-        email: r.email || "",
-        hours: r.hours || "",
         mapQ: r.map_q || "",
         mapEmbedUrl: r.map_embed_url || "",
       })),
